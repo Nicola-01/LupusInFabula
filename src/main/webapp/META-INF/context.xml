@@ -1,24 +1,21 @@
 <Context>
-
-    <Resource name="jdbc/lupus"
+    <Resource name="jdbc/lupusdb"
               auth="Container"
               type="javax.sql.DataSource"
               factory="org.apache.tomcat.jdbc.pool.DataSourceFactory"
               driverClassName="org.postgresql.Driver"
-
-              url="jdbc:postgresql://localhost:5432/lupusdb"
+              url="jdbc:postgresql://localhost:5432/postgres"
               username="postgres"
               password="postgres"
               testOnBorrow="true"
               validationQuery="SELECT 1"
               timeBetweenEvictionRunsMillis="30000"
-              maxActive="2"
-              minIdle="1"
+              maxActive="10"
+              minIdle="5"
               maxWait="10000"
-              initialSize="1"
+              initialSize="2"
               removeAbandonedTimeout="60"
               removeAbandoned="true"
               closeMethod="close"
     />
-
 </Context>

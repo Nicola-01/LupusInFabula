@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SelectPlayerDAO {
-    private static final String STATEMENT = "SELECT * FROM lupusdb.Player";
+    private static final String STATEMENT = "SELECT * FROM player";
     private final Connection con;
 //    private final Player player;
 

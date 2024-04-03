@@ -34,11 +34,6 @@
             <version>2.0.0</version>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.web</groupId>
-            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
-            <version>3.0.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
@@ -130,6 +125,26 @@
             </plugin>
 
         </plugins>
+
+        <!-- process resources before compilation and packaging -->
+        <resources>
+            <!-- copy HTML files to the target directory -->
+            <resource>
+                <targetPath>${basedir}/target/${project.artifactId}-${project.version}/html</targetPath>
+                <directory>${basedir}/src/main/webapp/html</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+            <!-- copy configuration files to the target directory -->
+            <resource>
+                <targetPath>${basedir}/target/${project.artifactId}-${project.version}/META-INF</targetPath>
+                <directory>${basedir}/src/main/webapp/META-INF</directory>
+                <includes>
+                    <include>**/*.*</include>
+                </includes>
+            </resource>
+        </resources>
 
     </build>
 </project>

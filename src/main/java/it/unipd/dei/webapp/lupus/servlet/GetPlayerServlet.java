@@ -22,7 +22,7 @@ public final class GetPlayerServlet extends AbstractDatabaseServlet {
         Message m = null;
 
         try {
-            players = new SelectPlayerDAO(getDataSource().getConnection()).searchPlayer();
+            players = new SelectPlayerDAO(getConnection()).searchPlayer();
             m = new Message("Players found");
         } catch (SQLException e) {
             m = new Message("Error SQLException", "E200", e.getMessage());
