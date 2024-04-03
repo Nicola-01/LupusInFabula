@@ -5,11 +5,16 @@ services:
     image: tomcat:10
     ports:
       - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
+#    depends_on:
+#      db:
+#        condition: service_healthy
     volumes:
       - ./target/lupus.war:/usr/local/tomcat/webapps/lupus.war
+      - .postgresql-42.7.3.jar:/usr/local/tomcat/lib/postgresql.jar
+
+    environment:
+      # Imposta il classpath per includere il driver JDBC
+      CLASSPATH: /usr/local/tomcat/lib/postgresql.jar
 
   db:
     image: postgres
