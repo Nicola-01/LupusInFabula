@@ -7,7 +7,7 @@
 <display-name>Lupus in Fabula</display-name>
     <servlet>
         <servlet-name>HelloServlet2</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.HelloServlet2</servlet-class>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.HelloServlet2</servlet-class>
     </servlet>
 
     <servlet-mapping>

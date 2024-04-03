@@ -1,4 +1,4 @@
-package it.unipd.dei.webapp.lupus;
+package it.unipd.dei.webapp.lupus.servlet;
 
 import java.io.*;
 import jakarta.servlet.http.*;
