@@ -10,5 +10,14 @@
 <a href="hello-servlet">Servlet 1</a>
 <br>
 <a href="helloworld2">Servlet 2</a>
+<br>
+<form action="addPlayer">
+  <input type="text" id="usernameID" name="username" value="username"><br>
+  <input type="text" id="emailID" name="email" value="email@email.com"><br>
+  <input type="text" id="passwordID" name="password" value="password"><br><br>
+  <input type="submit" formmethod="post" value="AddPlayer">
+</form>
+<br>
+<a href="getPlayer">GetPlayer</a>
 </body>
 </html>
