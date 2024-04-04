@@ -5,25 +5,30 @@ import it.unipd.dei.webapp.lupus.resource.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-public class InsertPlayerDAO {
-    private static final String STATEMENT = "INSERT INTO lupusdb.Player (id, username, email, password, registerDate) VALUES (?, ?, ?, ?, ?)";
-    private final Connection con;
+public class InsertPlayerDAO extends AbstractDAO{
+    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, ?, ?, ?)";
+
     private final Player player;
 
     public InsertPlayerDAO(final Connection con, final Player player) {
-        this.con = con;
+        super(con);
+
+        if (player == null) {
+            LOGGER.error("The player cannot be null.");
+            throw new NullPointerException("The player cannot be null.");
+        }
         this.player = player;
     }
 
-    public void createPlayer() throws SQLException {
+    @Override
+    protected void doAccess() throws SQLException {
         PreparedStatement pstmt = null;
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, player.getId());
-            pstmt.setString(2, player.getUsername());
-            pstmt.setString(3, player.getEmail());
-            pstmt.setString(4, player.getPassword());
-            pstmt.setDate(5, player.getRegisterDate());
+            pstmt.setString(1, player.getUsername());
+            pstmt.setString(2, player.getEmail());
+            pstmt.setString(3, player.getPassword());
+            pstmt.setDate(4, player.getRegisterDate());
 
             pstmt.execute();
         }

@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.servlet;
 
 import java.io.*;
 import java.sql.*;
+
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
@@ -9,6 +10,7 @@ import jakarta.servlet.annotation.*;
 public class HelloServlet2 extends HttpServlet {
 
     private String message;
+
     public void init() {
         message = "Hello World! 2";
     }
@@ -19,7 +21,8 @@ public class HelloServlet2 extends HttpServlet {
         PrintWriter out = response.getWriter();
 
         // Connessione al database
-        String url = "jdbc:postgresql://localhost:5432/lupusdb";
+        String url = "jdbc:postgresql://db:5432/postgres";
+
         String usernameSQL = "postgres";
         String passwordSQL = "postgres";
 
@@ -30,14 +33,14 @@ public class HelloServlet2 extends HttpServlet {
             Connection connection = DriverManager.getConnection(url, usernameSQL, passwordSQL);
 
             // Query per recuperare l'utente
-            String query = "SELECT * FROM users";
+            String query = "SELECT * FROM player;";
             out.println(query);
             PreparedStatement statement = connection.prepareStatement(query);
-            out.println(query);
+//            out.println(query);
             // Esecuzione della query
             ResultSet resultSet = statement.executeQuery();
 
-
+            out.println("ESEGUITA");
             out.println("<html><body>");
 
             if (resultSet.next()) {
@@ -69,5 +72,6 @@ public class HelloServlet2 extends HttpServlet {
         }
     }
 
-    public void destroy() {}
+    public void destroy() {
+    }
 }

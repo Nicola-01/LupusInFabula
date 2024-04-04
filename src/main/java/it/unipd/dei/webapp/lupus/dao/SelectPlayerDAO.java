@@ -9,25 +9,23 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectPlayerDAO {
+public class SelectPlayerDAO extends AbstractDAO<List<Player>>{
     private static final String STATEMENT = "SELECT * FROM player";
-    private final Connection con;
-//    private final Player player;
 
     public SelectPlayerDAO(final Connection con) {
-        this.con = con;
-//        this.player = player;
+        super(con);
     }
 
-    public List<Player> searchPlayer() throws SQLException {
+    @Override
+    public final void doAccess() throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        List<Player> players = new ArrayList<Player>();
+        final List<Player> players = new ArrayList<Player>();
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.executeQuery();
+            rs = pstmt.executeQuery();
 
             while (rs.next()) {
                 players.add(new Player(rs.getInt("id"), rs.getString("username"),
@@ -40,8 +38,7 @@ public class SelectPlayerDAO {
             if (rs != null) {
                 rs.close();
             }
-            con.close();
         }
-        return players;
+        this.outputParam = players;
     }
 }

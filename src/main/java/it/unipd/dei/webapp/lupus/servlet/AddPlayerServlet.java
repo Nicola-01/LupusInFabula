@@ -30,13 +30,12 @@ public final class AddPlayerServlet extends AbstractDatabaseServlet {
         PrintWriter out = res.getWriter();
 
         try {
-            id = Integer.parseInt(req.getParameter("id"));
             username = req.getParameter("username");
             email = req.getParameter("email");
             password = req.getParameter("password");
             registerDate = new Date(System.currentTimeMillis());
 
-            p = new Player(id, username, email, password, registerDate);
+            p = new Player(1, username, email, password, registerDate);
 
             out.println(p.getId());
             out.println(p.getUsername());
@@ -45,10 +44,12 @@ public final class AddPlayerServlet extends AbstractDatabaseServlet {
             out.println(p.getRegisterDate());
             out.println("<br><br>");
 
-            new InsertPlayerDAO(getConnection(), p).createPlayer();
+            new InsertPlayerDAO(getConnection(), p).access();
 
             m = new Message("Players added");
-        } catch (SQLException e) {
+        }
+        // Menages error/success
+        catch (SQLException e) {
             m = new Message("Error SQLException", "E200", e.getMessage());
         } catch (NumberFormatException e) {
             m = new Message("Error NumberFormatException", "E200", e.getMessage());

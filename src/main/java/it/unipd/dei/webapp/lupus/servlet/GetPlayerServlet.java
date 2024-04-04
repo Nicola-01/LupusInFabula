@@ -21,21 +21,59 @@ public final class GetPlayerServlet extends AbstractDatabaseServlet {
         List<Player> players = null;
         Message m = null;
 
+        res.setContentType("text/html; charset=utf-8");
+
+        PrintWriter out = res.getWriter();
+
+        //out.printf("<table>%n");
         try {
-            players = new SelectPlayerDAO(getConnection()).searchPlayer();
+            players = new SelectPlayerDAO(getConnection()).access().getOutputParam();
             m = new Message("Players found");
+
+            out.printf("<!DOCTYPE html>%n");
+            out.printf("<head>%n");
+            out.printf("<meta charset=\"utf-8\">%n");
+            out.printf("<title>LUPUS</title>%n");
+            out.printf("</head>%n");
+            out.printf("<body>%n");
+            //out.printf("<table>%n");
+            if(m.isError()) {
+
+                out.printf("<ul>%n");
+                out.printf("<li>error code: %s</li>%n", m.getErrorCode());
+                out.printf("<li>message: %s</li>%n", m.getMessage());
+                out.printf("<li>details: %s</li>%n", m.getErrorDetails());
+                out.printf("</ul>%n");
+
+            } else {
+
+                out.printf("<p>%s</p>%n", m.getMessage());
+                out.printf("<table>%n");
+                out.printf("<tr>%n");
+                out.printf("<td>email</td>%n");
+                out.printf("</tr>%n");
+                for (Player p : players) {
+                    out.printf("<tr>%n");
+                    out.printf("<td>%s</td>", p.getEmail());
+                    out.printf("</tr>%n");
+                }
+                out.printf("</table>%n");
+
+            }
+            //out.printf("</table>%n");
         } catch (SQLException e) {
             m = new Message("Error SQLException", "E200", e.getMessage());
         } catch (NumberFormatException e) {
             m = new Message("Error NumberFormatException", "E200", e.getMessage());
         }
+        //out.printf("</table>%n");
+//        out.printf(m.getMessage());
+//        out.println("<br>");
+//        out.printf(m.getErrorDetails());
 
-        res.setContentType("text/html; charset=utf-8");
+        out.println("</body></html>");
 
-        PrintWriter out = res.getWriter();
-
-        out.printf(m.getMessage());
-        out.println("<br>");
-        out.printf(m.getErrorDetails());
+        out.flush();
+        out.close();
     }
 }
