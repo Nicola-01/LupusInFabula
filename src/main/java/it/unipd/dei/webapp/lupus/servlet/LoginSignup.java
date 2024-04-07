@@ -1,0 +1,93 @@
+package it.unipd.dei.webapp.lupus.servlet;
+
+import it.unipd.dei.webapp.lupus.dao.InsertPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.SelectPlayerByUserAndPasswordDAO;
+import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.resource.Player;
+
+
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.util.Objects;
+
+public class LoginSignup extends AbstractDatabaseServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String op = req.getRequestURI();
+        op = op.split("/")[1];
+        LOGGER.info("Operation: {}", op);
+        req.getSession().invalidate();
+        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+        }
+
+    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        String op = req.getRequestURI();
+        op = op.split("/")[1];
+        LOGGER.info("Operation: {}", op);
+
+        Player p = null;
+        Message m = null;
+
+        switch (op) {
+            case "signup":
+                singup(req, res);
+                break;
+            case "login":
+                login(req, res);
+                break;
+        }
+
+    }
+
+    public void singup(HttpServletRequest req, HttpServletResponse res) {
+        String username = req.getParameter("username");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+        Date registerDate = new Date(System.currentTimeMillis());
+        Player p = new Player( username, email, password, registerDate);
+        try {
+            new InsertPlayerDAO(getConnection(), p).access();
+        } catch (SQLException e) {
+//            logger.error("stacktrace:", e);
+//            writeError(res, ErrorCode.INTERNAL_ERROR);
+        }
+    }
+
+    public void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+        String user = req.getParameter("user");
+        String password = req.getParameter("password");
+        Player p = null;
+        try {
+            p = new SelectPlayerByUserAndPasswordDAO(getConnection(), user, password).access().getOutputParam();
+        } catch (SQLException e) {
+//            logger.error("stacktrace:", e);
+//            writeError(res, ErrorCode.INTERNAL_ERROR);
+        }
+
+        if (p == null) {
+//            ErrorCode ec = ErrorCode.WRONG_CREDENTIALS;
+//            res.setStatus(ec.getHTTPCode());
+//            Message m = new Message(true, "Credentials are wrong");
+//            req.setAttribute("message", m);
+            req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+        }
+        else{
+            // activate a session to keep the user data
+            HttpSession session = req.getSession();
+            session.setAttribute("player", p);
+            LOGGER.info("the player {} logged in", p.getEmail());
+
+            // login credentials were correct: we redirect the user to the homepage
+            res.sendRedirect("/jsp/home.jsp");
+        }
+    }
+
+}

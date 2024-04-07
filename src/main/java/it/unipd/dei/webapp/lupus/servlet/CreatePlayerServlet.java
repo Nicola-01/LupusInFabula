@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.SQLException;
 
-public final class AddPlayerServlet extends AbstractDatabaseServlet {
+public final class CreatePlayerServlet extends AbstractDatabaseServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
