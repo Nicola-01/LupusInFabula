@@ -1,0 +1,15 @@
+.body {
+    margin: 0;
+}
+
+.column {
+    float: left;
+    width: 32%;
+    padding: 20px;
+}
+
+@media screen and (max-width:600px) {
+    .column {
+        width: 100%;
+    }
+}
