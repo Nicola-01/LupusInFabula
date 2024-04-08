@@ -6,15 +6,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
-public class SelectPlayerByUserAndPasswordDAO extends AbstractDAO<Player>{
+public class SearchPlayerByUserAndPasswordDAO extends AbstractDAO<Player>{
     private static final String STATEMENT = "SELECT * FROM player WHERE (username = ? OR email = ?) AND password = ?";
 
     private final String user, password;
 
-    public SelectPlayerByUserAndPasswordDAO(final Connection con, final String user, final String password) {
+    public SearchPlayerByUserAndPasswordDAO(final Connection con, final String user, final String password) {
         super(con);
         this.user = user;
         this.password = password;

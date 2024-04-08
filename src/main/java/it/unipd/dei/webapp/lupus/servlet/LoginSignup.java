@@ -1,10 +1,11 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.InsertPlayerDAO;
-import it.unipd.dei.webapp.lupus.dao.SelectPlayerByUserAndPasswordDAO;
+import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUserAndPasswordDAO;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
-
+import it.unipd.dei.webapp.lupus.resource.LogContext;
+import it.unipd.dei.webapp.lupus.resource.Actions;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,23 +16,27 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.Objects;
 
 public class LoginSignup extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+
+        LogContext.setIPAddress(req.getRemoteAddr());
+
         String op = req.getRequestURI();
         op = op.split("/")[2];
-        LOGGER.info("Operation: {}", op);
+        LOGGER.info("Access using GET, operation: {}, redirect to /jsp/login.jsp", op);
         req.getSession().invalidate();
 
-//        PrintWriter out = res.getWriter();
-//        out.println("<html><body>");
-//        out.println(op);
-//        out.println("</body></html>");
+        PrintWriter out = res.getWriter();
+        out.println("<html><body>");
+        out.println(op);
+        out.println("</body></html>");
 
-        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+//        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+
+        LogContext.removeIPAddress();
         }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
@@ -83,7 +88,7 @@ public class LoginSignup extends AbstractDatabaseServlet {
         String password = req.getParameter("password");
         Player p = null;
         try {
-            p = new SelectPlayerByUserAndPasswordDAO(getConnection(), user, password).access().getOutputParam();
+            p = new SearchPlayerByUserAndPasswordDAO(getConnection(), user, password).access().getOutputParam();
         } catch (SQLException e) {
 //            logger.error("stacktrace:", e);
 //            writeError(res, ErrorCode.INTERNAL_ERROR);
