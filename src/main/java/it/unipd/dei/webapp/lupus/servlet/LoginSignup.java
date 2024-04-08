@@ -22,15 +22,21 @@ public class LoginSignup extends AbstractDatabaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         String op = req.getRequestURI();
-        op = op.split("/")[1];
+        op = op.split("/")[2];
         LOGGER.info("Operation: {}", op);
         req.getSession().invalidate();
+
+//        PrintWriter out = res.getWriter();
+//        out.println("<html><body>");
+//        out.println(op);
+//        out.println("</body></html>");
+
         req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
         }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
         String op = req.getRequestURI();
-        op = op.split("/")[1];
+        op = op.split("/")[2];
         LOGGER.info("Operation: {}", op);
 
         Player p = null;
@@ -47,18 +53,29 @@ public class LoginSignup extends AbstractDatabaseServlet {
 
     }
 
-    public void singup(HttpServletRequest req, HttpServletResponse res) {
+    public void singup(HttpServletRequest req, HttpServletResponse res) throws IOException {
         String username = req.getParameter("username");
         String email = req.getParameter("email");
         String password = req.getParameter("password");
         Date registerDate = new Date(System.currentTimeMillis());
         Player p = new Player( username, email, password, registerDate);
+
         try {
             new InsertPlayerDAO(getConnection(), p).access();
+            // TODO: da togliere, solo per test
+            PrintWriter out = res.getWriter();
+            out.println("<html><body>");
+            out.println("Done");
+            out.println(p.getUsername());
+            out.println(p.getEmail());
+            out.println("</body></html>");
+            out.flush();
+            out.close();
         } catch (SQLException e) {
-//            logger.error("stacktrace:", e);
+            LOGGER.error("stacktrace:", e);
 //            writeError(res, ErrorCode.INTERNAL_ERROR);
         }
+
     }
 
     public void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
@@ -77,16 +94,37 @@ public class LoginSignup extends AbstractDatabaseServlet {
 //            res.setStatus(ec.getHTTPCode());
 //            Message m = new Message(true, "Credentials are wrong");
 //            req.setAttribute("message", m);
-            req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+            PrintWriter out = res.getWriter();
+            out.println("<html><body>");
+            out.println("Done");
+            out.println("Player non trovato");
+            out.println("</body></html>");
+            out.flush();
+            out.close();
+
+//            req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+
+
         }
         else{
+            // TODO: da togliere, solo per test
+            PrintWriter out = res.getWriter();
+            out.println("<html><body>");
+            out.println("Done");
+            out.println(p.getUsername());
+            out.println(p.getEmail());
+            out.println("</body></html>");
+            out.flush();
+            out.close();
+
+
             // activate a session to keep the user data
             HttpSession session = req.getSession();
             session.setAttribute("player", p);
             LOGGER.info("the player {} logged in", p.getEmail());
 
             // login credentials were correct: we redirect the user to the homepage
-            res.sendRedirect("/jsp/home.jsp");
+//            res.sendRedirect("/jsp/home.jsp");
         }
     }
 

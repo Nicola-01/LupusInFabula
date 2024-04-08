@@ -1,6 +1,6 @@
 <Configuration status="INFO" monitorInterval="0" name="log4j2-config">
     <Appenders>
-        <RollingRandomAccessFile name="RFILE" fileName="${sys:catalina.base}/webapps/my-logs/hello-world-servlet-log4j.log" filePattern="${sys:catalina.base}/webapps/my-logs/$${date:yyyy-MM}/hello-world-servlet-log4j-%d{yyyyMMdd}-%i.log.gz">
+        <RollingRandomAccessFile name="RFILE" fileName="${docker:containerId}/${sys:catalina.base}/webapps/my-logs/lupus-in-fabula.log" filePattern="${docker:containerId}/${sys:catalina.base}/webapps/my-logs/$${date:yyyy-MM}/lupus-in-fabula-%d{yyyyMMdd}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%date{DEFAULT} %level [%thread] %class{1}.%method(%file:%line)%n\tIP = %MDC{IP}; USER = %MDC{USER}; ACTION = %MDC{ACTION}; RESOURCE = %MDC{RESOURCE}%n\t%message%n\t%throwable%n</Pattern>
             </PatternLayout>
