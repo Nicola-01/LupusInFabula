@@ -12,7 +12,7 @@ public class HelloServlet extends HttpServlet {
     private String message;
 
     public void init() {
-        message = "Hello World! 1";
+        message = "Hello World!";
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -21,8 +21,7 @@ public class HelloServlet extends HttpServlet {
         Logger LOGGER = LogManager.getLogger(AbstractDatabaseServlet.class,
                 StringFormatterMessageFactory.INSTANCE);
 
-        LOGGER.info(message);
-        LOGGER.info("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+        LOGGER.info("%s Servlet", message);
 
         // Hello
         PrintWriter out = response.getWriter();

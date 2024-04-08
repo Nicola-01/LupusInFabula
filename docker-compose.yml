@@ -9,7 +9,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - ./target/lupus.war:/usr/local/tomcat/webapps/lupus.war
+      - ./target/lupus-1.00.war:/usr/local/tomcat/webapps/lupus.war
 
   db:
     image: postgres

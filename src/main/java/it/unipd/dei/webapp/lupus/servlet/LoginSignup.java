@@ -26,7 +26,8 @@ public class LoginSignup extends AbstractDatabaseServlet {
 
         String op = req.getRequestURI();
         op = op.split("/")[2];
-        LOGGER.info("Access using GET, operation: {}, redirect to /jsp/login.jsp", op);
+        LOGGER.info("Access using GET, operation: %s, redirect to /jsp/login.jsp", op);
+
         req.getSession().invalidate();
 
         PrintWriter out = res.getWriter();
