@@ -7,12 +7,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SearchPlayerByUserAndPasswordDAO extends AbstractDAO<Player>{
-    private static final String STATEMENT = "SELECT * FROM player WHERE (username = ? OR email = ?) AND password = ?";
+public class LoginPlayerDAO extends AbstractDAO<Player>{
+    private static final String STATEMENT = "SELECT * FROM player WHERE (username = ? OR email = ?) AND password = md5(?)";
 
     private final String user, password;
 
-    public SearchPlayerByUserAndPasswordDAO(final Connection con, final String user, final String password) {
+    public LoginPlayerDAO(final Connection con, final String user, final String password) {
         super(con);
         this.user = user;
         this.password = password;

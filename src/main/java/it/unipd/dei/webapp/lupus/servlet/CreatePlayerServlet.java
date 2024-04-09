@@ -1,6 +1,6 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
-import it.unipd.dei.webapp.lupus.dao.InsertPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import jakarta.servlet.ServletException;
@@ -44,7 +44,7 @@ public final class CreatePlayerServlet extends AbstractDatabaseServlet {
             out.println(p.getRegisterDate());
             out.println("<br><br>");
 
-            new InsertPlayerDAO(getConnection(), p).access();
+            new SingupPlayerDAO(getConnection(), p).access();
 
             m = new Message("Players added");
         }

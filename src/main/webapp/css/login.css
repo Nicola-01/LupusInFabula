@@ -79,9 +79,15 @@ input[type="submit"]{
     transition: .2s ease-in;
     cursor: pointer;
 }
-button:hover{
+input[type="submit"]:hover{
     background: #6d44b8;
 }
+input[type="submit"]:disabled {
+    background: #cfbef7;
+    color: #573b8a;
+    cursor: not-allowed;
+}
+
 .login{
     height: 460px;
     background: #eee;

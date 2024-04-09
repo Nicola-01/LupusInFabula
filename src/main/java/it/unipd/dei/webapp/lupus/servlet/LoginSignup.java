@@ -1,11 +1,10 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
-import it.unipd.dei.webapp.lupus.dao.InsertPlayerDAO;
-import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUserAndPasswordDAO;
+import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
-import it.unipd.dei.webapp.lupus.resource.Actions;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,12 +29,7 @@ public class LoginSignup extends AbstractDatabaseServlet {
 
         req.getSession().invalidate();
 
-        PrintWriter out = res.getWriter();
-        out.println("<html><body>");
-        out.println(op);
-        out.println("</body></html>");
-
-//        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
 
         LogContext.removeIPAddress();
         }
@@ -67,7 +61,7 @@ public class LoginSignup extends AbstractDatabaseServlet {
         Player p = new Player( username, email, password, registerDate);
 
         try {
-            new InsertPlayerDAO(getConnection(), p).access();
+            new SingupPlayerDAO(getConnection(), p).access();
             // TODO: da togliere, solo per test
             PrintWriter out = res.getWriter();
             out.println("<html><body>");
@@ -89,7 +83,7 @@ public class LoginSignup extends AbstractDatabaseServlet {
         String password = req.getParameter("password");
         Player p = null;
         try {
-            p = new SearchPlayerByUserAndPasswordDAO(getConnection(), user, password).access().getOutputParam();
+            p = new LoginPlayerDAO(getConnection(), user, password).access().getOutputParam();
         } catch (SQLException e) {
 //            logger.error("stacktrace:", e);
 //            writeError(res, ErrorCode.INTERNAL_ERROR);
