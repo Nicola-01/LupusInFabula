@@ -13,45 +13,48 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/card_animation.css">
 </head>
 <body>
-
-    <div class="column">
-            <div class="card">
-                <div class="back">
-                    <!--
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/card's_back.jpg"> -->
-                </div>
-                <div class="front">
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/farmer.png">
-                </div>
-            </div>
-
+    <div id="myNavRoles" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav('myNavRoles')">&times;</a>
+        <div class="overlay-content">
+            <p style="color: white">Contenuto delle Roles</p>
+        </div>
     </div>
-    <div class="column">
-
-            <div class="card">
-                <div class="back">
-                    <!--
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/card's_back.jpg"> -->
-                </div>
-                <div class="front">
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/wolf.png">
-                </div>
-            </div>
-
+    <div id="myNavRules" class="overlay">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav('myNavRules')">&times;</a>
+        <div class="overlay-content">
+            <p style="color: white">Contenuto delle Rules</p>
+        </div>
     </div>
-    <div class="column">
-
-            <div class="card">
-                <div class="back">
-                    <!--
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/card's_back.jpg"> -->
-                </div>
-                <div class="front">
-                    <img alt="Farmer" src="${pageContext.request.contextPath}/media/sam.png">
-                </div>
-            </div>
-
+    <div class="row upper">
+        <div class="title-row">
+            <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRules')">RULES</span>
+        </div>
     </div>
+    <div class="row down">
+        <div class="title-row">
+            <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRoles')">ROLES</span>
+        </div>
+    </div>
+
+    <script>
+        function openNav(id) {
+            var overlay = document.getElementById(id);
+            if (overlay) {
+                overlay.style.width = "100%";
+            } else {
+                console.error("Elemento con ID specificato non trovato");
+            }
+        }
+
+        function closeNav(id) {
+            var overlay = document.getElementById(id);
+            if (overlay) {
+                overlay.style.width = "0";
+            } else {
+                console.error("Elemento con ID specificato non trovato");
+            }
+        }
+    </script>
 
 </body>
 </html>
