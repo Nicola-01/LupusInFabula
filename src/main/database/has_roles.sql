@@ -1,8 +1,11 @@
-CREATE TABLE HAS_ROLES (
-                           game_id SERIAL REFERENCES Game(ID),
-                           role_id SERIAL REFERENCES Role(ID),
-                           number_of_roles SMALLINT NOT NULL,
-                           PRIMARY KEY (game_id, role_id)
+DROP TABLE IF EXISTS HAS_ROLES;
+
+CREATE TABLE HAS_ROLES
+(
+    game_id         SERIAL REFERENCES Game (ID),
+    role_id         SERIAL REFERENCES Role (ID),
+    number_of_roles SMALLINT NOT NULL,
+    PRIMARY KEY (game_id, role_id)
 );
 
 COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';

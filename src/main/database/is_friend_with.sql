@@ -1,8 +1,11 @@
-CREATE TABLE IS_FRIEND_WITH (
-                                player_username VARCHAR(20) REFERENCES Player(username),
-                                friend_username VARCHAR(20) REFERENCES Player(username),
-                                date DATE NOT NULL,
-                                PRIMARY KEY (player_username, friend_username)
+DROP TABLE IF EXISTS IS_FRIEND_WITH;
+
+CREATE TABLE IS_FRIEND_WITH
+(
+    player_username VARCHAR(20) REFERENCES Player (username),
+    friend_username VARCHAR(20) REFERENCES Player (username),
+    date            DATE NOT NULL,
+    PRIMARY KEY (player_username, friend_username)
 );
 
 COMMENT ON TABLE IS_FRIEND_WITH IS 'Represents friendship relationships between players.';

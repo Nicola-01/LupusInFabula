@@ -1,13 +1,16 @@
-CREATE TABLE Action (
-                        game_id SERIAL REFERENCES Game(ID),
-                        player_username VARCHAR(20) REFERENCES Player(username),
-                        round INTEGER NOT NULL,
-                        phase INTEGER NOT NULL,
-                        subphase INTEGER NOT NULL,
-                        description CHARACTER VARYING,
-                        type_of_action SERIAL REFERENCES type_action(ID) NOT NULL,
-                        target VARCHAR(20) REFERENCES Player(username) NOT NULL,
-                        PRIMARY KEY (game_id, player_username, round, phase, subphase)
+DROP TABLE IF EXISTS Action;
+
+CREATE TABLE Action
+(
+    game_id         SERIAL REFERENCES Game (ID),
+    player_username VARCHAR(20) REFERENCES Player (username),
+    round           INTEGER                                  NOT NULL,
+    phase           INTEGER                                  NOT NULL,
+    subphase        INTEGER                                  NOT NULL,
+    description     CHARACTER VARYING,
+    type_of_action  SERIAL REFERENCES type_action (ID)       NOT NULL,
+    target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
+    PRIMARY KEY (game_id, player_username, round, phase, subphase)
 );
 
 COMMENT ON TABLE Action IS 'Represents actions performed by players during the game.';
