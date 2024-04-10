@@ -5,5 +5,7 @@ CREATE TABLE Action (
                         phase INTEGER,
                         subphase INTEGER,
                         description CHARACTER VARYING,
+                        type_of_action SERIAL REFERENCES type_action(ID),
+                        target VARCHAR(20) REFERENCES Player(username),
                         PRIMARY KEY (game_id, player_username)
 );

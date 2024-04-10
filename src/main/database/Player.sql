@@ -1,8 +1,7 @@
 DROP TABLE IF EXISTS Player;
 
 CREATE TABLE Player (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
+    username VARCHAR(20) PRIMARY KEY,
     email VARCHAR(100) NOT NULL,
     password VARCHAR(100) NOT NULL,
     registerDate DATE NOT NULL
