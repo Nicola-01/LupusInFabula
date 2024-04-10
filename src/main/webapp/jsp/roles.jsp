@@ -10,7 +10,7 @@
 <html lang="en">
 <head>
     <title>Lupus in Fabula Roles</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/card_animation.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules-roles.css">
 </head>
 <body>
     <div class="row upper">
@@ -22,7 +22,36 @@
     <div id="myNavRoles" class="overlay roles">
         <a href="javascript:void(0)" class="closebtn" onclick="closeNav('myNavRoles')">&times;</a>
         <div class="overlay-content">
-            <p style="color: white">Contenuto delle Roles</p>
+            <div class="slideshow-container">
+
+                <div class="mySlides fade">
+                    <!-- <div class="numbertext">1 / 3</div> -->
+                    <img src="${pageContext.request.contextPath}/media/farmer.png" style="width:25%">
+                    <!-- <div class="text">Farmer</div> -->
+                </div>
+
+                <div class="mySlides fade">
+                    <!-- <div class="numbertext">2 / 3</div> -->
+                    <img src="${pageContext.request.contextPath}/media/wolf.png" style="width:25%">
+                    <!-- <div class="text">Wolf</div> -->
+                </div>
+
+                <div class="mySlides fade">
+                    <!-- <div class="numbertext">3 / 3</div> -->
+                    <img src="${pageContext.request.contextPath}/media/sam.png" style="width:25%">
+                    <!-- <div class="text">Sam</div> -->
+                </div>
+
+                <a class="prev" onclick="plusSlides(-1)">❮</a>
+                <a class="next" onclick="plusSlides(1)">❯</a>
+
+            </div>
+            <br>
+            <div style="text-align:center">
+                <span class="dot" onclick="currentSlide(1)"></span>
+                <span class="dot" onclick="currentSlide(2)"></span>
+                <span class="dot" onclick="currentSlide(3)"></span>
+            </div>
         </div>
     </div>
 
@@ -48,7 +77,8 @@
                 each player votes which player they want to kill.
                 N.B. We have extra roles, e.g. the knight, who can protect a player during the night, so for example if the wolf
                 and knight target the same player, that person will not die that night, so the game-master will say ”no one died
-                during the night”.</p>
+                during the night”.
+            </p>
         </div>
     </div>
 
@@ -69,6 +99,35 @@
             } else {
                 console.error("Elemento con ID specificato non trovato");
             }
+        }
+    </script>
+
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex += n);
+        }
+
+        function currentSlide(n) {
+            showSlides(slideIndex = n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+            if (n > slides.length) {slideIndex = 1}
+            if (n < 1) {slideIndex = slides.length}
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+            slides[slideIndex-1].style.display = "block";
+            dots[slideIndex-1].className += " active";
         }
     </script>
 

@@ -6,8 +6,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 public class InsertPlayerDAO extends AbstractDAO{
-    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, ?, ?, ?)";
 
+    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, ?, ?, ?)";
     private final Player player;
 
     public InsertPlayerDAO(final Connection con, final Player player) {
@@ -22,20 +22,14 @@ public class InsertPlayerDAO extends AbstractDAO{
 
     @Override
     protected void doAccess() throws SQLException {
-        PreparedStatement pstmt = null;
-        try {
-            pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setString(1, player.getUsername());
-            pstmt.setString(2, player.getEmail());
-            pstmt.setString(3, player.getPassword());
-            pstmt.setDate(4, player.getRegisterDate());
+        try (PreparedStatement ps = con.prepareStatement(STATEMENT)) {
+            ps.setString(1, player.getUsername());
+            ps.setString(2, player.getEmail());
+            ps.setString(3, player.getPassword());
+            ps.setDate(4, player.getRegisterDate());
 
-            pstmt.execute();
-        }
-        finally {
-            if(pstmt != null) {
-                pstmt.close();
-            }
+            ps.execute();
+        } finally {
             con.close();
         }
     }

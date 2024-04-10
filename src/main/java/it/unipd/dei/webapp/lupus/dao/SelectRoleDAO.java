@@ -1,6 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.resource.Role;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,11 +9,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectPlayerDAO extends AbstractDAO<List<Player>>{
+public class SelectRoleDAO extends AbstractDAO<List<Role>>{
 
-    private static final String STATEMENT = "SELECT * FROM player";
+    private static final String STATEMENT = "SELECT * FROM role";
 
-    public SelectPlayerDAO(final Connection con) {
+    public SelectRoleDAO(final Connection con) {
         super(con);
     }
 
@@ -21,25 +21,24 @@ public class SelectPlayerDAO extends AbstractDAO<List<Player>>{
     public final void doAccess() throws SQLException {
         PreparedStatement ps = null;
         ResultSet rs = null;
-
-        final List<Player> players = new ArrayList<Player>();
+        final List<Role> roles = new ArrayList<Role>();
 
         try {
             ps = con.prepareStatement(STATEMENT);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                players.add(new Player(rs.getInt("id"), rs.getString("username"),
-                        rs.getString("email"), rs.getString("password"), rs.getDate("registerDate")));
+                roles.add(new Role(rs.getString("name"), rs.getString("with_who_wins"),
+                        rs.getString("type"), rs.getString("description")));
             }
         } finally {
-            if (ps != null) {
-                ps.close();
-            }
             if (rs != null) {
                 rs.close();
             }
+            if (ps != null) {
+                ps.close();
+            }
         }
-        this.outputParam = players;
+        this.outputParam = roles;
     }
 }

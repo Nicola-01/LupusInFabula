@@ -3,12 +3,14 @@ package it.unipd.dei.webapp.lupus.resource;
 public class Role {
 
     private final String name;
-    private final String wins_with;
+    private final String type;
+    private final String with_who_wins;
     private final String description;
 
-    public Role(String name, String wins_with, String description) {
+    public Role(String name, String type, String with_who_wins, String description) {
         this.name = name;
-        this.wins_with = wins_with;
+        this.type = type;
+        this.with_who_wins = with_who_wins;
         this.description = description;
     }
 
@@ -16,11 +18,15 @@ public class Role {
         return name;
     }
 
-    public String getWins_with() {
-        return wins_with;
+    public String getWith_who_wins() {
+        return with_who_wins;
     }
 
     public String getDescription() {
         return description;
+    }
+
+    public String getType() {
+        return type;
     }
 }
