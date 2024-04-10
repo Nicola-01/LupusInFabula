@@ -11,7 +11,7 @@
 <br>
 <a href="helloworld2">Servlet 2</a>
 <br>
-<a href="${pageContext.request.contextPath}/jsp/roles.jsp">Roles</a>
+<a href="${pageContext.request.contextPath}/jsp/rules.jsp">Roles</a>
 <br>
 <form action="addPlayer">
   <input type="text" id="usernameID" name="username" value="username"><br>

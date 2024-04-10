@@ -22,6 +22,10 @@
         <servlet-name>GetPlayer</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.GetPlayerServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Rules</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.RulesServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>HelloServlet2</servlet-name>
@@ -34,6 +38,10 @@
     <servlet-mapping>
         <servlet-name>GetPlayer</servlet-name>
         <url-pattern>/getPlayer</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Rules</servlet-name>
+        <url-pattern>/rules</url-pattern>
     </servlet-mapping>
 
     <resource-ref>

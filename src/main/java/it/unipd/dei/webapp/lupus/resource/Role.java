@@ -3,11 +3,11 @@ package it.unipd.dei.webapp.lupus.resource;
 public class Role {
 
     private final String name;
-    private final String type;
+    private final int type;
     private final String with_who_wins;
     private final String description;
 
-    public Role(String name, String type, String with_who_wins, String description) {
+    public Role(String name, int type, String with_who_wins, String description) {
         this.name = name;
         this.type = type;
         this.with_who_wins = with_who_wins;
@@ -26,7 +26,7 @@ public class Role {
         return description;
     }
 
-    public String getType() {
+    public int getType() {
         return type;
     }
 }
