@@ -1,0 +1,25 @@
+
+### Empty fields
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "user": "",
+  "password": "password123"
+}
+
+### Wrong Login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio23 &
+password = password123
+
+### Correct Login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123
+
+###
