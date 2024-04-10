@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 public class SingupPlayerDAO extends AbstractDAO{
-    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, ?, md5(?), ?)";
+    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, LOWER(?), md5(?), ?)";
 
     private final Player player;
 

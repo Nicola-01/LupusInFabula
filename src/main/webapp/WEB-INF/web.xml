@@ -31,7 +31,7 @@
 
     <servlet>
         <servlet-name>LoginSignup</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.LoginSignup</servlet-class>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>

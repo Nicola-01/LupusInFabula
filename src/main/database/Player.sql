@@ -10,5 +10,5 @@ CREATE TABLE Player (
 
 INSERT INTO Player (username, email, password, registerDate) VALUES ('esempio', 'esempio@example.com',
                                                                      md5('password123'), '2024-02-02');
-INSERT INTO Player (username, email, password, registerDate) VALUES ('2esempio2', 'esempio@example.com',
+INSERT INTO Player (username, email, password, registerDate) VALUES ('2esempio2', '2esempio2@example.com',
                                                                      md5('password123'), '2024-02-02');

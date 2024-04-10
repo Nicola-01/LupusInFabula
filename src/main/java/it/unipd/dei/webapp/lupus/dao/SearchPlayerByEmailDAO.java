@@ -7,15 +7,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginPlayerDAO extends AbstractDAO<Player>{
-    private static final String STATEMENT = "SELECT * FROM player WHERE (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)) AND password = md5(?)";
+public class SearchPlayerByEmailDAO extends AbstractDAO<Player>{
+    private static final String STATEMENT = "SELECT * FROM player WHERE LOWER(email) = LOWER(?)";
 
-    private final String user, password;
+    private final String user;
 
-    public LoginPlayerDAO(final Connection con, final String user, final String password) {
+    public SearchPlayerByEmailDAO(final Connection con, final String user) {
         super(con);
         this.user = user;
-        this.password = password;
     }
 
     @Override
@@ -28,8 +27,6 @@ public class LoginPlayerDAO extends AbstractDAO<Player>{
         try {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, user);
-            pstmt.setString(2, user);
-            pstmt.setString(3, password);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
