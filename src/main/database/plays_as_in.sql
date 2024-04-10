@@ -1,5 +1,5 @@
 CREATE TABLE PLAYS_AS_IN (
-                             player_username TEXT REFERENCES Player(username),
+                             player_username VARCHAR(20) REFERENCES Player(username),
                              game_id SERIAL REFERENCES Game(ID),
                              role_id SERIAL REFERENCES Role(ID),
                              round_of_death INTEGER,
