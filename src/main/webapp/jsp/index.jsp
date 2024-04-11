@@ -13,7 +13,7 @@
   <a href="helloworld2">Servlet 2</a>
   <br>
   <!-- <a href="${pageContext.request.contextPath}/jsp/rules.jsp">Roles</a> -->
-  <!-- <img src="<c:url value="/media/farmer.png"/>"> -->
+  <!-- <img src="<c:url value="/media/cards/farmer.png"/>"> -->
   <a href="<c:url value="/rules"/>" title="Click for tryng the link">Prova</a>
   <br>
   <form action="addPlayer">

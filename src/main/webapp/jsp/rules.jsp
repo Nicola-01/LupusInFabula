@@ -6,11 +6,12 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Lupus in Fabula Roles</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules-roles.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules.css">
 </head>
 <body>
     <div class="row upper">
@@ -24,23 +25,25 @@
         <div class="overlay-content">
             <div class="slideshow-container">
 
-                <div class="mySlides fade">
-                    <!-- <div class="numbertext">1 / 3</div> -->
-                    <img src="${pageContext.request.contextPath}/media/farmer.png" style="width:25%">
-                    <!-- <div class="text">Farmer</div> -->
-                </div>
+                <c:if test="${not empty roles}">
+                    <c:forEach var="roleList" items="${roles}">
+                        <c:forEach var="role" items="${roleList}">
 
-                <div class="mySlides fade">
-                    <!-- <div class="numbertext">2 / 3</div> -->
-                    <img src="${pageContext.request.contextPath}/media/wolf.png" style="width:25%">
-                    <!-- <div class="text">Wolf</div> -->
-                </div>
+                            <div class="mySlides fade">
+                                <div>
+                                    <!-- <p><c:out value="${role.name}"/></p> -->
+                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png" style="width:25%">
+                                </div>
+                                <div>
+                                    <p><c:out value="${role.description}"/></p>
+                                    <br>
+                                    <p><c:out value="${role.with_who_wins}"/></p>
+                                </div>
+                            </div>
 
-                <div class="mySlides fade">
-                    <!-- <div class="numbertext">3 / 3</div> -->
-                    <img src="${pageContext.request.contextPath}/media/sam.png" style="width:25%">
-                    <!-- <div class="text">Sam</div> -->
-                </div>
+                        </c:forEach>
+                    </c:forEach>
+                </c:if>
 
                 <a class="prev" onclick="plusSlides(-1)">❮</a>
                 <a class="next" onclick="plusSlides(1)">❯</a>
@@ -48,9 +51,25 @@
             </div>
             <br>
             <div style="text-align:center">
-                <span class="dot" onclick="currentSlide(1)"></span>
+
+                <c:if test="${not empty roles}">
+                    <%
+                        var totalRole = 0;
+                    %>
+                    <c:forEach var="roleList" items="${roles}" varStatus="outerLoop">
+                        <c:forEach var="role" items="${roleList}" varStatus="innerLoop">
+                            <%
+                                totalRole++;
+                            %>
+                            <span class="dot" onclick="currentSlide(<%= totalRole%>)"></span>
+                        </c:forEach>
+                    </c:forEach>
+                </c:if>
+                <!-- <span class="dot" onclick="currentSlide(1)"></span>
                 <span class="dot" onclick="currentSlide(2)"></span>
                 <span class="dot" onclick="currentSlide(3)"></span>
+                <span class="dot" onclick="currentSlide(4)"></span> -->
+
             </div>
         </div>
     </div>

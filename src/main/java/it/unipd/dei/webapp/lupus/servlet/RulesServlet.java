@@ -39,7 +39,7 @@ public final class RulesServlet extends AbstractDatabaseServlet {
         try {
             request.setAttribute("roles", roles);
             request.setAttribute("m", m);
-            request.getRequestDispatcher("/jsp/servlet-prov.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/rules.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.error("Unable to send response when creating the roles list", e);
             throw e;
