@@ -18,6 +18,10 @@
         <servlet-name>AddPlayer</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.CreatePlayerServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Rules</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.RulesServlet</servlet-class>
+    </servlet>
 
 
     <servlet-mapping>
@@ -37,6 +41,10 @@
         <servlet-name>LoginSignup</servlet-name>
         <url-pattern>/signup</url-pattern>
         <url-pattern>/login</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Rules</servlet-name>
+        <url-pattern>/rules</url-pattern>
     </servlet-mapping>
 
 
