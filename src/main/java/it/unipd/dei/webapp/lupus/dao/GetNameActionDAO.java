@@ -9,9 +9,10 @@ import java.sql.SQLException;
 
 public class GetNameActionDAO extends AbstractDAO {
     private static final String STATEMENT = "SELECT name FROM type_action WHERE ID = ?";
-
-    public GetNameActionDAO(final Connection con){
+    private final int id;
+    public GetNameActionDAO(final Connection con, final int id){
         super(con);
+        this.id = id;
     }
 
     @Override
@@ -22,23 +23,6 @@ public class GetNameActionDAO extends AbstractDAO {
         String name_action = null;
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            int id = -1000;
-            try {
-                int index = STATEMENT.indexOf("=");
-                String id_str = STATEMENT.substring(index+1);
-                if (id_str.length() > 1) {
-                    try {
-                        id = Integer.parseInt(id_str);
-                    } catch (NumberFormatException e) {
-
-                    }
-                } else {
-                }
-            } catch(Exception e){
-                
-            }
-
-
             pstmt.setInt(1, id);
 
             rs = pstmt.executeQuery();
