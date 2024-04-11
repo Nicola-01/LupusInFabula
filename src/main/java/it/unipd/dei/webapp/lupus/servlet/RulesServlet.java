@@ -29,7 +29,6 @@ public final class RulesServlet extends AbstractDatabaseServlet {
             }
             m = new Message("Roles successfully selected");
 
-
         } catch (SQLException e) {
             m = new Message("Cannot search for roles: unexpected error while accessing the database.", "E200",
                     e.getMessage());
@@ -39,7 +38,7 @@ public final class RulesServlet extends AbstractDatabaseServlet {
         try {
             request.setAttribute("roles", roles);
             request.setAttribute("m", m);
-            request.getRequestDispatcher("/jsp/rules.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/prova.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.error("Unable to send response when creating the roles list", e);
             throw e;

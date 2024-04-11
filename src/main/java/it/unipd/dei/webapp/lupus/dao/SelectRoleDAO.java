@@ -28,7 +28,7 @@ public class SelectRoleDAO extends AbstractDAO<List<Role>>{
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                roles.add(new Role(rs.getString("name"), rs.getInt("type"),
+                roles.add(new Role(rs.getInt("id"), rs.getString("name"), rs.getInt("type"),
                         rs.getString("with_who_wins"), rs.getString("description")));
             }
         } finally {
