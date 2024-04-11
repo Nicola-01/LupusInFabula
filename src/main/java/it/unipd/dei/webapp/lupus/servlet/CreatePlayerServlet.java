@@ -41,7 +41,7 @@ public final class CreatePlayerServlet extends AbstractDatabaseServlet {
             out.println(p.getUsername());
             out.println(p.getEmail());
             out.println(p.getPassword());
-            out.println(p.getRegisterDate());
+            out.println(p.getRegistration_date());
             out.println("<br><br>");
 
             new SingupPlayerDAO(getConnection(), p).access();

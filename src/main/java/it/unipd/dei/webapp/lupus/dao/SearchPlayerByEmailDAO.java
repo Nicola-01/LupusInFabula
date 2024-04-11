@@ -31,7 +31,7 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player>{
 
             if (rs.next()) {
                 player = new Player(rs.getInt("id"), rs.getString("username"),
-                        rs.getString("email"), rs.getString("password"), rs.getDate("registerDate"));
+                        rs.getString("email"), rs.getString("password"), rs.getDate("registration_date"));
                 LOGGER.info("Player found: " + rs.getString("username") + " " + rs.getString("email"));
             } else {
                 LOGGER.info("No record found for player " + user);
