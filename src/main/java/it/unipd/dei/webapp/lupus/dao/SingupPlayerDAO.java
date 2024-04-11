@@ -5,12 +5,13 @@ import it.unipd.dei.webapp.lupus.resource.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-public class InsertPlayerDAO extends AbstractDAO{
+public class SingupPlayerDAO extends AbstractDAO{
+    private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, LOWER(?), md5(?), ?)";
 
     private static final String STATEMENT = "INSERT INTO player (username, email, password, registerDate) VALUES (?, ?, ?, ?)";
     private final Player player;
 
-    public InsertPlayerDAO(final Connection con, final Player player) {
+    public SingupPlayerDAO(final Connection con, final Player player) {
         super(con);
 
         if (player == null) {

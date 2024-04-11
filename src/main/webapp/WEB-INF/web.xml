@@ -7,7 +7,7 @@
 <display-name>Lupus in Fabula</display-name>
     
     <welcome-file-list>
-        <welcome-file>jsp/index.jsp</welcome-file>
+        <welcome-file>jsp/home.jsp</welcome-file>
     </welcome-file-list>
     
     <servlet>
@@ -16,16 +16,13 @@
     </servlet>
     <servlet>
         <servlet-name>AddPlayer</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.AddPlayerServlet</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>GetPlayer</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.GetPlayerServlet</servlet-class>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.CreatePlayerServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Rules</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.RulesServlet</servlet-class>
     </servlet>
+
 
     <servlet-mapping>
         <servlet-name>HelloServlet2</servlet-name>
@@ -35,14 +32,21 @@
         <servlet-name>AddPlayer</servlet-name>
         <url-pattern>/addPlayer</url-pattern>
     </servlet-mapping>
+
+    <servlet>
+        <servlet-name>LoginSignup</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
-        <servlet-name>GetPlayer</servlet-name>
-        <url-pattern>/getPlayer</url-pattern>
+        <servlet-name>LoginSignup</servlet-name>
+        <url-pattern>/signup</url-pattern>
+        <url-pattern>/login</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Rules</servlet-name>
         <url-pattern>/rules</url-pattern>
     </servlet-mapping>
+
 
     <resource-ref>
         <description>Connection pool to the database</description>

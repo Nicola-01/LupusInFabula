@@ -1,6 +1,6 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
-import it.unipd.dei.webapp.lupus.dao.InsertPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import jakarta.servlet.ServletException;
@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 import java.sql.Date;
 import java.sql.SQLException;
 
-public final class AddPlayerServlet extends AbstractDatabaseServlet {
+public final class CreatePlayerServlet extends AbstractDatabaseServlet {
 
     public void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
@@ -44,7 +44,7 @@ public final class AddPlayerServlet extends AbstractDatabaseServlet {
             out.println(p.getRegisterDate());
             out.println("<br><br>");
 
-            new InsertPlayerDAO(getConnection(), p).access();
+            new SingupPlayerDAO(getConnection(), p).access();
 
             m = new Message("Players added");
         }
