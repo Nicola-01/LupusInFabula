@@ -1,3 +1,14 @@
+DROP TABLE IF EXISTS Action;
+DROP TABLE IF EXISTS TYPE_ACTION;
+DROP TABLE IF EXISTS HAS_ROLES;
+DROP TABLE IF EXISTS PLAYS_AS_IN;
+DROP TYPE IF EXISTS cycle_phase;
+DROP TABLE IF EXISTS Game;
+DROP TYPE IF EXISTS winning_faction;
+DROP TABLE IF EXISTS Role;
+DROP TYPE IF EXISTS alignment;
+DROP TYPE IF EXISTS faction;
+DROP TABLE IF EXISTS IS_FRIEND_WITH;
 DROP TABLE IF EXISTS Player;
 
 -- #################################################################################################
@@ -6,11 +17,12 @@ DROP TABLE IF EXISTS Player;
 --
 -- This table represents the players that has registered to the web app
 
-CREATE TABLE Player (
-                        username VARCHAR(20) PRIMARY KEY,
-                        email VARCHAR(100) NOT NULL,
-                        password VARCHAR(100) NOT NULL,
-                        registration_date DATE NOT NULL
+CREATE TABLE Player
+(
+    username          VARCHAR(20) PRIMARY KEY,
+    email             VARCHAR(100) NOT NULL,
+    password          VARCHAR(100) NOT NULL,
+    registration_date DATE         NOT NULL
 );
 
 COMMENT ON TABLE Player IS 'Represents player information.';
@@ -27,11 +39,12 @@ COMMENT ON COLUMN Player.registration_date IS 'The date when the player register
 --
 -- This table represents the friendships of the players
 
-CREATE TABLE IS_FRIEND_WITH (
-                                player_username VARCHAR(20) REFERENCES Player(username),
-                                friend_username VARCHAR(20) REFERENCES Player(username),
-                                date DATE NOT NULL,
-                                PRIMARY KEY (player_username, friend_username)
+CREATE TABLE IS_FRIEND_WITH
+(
+    player_username VARCHAR(20) REFERENCES Player (username),
+    friend_username VARCHAR(20) REFERENCES Player (username),
+    date            DATE NOT NULL,
+    PRIMARY KEY (player_username, friend_username)
 );
 
 COMMENT ON TABLE IS_FRIEND_WITH IS 'Represents friendship relationships between players.';
@@ -52,11 +65,11 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 --   2 for itself.
 
 CREATE TYPE faction AS ENUM (
-        -1,
-        0,
-        1,
-        2
-    )
+    '-1',
+    '0',
+    '1',
+    '2'
+    );
 COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.';
 
 -- #################################################################################################
@@ -70,11 +83,11 @@ COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.
 --   2 for neutral.
 
 CREATE TYPE alignment AS ENUM (
-        -1,
-        0,
-        1,
-        2
-    )
+    '-1',
+    '0',
+    '1',
+    '2'
+    );
 COMMENT ON TYPE faction IS 'The categories of the possible alignments that a role can be in the game.';
 
 -- #################################################################################################
@@ -83,18 +96,19 @@ COMMENT ON TYPE faction IS 'The categories of the possible alignments that a rol
 --
 -- This table represents the roles playable in the game
 
-CREATE TABLE Role (
-                      ID SERIAL PRIMARY KEY,
-                      name CHARACTER VARYING NOT NULL,
-                      type alignment NOT NULL,
-                      with_who_wins faction NOT NULL,
-                      description CHARACTER VARYING
+CREATE TABLE Role
+(
+    ID            SERIAL PRIMARY KEY,
+    name          CHARACTER VARYING NOT NULL,
+    type          alignment         NOT NULL,
+    with_who_wins faction           NOT NULL,
+    description   CHARACTER VARYING
 );
 
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
 COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
-COMMENT ON COLUMN Role.name IS 'The name of the role.'
-COMMENT ON COLUMN Role.type IS 'The type of the role (good, evil or neutral).'
+COMMENT ON COLUMN Role.name IS 'The name of the role.';
+COMMENT ON COLUMN Role.type IS 'The type of the role (good, evil or neutral).';
 COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (wolves, farmers or itself).';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
@@ -111,11 +125,11 @@ COMMENT ON COLUMN Role.description IS 'A description of the role.';
 --   2 for other.
 
 CREATE TYPE winning_faction AS ENUM (
-        -1,
-        0,
-        1,
-        2
-    )
+    '-1',
+    '0',
+    '1',
+    '2'
+    );
 COMMENT ON TYPE faction IS 'The categories of the possible winning factions in the game.';
 
 -- #################################################################################################
@@ -124,12 +138,13 @@ COMMENT ON TYPE faction IS 'The categories of the possible winning factions in t
 --
 -- This table represents the games that have been played
 
-CREATE TABLE Game (
-                      ID SERIAL PRIMARY KEY,
-                      start TIMESTAMP NOT NULL,
-                      game_duration TIME,
-                      who_wins winning_faction,
-                      number_of_rounds INTEGER
+CREATE TABLE Game
+(
+    ID               SERIAL PRIMARY KEY,
+    start            TIMESTAMP NOT NULL,
+    game_duration    TIME,
+    who_wins         winning_faction,
+    number_of_rounds INTEGER
 );
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
@@ -151,10 +166,10 @@ COMMENT ON COLUMN Game.number_of_rounds IS 'The total number of rounds played in
 --   D for day,
 
 CREATE TYPE cycle_phase AS ENUM (
-        'M',
-        'N',
-        'D'
-);
+    'M',
+    'N',
+    'D'
+    );
 
 COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 
@@ -164,14 +179,15 @@ COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 --
 -- This table represents the player that plays a role in a game
 
-CREATE TABLE PLAYS_AS_IN (
-                             player_username VARCHAR(20) REFERENCES Player(username),
-                             game_id SERIAL REFERENCES Game(ID),
-                             role_id SERIAL REFERENCES Role(ID),
-                             round_of_death INTEGER,
-                             phase_of_death cycle_phase,
-                             duration_of_life FLOAT,
-                             PRIMARY KEY (player_username, game_id, role_id)
+CREATE TABLE PLAYS_AS_IN
+(
+    player_username  VARCHAR(20) REFERENCES Player (username),
+    game_id          SERIAL REFERENCES Game (ID),
+    role_id          SERIAL REFERENCES Role (ID),
+    round_of_death   INTEGER,
+    phase_of_death   cycle_phase,
+    duration_of_life FLOAT,
+    PRIMARY KEY (player_username, game_id, role_id)
 );
 
 COMMENT ON TABLE PLAYS_AS_IN IS 'Represents the role played by a player in a game.';
@@ -189,11 +205,12 @@ COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The percentage of time in whi
 --
 -- This table represents the number of instances for each role in a game
 
-CREATE TABLE HAS_ROLES (
-                           game_id SERIAL REFERENCES Game(ID),
-                           role_id SERIAL REFERENCES Role(ID),
-                           number_of_roles SMALLINT NOT NULL,
-                           PRIMARY KEY (game_id, role_id)
+CREATE TABLE HAS_ROLES
+(
+    game_id         SERIAL REFERENCES Game (ID),
+    role_id         SERIAL REFERENCES Role (ID),
+    number_of_roles SMALLINT NOT NULL,
+    PRIMARY KEY (game_id, role_id)
 );
 
 COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';
@@ -208,9 +225,10 @@ COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the r
 --
 -- This table represents the type of actions possible in a game
 
-CREATE TABLE TYPE_ACTION (
-                             ID SERIAL PRIMARY KEY,
-                             name CHARACTER VARYING NOT NULL
+CREATE TABLE TYPE_ACTION
+(
+    ID   SERIAL PRIMARY KEY,
+    name CHARACTER VARYING NOT NULL
 );
 
 COMMENT ON TABLE TYPE_ACTION IS 'Represents different types of actions.';
@@ -225,16 +243,17 @@ COMMENT ON COLUMN TYPE_ACTION.name IS 'The name of the type of action.';
 --
 -- This table represents the actions that has happened during a game
 
-CREATE TABLE Action (
-                        game_id SERIAL REFERENCES Game(ID),
-                        player_username VARCHAR(20) REFERENCES Player(username),
-                        round INTEGER NOT NULL,
-                        phase INTEGER NOT NULL,
-                        subphase INTEGER NOT NULL,
-                        description CHARACTER VARYING,
-                        type_of_action SERIAL REFERENCES type_action(ID) NOT NULL,
-                        target VARCHAR(20) REFERENCES Player(username) NOT NULL,
-                        PRIMARY KEY (game_id, player_username, round, phase, subphase)
+CREATE TABLE Action
+(
+    game_id         SERIAL REFERENCES Game (ID),
+    player_username VARCHAR(20) REFERENCES Player (username),
+    round           INTEGER                                  NOT NULL,
+    phase           INTEGER                                  NOT NULL,
+    subphase        INTEGER                                  NOT NULL,
+    description     CHARACTER VARYING,
+    type_of_action  SERIAL REFERENCES type_action (ID)       NOT NULL,
+    target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
+    PRIMARY KEY (game_id, player_username, round, phase, subphase)
 );
 
 COMMENT ON TABLE Action IS 'Represents actions performed by players during the game.';
