@@ -19,7 +19,7 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player>{
 
     @Override
     public final void doAccess() throws SQLException {
-        PreparedStatement ps = null;
+        PreparedStatement pstmt = null;
         ResultSet rs = null;
 
         Player player = null;
@@ -38,8 +38,8 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player>{
             }
 
         } finally {
-            if (ps != null) {
-                ps.close();
+            if (pstmt != null) {
+                pstmt.close();
             }
             if (rs != null) {
                 rs.close();

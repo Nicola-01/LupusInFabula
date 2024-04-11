@@ -20,13 +20,15 @@
                 </tr>
             </thead>
             <tbody>
-                <c:forEach var="role" items="${roles}">
-                    <tr>
-                        <td><c:out value="${role.name}"/></td>
-                        <td><c:out value="${role.type}"/></td>
-                        <td><c:out value="${role.with_who_wins}"/></td>
-                        <td><c:out value="${role.description}"/></td>
-                    </tr>
+                <c:forEach var="roleList" items="${roles}">
+                    <c:forEach var="role" items="${roleList}">
+                        <tr>
+                            <td><c:out value="${role.name}"/></td>
+                            <td><c:out value="${role.type}"/></td>
+                            <td><c:out value="${role.with_who_wins}"/></td>
+                            <td><c:out value="${role.description}"/></td>
+                        </tr>
+                    </c:forEach>
                 </c:forEach>
             </tbody>
         </table>
