@@ -64,13 +64,13 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 --   1 for farmers,
 --   2 for itself.
 
-CREATE TYPE faction AS ENUM (
-    '-1',
-    '0',
-    '1',
-    '2'
-    );
-COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.';
+-- CREATE TYPE faction AS ENUM (
+--     '-1',
+--     '0',
+--     '1',
+--     '2'
+--     );
+-- COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.';
 
 -- #################################################################################################
 -- ## Creation of enumeration for alignment                                                       ##
@@ -82,13 +82,13 @@ COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.
 --   1 for good,
 --   2 for neutral.
 
-CREATE TYPE alignment AS ENUM (
-    '-1',
-    '0',
-    '1',
-    '2'
-    );
-COMMENT ON TYPE faction IS 'The categories of the possible alignments that a role can be in the game.';
+-- CREATE TYPE alignment AS ENUM (
+--     '-1',
+--     '0',
+--     '1',
+--     '2'
+--     );
+-- COMMENT ON TYPE faction IS 'The categories of the possible alignments that a role can be in the game.';
 
 -- #################################################################################################
 -- ## Creation of the table Role                                                                  ##
@@ -100,16 +100,16 @@ CREATE TABLE Role
 (
     ID            SERIAL PRIMARY KEY,
     name          CHARACTER VARYING NOT NULL,
-    type          alignment         NOT NULL,
-    with_who_wins faction           NOT NULL,
+    type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    with_who_wins SMALLINT          NOT NULL CHECK ( type IN (0, 1, 2, 3) ),
     description   CHARACTER VARYING
 );
 
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
 COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
-COMMENT ON COLUMN Role.type IS 'The type of the role (good, evil or neutral).';
-COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (wolves, farmers or itself).';
+COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
+COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or someone else(3)).';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
 
@@ -124,13 +124,13 @@ COMMENT ON COLUMN Role.description IS 'A description of the role.';
 --   1 for farmers,
 --   2 for other.
 
-CREATE TYPE winning_faction AS ENUM (
-    '-1',
-    '0',
-    '1',
-    '2'
-    );
-COMMENT ON TYPE faction IS 'The categories of the possible winning factions in the game.';
+-- CREATE TYPE winning_faction AS ENUM (
+--     '-1',
+--     '0',
+--     '1',
+--     '2'
+--     );
+-- COMMENT ON TYPE faction IS 'The categories of the possible winning factions in the game.';
 
 -- #################################################################################################
 -- ## Creation of the table Game                                                                  ##
@@ -143,7 +143,7 @@ CREATE TABLE Game
     ID               SERIAL PRIMARY KEY,
     start            TIMESTAMP NOT NULL,
     game_duration    TIME,
-    who_wins         winning_faction,
+    who_wins         SMALLINT CHECK ( who_wins IN (0, 1, 2, 3) ),
     number_of_rounds INTEGER
 );
 
