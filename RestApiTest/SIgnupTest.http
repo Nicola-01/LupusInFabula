@@ -1,5 +1,5 @@
 ### Empty fields
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio &
@@ -7,7 +7,7 @@ email = 1@a.c &
 password = password123
 
 ### not valid username
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = _esempio &
@@ -16,7 +16,7 @@ password = password123 &
 password_rp = password123
 
 ### not valid email
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio &
@@ -25,7 +25,7 @@ password = password123 &
 password_rp = password123
 
 ### Passwords not complex enough
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio &
@@ -34,7 +34,7 @@ password = password123 &
 password_rp = password123
 
 ### different passwords
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio &
@@ -43,7 +43,7 @@ password = abC12#A1 &
 password_rp = abC12#A12
 
 ### Username already exists
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio &
@@ -52,7 +52,7 @@ password = abC12#A1 &
 password_rp = abC12#A1
 
 ### Email already used
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 username = esempio23 &
@@ -61,10 +61,10 @@ password = abC12#A1 &
 password_rp = abC12#A1
 
 ### correct Signup
-POST http://localhost:8080/lupus/signup HTTP/1.1
+POST http://localhost:8080/lupus/player/signup HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
-username = newUser1234 &
-email = newUser1234@example.com &
+username = newUser12345 &
+email = newUser12345@example.com &
 password = abC12#A1 &
 password_rp = abC12#A1

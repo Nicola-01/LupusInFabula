@@ -37,7 +37,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("/")[2];
+        op = op.split("/")[3];
         LOGGER.info("Access using GET, operation: %s, redirect to /jsp/login.jsp", op);
 
 
@@ -58,7 +58,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("/")[2];
+        op = op.split("/")[3];
         LOGGER.info("Access using POST, operation: %s", op);
 
         switch (op) {

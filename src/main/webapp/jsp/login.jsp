@@ -15,7 +15,7 @@
         <input type="checkbox" id="chk" aria-hidden="true">
 
         <div class="signup">
-            <form action="<c:url value="/signup"/>" method="POST">
+            <form action="<c:url value="/player/signup"/>" method="POST">
                 <label class="lb_singup" for="chk" aria-hidden="true">Sign up</label>
                 <input type="text" id="sing_username" class="custom-input" name="username" placeholder="Username" required="">
                 <input type="email" id="sing_email" class="custom-input" name="email" placeholder="Email" required="">
@@ -27,7 +27,7 @@
         </div>
 
         <div class="login">
-            <form action="<c:url value="/login"/>" method="POST">
+            <form action="<c:url value="/player/login"/>" method="POST">
                 <label class="lb_login" for="chk" aria-hidden="true">Login</label>
                 <input type="text" id="login_user" class="custom-input" name="user" placeholder="Username/Email" required="">
                 <input type="password" id="login_password"  class="custom-input" name="password" placeholder="Password" required="">

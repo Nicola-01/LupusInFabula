@@ -21,9 +21,9 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
-        <url-pattern>/signup</url-pattern>
-        <url-pattern>/login</url-pattern>
-        <url-pattern>/logout</url-pattern>
+        <url-pattern>/player/signup</url-pattern>
+        <url-pattern>/player/login</url-pattern>
+        <url-pattern>/player/logout</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Rules</servlet-name>
