@@ -102,6 +102,7 @@ CREATE TABLE Role
     name          CHARACTER VARYING NOT NULL,
     type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
     with_who_wins SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    max_number    SMALLINT          NOT NULL,
     description   CHARACTER VARYING
 );
 
