@@ -101,7 +101,7 @@ CREATE TABLE Role
     ID            SERIAL PRIMARY KEY,
     name          CHARACTER VARYING NOT NULL,
     type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
-    with_who_wins SMALLINT          NOT NULL CHECK ( type IN (0, 1, 2, 3) ),
+    with_who_wins SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
     description   CHARACTER VARYING
 );
 
@@ -109,7 +109,7 @@ COMMENT ON TABLE Role IS 'Represents different roles in the game.';
 COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
-COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or someone else(3)).';
+COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
 
@@ -171,7 +171,7 @@ CREATE TYPE cycle_phase AS ENUM (
     'D'
     );
 
-COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
+-- COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 
 -- #################################################################################################
 -- ## Creation of the table plays_as_in                                                           ##
