@@ -19,6 +19,12 @@
         <servlet-name>LoginSignup</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet</servlet-class>
     </servlet>
+    
+    <servlet>
+        <servlet-name>User</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserServlet</servlet-class>
+    </servlet>
+    
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
         <url-pattern>/player/signup</url-pattern>
@@ -28,6 +34,10 @@
     <servlet-mapping>
         <servlet-name>Rules</servlet-name>
         <url-pattern>/rules</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>User</servlet-name>
+        <url-pattern>/user/*</url-pattern>
     </servlet-mapping>
 
 
