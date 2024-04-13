@@ -83,8 +83,6 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         String password = request.getParameter("password");
         String password_rp = request.getParameter("password_rp");
 
-        Date registerDate = new Date(System.currentTimeMillis());
-
         LOGGER.info("username (%s, %s) is trying to singup", username, email);
 
         try {
@@ -167,7 +165,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Email already used");
                 } else {
-                    Player signupPlayer = new Player(username, email, password, registerDate);
+                    Player signupPlayer = new Player(username, email, password);
                     new SingupPlayerDAO(getConnection(), signupPlayer).access();
 
                     HttpSession session = request.getSession();
