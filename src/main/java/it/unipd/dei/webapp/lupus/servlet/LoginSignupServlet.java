@@ -32,6 +32,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
     Pattern usernameRegexPattern = Pattern.compile(usernameRegex);
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LogContext.setIPAddress(request.getRemoteAddr());
@@ -54,11 +55,14 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         LogContext.removeIPAddress();
     }
 
+    @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("/")[3];
+        op = op.split("[/;]")[3]; // to handle also jssasionid:
+        // /lupus/player/signup;jsessionid=C5771A95DD33E55251182A81F34A74CB
+
         LOGGER.info("Access using POST, operation: %s", op);
 
         switch (op) {

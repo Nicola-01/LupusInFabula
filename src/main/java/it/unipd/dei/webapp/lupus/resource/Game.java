@@ -1,16 +1,16 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import java.sql.Date;
-import java.sql.Time;
+import java.sql.Timestamp;
 
 public class Game {
-    private int id;
-    private final Time game_duration;
+    private final int id;
+    private final Timestamp game_duration;
     private final String who_win;
     private final int number_of_rounds;
     private final Date start;
 
-    public Game(final int id, final Time game_duration, final String who_win,
+    public Game(final int id, final Timestamp game_duration, final String who_win,
                 final int number_of_rounds, final Date start) {
         this.id = id;
         this.game_duration = game_duration;
@@ -23,7 +23,9 @@ public class Game {
         return id;
     }
 
-    public final Time getDuration() {return game_duration; }
+    public final Timestamp getDuration() {
+        return game_duration;
+    }
 
     public final String getWho_win() {
         return who_win;

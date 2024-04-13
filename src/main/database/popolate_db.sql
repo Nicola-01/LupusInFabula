@@ -1,5 +1,14 @@
 INSERT INTO Player (username, email, password, registration_date)
-VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), '2024-02-02');
+VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), CURRENT_DATE),
+       ('user1', LOWER('user1@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user2', LOWER('user2@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user3', LOWER('user3@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user4', LOWER('user41@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user5', LOWER('user5@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user6', LOWER('user6@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user7', LOWER('user7@test.com'), md5('ciao'), CURRENT_DATE),
+       ('user8', LOWER('user8@test.com'), md5('ciao'), CURRENT_DATE);
+
 
 INSERT INTO Role (name, type, with_who_wins, max_number, description) VALUES
                     ('master', -1, -1, 1, 'The player who runs the game'),

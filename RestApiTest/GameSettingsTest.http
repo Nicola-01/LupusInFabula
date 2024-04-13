@@ -1,0 +1,5 @@
+GET http://localhost:8080/lupus/game/settings HTTP/1.1
+
+###
+
+POST http://localhost:8080/lupus/game/settings HTTP/1.1
