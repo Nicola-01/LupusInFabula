@@ -24,56 +24,62 @@ import java.util.regex.Pattern;
 public class LoginSignupServlet extends AbstractDatabaseServlet {
 
     // Define the regex pattern to check if the string is valid
-    String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-    String usernameRegex = "^[a-zA-Z0-9](?:[a-zA-Z0-9_]*[a-zA-Z0-9])?$";
-    String passwordRegex = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ %^&*-]).{8,}$";
+    String emailRegex = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$";
+    String usernameRegex = "^(?=.{3,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9_-]+([^._-])$";
+    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
     // Compile the regex pattern
     Pattern emailRegexPattern = Pattern.compile(emailRegex);
     Pattern usernameRegexPattern = Pattern.compile(usernameRegex);
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        LogContext.setIPAddress(req.getRemoteAddr());
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        LogContext.setIPAddress(request.getRemoteAddr());
 
-        String op = req.getRequestURI();
+        String op = request.getRequestURI();
         op = op.split("/")[2];
         LOGGER.info("Access using GET, operation: %s, redirect to /jsp/login.jsp", op);
 
-        req.getSession().invalidate();
-        req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+
+        if (op.startsWith("logout")) {
+            HttpSession session = request.getSession();
+            Player p = (Player) session.getAttribute("player");
+
+            LOGGER.info("the PLAYER %s logged out", p.getUsername());
+        }
+        // session invalidate for all cases
+        request.getSession().invalidate();
+        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
 
         LogContext.removeIPAddress();
     }
 
-    public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
-        LogContext.setIPAddress(req.getRemoteAddr());
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        LogContext.setIPAddress(request.getRemoteAddr());
 
-        String op = req.getRequestURI();
+        String op = request.getRequestURI();
         op = op.split("/")[2];
-        LOGGER.info("Access using POST, operation: %s, redirect to /jsp/login.jsp", op);
+        LOGGER.info("Access using POST, operation: %s", op);
 
         switch (op) {
             case "signup":
-                singup(req, res);
+                singup(request, response);
                 break;
             case "login":
-                login(req, res);
+                login(request, response);
                 break;
         }
 
         LogContext.removeIPAddress();
     }
 
-    public void singup(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        String username = req.getParameter("username");
-        String email = req.getParameter("email");
-        String password = req.getParameter("password");
-        String password_rp = req.getParameter("password_rp");
+    public void singup(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String username = request.getParameter("username");
+        String email = request.getParameter("email");
+        String password = request.getParameter("password");
+        String password_rp = request.getParameter("password_rp");
 
         Date registerDate = new Date(System.currentTimeMillis());
-
-        Player signupPlayer = new Player(username, email, password, registerDate);
 
         LOGGER.info("username (%s, %s) is trying to singup", username, email);
 
@@ -86,49 +92,49 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                 // TODO: To check
                 ErrorCode ec = ErrorCode.EMPTY_INPUT_FIELDS;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 // LOGGER.debug("User have invalid fields"); // .debug not work
                 LOGGER.info("Some fields are empty");
 
-//                req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+//                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else if (!usernameRegexPattern.matcher(username).matches()) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.INVALID_USERNAME_FORMAT;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Username not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 LOGGER.info("Username not valid");
             } else if (!emailRegexPattern.matcher(email).matches()) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.INVALID_EMAIL_FORMAT;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Email not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 LOGGER.info("Email not valid");
             } else if (!passwordRegexPattern.matcher(password).matches()) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.INVALID_PASSWORD_FORMAT;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Passwords not complex enough", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 LOGGER.info("Passwords not complex enough");
             } else if (!password.equals(password_rp)) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Passwords do not match", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 LOGGER.info("Passwords do not match");
             } else {
@@ -139,47 +145,47 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 if (player_user != null) {
                     // TODO: To check
                     ErrorCode ec = ErrorCode.USERNAME_ALREADY_USED;
-                    res.setStatus(ec.getHTTPCode());
+                    response.setStatus(ec.getHTTPCode());
 
                     Message m = new Message("Username already used", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    req.setAttribute("message", m);
+                    request.setAttribute("message", m);
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Username already used");
                 } else if (player_email != null) {
                     // TODO: To check
                     ErrorCode ec = ErrorCode.EMAIL_ALREADY_USED;
-                    res.setStatus(ec.getHTTPCode());
+                    response.setStatus(ec.getHTTPCode());
 
                     Message m = new Message("Email already used", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    req.setAttribute("message", m);
+                    request.setAttribute("message", m);
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Email already used");
                 } else {
+                    Player signupPlayer = new Player(username, email, password, registerDate);
                     new SingupPlayerDAO(getConnection(), signupPlayer).access();
-                    //                // TODO: da togliere, solo per test
-                    //                PrintWriter out = res.getWriter();
-                    //                out.println("<html><body>");
-                    //                out.println("Done");
-                    //                out.println(p.getUsername());
-                    //                out.println(p.getEmail());
-                    //                out.println("</body></html>");
-                    //                out.flush();
-                    //                out.close();
-                    LOGGER.info("User correctly added");
+
+                    HttpSession session = request.getSession();
+                    session.setAttribute("player", signupPlayer);
+                    LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
+
+                    // login credentials were correct: we redirect the user to the homepage
+//                    request.getRequestDispatcher("/jsp/home.jsp").forward(request, response);
+                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+
                 }
             }
-        } catch (SQLException e) { // (SQLException | ServletException e)
-//            writeError(res, ErrorCode.INTERNAL_ERROR);
+        } catch (SQLException e) {
+//            writeError(response, ErrorCode.INTERNAL_ERROR);
             LOGGER.error("stacktrace:", e);
         }
     }
 
-    public void login(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+    public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            String user = req.getParameter("user");
-            String password = req.getParameter("password");
+            String user = request.getParameter("user");
+            String password = request.getParameter("password");
 
             LOGGER.info("User %s is trying to login", user);
 
@@ -188,38 +194,39 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                 // TODO: To check
                 ErrorCode ec = ErrorCode.EMPTY_INPUT_FIELDS;
-                res.setStatus(ec.getHTTPCode());
+                response.setStatus(ec.getHTTPCode());
 
                 Message m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                request.setAttribute("message", m);
 
                 // LOGGER.debug("User have invalid fields"); // .debug not work
                 LOGGER.info("Some fields are empty");
 
-//                req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+//                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else {
                 Player p = new LoginPlayerDAO(getConnection(), user, password).access().getOutputParam();
                 if (p == null) {
                     // TODO: To check
                     ErrorCode ec = ErrorCode.WRONG_CREDENTIALS;
-                    res.setStatus(ec.getHTTPCode());
-                    Message m = new Message("Credentials are wrong",  "" + ec.getErrorCode(), ec.getErrorMessage());
-                    req.setAttribute("message", m);
+                    response.setStatus(ec.getHTTPCode());
+                    Message m = new Message("Credentials are wrong", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    request.setAttribute("message", m);
                     LOGGER.info("Credentials are wrong");
-//                    req.getRequestDispatcher("/jsp/student/login.jsp").forward(req, res);
-                }
-                else {
+//                    request.getRequestDispatcher("/jsp/student/login.jsp").forward(request, response);
+                } else {
                     // activate a session to keep the user data
-                    HttpSession session = req.getSession();
+                    HttpSession session = request.getSession();
                     session.setAttribute("player", p);
                     LOGGER.info("the user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
                     // login credentials were correct: we redirect the user to the homepage
-                    // res.sendRedirect("/jsp/home.jsp");
+//                    request.getRequestDispatcher("/jsp/home.jsp").forward(request, response);
+                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+
                 }
             }
-        } catch (SQLException e) { // (SQLException | ServletException e)
-//            writeError(res, ErrorCode.INTERNAL_ERROR);
+        } catch (SQLException e) {
+//            writeError(response, ErrorCode.INTERNAL_ERROR);
             LOGGER.error("stacktrace:", e);
         }
     }

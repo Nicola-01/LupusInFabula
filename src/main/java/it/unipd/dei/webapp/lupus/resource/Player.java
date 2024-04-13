@@ -3,20 +3,10 @@ package it.unipd.dei.webapp.lupus.resource;
 import java.sql.Date;
 
 public class Player {
-    private int id;
     private final String username;
     private final String email;
     private final String password;
     private final Date registration_date;
-
-    public Player(final int id, final String username, final String email,
-                  final String password, final Date registration_date) {
-        this.id = id;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.registration_date = registration_date;
-    }
 
     public Player(final String username, final String email,
                   final String password, final Date registration_date) {
@@ -24,10 +14,6 @@ public class Player {
         this.email = email;
         this.password = password;
         this.registration_date = registration_date;
-    }
-
-    public final int getId() {
-        return id;
     }
 
     public final String getUsername() {

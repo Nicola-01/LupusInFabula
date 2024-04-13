@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class SearchPlayerByUsernameDAO extends AbstractDAO<Player>{
+public class SearchPlayerByUsernameDAO extends AbstractDAO<Player> {
     private static final String STATEMENT = "SELECT * FROM player WHERE LOWER(username) = LOWER(?)";
 
     private final String user;
@@ -30,8 +30,8 @@ public class SearchPlayerByUsernameDAO extends AbstractDAO<Player>{
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                player = new Player(rs.getInt("id"), rs.getString("username"),
-                        rs.getString("email"), rs.getString("password"), rs.getDate("registration_date"));
+                player = new Player(rs.getString("username"), rs.getString("email"),
+                        rs.getString("password"), rs.getDate("registration_date"));
                 LOGGER.info("Player found: " + rs.getString("username") + " " + rs.getString("email"));
             } else {
                 LOGGER.info("No record found for player " + user);
