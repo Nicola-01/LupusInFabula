@@ -7,7 +7,7 @@ import java.sql.PreparedStatement;
 
 public class UpdateEmailByUsernameDAO extends AbstractDAO<Integer> {
 
-    private static final String STATEMENT = "UPDATE player SET email = ? WHERE username = ? AND email = ?";
+    private static final String STATEMENT = "UPDATE player SET email = ? WHERE LOWER(username) = LOWER(?) AND email = ?";
     private final String newEmail;
     private final String oldEmail;
     private final String username;
