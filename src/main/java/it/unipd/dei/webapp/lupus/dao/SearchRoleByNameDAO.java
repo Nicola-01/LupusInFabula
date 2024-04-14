@@ -9,28 +9,34 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectRoleDAO extends AbstractDAO<List<Role>>{
+public class SearchRoleByNameDAO extends AbstractDAO<Role> {
 
-    private static final String STATEMENT = "SELECT * FROM role";
+    private final static String STATEMENT = "SELECT * FROM role WHERE LOWER(name) = lower(?)";
+    private final String name;
 
-    public SelectRoleDAO(final Connection con) {
+    public SearchRoleByNameDAO(final Connection con, final String type) {
         super(con);
+        this.name = type;
     }
 
     @Override
     public final void doAccess() throws SQLException {
+
         PreparedStatement ps = null;
         ResultSet rs = null;
-        final List<Role> roles = new ArrayList<Role>();
+        Role role = null;
 
         try {
             ps = con.prepareStatement(STATEMENT);
+            ps.setString(1, name);
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                roles.add(new Role(rs.getInt("id"), rs.getString("name"), rs.getInt("type"),
-                        rs.getString("with_who_wins"), rs.getInt("max_number"), rs.getString("description")));
+                role = new Role(rs.getInt("id"), rs.getString("name"), rs.getInt("type"),
+                        rs.getString("with_who_wins"), rs.getInt("max_number"), rs.getString("description"));
             }
+
+            LOGGER.info("Role %s found", name);
         } finally {
             if (rs != null) {
                 rs.close();
@@ -39,6 +45,7 @@ public class SelectRoleDAO extends AbstractDAO<List<Role>>{
                 ps.close();
             }
         }
-        this.outputParam = roles;
+        this.outputParam = role;
     }
+
 }

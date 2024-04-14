@@ -22,4 +22,7 @@ Content-Type: application/x-www-form-urlencoded
 user = esempio &
 password = password123
 
+#> {% client.global.set("player", response.headers.token); %}
+
+
 ###
