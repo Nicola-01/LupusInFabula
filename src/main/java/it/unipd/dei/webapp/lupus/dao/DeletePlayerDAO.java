@@ -7,7 +7,6 @@ import java.sql.SQLException;
 public class DeletePlayerDAO extends AbstractDAO<Integer> {
 
     private static final String STATEMENT = "DELETE FROM player WHERE username = ?";
-
     private final String player_username;
 
     public DeletePlayerDAO(final Connection con, final String player_username) {
@@ -27,7 +26,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
             pstmt.setString(1, player_username);
             result = pstmt.executeUpdate();
 
-            if (result > 0) {
+            if (result == 1) {
                 LOGGER.info("Deleted player %s from database", player_username);
             } else {
                 LOGGER.info("Failed to delete player %s from database", player_username);
