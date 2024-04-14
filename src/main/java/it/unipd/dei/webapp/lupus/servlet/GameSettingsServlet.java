@@ -6,6 +6,8 @@ import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
 import it.unipd.dei.webapp.lupus.resource.Role;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
+import it.unipd.dei.webapp.lupus.utils.RoleId;
+import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,8 +38,7 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
             LOGGER.info("Roles successfully selected by type");
 
         } catch (SQLException e) {
-            m = new Message("Cannot search for roles: unexpected error while accessing the database.", "E200",
-                    e.getMessage());
+            m = new Message("Cannot search for roles: unexpected error while accessing the database.", "E200", e.getMessage());
             LOGGER.info("Cannot search for roles: unexpected error while accessing the database.", e);
         }
 
@@ -54,9 +55,8 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
             int totalRoles = 0;
             boolean exit = false;
 
-            for (Role role : roles) {
+            for (Role role : roles)
                 selectedRoles.put(role.getName(), 0);
-            }
 
             // Gets all parameters passed
             Enumeration<String> parameterNames = request.getParameterNames();
@@ -65,27 +65,8 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                 String paramName = parameterNames.nextElement();
                 // If start with player -> is a player, I check if exist
                 if (paramName.startsWith("player")) {
-                    if (paramName.equals("player" + playerIndex)) { // check if sequence number is correct
-                        playerIndex++;
-                        String username = request.getParameter(paramName);
-                        // Check if username exist, and obtain the correct name (Lowercase and Lowrcase)
-                        Player selectedPlayer = new SearchPlayerByUsernameDAO(getConnection(), username)
-                                .access().getOutputParam();
-                        if (selectedPlayer == null) { // check if player not exist
-                            // TODO, message and error
-                            ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
-                            response.setStatus(ec.getHTTPCode());
 
-                            Message m = new Message("PLAYER " + username + " does not exist", "" + ec.getErrorCode(), ec.getErrorMessage());
-                            request.setAttribute("message", m);
-
-                            // LOGGER.debug("User have invalid fields"); // .debug not work
-                            LOGGER.info("%s does not exist", username);
-                            exit = true;
-                            break;
-                        }
-                        selectedPlayers.add(selectedPlayer.getUsername()); // if it exists, add to the player list
-                    } else { // check if sequence number not correct
+                    if (!paramName.equals("player" + playerIndex)) { // check if sequence number not correct
                         // TODO, message and error
                         ErrorCode ec = ErrorCode.INVALID_GAMESETTINGS;
                         response.setStatus(ec.getHTTPCode());
@@ -98,7 +79,48 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                         exit = true;
                         break;
                     }
-                } else if (isValidRole(roles, paramName)) { // if the parameter not start with player -> is a role, check if exists
+
+                    String username = request.getParameter(paramName);
+                    // Check if username exist, and obtain the correct name (Lowercase and Lowercase)
+                    Player validPlayer = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
+
+                    if (validPlayer == null) {
+                        // TODO, message and error
+                        ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
+                        response.setStatus(ec.getHTTPCode());
+
+                        Message m = new Message("PLAYER " + username + " does not exist", "" + ec.getErrorCode(), ec.getErrorMessage());
+                        request.setAttribute("message", m);
+
+                        // LOGGER.debug("User have invalid fields"); // .debug not work
+                        LOGGER.info("USER %s does not exist", username);
+                        exit = true;
+                        break;
+                    }
+
+                    username = validPlayer.getUsername();
+
+                    // check if the player is already in a game
+                    if (new PlayerInGameDAO(getConnection(), username).access().getOutputParam()) {
+                        // TODO, message and error
+                        ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
+                        response.setStatus(ec.getHTTPCode());
+
+                        Message m = new Message("PLAYER " + username + " is already in a game", "" + ec.getErrorCode(), ec.getErrorMessage());
+                        request.setAttribute("message", m);
+
+                        // LOGGER.debug("User have invalid fields"); // .debug not work
+                        LOGGER.info("USER %s is already in a game", username);
+                        exit = true;
+                        break;
+                    }
+                    // the player is correct added to the new game
+                    playerIndex++;
+                    selectedPlayers.add(validPlayer.getUsername()); // if it exists, add to the player list
+
+                }
+                // if the parameter not start with player -> is a role, check if exists
+                else if (isValidRole(roles, paramName)) {
                     int number = Integer.parseInt(request.getParameter(paramName));
                     selectedRoles.put(paramName, number); // add role and number to the map
                     totalRoles += number; // total number of roles
@@ -119,52 +141,45 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
             if (exit) { // error in the while loop
                 request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
             } else {
+                // check the validity of the settings, e.g. number of roles in comparison with number of players
                 int totalPlayers = selectedPlayers.size();
 
-                if(totalPlayers < 5) {
+                if (totalPlayers < 5) { // at least 5 players, exclude the master
                     // TODO, message and error
                     ErrorCode ec = ErrorCode.NOT_ENOUGH_PLAYERS;
                     response.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Not enough players, player number: " + totalPlayers + " minimum required 5",
-                            "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Not enough players, player number: " + totalPlayers + " minimum required 5", "" + ec.getErrorCode(), ec.getErrorMessage());
                     request.setAttribute("message", m);
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Not enough players, player number: %d minimum required 5", totalPlayers);
                     request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
-                }
-                else if (totalPlayers != totalRoles) { // check if number of players it's equal to number of roles
-                    // TODO, message and error
-                    ErrorCode ec = ErrorCode.NUMBER_PLAYERS_ROLES_NOT_MATCH;
-                    response.setStatus(ec.getHTTPCode());
-
-                    Message m = new Message("Player number " + totalPlayers + " does not match the number of roles " + totalRoles,
-                            "" + ec.getErrorCode(), ec.getErrorMessage());
-                    request.setAttribute("message", m);
-
-                    // LOGGER.debug("User have invalid fields"); // .debug not work
-                    LOGGER.info("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
-                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
-                } else if (!isValidRolesCardinality(selectedRoles, roles)) {
-
+                } else if (!isValidRolesCardinality(selectedRoles, roles)) { // check if role cardinality respect the maximum
                     // TODO, message and error
                     ErrorCode ec = ErrorCode.INVALID_ROLES_CARDINALITY;
                     response.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("One or more roles have exceeded the maximum cardinality",
-                            "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("One or more roles have exceeded the maximum cardinality", "" + ec.getErrorCode(), ec.getErrorMessage());
                     request.setAttribute("message", m);
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("One or more roles have exceeded the maximum cardinality", totalPlayers, totalRoles);
                     request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
-                } else {
+                } else if (totalPlayers != totalRoles) { // check if number of players it's equal to number of roles
+                    // TODO, message and error
+                    ErrorCode ec = ErrorCode.NUMBER_PLAYERS_ROLES_NOT_MATCH;
+                    response.setStatus(ec.getHTTPCode());
 
-                    // TODO: check the roles number
-                    // e.g number of wolf <= 1/4 total number
+                    Message m = new Message("Player number " + totalPlayers + " does not match the number of roles " + totalRoles, "" + ec.getErrorCode(), ec.getErrorMessage());
+                    request.setAttribute("message", m);
 
-                    // TODO check
+                    // LOGGER.debug("User have invalid fields"); // .debug not work
+                    LOGGER.info("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
+                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
+                }
+                // Create the game
+                else {
 
                     int gameID = new CreateGameDAO(getConnection()).access().getOutputParam();
                     LOGGER.info("GAME created, gameID: %d", gameID);
@@ -189,24 +204,41 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                     }
                 }
             }
-        } catch (
-                SQLException e) {
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
+    /**
+     * It checks that the number of roles chosen respects prerequisites.<br>
+     * - Roles must have a minimum of 0, or 1 in the case of wolves and must respect the maximum
+     * number depending on the role, all have a maximum of 1 except for wolves and farmers.<br>
+     * - Evil roles must be less than a quarter
+     *
+     * @param selectedRoles Map with the roles and the selected cardinality
+     * @param roles         List with all the roles
+     * @return True if all prerequisites have been satisfied.
+     */
     private boolean isValidRolesCardinality(Map<String, Integer> selectedRoles, List<Role> roles) {
-        for (Role role : roles)
-            if (selectedRoles.get(role.getName()) > role.getMax_number()) // role
+        Map<Integer, Integer> type = new HashMap<>(); // roleType it's the key
+        int totalRolesNumber = 0;
+        for (Role role : roles) {
+            if (role.getName().equals(RoleId.MASTER.getName())) continue;
+
+            int cardinality = selectedRoles.get(role.getName());
+            if (cardinality < 0 || cardinality > role.getMax_number()) // invalid role cardinality
                 return false;
-        // TODO Evil roles <= 1/4 all roles
-        return true;
+            if (role.getName().equals(RoleId.WOLF.getName()) && cardinality == 0) // at least one wolf
+                return false;
+            type.put(role.getType(), cardinality);
+            totalRolesNumber += cardinality;
+        }
+        return type.get(RoleType.EVIL.getType()) <= totalRolesNumber / 4;
     }
 
     private boolean isValidRole(List<Role> roles, String roleToCheck) {
         for (Role role : roles)
-            if (role.getName().equals(roleToCheck))
-                return true;
+            if (role.getName().equals(roleToCheck)) return true;
         return false;
     }
 
@@ -220,8 +252,7 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
         } while (roles.get(role) == 0);
         roles.put(role, roles.get(role) - 1);
 
-        if (roles.get(role) == 0)
-            roles.remove(role);
+        if (roles.get(role) == 0) roles.remove(role);
 
         return role;
     }

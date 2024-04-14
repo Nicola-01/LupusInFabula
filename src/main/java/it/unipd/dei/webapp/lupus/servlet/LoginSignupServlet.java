@@ -101,6 +101,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                 // LOGGER.debug("User have invalid fields"); // .debug not work
                 LOGGER.info("Some fields are empty");
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
 
 //                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else if (!usernameRegexPattern.matcher(username).matches()) {
@@ -112,6 +113,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 request.setAttribute("message", m);
 
                 LOGGER.info("Username not valid");
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else if (!emailRegexPattern.matcher(email).matches()) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.INVALID_EMAIL_FORMAT;
@@ -121,6 +123,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 request.setAttribute("message", m);
 
                 LOGGER.info("Email not valid");
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else if (!passwordRegexPattern.matcher(password).matches()) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.INVALID_PASSWORD_FORMAT;
@@ -130,6 +133,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 request.setAttribute("message", m);
 
                 LOGGER.info("Passwords not complex enough");
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else if (!password.equals(password_rp)) {
                 // TODO: To check
                 ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
@@ -139,6 +143,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 request.setAttribute("message", m);
 
                 LOGGER.info("Passwords do not match");
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else {
 
                 Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
@@ -154,6 +159,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Username already used");
+                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
                 } else if (player_email != null) {
                     // TODO: To check
                     ErrorCode ec = ErrorCode.EMAIL_ALREADY_USED;
@@ -164,6 +170,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Email already used");
+                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
                 } else {
                     Player signupPlayer = new Player(username, email, password);
                     new SingupPlayerDAO(getConnection(), signupPlayer).access();
@@ -178,7 +185,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ServletException e) {
 //            writeError(response, ErrorCode.INTERNAL_ERROR);
             LOGGER.error("stacktrace:", e);
         }
@@ -203,8 +210,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                 // LOGGER.debug("User have invalid fields"); // .debug not work
                 LOGGER.info("Some fields are empty");
-
-//                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             } else {
                 Player p = new LoginPlayerDAO(getConnection(), user, password).access().getOutputParam();
                 if (p == null) {
@@ -214,20 +220,17 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     Message m = new Message("Credentials are wrong", "" + ec.getErrorCode(), ec.getErrorMessage());
                     request.setAttribute("message", m);
                     LOGGER.info("Credentials are wrong");
-//                    request.getRequestDispatcher("/jsp/student/login.jsp").forward(request, response);
+                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
                     session.setAttribute("player", p);
                     LOGGER.info("the user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
-                    // login credentials were correct: we redirect the user to the homepage
-//                    request.getRequestDispatcher("/jsp/home.jsp").forward(request, response);
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
-
                 }
             }
-        } catch (SQLException e) {
+        } catch (SQLException | ServletException e) {
 //            writeError(response, ErrorCode.INTERNAL_ERROR);
             LOGGER.error("stacktrace:", e);
         }

@@ -13,7 +13,7 @@
 <div class="container">
     <div class="main">
         <input type="checkbox" id="chk" aria-hidden="true">
-
+        <c:import url="/jsp/include/show-message.jsp"/>
         <div class="signup">
             <form action="<c:url value="/player/signup"/>" method="POST">
                 <label class="lb_singup" for="chk" aria-hidden="true">Sign up</label>

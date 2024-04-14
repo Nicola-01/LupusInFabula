@@ -12,10 +12,6 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
- 
- Author: Nicola Ferro (ferro@dei.unipd.it)
- Version: 1.0
- Since: 1.0
 -->
 
 <%@ page contentType="text/html;charset=utf-8" %>
