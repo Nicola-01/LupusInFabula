@@ -44,7 +44,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
         if (op.startsWith("logout")) {
             HttpSession session = request.getSession();
-            Player p = (Player) session.getAttribute("player");
+            Player p = (Player) session.getAttribute("user");
 
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
         }
@@ -176,7 +176,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     new SingupPlayerDAO(getConnection(), signupPlayer).access();
 
                     HttpSession session = request.getSession();
-                    session.setAttribute("player", signupPlayer);
+                    session.setAttribute("user", signupPlayer);
                     LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
 
                     // login credentials were correct: we redirect the user to the homepage
@@ -224,7 +224,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
-                    session.setAttribute("player", p);
+                    session.setAttribute("user", p);
                     LOGGER.info("the user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");

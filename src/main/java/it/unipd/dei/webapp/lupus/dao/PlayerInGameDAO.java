@@ -7,9 +7,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
 
-public class PlayerInGameDAO extends AbstractDAO<Boolean> {
+public class PlayerInGameDAO extends AbstractDAO<Integer> {
 
-    private static final String STATEMENT = "SELECT start FROM game g join public.plays_as_in pai on g.id = pai.game_id " +
+    private static final String STATEMENT = "SELECT g.id FROM game g join public.plays_as_in pai on g.id = pai.game_id " +
             "where g.number_of_rounds IS NULL and player_username = ?";
 
     private final String user;
@@ -24,7 +24,7 @@ public class PlayerInGameDAO extends AbstractDAO<Boolean> {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        Timestamp start = null;
+        int gameId = -1;
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
@@ -32,8 +32,8 @@ public class PlayerInGameDAO extends AbstractDAO<Boolean> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                start = rs.getTimestamp("start");
-                LOGGER.info("Player " + user + " found in a game started " + start.toString());
+                gameId = rs.getInt("id");
+                LOGGER.info("Player " + user + " found in a gameID: " + gameId);
             }
 
         } finally {
@@ -44,6 +44,6 @@ public class PlayerInGameDAO extends AbstractDAO<Boolean> {
                 rs.close();
             }
         }
-        this.outputParam = start != null;
+        this.outputParam = gameId;
     }
 }

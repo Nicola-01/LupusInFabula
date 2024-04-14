@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-@WebServlet(name = "GameSettingsServlet", value = "/game/settings")
 public class GameSettingsServlet extends AbstractDatabaseServlet {
 
     @Override
@@ -101,7 +100,7 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                     username = validPlayer.getUsername();
 
                     // check if the player is already in a game
-                    if (new PlayerInGameDAO(getConnection(), username).access().getOutputParam()) {
+                    if (new PlayerInGameDAO(getConnection(), username).access().getOutputParam() != -1) {
                         // TODO, message and error
                         ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
                         response.setStatus(ec.getHTTPCode());
@@ -186,12 +185,15 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
 
 
                     // TODO add master
-//                    HttpSession session = request.getSession();
-//                    Player gameMaster = (Player) session.getAttribute("player");
-//                    int masterID = new SearchRoleByNameDAO(getConnection(), "master").access().getOutputParam().getId();
-//
-//                    PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, masterID);
-//                    new InsertIntoPlayAsInDAO(getConnection(), master_playsAsIn).access();
+                    HttpSession session = request.getSession(false);
+                    Player gameMaster = (Player) session.getAttribute("user");
+                    int masterID = new SearchRoleByNameDAO(getConnection(), "master").access().getOutputParam().getId();
+
+                    PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, masterID);
+                    new InsertIntoPlayAsInDAO(getConnection(), master_playsAsIn).access();
+
+                    session.setAttribute("master", gameMaster);
+                    session.setAttribute("gameID", gameID);
 
 
                     for (int i = 0; i < totalPlayers; i++) {
