@@ -39,7 +39,7 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Is_Friend_With>
                 LOGGER.info("Friend found: " + rs.getString("friend_username") + " " + rs.getDate("date"));
             }
             if (friendship.isEmpty()){
-                LOGGER.info("No record found for player " + user);
+                LOGGER.info("No friend found " + user);
             }
 
         } finally {
