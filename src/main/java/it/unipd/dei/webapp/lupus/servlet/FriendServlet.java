@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.sql.Date;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
@@ -55,7 +56,35 @@ public class FriendServlet extends AbstractDatabaseServlet{
     }
 
     public void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {
+        Message m = null;
 
+        try {
+            HttpSession session = req.getSession(false);
+            // check if the user hae done the login
+            if (session != null && session.getAttribute("player") != null) {
+                //take the username of the player
+                Player player = (Player) session.getAttribute("player");
+                String friend_username = req.getParameter("friend_username");
+                Date date = new Date(System.currentTimeMillis());
+
+                int result = new AddFriendDAO(getConnection(), player.getUsername(), friend_username, date).access().getOutputParam();
+                if (result == 1) {
+                    m = new Message("Correctly add friend");
+                    LOGGER.info("Correctly add friend");
+                }else {
+                    m = new Message("No player found");
+                    LOGGER.info("No player found");
+                }
+            } else {
+                LOGGER.info("User is not logged in. Redirecting to login page.");
+                //send the user to the login page
+                req.getRequestDispatcher("/jsp/login.jsp").forward(req, res);
+            }
+        } catch (SQLException e) { // (SQLException | ServletException e)
+            m = new Message("Cannot search for friends: unexpected error while accessing the database.", "E200",
+                    e.getMessage());
+            LOGGER.info("Cannot search for friends: unexpected error while accessing the database.", e);
+        }
     }
 
     public void doDelete(HttpServletRequest req, HttpServletResponse res) throws IOException, ServletException {

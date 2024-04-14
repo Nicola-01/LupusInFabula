@@ -48,6 +48,15 @@
     </servlet-mapping>
 
 
+    <servlet>
+        <servlet-name>Friend</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Friend</servlet-name>
+        <url-pattern>/friend/*</url-pattern>
+    </servlet-mapping>
+
     <resource-ref>
         <description>Connection pool to the database</description>
         <res-ref-name>jdbc/lupusdb</res-ref-name>
