@@ -39,6 +39,11 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomeServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>StatisticsLogsServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.StatisticsLogsServlet</servlet-class>
+    </servlet>
+
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
@@ -60,6 +65,12 @@
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StatisticsLogsServlet</servlet-name>
+        <url-pattern>/user/*/statistics</url-pattern>
+        <url-pattern>/user/*/logs</url-pattern>
     </servlet-mapping>
 
 
