@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 public class UpdatePasswordByUsernameDAO extends AbstractDAO<Integer> {
 
-    private static final String STATEMENT = "UPDATE player SET password = ? WHERE LOWER(username) = LOWER(?) AND password = ?";
+    private static final String STATEMENT = "UPDATE player SET password = md5(?) WHERE LOWER(username) = LOWER(?) AND password = md5(?)";
     private final String newPassword;
     private final String oldPassword;
     private final String username;

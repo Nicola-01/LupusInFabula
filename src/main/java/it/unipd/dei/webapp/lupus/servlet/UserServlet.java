@@ -7,9 +7,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import org.postgresql.core.Utils;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.logging.Logger;
 
 
 public class UserServlet extends AbstractDatabaseServlet{
@@ -75,8 +80,9 @@ public class UserServlet extends AbstractDatabaseServlet{
 
         try {
 
-            String username = req.getRequestURI();
-            username = username.substring(username.lastIndexOf('/') + 1);
+            HttpSession session = req.getSession();
+            String username = ((Player) session.getAttribute("player")).getUsername();
+            LOGGER.info("Username: " + username + " --> trying to delete the account");
             int result = new DeletePlayerDAO(getConnection(), username).access().getOutputParam();
 
             if (result == 1) {
@@ -108,34 +114,54 @@ public class UserServlet extends AbstractDatabaseServlet{
     }
 
     @Override
-    public void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         //LogContext.setIPAddress(req.getRemoteAddr());
         //LogContext.setAction(Actions.SELECT_ROLE_BY_TYPE);
         Message m;
-        HttpSession session = req.getSession();
-        String username = ((Player) session.getAttribute("player")).getUsername();
 
         try {
 
-            String uri = req.getRequestURI();
+            HttpSession session = req.getSession();
+            String username = ((Player) session.getAttribute("player")).getUsername();
+            LOGGER.info("Username: " + username + " --> trying to update the account");
 
-            if (req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword")) {
+            boolean prova = req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword") && req.getParameterMap().containsKey("repeatNewPassword");
+            LOGGER.info("Debug: " + prova + ", the req.getParameter(oldPassword) is: " + req.getParameter("oldPassword"));
+
+            if (req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword") && req.getParameterMap().containsKey("repeatNewPassword")) {
 
                 String oldPassword = req.getParameter("oldPassword");
                 String newPassword = req.getParameter("newPassword");
-                int rs = new UpdatePasswordByUsernameDAO(getConnection(), username, oldPassword, newPassword).access().getOutputParam();
+                String repeatNewPassword = req.getParameter("repeatNewPassword");
+                LOGGER.info("Username: " + username + " --> trying to update the password");
 
-                if (rs == 1) {
+                if (newPassword.equals(repeatNewPassword)) {
+                    int rs = new UpdatePasswordByUsernameDAO(getConnection(), username, oldPassword, newPassword).access().getOutputParam();
+                    LOGGER.info("The new password and the repeatNewPassword are the same");
 
-                    LOGGER.info("Player " + username + "'s successfully updated the password");
-                    // TODO --> add the page linked to this servlet (for successfully updated password)
-                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
+                    if (rs == 1) {
 
+                        LOGGER.info("Player " + username + "'s successfully updated the password");
+                        // TODO --> add the page linked to this servlet (for successfully updated password)
+                        req.getRequestDispatcher("/jsp/...").forward(req, resp);
+
+                    } else {
+
+                        m = new Message("Player " + username + " was not found");
+                        LOGGER.info("Player " + username + " was not found");
+                        req.setAttribute("m", m);
+                        // TODO --> add the page linked to this servlet (for not successfully updated password)
+                        req.getRequestDispatcher("/jsp/...").forward(req, resp);
+
+                    }
                 } else {
 
-                    m = new Message("Player " + username + " was not found");
-                    LOGGER.info("Player " + username + " was not found");
+                    m = new Message("New password and repeatNewPassword do not match");
+                    LOGGER.info("New password and repeatNewPassword do not match");
+                    req.setAttribute("m", m);
+                    // TODO --> add the page linked to this servlet (for not successfully updated password)
+                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
 
                 }
 
@@ -143,6 +169,7 @@ public class UserServlet extends AbstractDatabaseServlet{
 
                 String oldUsername = req.getParameter("oldUsername");
                 String newUsername = req.getParameter("newUsername");
+                LOGGER.info("Username: " + oldUsername + " --> trying to update the username");
                 int rs = new UpdateUsernameDAO(getConnection(), oldUsername, newUsername).access().getOutputParam();
 
                 if (rs == 1) {
@@ -155,6 +182,9 @@ public class UserServlet extends AbstractDatabaseServlet{
 
                     m = new Message("Impossible to update the username");
                     LOGGER.info("Impossible to update the old username to the new one");
+                    req.setAttribute("m", m);
+                    // TODO --> add the page linked to this servlet (for not successfully updated username)
+                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
 
                 }
 
@@ -162,6 +192,7 @@ public class UserServlet extends AbstractDatabaseServlet{
 
                 String oldEmail = req.getParameter("oldEmail");
                 String newEmail = req.getParameter("newEmail");
+                LOGGER.info("Username: " + username + " --> trying to update the email");
                 int rs = new UpdateEmailByUsernameDAO(getConnection(), username, oldEmail, newEmail).access().getOutputParam();
 
                 if (rs == 1) {
@@ -173,9 +204,14 @@ public class UserServlet extends AbstractDatabaseServlet{
                 } else {
                     m = new Message("Impossible to update email");
                     LOGGER.info("Impossible to update the old email to the new one");
+                    req.setAttribute("m", m);
+                    // TODO --> add the page linked to this servlet (for not successfully updated email)
+                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
                 }
 
             }
+
+//            LOGGER.info("Something went wrong");
 
         } catch (SQLException e) {
             LOGGER.error("Unable to send response", e);

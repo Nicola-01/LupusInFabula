@@ -99,7 +99,7 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 CREATE TABLE Role
 (
     ID            SERIAL PRIMARY KEY,
-    name          CHARACTER VARYING NOT NULL,
+    name          CHARACTER VARYING NOT NULL UNIQUE,
     type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
     with_who_wins SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
     description   CHARACTER VARYING
