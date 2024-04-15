@@ -38,7 +38,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("/")[3];
+        op = op.split("/")[2];
         LOGGER.info("Access using GET, operation: %s, redirect to /jsp/login.jsp", op);
 
 
@@ -60,7 +60,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("[/;]")[3]; // to handle also jssasionid:
+        op = op.split("[/;]")[2]; // to handle also jssasionid:
         // /lupus/player/signup;jsessionid=C5771A95DD33E55251182A81F34A74CB
 
         LOGGER.info("Access using POST, operation: %s", op);

@@ -42,9 +42,9 @@
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
-        <url-pattern>/user/signup</url-pattern>
-        <url-pattern>/user/login</url-pattern>
-        <url-pattern>/user/logout</url-pattern>
+        <url-pattern>/signup</url-pattern>
+        <url-pattern>/login</url-pattern>
+        <url-pattern>/logout</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
@@ -76,7 +76,7 @@
 
     <filter-mapping>
         <filter-name>LoginFilter</filter-name>
-        <url-pattern>/user/logout</url-pattern>
+        <url-pattern>/logout</url-pattern>
         <url-pattern>/user/me</url-pattern>
         <url-pattern>/user/friend</url-pattern>
         <url-pattern>/game/settings</url-pattern>
