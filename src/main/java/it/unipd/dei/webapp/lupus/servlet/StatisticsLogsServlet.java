@@ -23,12 +23,12 @@ public class StatisticsLogsServlet extends AbstractDatabaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String op = req.getRequestURI();
-        String username = op.split("/")[3]; //recupero username
-        String operation_type = op.split("/")[4]; //recupero operation_type
+        String username = op.split("/")[3]; //[3]; //recupero username
+        String operation_type = op.split("/")[4];//[4]; //recupero operation_type
 
         LOGGER.info("Access to %s of Player %s", operation_type, username);
 
-        switch (op) {
+        switch (operation_type) {
             case "logs":
                 try {
                     logs(req, resp, username);
@@ -56,9 +56,15 @@ public class StatisticsLogsServlet extends AbstractDatabaseServlet {
         }
 
         try {
+            String infos = "logs of the player " + username;
+            for (int i = 0; i < logs.size(); i++) {
+               // infos += "\n" + logs[0].name;
+            }
+            LOGGER.info(infos);
             request.setAttribute("logs",logs);
             request.setAttribute("m", m);
-            request.getRequestDispatcher("/jsp/rules.jsp").forward(request, response);
+            request.getRequestDispatcher("/jsp/logs.jsp").forward(request, response);
+
         } catch (Exception e) {
             LOGGER.error("Unable to send response when creating the logs list", e);
             throw e;

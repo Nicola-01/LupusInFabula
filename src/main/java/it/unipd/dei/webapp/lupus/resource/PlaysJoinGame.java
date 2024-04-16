@@ -42,7 +42,7 @@ public class PlaysJoinGame {
         return name;
     }
 
-    public boolean getHas_won() {
+    public boolean getHasWon() {
         return has_won;
     }
 

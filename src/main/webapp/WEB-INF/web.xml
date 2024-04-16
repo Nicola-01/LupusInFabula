@@ -69,8 +69,9 @@
 
     <servlet-mapping>
         <servlet-name>StatisticsLogsServlet</servlet-name>
-        <url-pattern>/user/*/statistics</url-pattern>
-        <url-pattern>/user/*/logs</url-pattern>
+        <url-pattern>/user/user1/logs</url-pattern>
+<!--        <url-pattern>/user/*/statistics</url-pattern>-->
+<!--        <url-pattern>/user/*/logs</url-pattern>-->
     </servlet-mapping>
 
 

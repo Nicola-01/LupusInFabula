@@ -1,0 +1,22 @@
+/* Stile generale per il body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* Stile per i paragrafi */
+p {
+    margin-bottom: 10px;
+}
+
+/* Stile per separare le informazioni */
+hr {
+    border: 0;
+    height: 1px;
+    background-color: #ccc;
+    margin: 20px 0;
+}
+
+.row:nth-child(odd) {
+    background-color: darkorange; /* Change this to your desired color for the first row */
+}

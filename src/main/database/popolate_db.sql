@@ -31,3 +31,14 @@ INSERT INTO Role (name, type, with_who_wins, max_number, description) VALUES
                     ('sheriff', 0, 0, 1, 'During the night, the sheriff may decide to select a person and kill them. If the designated person is a wolf pack, or a victory stealer, he will die, but if the designated person is a villager, the sheriff himself will die.'),
                     ('seer', 0, 0, 1, 'He is a peasant during the day, like any other. At night, he can ask the mayor if a player is a wolf. If he probes the hamster, it dies, but the seer remains uninformed of their role and death.'),
                     ('wolf', 1, 1, 3, 'Those who sow terror in the small village of Tabula. The wolves know each other and at night they agree to kill a character by deciding who among them will go and maul him.');
+
+
+-- #################################################################################################
+-- ## Popolation for testing getlogs                                                              ##
+-- #################################################################################################
+
+INSERT INTO player VALUES ('nicola', 'nic@gmail.com', 12345, now());
+
+INSERT INTO game VALUES (1, now(), null, 1, 12);
+
+INSERT INTO plays_as_in VALUES ('nicola', 1, 20, null, null, 12);
