@@ -10,10 +10,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Lupus in Fabula Roles</title>
+    <title>Lupus in Fabula - Rules</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
 </head>
 <body>
+    <header>
+        <h1>Lupus in Fabula</h1>
+    </header>
     <div class="row upper">
         <div class="title-row">
             <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRules')">RULES</span>
@@ -100,6 +104,9 @@
             </p>
         </div>
     </div>
+    <footer>
+        <p>&copy; 2024 Team LIF - Lupus in Fabula. All rights reserved.</p>
+    </footer>
 
     <script>
         function openNav(id) {
