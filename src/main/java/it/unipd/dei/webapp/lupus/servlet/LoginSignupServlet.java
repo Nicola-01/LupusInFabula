@@ -50,9 +50,9 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
         }
         // session invalidate for all cases
         request.getSession().invalidate();
-        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
 
         LogContext.removeIPAddress();
+        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
     }
 
     @Override

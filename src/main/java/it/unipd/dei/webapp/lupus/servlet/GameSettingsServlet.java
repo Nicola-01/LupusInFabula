@@ -1,10 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.*;
-import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.Player;
-import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
-import it.unipd.dei.webapp.lupus.resource.Role;
+import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.RoleId;
 import it.unipd.dei.webapp.lupus.utils.RoleType;
@@ -180,8 +177,10 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                 // Create the game
                 else {
 
-                    int gameID = new CreateGameDAO(getConnection()).access().getOutputParam();
-                    LOGGER.info("GAME created, gameID: %d", gameID);
+                    Game newGame = new CreateGameDAO(getConnection(), roles).access().getOutputParam();
+                    int gameID = newGame.getId();
+                    String publicID = newGame.getPublic_ID();
+                    LOGGER.info("GAME created, gameID: (%d, %s)", gameID, publicID);
 
 
                     // TODO add master
@@ -192,8 +191,8 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
                     PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, masterID);
                     new InsertIntoPlayAsInDAO(getConnection(), master_playsAsIn).access();
 
-                    session.setAttribute("master", gameMaster);
-                    session.setAttribute("gameID", gameID);
+                    session.setAttribute("master", gameID);
+//                    session.setAttribute("gameID", gameID);
 
 
                     for (int i = 0; i < totalPlayers; i++) {

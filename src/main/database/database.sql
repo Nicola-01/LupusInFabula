@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS Player;
 CREATE TABLE Player
 (
     username          VARCHAR(20) PRIMARY KEY,
-    email             VARCHAR(100) NOT NULL UNIQUE ,
+    email             VARCHAR(100) NOT NULL UNIQUE,
     password          VARCHAR(100) NOT NULL,
     registration_date DATE         NOT NULL
 );
@@ -142,6 +142,7 @@ COMMENT ON COLUMN Role.description IS 'A description of the role.';
 CREATE TABLE Game
 (
     ID               SERIAL PRIMARY KEY,
+    public_ID        CHARACTER VARYING UNIQUE NOT NULL,
     start            TIMESTAMP NOT NULL,
     game_duration    TIME,
     who_wins         SMALLINT CHECK ( who_wins IN (0, 1, 2, 3) ),
