@@ -12,36 +12,53 @@
 <html lang="en">
 <head>
     <title>logs</title>
-<%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/logs.css">--%>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/logs.css">
 </head>
 
 <h2>Hello, World!</h2>
 
 
 <body>
-<c:if test="${not empty logs}">
-    <c:forEach var="log" items="${logs}">
-        <p>Game ID: <c:out value="${log.getGameId()}"/></p>
-        <p>Start: <c:out value="${log.getStart()}"/></p>
-        <p>Game Duration: <c:out value="${log.getGameDuration()}"/></p>
-        <p>Number of Rounds: <c:out value="${log.getNumberOfRounds()}"/></p>
-        <p>Name: <c:out value="${log.getName()}"/></p>
-        <p>Who has Won: <c:out value="${log.getHasWon()}"/></p>
-        <br/>
-    </c:forEach>
-</c:if>
 
-<c:if test="${empty logs}">
-    <p>Game ID: No data available</p>
-    <p>Start: No data available</p>
-    <p>Game Duration: No data available</p>
-    <p>Number of Rounds: No data available</p>
-    <p>Name: No data available</p>
-    <p>With Who Wins: No data available</p>
-    <p>Who Wins: No data available</p>
-    <br/>
-</c:if>
+<h2>Table of logs</h2>
+<table border="1">
+    <thead>
+    <tr>
+        <th>Game ID</th>
+        <th>Date</th>
+        <th>Game Duration</th>
+        <th>Rounds played</th>
+        <th>Role played</th>
+        <th>Result</th>
+    </tr>
+    </thead>
+    <tbody>
+    <c:choose>
+        <c:when test="${not empty logs}">
+            <c:forEach var="log" items="${logs}">
+                <tr>
+                    <td><c:out value="${log.getGameId()}"/></td>
+                    <td><c:out value="${log.getStart()}"/></td>
+                    <td><c:out value="${log.getGameDuration()}"/></td>
+                    <td><c:out value="${log.getNumberOfRounds()}"/></td>
+                    <td><c:out value="${log.getName()}"/></td>
+                    <td><c:out value="${log.getHasWon() ? 'Victory' : 'Loss'}"/></td>
+                </tr>
+            </c:forEach>
+        </c:when>
+        <c:otherwise>
+            <tr>
+                <td> colspan="6>No data available/></td>
 
+            </tr>
+        </c:otherwise>
+
+    </c:choose>
+
+
+    </tbody>
+
+</table>
 
 </body>
 </html>

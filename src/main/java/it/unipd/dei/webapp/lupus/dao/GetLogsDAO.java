@@ -1,7 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.PlaysJoinGame;
-import it.unipd.dei.webapp.lupus.resource.Role;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -36,8 +35,7 @@ public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
             pstmt.setString(1, username);
 
             rs = pstmt.executeQuery();
-            int i=0;
-            if (rs.next()) {
+            while (rs.next()) {
                 join.add(new PlaysJoinGame(
                         rs.getInt("game_id"),
                         rs.getTimestamp("start"),
@@ -47,10 +45,13 @@ public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
                         rs.getInt("with_who_wins"),
                         rs.getInt("who_wins")
                 ));
-                LOGGER.info(join.get(i++));
-            } else {
-                throw new RuntimeException("username specified is not present in the database.");
             }
+            String infos = "logs contains " + join.size() + " games";
+            LOGGER.info(infos);//join.get(i++));
+            //if (!rs.next()) {
+              //  throw new RuntimeException("username specified is not present in the database.");
+            //}
+
         } finally {
             if (rs != null) {
                 rs.close();

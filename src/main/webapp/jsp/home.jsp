@@ -13,6 +13,10 @@
 <h1>Logs</h1>
 <a href="<c:url value="/user/user1/logs"/>"> Logs </a>
 
+<h1>Statistics</h1>
+<a href="<c:url value="/user/user1/statistics"/>"> Statistics </a>
+
+
 <c:import url="/jsp/include/show-message.jsp"/>
 
 
