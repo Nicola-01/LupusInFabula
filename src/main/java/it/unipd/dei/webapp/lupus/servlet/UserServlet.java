@@ -165,29 +165,6 @@ public class UserServlet extends AbstractDatabaseServlet{
 
                 }
 
-            } else if (req.getParameterMap().containsKey("oldUsername") && req.getParameterMap().containsKey("newUsername")) {
-
-                String oldUsername = req.getParameter("oldUsername");
-                String newUsername = req.getParameter("newUsername");
-                LOGGER.info("Username: " + oldUsername + " --> trying to update the username");
-                int rs = new UpdateUsernameDAO(getConnection(), oldUsername, newUsername).access().getOutputParam();
-
-                if (rs == 1) {
-
-                    LOGGER.info("Player " + newUsername + "'s successfully updated the username");
-                    // TODO --> add the page linked to this servlet (for successfully updated username)
-                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
-
-                } else {
-
-                    m = new Message("Impossible to update the username");
-                    LOGGER.info("Impossible to update the old username to the new one");
-                    req.setAttribute("m", m);
-                    // TODO --> add the page linked to this servlet (for not successfully updated username)
-                    req.getRequestDispatcher("/jsp/...").forward(req, resp);
-
-                }
-
             } else if (req.getParameterMap().containsKey("oldEmail") && req.getParameterMap().containsKey("newEmail")) {
 
                 String oldEmail = req.getParameter("oldEmail");

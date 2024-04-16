@@ -32,9 +32,9 @@ public class UpdateEmailByUsernameDAO extends AbstractDAO<Integer> {
             pstmt.setString(2, username);
             pstmt.setString(3, oldEmail);
 
-            Player player = new SearchPlayerByEmailDAO(con, oldEmail).access().getOutputParam();
+            Player player = new SearchPlayerByEmailDAO(con, newEmail).access().getOutputParam();
 
-            if (player != null && player.getEmail().equals(newEmail)) {
+            if (player != null) {
                 LOGGER.info("Impossible to update the email because the new email already exists");
             } else {
 
