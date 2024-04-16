@@ -32,6 +32,8 @@ public final class Actions {
 	 */
 	public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
 
+	public static final String ADD_ACTIONS = "ADD_ACTIONS";
+
 	/**
 	 * This class can be neither instantiated nor sub-classed.
 	 */

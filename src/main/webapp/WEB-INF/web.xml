@@ -30,15 +30,15 @@
     </servlet>
 
     <servlet>
-        <servlet-name>GameSettingsServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.GameSettingsServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomeServlet</servlet-class>
     </servlet>
 
+
+    <servlet>
+        <servlet-name>GameDispatcherServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.GameDispatcherServlet</servlet-class>
+    </servlet>
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
@@ -53,40 +53,35 @@
     </servlet-mapping>
 
     <servlet-mapping>
-        <servlet-name>GameSettingsServlet</servlet-name>
-        <url-pattern>/game/settings</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>HomeServlet</servlet-name>
-        <url-pattern>/home</url-pattern>
+        <servlet-name>GameDispatcherServlet</servlet-name>
+        <url-pattern>/game/*</url-pattern>
     </servlet-mapping>
 
 
-    <filter>
-        <filter-name>LoginFilter</filter-name>
-        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>
-    </filter>
+<!--    <filter>-->
+<!--        <filter-name>LoginFilter</filter-name>-->
+<!--        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>-->
+<!--    </filter>-->
 
-    <filter>
-        <filter-name>GameMasterFilter</filter-name>
-        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>
-    </filter>
+<!--    <filter>-->
+<!--        <filter-name>GameMasterFilter</filter-name>-->
+<!--        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>-->
+<!--    </filter>-->
 
 
-    <filter-mapping>
-        <filter-name>LoginFilter</filter-name>
-        <url-pattern>/logout</url-pattern>
-        <url-pattern>/user/me</url-pattern>
-        <url-pattern>/user/friend</url-pattern>
-        <url-pattern>/game/settings</url-pattern>
-        <url-pattern>/home</url-pattern>
-    </filter-mapping>
+<!--    <filter-mapping>-->
+<!--        <filter-name>LoginFilter</filter-name>-->
+<!--        <url-pattern>/logout</url-pattern>-->
+<!--        <url-pattern>/user/me</url-pattern>-->
+<!--        <url-pattern>/user/friend</url-pattern>-->
+<!--        <url-pattern>/game/settings</url-pattern>-->
+<!--        <url-pattern>/home</url-pattern>-->
+<!--    </filter-mapping>-->
 
-    <filter-mapping>
-        <filter-name>GameMasterFilter</filter-name>
-        <url-pattern>/game/currentgame/master</url-pattern>
-        <url-pattern>/game/currentgame/log</url-pattern>
-    </filter-mapping>
+<!--    <filter-mapping>-->
+<!--        <filter-name>GameMasterFilter</filter-name>-->
+<!--        <url-pattern>/game/currentgame/master</url-pattern>-->
+<!--        <url-pattern>/game/currentgame/log</url-pattern>-->
+<!--    </filter-mapping>-->
 
 </web-app>
