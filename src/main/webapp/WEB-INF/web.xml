@@ -56,10 +56,10 @@
         <servlet-name>Rules</servlet-name>
         <url-pattern>/rules</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
+    <!--<servlet-mapping>
         <servlet-name>User</servlet-name>
         <url-pattern>/user/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
     <servlet-mapping>
         <servlet-name>GameSettingsServlet</servlet-name>
