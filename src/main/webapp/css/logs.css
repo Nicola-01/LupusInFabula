@@ -1,0 +1,20 @@
+/* Stile generale per il body */
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    background-color: #ff9913;
+}
+
+/* Stile per i paragrafi */
+p {
+    margin-bottom: 10px;
+}
+
+/* Stile per separare le informazioni */
+hr {
+    border: 0;
+    height: 12px;
+    /*background-color: #ccc;*/
+    background-color: darkorange;
+    margin: 125px 0;
+}

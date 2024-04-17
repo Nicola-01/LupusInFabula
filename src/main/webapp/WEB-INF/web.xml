@@ -39,6 +39,11 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomeServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>StatisticsLogsServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.StatisticsLogsServlet</servlet-class>
+    </servlet>
+
 
     <servlet>
         <servlet-name>GameDispatcherServlet</servlet-name>
@@ -65,6 +70,14 @@
     <servlet-mapping>
         <servlet-name>GameDispatcherServlet</servlet-name>
         <url-pattern>/game/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>StatisticsLogsServlet</servlet-name>
+        <url-pattern>/user/user1/logs</url-pattern>
+        <url-pattern>/user/user1/statistics</url-pattern>
+<!--        <url-pattern>/user/*/statistics</url-pattern>-->
+<!--        <url-pattern>/user/*/logs</url-pattern>-->
     </servlet-mapping>
 
 
