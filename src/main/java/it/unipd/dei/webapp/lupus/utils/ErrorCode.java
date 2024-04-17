@@ -2,7 +2,7 @@ package it.unipd.dei.webapp.lupus.utils;
 
 
 import jakarta.servlet.http.HttpServletResponse;
-//import org.json.JSONObject;
+import org.json.JSONObject;
 
 public enum ErrorCode {
 
@@ -67,12 +67,13 @@ public enum ErrorCode {
     public String getErrorMessage() {
         return errorMessage;
     }
-//    public JSONObject toJSON() {
-//        JSONObject data = new JSONObject();
-//        data.put("code", errorCode);
-//        data.put("message", errorMessage);
-//        JSONObject info = new JSONObject();
-//        info.put("error", data);
-//        return info;
-//    }
+
+    public JSONObject toJSON() {
+        JSONObject data = new JSONObject();
+        data.put("code", errorCode);
+        data.put("message", errorMessage);
+        JSONObject info = new JSONObject();
+        info.put("error", data);
+        return info;
+    }
 }

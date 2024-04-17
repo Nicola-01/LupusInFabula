@@ -7,6 +7,7 @@ import it.unipd.dei.webapp.lupus.resource.RoleCardinality;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +16,8 @@ import java.util.List;
 
 public class GameSettingsPostRR extends AbstractRR {
 
-    public GameSettingsPostRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.ADD_ACTIONS, req, res, con);
+    public GameSettingsPostRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.ADD_ACTIONS, req, res, ds);
     }
 
     @Override

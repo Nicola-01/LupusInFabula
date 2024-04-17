@@ -8,6 +8,7 @@ import it.unipd.dei.webapp.lupus.resource.ResourceList;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -17,8 +18,8 @@ public class PlayerGameInfoRR extends AbstractRR {
 
     private final int gameID;
 
-    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, Connection con, int gameID) {
-        super(Actions.ADD_ACTIONS, req, res, con);
+    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
+        super(Actions.ADD_ACTIONS, req, res, ds);
         this.gameID = gameID;
     }
 
@@ -35,7 +36,7 @@ public class PlayerGameInfoRR extends AbstractRR {
             //final int gameID = Integer.parseInt(path.substring(1));
 
             // creates a new DAO for accessing the database and lists the players of a match
-            el = new GetGameInfoDAO(con, this.gameID).access().getOutputParam();
+            el = new GetGameInfoDAO(ds.getConnection(), this.gameID).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");

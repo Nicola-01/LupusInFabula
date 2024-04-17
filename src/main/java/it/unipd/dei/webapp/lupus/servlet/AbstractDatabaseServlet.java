@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.ServletConfig;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -11,6 +12,7 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -33,7 +35,6 @@ public abstract class AbstractDatabaseServlet extends HttpServlet {
      *
      * @param config a {@code ServletConfig} object containing the servlet's configuration and initialization
      *               parameters.
-     *
      * @throws ServletException if an exception has occurred that interferes with the servlet's normal operation
      */
     public void init(ServletConfig config) throws ServletException {
@@ -66,7 +67,6 @@ public abstract class AbstractDatabaseServlet extends HttpServlet {
      * Returns a {@link  Connection} for accessing the database.
      *
      * @return a {@link Connection} for accessing the database
-     *
      * @throws SQLException if anything goes wrong in obtaining the connection.
      */
     protected final Connection getConnection() throws SQLException {
@@ -78,6 +78,27 @@ public abstract class AbstractDatabaseServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Returns the {@code DataSource} for managing the connection pool to the database.
+     *
+     * @return the {@code DataSource} for managing the connection pool to the database
+     */
+    protected final DataSource getDataSource() {
+//        logger = LogManager.getLogger(this.getClass());
+        return ds;
+    }
+
+    /**
+     * Write on the Output Streaming of the HTTP Response an {@code ErrorCode}.
+     *
+     * @param res the HTTP response.
+     * @param ec  the {@code ErrorCode} to write in the streaming output.
+     * @throws IOException if any error occurs in the client/server communication.
+     */
+    public void writeError(HttpServletResponse res, ErrorCode ec) throws IOException {
+        res.setStatus(ec.getHTTPCode());
+        res.getWriter().write(ec.toJSON().toString());
+    }
 
 }
 

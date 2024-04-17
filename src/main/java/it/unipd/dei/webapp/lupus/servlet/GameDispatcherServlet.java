@@ -83,10 +83,10 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
         if(path.equals("/settings")){
             switch(method){
                 case "GET":
-                    // new GameSettingsGetRR(req, res, getConnection()).serve();
+                    new GameSettingsGetRR(req, res, getDataSource()).serve();
                     break;
                 case "POST":
-                    new GameSettingsPostRR(req, res, getConnection()).serve();
+                    new GameSettingsPostRR(req, res, getDataSource()).serve();
                     break;
                 default:
                     LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method); // TODO cambiare errore
@@ -109,7 +109,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
                 m.toJSON(res.getOutputStream());
             }
             else
-                new GameActionsRR(req, res, getConnection()).serve();
+                new GameActionsRR(req, res, getDataSource()).serve();
         }
         // /game/log/{gameID}
         // /game/log/{gameID}/master
@@ -170,7 +170,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
             //else if(path.endsWith("/master"))
                  // new GameStatusRR(req, res, getConnection()).serve();
             else
-                new PlayerGameInfoRR(req, res, getConnection(), Integer.parseInt(gameID)).serve();
+                new PlayerGameInfoRR(req, res, getDataSource(), Integer.parseInt(gameID)).serve();
         }
         return true;
     }

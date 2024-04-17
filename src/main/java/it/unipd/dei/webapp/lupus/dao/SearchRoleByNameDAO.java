@@ -33,7 +33,7 @@ public class SearchRoleByNameDAO extends AbstractDAO<Role> {
 
             while (rs.next()) {
                 role = new Role(rs.getInt("id"), rs.getString("name"), rs.getInt("type"),
-                        rs.getString("with_who_wins"), rs.getInt("max_number"), rs.getString("description"));
+                        rs.getInt("with_who_wins"), rs.getInt("max_number"), rs.getString("description"));
             }
 
             LOGGER.info("Role %s found", name);

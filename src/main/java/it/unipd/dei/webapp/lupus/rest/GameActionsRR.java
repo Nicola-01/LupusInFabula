@@ -4,14 +4,15 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.util.List;
 
 public class GameActionsRR extends AbstractRR {
 
-    public GameActionsRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.ADD_ACTIONS, req, res, con);
+    public GameActionsRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.ADD_ACTIONS, req, res, ds);
     }
 
     @Override

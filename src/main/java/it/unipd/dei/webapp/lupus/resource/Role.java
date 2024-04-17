@@ -1,15 +1,19 @@
 package it.unipd.dei.webapp.lupus.resource;
 
-public class Role {
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.OutputStream;
+
+public class Role extends AbstractResource {
 
     private final int id;
     private final String name;
     private final int type;
-    private final String with_who_wins;
+    private final int with_who_wins;
     private final int max_number;
     private final String description;
 
-    public Role(int id, String name, int type, String with_who_wins, int maxNumber, String description) {
+    public Role(int id, String name, int type, int with_who_wins, int maxNumber, String description) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -18,13 +22,15 @@ public class Role {
         this.description = description;
     }
 
-    public int getId() { return id; }
+    public int getId() {
+        return id;
+    }
 
     public String getName() {
         return name;
     }
 
-    public String getWith_who_wins() {
+    public int getWith_who_wins() {
         return with_who_wins;
     }
 
@@ -38,5 +44,24 @@ public class Role {
 
     public int getType() {
         return type;
+    }
+
+    @Override
+    protected void writeJSON(OutputStream out) throws Exception {
+
+        final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
+
+        jg.writeStartObject();
+        jg.writeFieldName("role");
+        jg.writeStartObject();
+        jg.writeNumberField("id", id);
+        jg.writeStringField("name", name);
+        jg.writeNumberField("type", type);
+        jg.writeNumberField("with_who_wins", with_who_wins);
+        jg.writeNumberField("max_number", max_number);
+        jg.writeStringField("description", description);
+        jg.writeEndObject();
+        jg.writeEndObject();
+        jg.flush();
     }
 }
