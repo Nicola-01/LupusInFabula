@@ -17,12 +17,25 @@ import java.sql.SQLException;
 public abstract class AbstractDatabaseServlet extends HttpServlet {
 
     /**
-     * The connection pool to the database.
+     * A LOGGER available for all the subclasses.
      */
-    private DataSource ds;
     protected static final Logger LOGGER = LogManager.getLogger(AbstractDatabaseServlet.class,
             StringFormatterMessageFactory.INSTANCE);
 
+    /**
+     * The connection pool to the database.
+     */
+    private DataSource ds;
+
+
+    /**
+     * Gets the {@code DataSource} for managing the connection pool to the database.
+     *
+     * @param config a {@code ServletConfig} object containing the servlet's configuration and initialization
+     *               parameters.
+     *
+     * @throws ServletException if an exception has occurred that interferes with the servlet's normal operation
+     */
     public void init(ServletConfig config) throws ServletException {
 
         // the JNDI lookup context
@@ -49,6 +62,13 @@ public abstract class AbstractDatabaseServlet extends HttpServlet {
         LOGGER.info("Connection pool to the database pool successfully released.");
     }
 
+    /**
+     * Returns a {@link  Connection} for accessing the database.
+     *
+     * @return a {@link Connection} for accessing the database
+     *
+     * @throws SQLException if anything goes wrong in obtaining the connection.
+     */
     protected final Connection getConnection() throws SQLException {
         try {
             return ds.getConnection();

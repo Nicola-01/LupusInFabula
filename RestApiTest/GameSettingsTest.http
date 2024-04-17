@@ -126,6 +126,7 @@ knight = 1 &
 jester = 1 &
 hamster = 1
 
+
 ### PLAYER ALREADY IN GAME
 
 POST http://localhost:8080/lupus/game/settings HTTP/1.1
