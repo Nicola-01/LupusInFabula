@@ -5,11 +5,11 @@ public class Role {
     private final int id;
     private final String name;
     private final int type;
-    private final String with_who_wins;
+    private final int with_who_wins;
     private final int max_number;
     private final String description;
 
-    public Role(int id, String name, int type, String with_who_wins, int maxNumber, String description) {
+    public Role(int id, String name, int type, int with_who_wins, int maxNumber, String description) {
         this.id = id;
         this.name = name;
         this.type = type;
@@ -24,7 +24,7 @@ public class Role {
         return name;
     }
 
-    public String getWith_who_wins() {
+    public int getWith_who_wins() {
         return with_who_wins;
     }
 
