@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
-    private static final String STATEMENT = "SELECT * FROM play_as_in WHERE game_id = ?";
+    private static final String STATEMENT = "SELECT * FROM plays_as_in WHERE game_id = ?";
     private final int gameID;
 
     public GetGameInfoDAO(final Connection con, final int gameID){
@@ -40,7 +40,8 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
                 ));
             }
             String infos = "logs contains " + join.size() + " play_as_in";
-            LOGGER.info(infos);//join.get(i++));
+            System.out.println(infos);
+            LOGGER.info(infos);
         } finally {
             if (rs != null) {
                 rs.close();
@@ -50,5 +51,6 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
             }
         }
         this.outputParam = join;
+        System.out.println("Sent");
     }
 }

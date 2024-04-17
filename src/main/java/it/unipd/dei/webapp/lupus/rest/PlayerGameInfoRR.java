@@ -15,8 +15,11 @@ import java.util.List;
 
 public class PlayerGameInfoRR extends AbstractRR {
 
-    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
+    private final int gameID;
+
+    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, Connection con, int gameID) {
         super(Actions.ADD_ACTIONS, req, res, con);
+        this.gameID = gameID;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class PlayerGameInfoRR extends AbstractRR {
             //final int gameID = Integer.parseInt(path.substring(1));
 
             // creates a new DAO for accessing the database and lists the players of a match
-            el = new GetGameInfoDAO(con, 10).access().getOutputParam();
+            el = new GetGameInfoDAO(con, this.gameID).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");

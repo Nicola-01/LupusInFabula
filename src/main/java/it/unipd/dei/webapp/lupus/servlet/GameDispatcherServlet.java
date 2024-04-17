@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class GameDispatcherServlet extends AbstractDatabaseServlet{
 
@@ -138,6 +140,16 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
         // /game/{gameID}
         // /game/{gameID}/master
         else{
+            // extract gameID
+            Pattern pattern = Pattern.compile("/(\\\\d+)(?:/\\\\w+)?");
+            Matcher matcher = pattern.matcher(path);
+            String gameID = "-1";
+            if (matcher.find()) {
+                gameID = matcher.group(1);
+            } else {
+                LOGGER.warn("gameID not found.");
+            }
+
             path = path.substring(path.indexOf("/") + 1);
             if (!req.getMethod().equals("GET")) {
                 LOGGER.warn("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master: %s.", method);
@@ -147,18 +159,18 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
                 res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 m.toJSON(res.getOutputStream());
             }
-            else if (path.contains("/") && !path.endsWith("/master")) {
+            /*else if (path.contains("/") && !path.endsWith("/master")) {
                 LOGGER.warn("Wrong format for URI /game/{gameID}/master: URI doesn't end with /master.");
 
                 m = new Message("Wrong format for URI /game/{gameID}/master.", "E4A5", // TODO cambiare errore
                         String.format("Requested URI %s, but required /game/{gameID}/master", req.getRequestURI()));
                 res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 m.toJSON(res.getOutputStream());
-            }
-            else if(path.endsWith("/master"))
-                ; // new GameStatusRR(req, res, getConnection()).serve();
+            }*/
+            //else if(path.endsWith("/master"))
+                 // new GameStatusRR(req, res, getConnection()).serve();
             else
-                ; // new GameStatusMasterRR(req, res, getConnection()).serve();
+                new PlayerGameInfoRR(req, res, getConnection(), Integer.parseInt(gameID)).serve();
         }
         return true;
     }
