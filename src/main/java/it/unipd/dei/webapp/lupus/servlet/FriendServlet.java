@@ -111,7 +111,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
                 }
             }
             req.setAttribute("message", m);
-            req.getRequestDispatcher("/jsp/home.jsp").forward(req, res);
+            //req.getRequestDispatcher("/jsp/friend.jsp").forward(req, res);
 
         } catch (SQLException e) { // (SQLException | ServletException e)
             m = new Message("Cannot search for friends: unexpected error while accessing the database.", "E200",
@@ -149,7 +149,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
                 }
             }
             req.setAttribute("message", m);
-            req.getRequestDispatcher("/jsp/home.jsp").forward(req, res);
+            //req.getRequestDispatcher("/jsp/friend.jsp").forward(req, res);
         } catch (SQLException e) { // (SQLException | ServletException e)
             m = new Message("Cannot search for friends: unexpected error while accessing the database.", "E200",
                     e.getMessage());
