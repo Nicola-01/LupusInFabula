@@ -18,6 +18,11 @@
         <res-auth>Container</res-auth>
     </resource-ref>
 
+    <servlet>
+        <servlet-name>Friend</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendServlet</servlet-class>
+    </servlet>
+
 
     <servlet>
         <servlet-name>Rules</servlet-name>
@@ -92,5 +97,10 @@
         <url-pattern>/game/currentgame/master</url-pattern>
         <url-pattern>/game/currentgame/log</url-pattern>
     </filter-mapping>
+
+    <servlet-mapping>
+        <servlet-name>Friend</servlet-name>
+        <url-pattern>/user/me/friend</url-pattern>
+    </servlet-mapping>
 
 </web-app>
