@@ -8,5 +8,7 @@
 <h1>HOME PAGE</h1>
 <a href="<c:url value="/rules"/>"> Rules </a>
 <c:import url="/jsp/include/show-message.jsp"/>
+<a href="<c:url value="/user/me/friend"/>"> Friend </a>
+<c:import url="/jsp/include/show-message.jsp"/>
 </body>
 </html>

@@ -3,7 +3,7 @@ package it.unipd.dei.webapp.lupus.dao;
 import java.sql.*;
 
 public class AddFriendDAO extends AbstractDAO<Integer>{
-    private static final String STATEMENT = "INSERT INTO Is_Friend_With (player_username, friend_username, date) VALUE(?,?,?)";
+    private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH VALUES (?,?,?)";
 
     private final String player_username;
     private final String friend_username;
@@ -17,7 +17,7 @@ public class AddFriendDAO extends AbstractDAO<Integer>{
     }
 
     @Override
-    public final void doAccess() throws SQLException {
+    public void doAccess() throws SQLException {
         PreparedStatement pstmt = null;
         int rs = 0;
 
