@@ -41,7 +41,8 @@ public class PlayerGameInfoRR extends AbstractRR {
                 LOGGER.info("Players successfully listed.");
 
                 res.setStatus(HttpServletResponse.SC_OK);
-                new ResourceList(el).toJSON(res.getOutputStream()); //it SHOULD work, but it's not tested yet
+                new ResourceList<PlaysAsIn>(el).toJSON(res.getOutputStream());
+
             } else { // it should not happen
                 LOGGER.error("Fatal error while listing players.");
 

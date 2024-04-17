@@ -39,8 +39,7 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
                         rs.getFloat("duration_of_life")
                 ));
             }
-            String infos = "logs contains " + join.size() + " play_as_in";
-            System.out.println(infos);
+            String infos = "logs contains " + join.size() + " plays_as_in";
             LOGGER.info(infos);
         } finally {
             if (rs != null) {
@@ -51,6 +50,5 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
             }
         }
         this.outputParam = join;
-        System.out.println("Sent");
     }
 }

@@ -46,7 +46,6 @@ public final class ResourceList<T extends Resource> extends AbstractResource {
             if (firstElement) {
                 r.toJSON(out);
                 jg.flush();
-
                 firstElement = false;
             } else {
                 jg.writeRaw(',');

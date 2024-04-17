@@ -1,6 +1,11 @@
 package it.unipd.dei.webapp.lupus.resource;
 
-public class PlaysAsIn {
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.IOException;
+import java.io.OutputStream;
+
+public class PlaysAsIn extends AbstractResource {
 
     private final String playerUsername;
     private final int gameId;
@@ -23,6 +28,26 @@ public class PlaysAsIn {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
         this.roleId = roleId;
+    }
+
+    @Override
+    protected void writeJSON(final OutputStream out) throws IOException {
+        final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
+
+        jg.writeStartObject();
+
+        jg.writeFieldName("user");
+        jg.writeStartObject();
+
+        jg.writeStringField("username", this.playerUsername); // Write the username field
+        jg.writeStringField("gameID", Integer.toString(this.gameId));
+        jg.writeStringField("roleID", Integer.toString(this.roleId));
+
+        jg.writeEndObject();
+
+        jg.writeEndObject();
+
+        jg.flush();
     }
 
     public String getPlayerUsername() {
