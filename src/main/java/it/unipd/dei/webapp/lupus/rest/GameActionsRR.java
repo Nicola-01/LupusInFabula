@@ -19,9 +19,7 @@ public class GameActionsRR extends AbstractRR {
 
         LOGGER.info("Handling game actions");
 
-        List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream());
-
-
+        List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo da gestire throws IOException
         for (GameAction gameAction : gameActions) {
             LOGGER.info(gameAction.getPlayer() + " " +
                     gameAction.getRole() + " " +

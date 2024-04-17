@@ -84,7 +84,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
                     // new GameSettingsGetRR(req, res, getConnection()).serve();
                     break;
                 case "POST":
-                    // new GameSettingsPostRR(req, res, getConnection()).serve();
+                    new GameSettingsPostRR(req, res, getConnection()).serve();
                     break;
                 default:
                     LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method); // TODO cambiare errore

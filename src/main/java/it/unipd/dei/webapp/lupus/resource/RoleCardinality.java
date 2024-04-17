@@ -10,39 +10,33 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+public class RoleCardinality extends AbstractResource {
 
-public class GameAction extends AbstractResource {
+    private static final String JSON_NAME = "roleCardinality";
 
-    private static final String JSON_NAME = "gameAction";
-
-    private final String player;
     private final String role;
-    private final String target;
+    private final int carnality;
 
-    public GameAction(String player, String role, String target) {
-        this.player = player;
+
+    public RoleCardinality(String role, int carnality) {
         this.role = role;
-        this.target = target;
-    }
-
-    public String getPlayer() {
-        return player;
+        this.carnality = carnality;
     }
 
     public String getRole() {
         return role;
     }
 
-    public String getTarget() {
-        return target;
+    public int getCarnality() {
+        return carnality;
     }
 
     @Override
     protected void writeJSON(OutputStream out) throws Exception {
     }
 
-    public static List<GameAction> fromJSON(final InputStream in) throws IOException {
-        List<GameAction> gameActions = new ArrayList<>();
+    public static List<RoleCardinality> fromJSON(final InputStream in) throws IOException {
+        List<RoleCardinality> roleCardinalities = new ArrayList<>();
 
         try {
             final JsonParser jp = JSON_FACTORY.createParser(in);
@@ -53,61 +47,53 @@ public class GameAction extends AbstractResource {
 
                 // there are no more events
                 if (jp.nextToken() == null) {
-                    LOGGER.error("No GameAction object found in the stream.");
-                    throw new EOFException("Unable to parse JSON: no GameAction object found.");
+                    LOGGER.error("No GameSetting object found in the stream.");
+                    throw new EOFException("Unable to parse JSON: no GameSetting object found.");
                 }
             }
 
             jp.nextToken();
             if (jp.getCurrentToken() == JsonToken.START_ARRAY) {
                 while (jp.nextToken() != JsonToken.END_ARRAY) {
-                    gameActions.add(handleGameAction(jp));
+                    roleCardinalities.add(handleGameSettingJSON(jp));
                 }
             } else
-                gameActions.add(handleGameAction(jp));
+                roleCardinalities.add(handleGameSettingJSON(jp));
 
-            return gameActions;
+            return roleCardinalities;
 
         } catch (IOException e) {
-            LOGGER.error("Unable to parse an GameAction object from JSON.", e);
+            LOGGER.error("Unable to parse an GameSetting object from JSON.", e);
             throw e;
         }
     }
 
-    private static GameAction handleGameAction(final JsonParser jp) throws IOException {
-
-        String jPlayer = null;
+    private static RoleCardinality handleGameSettingJSON(JsonParser jp) throws IOException {
         String jRole = null;
-        String jTarget = null;
+        int jCarnality = -1;
 
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
 
                 switch (jp.getCurrentName()) {
-                    case "player":
-                        jp.nextToken();
-                        jPlayer = jp.getText();
-                        break;
                     case "role":
                         jp.nextToken();
                         jRole = jp.getText();
                         break;
-                    case "target":
+                    case "cardinality":
                         jp.nextToken();
-                        jTarget = jp.getText();
+                        jCarnality = jp.getIntValue();
                         break;
                     default:
                         // Handle unexpected fields if needed
                         break;
                 }
             }
-
         }
-        if (jPlayer == null || jRole == null || jTarget == null) {
-            throw new IOException("Unable to parse JSON: GameAction contains null value.");
+        if (jRole == null || jCarnality == -1) {
+            throw new IOException("Unable to parse JSON: GameSetting contains null value.");
         }
 
-        return new GameAction(jPlayer, jRole, jTarget);
+        return new RoleCardinality(jRole, jCarnality);
     }
-
 }
