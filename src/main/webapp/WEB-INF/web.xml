@@ -18,6 +18,11 @@
         <res-auth>Container</res-auth>
     </resource-ref>
 
+    <servlet>
+        <servlet-name>Friend</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendServlet</servlet-class>
+    </servlet>
+
 
     <servlet>
         <servlet-name>Rules</servlet-name>
