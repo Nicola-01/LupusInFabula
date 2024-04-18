@@ -1,13 +1,13 @@
 package it.unipd.dei.webapp.lupus.utils;
 
-public enum RoleId {
+public enum GameRole {
     MASTER(-1, "master"),
-    WOLF(20, "wolf");
+    WOLF(16, "wolf");
 
     private final int id;
     private final String name;
 
-    RoleId(int id, String name) {
+    GameRole(int id, String name) {
         this.id = id;
         this.name = name;
     }

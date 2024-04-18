@@ -35,7 +35,7 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
                         rs.getInt("game_id"),
                         rs.getInt("role_id"),
                         rs.getInt("round_of_death"),
-                        rs.getString("phase_of_death"),
+                        rs.getInt("phase_of_death"),
                         rs.getFloat("duration_of_life")
                 ));
             }

@@ -10,7 +10,6 @@
         <welcome-file>jsp/home.jsp</welcome-file>
     </welcome-file-list>
 
-
     <resource-ref>
         <description>Connection pool to the database</description>
         <res-ref-name>jdbc/lupusdb</res-ref-name>

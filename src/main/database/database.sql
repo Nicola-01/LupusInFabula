@@ -55,43 +55,6 @@ COMMENT ON COLUMN IS_FRIEND_WITH.friend_username IS 'The username of the player 
 COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was established.';
 
 
-
--- #################################################################################################
--- ## Creation of enumeration for faction                                                         ##
--- #################################################################################################
---
--- This enumeration represents the factions that are present in the game.
---  -1 stands for Master,
---   0 for wolves,
---   1 for farmers,
---   2 for itself.
-
--- CREATE TYPE faction AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.';
-
--- #################################################################################################
--- ## Creation of enumeration for alignment                                                       ##
--- #################################################################################################
---
--- This enumeration represents the alignments that a role can be.
---  -1 stands for Master,
---   0 for evil,
---   1 for good,
---   2 for neutral.
-
--- CREATE TYPE alignment AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible alignments that a role can be in the game.';
-
 -- #################################################################################################
 -- ## Creation of the table Role                                                                  ##
 -- #################################################################################################
@@ -114,26 +77,6 @@ COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
 COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
-
-
-
--- #################################################################################################
--- ## Creation of enumeration for winning faction                                                 ##
--- #################################################################################################
---
--- This enumeration represents the possible factions that can win a game.
---  -1 stands for none,
---   0 for wolves,
---   1 for farmers,
---   2 for other.
-
--- CREATE TYPE winning_faction AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible winning factions in the game.';
 
 -- #################################################################################################
 -- ## Creation of the table Game                                                                  ##
@@ -160,21 +103,6 @@ COMMENT ON COLUMN Game.number_of_rounds IS 'The total number of rounds played in
 
 
 
--- #################################################################################################
--- ## Creation of enumeration for phase                                                           ##
--- #################################################################################################
---
--- This enumeration represents the phases that are present in the game.
---   M stands for Master,
---   N for night,
---   D for day,
-
-CREATE TYPE cycle_phase AS ENUM (
-    'M',
-    'N',
-    'D'
-    );
-
 -- COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 
 -- #################################################################################################
@@ -189,7 +117,7 @@ CREATE TABLE PLAYS_AS_IN
     game_id          SERIAL REFERENCES Game (ID),
     role_id          SERIAL REFERENCES Role (ID),
     round_of_death   INTEGER,
-    phase_of_death   cycle_phase,
+    phase_of_death   SMALLINT,
     duration_of_life FLOAT,
     PRIMARY KEY (player_username, game_id, role_id)
 );

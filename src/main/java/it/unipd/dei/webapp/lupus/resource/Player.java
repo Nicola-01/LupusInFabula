@@ -65,8 +65,6 @@ public class Player extends AbstractResource {
             // a token element, advance to the next element (if any)
             while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !JSON_NAME.equals(jp.getCurrentName())) { //TODO controllare il nome
 
-                LOGGER.debug(jp.getCurrentName());
-                LOGGER.info(jp.getCurrentName());
                 // there are no more events
                 if (jp.nextToken() == null) {
                     LOGGER.error("No Player object found in the stream.");

@@ -47,8 +47,8 @@ public class RoleCardinality extends AbstractResource {
 
                 // there are no more events
                 if (jp.nextToken() == null) {
-                    LOGGER.error("No GameSetting object found in the stream.");
-                    throw new EOFException("Unable to parse JSON: no GameSetting object found.");
+                    LOGGER.error("No " + JSON_NAME + " object found in the stream.");
+                    throw new EOFException("Unable to parse JSON: no " + JSON_NAME + " object found.");
                 }
             }
 
@@ -63,7 +63,7 @@ public class RoleCardinality extends AbstractResource {
             return roleCardinalities;
 
         } catch (IOException e) {
-            LOGGER.error("Unable to parse an GameSetting object from JSON.", e);
+            LOGGER.error("Unable to parse an " + JSON_NAME + " object from JSON.", e);
             throw e;
         }
     }
@@ -90,6 +90,7 @@ public class RoleCardinality extends AbstractResource {
                 }
             }
         }
+//        LOGGER.info("roleCardinality: " + jRole + " " + jCarnality);
         if (jRole == null || jCarnality == -1) {
             throw new IOException("Unable to parse JSON: GameSetting contains null value.");
         }

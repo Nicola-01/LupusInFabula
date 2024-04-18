@@ -9,23 +9,62 @@ password = password123
 ### PLAYER NOT EXIST
 
 POST http://localhost:8080/lupus/game/settings HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
+Content-Type: application/json
 
-player1 = user1 &
-player2 = user2 &
-player3 = user3 &
-player4 = user4 &
-player5 = user5 &
-player6 = user6 &
-player7 = user7 &
-player8 = user8 &
-player9 = user42 &
-wolf = 2 &
-farmer = 2 &
-seer = 1 &
-knight = 1 &
-jester = 1 &
-hamster = 1
+{
+  "player": [
+    {
+      "username": "user1"
+    },
+    {
+      "username": "user2"
+    },
+    {
+      "username": "user3"
+    },
+    {
+      "username": "user4"
+    },
+    {
+      "username": "user5"
+    },
+    {
+      "username": "user6"
+    },
+    {
+      "username": "user7"
+    },
+    {
+      "username": "user8"
+    }
+  ],
+  "roleCardinality": [
+    {
+      "role": "wolf",
+      "cardinality" : 2
+    },
+    {
+      "role": "farmer",
+      "cardinality" : 2
+    },
+    {
+      "role": "seer",
+      "cardinality" : 1
+    },
+    {
+      "role": "knight",
+      "cardinality" : 1
+    },
+    {
+      "role": "jester",
+      "cardinality" : 1
+    },
+    {
+      "role": "hamster",
+      "cardinality" : 1
+    }
+  ]
+}
 
 ### NOT VALID PARAMETER
 

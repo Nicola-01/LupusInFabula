@@ -11,11 +11,11 @@ public class PlaysAsIn extends AbstractResource {
     private final int gameId;
     private final int roleId;
     private int roundOfDeath;
-    private String phaseOfDeath;
+    private int phaseOfDeath;
     private float durationOfLife;
 
     public PlaysAsIn(final String playerUsername, final int gameId, final int roleId,
-                     final int roundOfDeath, final String phaseOfDeath, final float durationOfLife) {
+                     final int roundOfDeath, final int phaseOfDeath, final float durationOfLife) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
         this.roleId = roleId;
@@ -36,12 +36,12 @@ public class PlaysAsIn extends AbstractResource {
 
         jg.writeStartObject();
 
-        jg.writeFieldName("user");
+        jg.writeFieldName("playsAsIn");
         jg.writeStartObject();
 
         jg.writeStringField("username", this.playerUsername); // Write the username field
-        jg.writeStringField("gameID", Integer.toString(this.gameId));
-        jg.writeStringField("roleID", Integer.toString(this.roleId));
+        jg.writeNumberField("gameID", this.gameId);
+        jg.writeNumberField("roleID", this.roleId);
 
         jg.writeEndObject();
 
@@ -66,7 +66,7 @@ public class PlaysAsIn extends AbstractResource {
         return roundOfDeath;
     }
 
-    public String getPhaseOfDeath() {
+    public int getPhaseOfDeath() {
         return phaseOfDeath;
     }
 

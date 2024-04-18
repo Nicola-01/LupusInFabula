@@ -29,7 +29,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
 
         try {
             publicID = generatePublicID(roles);
-            LOGGER.info("Generated public id " + publicID);
+//            LOGGER.info("Generated public id " + publicID);
 
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);
             pstmt.setString(1, publicID);
@@ -40,7 +40,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getTime("start"));
+                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getDate("start"));
             }
         } finally {
             if (pstmt != null) {
@@ -72,8 +72,6 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             randomID = roles.get(role1).getName() + "-" +
                     roles.get(role2).getName() + "-" +
                     roles.get(role3).getName();
-
-            LOGGER.info(STATEMENT_CHECK_PUBLICID + ": " + randomID);
 
             pstmt = con.prepareStatement(STATEMENT_CHECK_PUBLICID);
             pstmt.setString(1, randomID);

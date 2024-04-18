@@ -3,10 +3,9 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
-import it.unipd.dei.webapp.lupus.utils.RoleId;
+import it.unipd.dei.webapp.lupus.utils.GameRole;
 import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -224,12 +223,12 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
         Map<Integer, Integer> type = new HashMap<>(); // roleType it's the key
         int totalRolesNumber = 0;
         for (Role role : roles) {
-            if (role.getName().equals(RoleId.MASTER.getName())) continue;
+            if (role.getName().equals(GameRole.MASTER.getName())) continue;
 
             int cardinality = selectedRoles.get(role.getName());
             if (cardinality < 0 || cardinality > role.getMax_number()) // invalid role cardinality
                 return false;
-            if (role.getName().equals(RoleId.WOLF.getName()) && cardinality == 0) // at least one wolf
+            if (role.getName().equals(GameRole.WOLF.getName()) && cardinality == 0) // at least one wolf
                 return false;
             type.put(role.getType(), cardinality);
             totalRolesNumber += cardinality;
