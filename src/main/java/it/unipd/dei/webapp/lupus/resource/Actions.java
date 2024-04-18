@@ -34,7 +34,17 @@ public final class Actions {
 
 	public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
-	/**
+    /**
+     * The deletion of a friend
+     */
+    public static final String DELETE_FRIEND = "DELETE_FRIEND";
+
+    /**
+     *  The list of all the friends
+     */
+    public static final String LIST_FRIENDS = "LIST_FRIENDS";
+
+    /**
 	 * This class can be neither instantiated nor sub-classed.
 	 */
 	private Actions() {
