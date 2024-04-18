@@ -7,8 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GameDispatcherServlet extends AbstractDatabaseServlet{
 
@@ -141,16 +139,20 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
         // /game/{gameID}/master
         else{
             // extract gameID
-            Pattern pattern = Pattern.compile("/(\\\\d+)(?:/\\\\w+)?");
-            Matcher matcher = pattern.matcher(path);
+            // right now the path is something like /{idgame}/words
+            // or it could be /{idgame}
+            int i = 1;
+            char c = path.charAt(i);
             String gameID = "-1";
-            if (matcher.find()) {
-                gameID = matcher.group(1);
-            } else {
-                LOGGER.warn("gameID not found.");
+            while((c >= '0' && c <= '9') && i < path.length() )
+            {
+                if(i == 1) gameID = "";
+                gameID = gameID + c;
+                i++;
+                if(i < path.length()) c = path.charAt(i);
             }
+            LOGGER.info("gameID="+gameID);
 
-            path = path.substring(path.indexOf("/") + 1);
             if (!req.getMethod().equals("GET")) {
                 LOGGER.warn("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master: %s.", method);
 

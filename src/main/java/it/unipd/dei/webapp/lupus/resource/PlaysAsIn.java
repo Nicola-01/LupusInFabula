@@ -34,9 +34,9 @@ public class PlaysAsIn extends AbstractResource {
     protected void writeJSON(final OutputStream out) throws IOException {
         final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
 
-        jg.writeStartObject();
+        //jg.writeStartObject();
 
-        jg.writeFieldName("playsAsIn");
+        //jg.writeFieldName("playsAsIn");
         jg.writeStartObject();
 
         jg.writeStringField("username", this.playerUsername); // Write the username field
@@ -45,7 +45,7 @@ public class PlaysAsIn extends AbstractResource {
 
         jg.writeEndObject();
 
-        jg.writeEndObject();
+        //jg.writeEndObject();
 
         jg.flush();
     }
