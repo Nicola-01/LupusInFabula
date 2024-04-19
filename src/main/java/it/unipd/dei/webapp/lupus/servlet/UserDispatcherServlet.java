@@ -74,11 +74,11 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
                 switch (method) {
                     case "PUT":
-                        //new UserMePutRR(req, resp, getConnection()).serve();
+                        //new UserMePutRR(req, resp, getConnection()).serve(); // TODO: Jacopo
                         LOGGER.info("Updating user");
                         break;
                     case "DELETE":
-                        //new UserMeDeleteRR(req, resp, getConnection()).serve();
+                        //new UserMeDeleteRR(req, resp, getConnection()).serve(); // TODO: Jacopo
                         LOGGER.info("Deleting user");
                         break;
                     default:
@@ -138,7 +138,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         }
         //possible URI: /user/{username}
         else if (new SearchPlayerByUsernameDAO(getConnection(), uri.substring(uri.lastIndexOf("/") + 1)).access().getOutputParam() != null) {
-            //new UserUsernameGetRR(req, resp, getConnection()).serve();
+            //new UserUsernameGetRR(req, resp, getConnection()).serve(); // TODO: Jacopo
             LOGGER.info("Getting username (uri: /user/username)");
         } else {
 
