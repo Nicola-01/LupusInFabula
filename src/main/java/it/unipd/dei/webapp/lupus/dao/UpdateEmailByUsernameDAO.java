@@ -32,6 +32,7 @@ public class UpdateEmailByUsernameDAO extends AbstractDAO<Integer> {
             pstmt.setString(2, username);
             pstmt.setString(3, oldEmail);
 
+            LOGGER.info("Searching for an already existing user with the new email: " + newEmail);
             Player player = new SearchPlayerByEmailDAO(con, newEmail).access().getOutputParam();
 
             if (player != null) {
@@ -41,9 +42,9 @@ public class UpdateEmailByUsernameDAO extends AbstractDAO<Integer> {
                 result = pstmt.executeUpdate();
 
                 if (result == 1) {
-                    LOGGER.info("Successfully updated the old email" + oldEmail + "with the new email " + newEmail);
+                    LOGGER.info("Successfully updated the old email" + oldEmail + " with the new email " + newEmail);
                 } else {
-                    LOGGER.info("Failed to update the old email" + oldEmail + "with the new email " + newEmail);
+                    LOGGER.info("Failed to update the old email" + oldEmail + " with the new email " + newEmail);
                 }
 
             }

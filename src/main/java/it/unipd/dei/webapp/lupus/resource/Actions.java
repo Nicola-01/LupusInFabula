@@ -59,6 +59,11 @@ public final class Actions {
     public static final String UPDATE_USER = "UPDATE_USER";
 
     /**
+     * The get of a user knowing his username
+     */
+    public static final String GET_USERNAME = "GET_USERNAME";
+
+    /**
      * The authentication of a user
      */
     public static final String AUTHENTICATE_USER = "AUTHENTICATE_USER";
