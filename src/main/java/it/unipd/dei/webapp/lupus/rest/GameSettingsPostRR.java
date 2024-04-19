@@ -96,8 +96,8 @@ public class GameSettingsPostRR extends AbstractRR {
             // Role check
             for (RoleCardinality roleCardinality : roleCardinalities) {
                 if (isValidRole(realRoles, roleCardinality.getRole())) {
-                    selectedRoles.put(roleCardinality.getRole(), roleCardinality.getCarnality()); // set the correct cardinality
-                    totalRoles += roleCardinality.getCarnality();
+                    selectedRoles.put(roleCardinality.getRole(), roleCardinality.getCardinality()); // set the correct cardinality
+                    totalRoles += roleCardinality.getCardinality();
                 } else {
                     // TODO, message and error
                     ErrorCode ec = ErrorCode.ROLE_NOT_EXIST;

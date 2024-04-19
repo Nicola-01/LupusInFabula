@@ -24,7 +24,14 @@ public enum ErrorCode {
     INVALID_GAMESETTINGS(-113, HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist"),
     INVALID_ROLES_CARDINALITY(-114, HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality"),
     INVALID_JSON_FORMAT(-115, HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON"),
-//    EMAIL_MISSING(-103, HttpServletResponse.SC_BAD_REQUEST, "Email missing"),
+
+//    INVALID_SESSION(-200, HttpServletResponse.SC_BAD_REQUEST, "Invalid session"),
+    NOT_LOGGED(-201, HttpServletResponse.SC_FORBIDDEN, "Account not logged in"),
+    NOT_MASTER(-201, HttpServletResponse.SC_FORBIDDEN, "The account is not a gamemaster"),
+    GAME_NOT_EXIST(-201, HttpServletResponse.SC_NOT_FOUND, "The game doesn't exist"),
+    DIFFERENT_GAMEID(-202, HttpServletResponse.SC_CONFLICT, "The gameIDs do not match"),
+
+    //    EMAIL_MISSING(-103, HttpServletResponse.SC_BAD_REQUEST, "Email missing"),
 //    COURSEID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Courseid missing"),
 //    MASTERID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Masterid missing"),
 //    PASSWORD_MISSING(-104, HttpServletResponse.SC_BAD_REQUEST, "Password missing"),

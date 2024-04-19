@@ -15,20 +15,20 @@ public class RoleCardinality extends AbstractResource {
     private static final String JSON_NAME = "roleCardinality";
 
     private final String role;
-    private final int carnality;
+    private final int cardinality;
 
 
-    public RoleCardinality(String role, int carnality) {
+    public RoleCardinality(String role, int cardinality) {
         this.role = role;
-        this.carnality = carnality;
+        this.cardinality = cardinality;
     }
 
     public String getRole() {
         return role;
     }
 
-    public int getCarnality() {
-        return carnality;
+    public int getCardinality() {
+        return cardinality;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class RoleCardinality extends AbstractResource {
 
     private static RoleCardinality handleGameSettingJSON(JsonParser jp) throws IOException {
         String jRole = null;
-        int jCarnality = -1;
+        int jCardinality = -1;
 
         while (jp.nextToken() != JsonToken.END_OBJECT) {
             if (jp.getCurrentToken() == JsonToken.FIELD_NAME) {
@@ -82,7 +82,7 @@ public class RoleCardinality extends AbstractResource {
                         break;
                     case "cardinality":
                         jp.nextToken();
-                        jCarnality = jp.getIntValue();
+                        jCardinality = jp.getIntValue();
                         break;
                     default:
                         // Handle unexpected fields if needed
@@ -90,11 +90,10 @@ public class RoleCardinality extends AbstractResource {
                 }
             }
         }
-//        LOGGER.info("roleCardinality: " + jRole + " " + jCarnality);
-        if (jRole == null || jCarnality == -1) {
+        if (jRole == null || jCardinality == -1) {
             throw new IOException("Unable to parse JSON: GameSetting contains null value.");
         }
 
-        return new RoleCardinality(jRole, jCarnality);
+        return new RoleCardinality(jRole, jCardinality);
     }
 }

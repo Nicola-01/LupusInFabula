@@ -5,7 +5,9 @@ import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
+import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -73,7 +75,6 @@ public class GameMasterFilter implements Filter {
             ds = null;
 
             LOGGER.error("Unable to acquire the connection pool to the database.", e);
-
             throw new ServletException("Unable to acquire the connection pool to the database", e);
         }
     }
@@ -85,14 +86,10 @@ public class GameMasterFilter implements Filter {
         LogContext.setIPAddress(servletRequest.getRemoteAddr());
 
         try {
-            if (!(servletRequest instanceof HttpServletRequest) || !(servletResponse instanceof HttpServletResponse)) {
+            if (!(servletRequest instanceof HttpServletRequest req) || !(servletResponse instanceof HttpServletResponse res)) {
                 LOGGER.error("Only HTTP requests/responses are allowed.");
                 throw new ServletException("Only HTTP requests/responses are allowed.");
             }
-
-            // Safe to downcast at this point.
-            final HttpServletRequest req = (HttpServletRequest) servletRequest;
-            final HttpServletResponse res = (HttpServletResponse) servletResponse;
 
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
@@ -116,6 +113,13 @@ public class GameMasterFilter implements Filter {
                 if (session == null) {
                     LOGGER.warn("Authentication required to access resource %s with method %s.", req.getRequestURI(),
                             req.getMethod());
+
+                    ErrorCode ec = ErrorCode.NOT_LOGGED;
+                    res.setStatus(ec.getHTTPCode());
+                    Message m = new Message("Authentication required, not logged in", "" + ec.getErrorCode(), ec.getErrorMessage());
+
+                    m.toJSON(res.getOutputStream());
+
                     return; // in this case the master is not even logged in
                 } else {
 
@@ -129,8 +133,6 @@ public class GameMasterFilter implements Filter {
                                 req.getRequestURI(), req.getMethod(), session.getId());
 
 
-                        // try to authenticate the user
-
                         Player currentPlayer = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
                         LOGGER.info("Trying to authenticate the currentPlayer %s in the game %d", currentPlayer.getUsername(), gameID);
 
@@ -138,17 +140,28 @@ public class GameMasterFilter implements Filter {
 
                         if(masterOfGame == null){
                             LOGGER.warn("There is no game with id %s", publicGame);
-                            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+
+                            ErrorCode ec = ErrorCode.NOT_LOGGED;
+                            res.setStatus(ec.getHTTPCode());
+                            Message m = new Message("There is no game with id " + publicGame, "" + ec.getErrorCode(), ec.getErrorMessage());
+
+                            m.toJSON(res.getOutputStream());
+//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
                         }
                         else if (masterOfGame.equals(currentPlayer.getUsername())) {
                             session.setAttribute(GAMEMASTER_ATTRIBUTE, gameID);
                         } else {
                             LOGGER.warn("%s is not the gamemaster in game %s" , currentPlayer.getUsername(), publicGame);
-                            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+                            ErrorCode ec = ErrorCode.NOT_MASTER;
+                            res.setStatus(ec.getHTTPCode());
+                            Message m = new Message("You are not the gamemaster in game " + publicGame, "" + ec.getErrorCode(), ec.getErrorMessage());
+
+                            m.toJSON(res.getOutputStream());
+//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
                         }
-
 
                     } else {
                         int sessionGameID = (int) gmAttribute;
@@ -156,13 +169,16 @@ public class GameMasterFilter implements Filter {
                         if (sessionGameID != gameID) {
                             LOGGER.warn("Different gameID");
 
-                            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            ErrorCode ec = ErrorCode.DIFFERENT_GAMEID;
+                            res.setStatus(ec.getHTTPCode());
+                            Message m = new Message("Different gameID founded", "" + ec.getErrorCode(), ec.getErrorMessage());
+
+                            m.toJSON(res.getOutputStream());
+//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
                         }
                     }
                 }
-
-
             }
 
             // the user is properly authenticated and in session, continue the processing
@@ -183,95 +199,6 @@ public class GameMasterFilter implements Filter {
     public void destroy() {
         config = null;
         ds = null;
-    }
-
-    /**
-     * Authenticates the user.
-     *
-     * @param req    the HTTP request.
-     * @param res    the HTTP response.
-     * @param gameID from where the request was made
-     * @return {@code true} if the user has been successfully authenticated; {@code false otherwise}.
-     */
-    private boolean authenticateMaster(HttpServletRequest req, HttpServletResponse res, int gameID) {
-
-        LogContext.setAction(Actions.AUTHENTICATE_MASTER);
-        HttpSession session = req.getSession(true);
-        Player gameMaster = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
-        LOGGER.info("Trying to authenticate the gameMaster %s in the game %d", gameMaster.getUsername(), gameID);
-
-
-        try {
-            // get the authorization information
-//            final String auth = req.getHeader("Authorization");
-//
-//            // if there is no authorization information, send the authentication challenge again
-//            if (auth == null || auth.isBlank()) {
-//
-//                LOGGER.info("No authorization header sent by the client.");
-//
-//                sendAuthenticationChallenge(res);
-//
-//                return false;
-//            }
-//
-//            // if it is not HTTP Basic authentication, send the authentication challenge again
-//            if (!auth.toUpperCase().startsWith("BASIC ")) {
-//
-//                LOGGER.warn("Basic authentication is expected. Clients sent instead: %s", auth);
-//
-//                sendAuthenticationChallenge(res);
-//
-//                return false;
-//            }
-//
-//            // perform Base64 decoding
-//            final String pair = new String(DECODER.decode(auth.substring(6)));
-//
-//            // userDetails[0] is the username; userDetails[1] is the password
-//            final String[] userDetails = pair.split(":", 2);
-//
-//            // if the user is successfully authenticated, create a Session and store the user there
-//            Player player = new LoginPlayerDAO(ds.getConnection(), userDetails[0], userDetails[1]).access().getOutputParam();
-//            if (player != null) {
-//                // create a  new session
-//                HttpSession session = req.getSession(true);
-//
-//                session.setAttribute(GAMEMASTER_ATTRIBUTE, player);
-//
-//                return true;
-//            }
-//
-//            // as a fallback, always send the authentication challenge again
-//            sendAuthenticationChallenge(res);
-
-        } catch (Exception e) {
-            LOGGER.error("Unable to authenticate the user.", e);
-        } finally {
-            LogContext.removeAction();
-        }
-
-        return false;
-    }
-
-    /**
-     * Sends the authentication challenge.
-     *
-     * @param res the HTTP servlet response.
-     * @throws IOException if anything goes wrong while sending the authentication challenge.
-     */
-    private void sendAuthenticationChallenge(HttpServletResponse res) throws IOException {
-
-        try {
-            res.setHeader("WWW-Authenticate", "Basic realm=Player");
-
-            res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-
-            LOGGER.info("Basic Authentication Challenge sent.");
-        } catch (Exception e) {
-            LOGGER.error("Unable to send authentication challenge.", e);
-            throw e;
-        }
     }
 
 }
