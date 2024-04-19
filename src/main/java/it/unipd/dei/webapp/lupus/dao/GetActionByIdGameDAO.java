@@ -1,6 +1,8 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.Action;
 import it.unipd.dei.webapp.lupus.resource.Actions;
+import it.unipd.dei.webapp.lupus.resource.GameAction;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 
 import java.sql.Connection;
@@ -9,8 +11,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class GetActionByIdGameDAO extends AbstractDAO<Actions> {
-    private static final String STATEMENT = "SELECT * FROM action WHERE game = ?";
+public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
+    private static final String STATEMENT = "SELECT * "                     +
+                                            "FROM Action a, TYPE_ACTION t " +
+                                            "JOIN a.type_of_action=t.ID "   +
+                                            "WHERE a.game_id = ? "          +
+                                            "ORDER BY a.round, a.phase, a.subphase";
 
     private final String idPart;
 
@@ -25,7 +31,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<Actions> {
     {
         PreparedStatement query = null;
         ResultSet rs = null;
-        ArrayList<LogContext> r  = new ArrayList<>();
+        ArrayList<Action> r  = new ArrayList<>();
 
         try
         {
@@ -33,15 +39,13 @@ public class GetActionByIdGameDAO extends AbstractDAO<Actions> {
             query.setString(1, idPart);
             rs = query.executeQuery();
 
-            while(rs.next())
-
-
+            while (rs.next()) r.add(new Action(rs));
         }
         finally
         {
             if (query != null) query.close();
             if (rs != null)    rs.close();
         }
-        this.outputParam = player;
+        this.outputParam = r;
     }
 }
