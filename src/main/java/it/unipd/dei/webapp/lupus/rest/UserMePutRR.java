@@ -5,12 +5,14 @@ import it.unipd.dei.webapp.lupus.dao.UpdatePasswordByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.resource.UserUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -29,18 +31,21 @@ public class UserMePutRR extends AbstractRR {
 
         try {
 
+            InputStream stream = req.getInputStream();
+            UserUpdate user_update = UserUpdate.fromJSON(stream);
             String username = ((Player) req.getSession().getAttribute("user")).getUsername();
             LOGGER.info("Username: " + username + " --> trying to update the account");
+
             //Debugging:
-            //boolean prova = req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword") && req.getParameterMap().containsKey("repeatNewPassword");
-            //LOGGER.info("Debug: " + prova + ", the req.getParameter(oldPassword) is: " + req.getParameter("oldPassword"));
+            LOGGER.info(user_update.getOldPassword() + " " + user_update.getNewPassword() + " " + user_update.getRepeatNewPassword());
+            LOGGER.info(user_update.getOldEmail() + " " + user_update.getNewEmail());
 
+            if (!user_update.getOldPassword().isEmpty() && !user_update.getNewPassword().isEmpty() && !user_update.getRepeatNewPassword().isEmpty() &&
+                    user_update.getOldEmail().isEmpty() && user_update.getNewEmail().isEmpty()) {
 
-            if (req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword") && req.getParameterMap().containsKey("repeatNewPassword")) {
-
-                String oldPassword = req.getParameter("oldPassword");
-                String newPassword = req.getParameter("newPassword");
-                String repeatNewPassword = req.getParameter("repeatNewPassword");
+                String oldPassword = user_update.getOldPassword();
+                String newPassword = user_update.getNewPassword();
+                String repeatNewPassword = user_update.getRepeatNewPassword();
                 LOGGER.info("Username: " + username + " --> trying to update the password");
 
                 if (newPassword.equals(repeatNewPassword)) {
@@ -78,10 +83,11 @@ public class UserMePutRR extends AbstractRR {
 
                 }
 
-            } else if (req.getParameterMap().containsKey("oldEmail") && req.getParameterMap().containsKey("newEmail")) {
+            } else if (user_update.getOldPassword().isEmpty() && user_update.getNewPassword().isEmpty() && user_update.getRepeatNewPassword().isEmpty() &&
+                    !user_update.getOldEmail().isEmpty() && !user_update.getNewEmail().isEmpty()) {
 
-                String oldEmail = req.getParameter("oldEmail");
-                String newEmail = req.getParameter("newEmail");
+                String oldEmail = user_update.getOldEmail();
+                String newEmail = user_update.getNewEmail();
                 LOGGER.info("Username: " + username + " --> trying to update the email");
                 int rs = new UpdateEmailByUsernameDAO(ds.getConnection(), username, oldEmail, newEmail).access().getOutputParam();
 
@@ -107,13 +113,19 @@ public class UserMePutRR extends AbstractRR {
 
             }
 
-//            LOGGER.info("Something went wrong");
+            //LOGGER.info("Something went wrong");
 
         } catch (SQLException e) {
             m = new Message("Unable to update the account");
             LOGGER.info("Unable to update the account");
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             m.toJSON(res.getOutputStream());
+        } catch (Exception e) {
+            m = new Message("Unable to update the account");
+            LOGGER.info("Unable to update the account");
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            //throw new RuntimeException();
         } finally {
             //LogContext.removeIPAddress()
             //LogContext.removeAction();

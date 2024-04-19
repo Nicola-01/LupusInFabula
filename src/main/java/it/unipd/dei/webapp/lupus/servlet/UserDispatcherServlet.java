@@ -87,7 +87,6 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         break;
                     case "PUT":
                         new UserMePutRR(req, resp, getDataSource()).serve();
-                        LOGGER.info("Updating user");
                         break;
                     case "DELETE":
                         new UserMeDeleteRR(req, resp, getDataSource()).serve();
@@ -153,6 +152,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         }
         //possible URI: /user/{username}
         else if (new SearchPlayerByUsernameDAO(getConnection(), uri.substring(uri.lastIndexOf("/") + 1)).access().getOutputParam() != null) {
+
             if (method.equals("GET")) {
 
                 String username =  uri.substring(uri.lastIndexOf("/") + 1);
@@ -172,7 +172,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
             LOGGER.warn("Unknown URI: %s.", uri);
             m = new Message("Unknown URI", "E4A5", String.format("This is URI (%s) isn't supported", uri));
-            resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             m.toJSON(resp.getOutputStream());
 
         }
