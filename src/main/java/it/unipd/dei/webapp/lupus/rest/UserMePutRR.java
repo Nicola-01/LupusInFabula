@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class UserMePutRR extends AbstractRR {
 
-    public UserMePutRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.UPDATE_USER, req, res, con);
+    public UserMePutRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.UPDATE_USER, req, res, ds);
     }
 
     @Override
@@ -44,7 +45,7 @@ public class UserMePutRR extends AbstractRR {
 
                 if (newPassword.equals(repeatNewPassword)) {
 
-                    int rs = new UpdatePasswordByUsernameDAO(con, username, oldPassword, newPassword).access().getOutputParam();
+                    int rs = new UpdatePasswordByUsernameDAO(ds.getConnection(), username, oldPassword, newPassword).access().getOutputParam();
                     //LOGGER.info("The new password and the repeatNewPassword are the same");
 
                     if (rs == 1) {
@@ -82,7 +83,7 @@ public class UserMePutRR extends AbstractRR {
                 String oldEmail = req.getParameter("oldEmail");
                 String newEmail = req.getParameter("newEmail");
                 LOGGER.info("Username: " + username + " --> trying to update the email");
-                int rs = new UpdateEmailByUsernameDAO(con, username, oldEmail, newEmail).access().getOutputParam();
+                int rs = new UpdateEmailByUsernameDAO(ds.getConnection(), username, oldEmail, newEmail).access().getOutputParam();
 
                 if (rs == 1) {
 

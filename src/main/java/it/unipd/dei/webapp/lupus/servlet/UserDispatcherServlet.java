@@ -86,11 +86,11 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         //new UserUsernameGetRR(req, resp, getConnection(), username).serve(); // TODO: Jacopo
                         break;
                     case "PUT":
-                        new UserMePutRR(req, resp, getConnection()).serve();
+                        new UserMePutRR(req, resp, getDataSource()).serve();
                         LOGGER.info("Updating user");
                         break;
                     case "DELETE":
-                        new UserMeDeleteRR(req, resp, getConnection()).serve();
+                        new UserMeDeleteRR(req, resp, getDataSource()).serve();
                         break;
                     default:
                         LOGGER.warn("Unknown method: %s.", method);
@@ -106,15 +106,15 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
                 switch (method) {
                     case "GET":
-                        new ListFriendsRR(req, resp, getConnection()).serve();
+                        new ListFriendsRR(req, resp, getDataSource()).serve();
                         LOGGER.info("Getting user's friend");
                         break;
                     case "POST":
-                        new AddFriendRR(req, resp, getConnection()).serve();
+                        new AddFriendRR(req, resp, getDataSource()).serve();
                         LOGGER.info("Posting user's friend");
                         break;
                     case "DELETE":
-                        new DeleteFriendRR(req, resp, getConnection()).serve();
+                        new DeleteFriendRR(req, resp, getDataSource()).serve();
                         LOGGER.info("Deleting user's friend");
                         break;
                     default:

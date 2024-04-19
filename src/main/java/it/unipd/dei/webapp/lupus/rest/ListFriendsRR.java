@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -12,21 +13,21 @@ import java.util.List;
 
 public class ListFriendsRR extends AbstractRR{
 
-    public ListFriendsRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.LIST_FRIENDS, req, res, con);
+    public ListFriendsRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.LIST_FRIENDS, req, res, ds);
     }
 
 
     @Override
     protected void doServe() throws IOException {
 
-        List<Is_Friend_With> fl = null;
+        List<Friend> fl = null;
         Message m = null;
         Player player = (Player) req.getSession().getAttribute("user");
         try {
 
             // creates a new DAO for accessing the database and lists the employee(s)
-            fl = new SearchFriendsByUsernameDAO(con, player.getUsername()).access().getOutputParam();
+            fl = new SearchFriendsByUsernameDAO(ds.getConnection(), player.getUsername()).access().getOutputParam();
 
             if (fl != null) {
                 LOGGER.info("Friend(s) successfully listed.");

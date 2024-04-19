@@ -9,14 +9,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class UserMeDeleteRR extends AbstractRR {
 
-    public UserMeDeleteRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.DELETE_USER, req, res, con);
+    public UserMeDeleteRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.DELETE_USER, req, res, ds);
     }
 
     @Override
@@ -31,7 +32,7 @@ public class UserMeDeleteRR extends AbstractRR {
             // TODO --> implement the password verification of the user
             String username = ((Player) req.getSession().getAttribute("user")).getUsername();
             LOGGER.info("Username: " + username + " --> trying to delete the account");
-            int result = new DeletePlayerDAO(con, username).access().getOutputParam();
+            int result = new DeletePlayerDAO(ds.getConnection(), username).access().getOutputParam();
 
             if (result == 1) {
 

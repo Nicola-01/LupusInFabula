@@ -5,14 +5,15 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class DeleteFriendRR extends AbstractRR{
 
-    public DeleteFriendRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.DELETE_FRIEND, req, res, con);
+    public DeleteFriendRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.DELETE_FRIEND, req, res, ds);
     }
 
 
@@ -26,7 +27,7 @@ public class DeleteFriendRR extends AbstractRR{
             String friend_username = Friend.fromJSON(req.getInputStream()).getUsername();
 
             // creates a new DAO for accessing the database and deletes the employee
-            int result = new DeleteFriendDAO(con, player.getUsername(), friend_username).access().getOutputParam();
+            int result = new DeleteFriendDAO(ds.getConnection(), player.getUsername(), friend_username).access().getOutputParam();
 
             if(result == 1) {
                 LOGGER.info("Friend successfully deleted.");

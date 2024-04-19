@@ -17,11 +17,6 @@
         <res-auth>Container</res-auth>
     </resource-ref>
 
-<!--    <servlet>-->
-<!--        <servlet-name>Friend</servlet-name>-->
-<!--        <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendServlet</servlet-class>-->
-<!--    </servlet>-->
-
     <servlet>
         <servlet-name>Rules</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.RulesServlet</servlet-class>
@@ -31,11 +26,6 @@
         <servlet-name>LoginSignup</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet</servlet-class>
     </servlet>
-
-<!--    <servlet>-->
-<!--        <servlet-name>HomeServlet</servlet-name>-->
-<!--        <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomeServlet</servlet-class>-->
-<!--    </servlet>-->
 
     <servlet>
         <servlet-name>GameDispatcherServlet</servlet-name>
@@ -70,47 +60,6 @@
         <url-pattern>/user/*</url-pattern>
     </servlet-mapping>
 
-    <!--    <servlet-mapping>-->
-    <!--        <servlet-name>User</servlet-name>-->
-    <!--        <url-pattern>/user/*</url-pattern>-->
-    <!--    </servlet-mapping>-->
-
-    <!--    <filter>-->
-    <!--        <filter-name>LoginFilter</filter-name>-->
-    <!--        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>-->
-    <!--    </filter>-->
-
-    <!--    <filter>-->
-    <!--        <filter-name>GameMasterFilter</filter-name>-->
-    <!--        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>-->
-    <!--    </filter>-->
-
-
-    <!--    <filter-mapping>-->
-    <!--        <filter-name>LoginFilter</filter-name>-->
-    <!--        <url-pattern>/logout</url-pattern>-->
-    <!--        <url-pattern>/user/me</url-pattern>-->
-    <!--        <url-pattern>/user/friend</url-pattern>-->
-    <!--        <url-pattern>/game/settings</url-pattern>-->
-    <!--        <url-pattern>/home</url-pattern>-->
-    <!--    </filter-mapping>-->
-<!--    <filter-mapping>-->
-<!--        <filter-name>GameMasterFilter</filter-name>-->
-<!--        <url-pattern>/game/*</url-pattern>-->
-<!--    </filter-mapping>-->
-
-    <!--    <filter-mapping>-->
-    <!--        <filter-name>GameMasterFilter</filter-name>-->
-    <!--        <url-pattern>/game/currentgame/master</url-pattern>-->
-    <!--        <url-pattern>/game/currentgame/log</url-pattern>-->
-    <!--    </filter-mapping>-->
-
-    <!-- <servlet-mapping>
-        <servlet-name>Friend</servlet-name>
-        <url-pattern>/user/me/friend</url-pattern>
-    </servlet-mapping>-->
-
-
 
     <filter>
         <filter-name>LoginFilter</filter-name>
@@ -119,6 +68,10 @@
     <filter>
         <filter-name>UserFilter</filter-name>
         <filter-class>it.unipd.dei.webapp.lupus.filter.UserFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>GameMasterFilter</filter-name>
+        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>
     </filter>
 
     <filter-mapping>
@@ -129,6 +82,10 @@
         <filter-name>UserFilter</filter-name>
         <url-pattern>/game/*</url-pattern>
         <url-pattern>/user/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>GameMasterFilter</filter-name>
+        <url-pattern>/game/*</url-pattern>
     </filter-mapping>
 
 </web-app>

@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import javax.sql.DataSource;
 import java.io.EOFException;
 import java.io.IOException;
 import java.sql.Connection;
@@ -13,8 +14,8 @@ import java.sql.SQLException;
 
 public class AddFriendRR extends AbstractRR{
 
-    public AddFriendRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.ADD_FRIEND, req, res, con);
+    public AddFriendRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.ADD_FRIEND, req, res, ds);
     }
 
 
@@ -29,7 +30,7 @@ public class AddFriendRR extends AbstractRR{
             Date date = new Date(System.currentTimeMillis());
 
             // creates a new DAO for accessing the database and stores the employee
-            int result = new AddFriendDAO(con, player.getUsername(), friend_username, date).access().getOutputParam();
+            int result = new AddFriendDAO(ds.getConnection(), player.getUsername(), friend_username, date).access().getOutputParam();
 
             if (result == 1) {
                 LOGGER.info("Friend successfully added.");
