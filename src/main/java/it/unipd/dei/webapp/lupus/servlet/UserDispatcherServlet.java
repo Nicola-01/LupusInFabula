@@ -3,6 +3,9 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.rest.AddFriendRR;
+import it.unipd.dei.webapp.lupus.rest.DeleteFriendRR;
+import it.unipd.dei.webapp.lupus.rest.ListFriendsRR;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -95,15 +98,15 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
                 switch (method) {
                     case "GET":
-                        //new UserMeFriendGetRR(req, resp, getConnection()).serve();
+                        new ListFriendsRR(req, resp, getConnection()).serve();
                         LOGGER.info("Getting user's friend");
                         break;
                     case "POST":
-                        //new UserMeFriendPostRR(req, resp, getConnection()).serve();
+                        new AddFriendRR(req, resp, getConnection()).serve();
                         LOGGER.info("Posting user's friend");
                         break;
                     case "DELETE":
-                        //new UserMeFriendDeleteRR(req, resp, getConnection()).serve();
+                        new DeleteFriendRR(req, resp, getConnection()).serve();
                         LOGGER.info("Deleting user's friend");
                         break;
                     default:

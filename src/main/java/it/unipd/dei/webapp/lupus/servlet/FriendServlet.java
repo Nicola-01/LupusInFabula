@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.resource.Friend;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.Is_Friend_With;
@@ -26,7 +27,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
 
     public void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 
-        List<Is_Friend_With> friendship = new ArrayList<>();
+        List<Friend> friendship = new ArrayList<>();
         Message m = null;
 
         try {

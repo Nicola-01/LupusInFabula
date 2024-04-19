@@ -29,7 +29,6 @@ public class ListFriendsRR extends AbstractRR{
 
             if (fl != null) {
                 LOGGER.info("Friend(s) successfully listed.");
-
                 res.setStatus(HttpServletResponse.SC_OK);
                 new ResourceList(fl).toJSON(res.getOutputStream());
             } else { // it should not happen

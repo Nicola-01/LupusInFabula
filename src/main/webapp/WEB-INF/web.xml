@@ -104,9 +104,9 @@
     <!--        <url-pattern>/game/currentgame/log</url-pattern>-->
     <!--    </filter-mapping>-->
 
-    <servlet-mapping>
+    <!-- <servlet-mapping>
         <servlet-name>Friend</servlet-name>
         <url-pattern>/user/me/friend</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
 </web-app>
