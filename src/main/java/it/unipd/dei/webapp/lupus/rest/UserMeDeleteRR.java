@@ -16,7 +16,7 @@ import java.sql.SQLException;
 public class UserMeDeleteRR extends AbstractRR {
 
     public UserMeDeleteRR(final HttpServletRequest req, final HttpServletResponse res, Connection con) {
-        super(Actions.ADD_ACTIONS, req, res, con);
+        super(Actions.DELETE_USER, req, res, con);
     }
 
     @Override
@@ -28,31 +28,36 @@ public class UserMeDeleteRR extends AbstractRR {
 
         try {
 
-            HttpSession session = req.getSession();
-            String username = ((Player) session.getAttribute("player")).getUsername();
+            // TODO --> implement the password verification of the user
+            String username = ((Player) req.getSession().getAttribute("user")).getUsername();
             LOGGER.info("Username: " + username + " --> trying to delete the account");
             int result = new DeletePlayerDAO(con, username).access().getOutputParam();
 
             if (result == 1) {
 
-                LOGGER.info("Player successfully deleted");
-                // TODO --> add the page linked to this servlet (for successfully deleted player)
+                m = new Message("User successfully deleted");
+                LOGGER.info("User successfully deleted");
+                res.setStatus(HttpServletResponse.SC_OK);
+                m.toJSON(res.getOutputStream());
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
             } else {
 
-                m = new Message("Player not found");
-                LOGGER.info("Player not found");
-                req.setAttribute("m", m);
-                // TODO --> add the page linked to this servlet (for the player not found)
+                m = new Message("User not found");
+                LOGGER.info("User not found");
+                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                m.toJSON(res.getOutputStream());
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
+
             }
 
         } catch (SQLException e) {
 
             // TODO --> check the error code
-            m = new Message("Player not found", "E200", e.getMessage());
+            m = new Message("User not found", "E200", e.getMessage());
             LOGGER.info("Unable to send response", e);
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
 
         } finally {
             //LogContext.removeIPAddress()

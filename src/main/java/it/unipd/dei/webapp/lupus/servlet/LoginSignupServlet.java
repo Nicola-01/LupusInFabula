@@ -4,6 +4,7 @@ import it.unipd.dei.webapp.lupus.dao.SearchPlayerByEmailDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
@@ -44,7 +45,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
         if (op.startsWith("logout")) {
             HttpSession session = request.getSession();
-            Player p = (Player) session.getAttribute("user");
+            Player p = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
 
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
         }

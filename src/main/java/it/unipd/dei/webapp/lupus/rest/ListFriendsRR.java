@@ -19,7 +19,8 @@ public class ListFriendsRR extends AbstractRR{
 
     @Override
     protected void doServe() throws IOException {
-        List<Friend> fl = null;
+
+        List<Is_Friend_With> fl = null;
         Message m = null;
         Player player = (Player) req.getSession().getAttribute("user");
         try {

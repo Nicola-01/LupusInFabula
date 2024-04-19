@@ -44,6 +44,21 @@ public final class Actions {
      */
     public static final String LIST_FRIENDS = "LIST_FRIENDS";
 
+	/**
+	 * The deletion of the user logged in
+	 */
+	public static final String DELETE_USER = "DELETE_USER";
+
+	/**
+	 * The update of the user logged in
+	 */
+	public static final String UPDATE_USER = "UPDATE_USER";
+
+	/**
+	 * The authentication of a user
+	 */
+	public static final String AUTHENTICATE_USER = "AUTHENTICATE_USER";
+
     /**
 	 * This class can be neither instantiated nor sub-classed.
 	 */

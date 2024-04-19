@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import jakarta.servlet.ServletException;
@@ -81,7 +82,7 @@ public class UserServlet extends AbstractDatabaseServlet{
         try {
 
             HttpSession session = req.getSession();
-            String username = ((Player) session.getAttribute("player")).getUsername();
+            String username = ((Player) session.getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             LOGGER.info("Username: " + username + " --> trying to delete the account");
             int result = new DeletePlayerDAO(getConnection(), username).access().getOutputParam();
 
@@ -123,7 +124,7 @@ public class UserServlet extends AbstractDatabaseServlet{
         try {
 
             HttpSession session = req.getSession();
-            String username = ((Player) session.getAttribute("player")).getUsername();
+            String username = ((Player) session.getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             LOGGER.info("Username: " + username + " --> trying to update the account");
 
             boolean prova = req.getParameterMap().containsKey("oldPassword") && req.getParameterMap().containsKey("newPassword") && req.getParameterMap().containsKey("repeatNewPassword");

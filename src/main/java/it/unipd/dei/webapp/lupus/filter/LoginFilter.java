@@ -22,7 +22,7 @@ public class LoginFilter extends AbstractFilter {
 
 //        LOGGER.info("Filtering session");
 
-        if (session != null && session.getAttribute("user") != null) {
+        if (session != null && session.getAttribute(UserFilter.USER_ATTRIBUTE) != null) {
             res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
             res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
             chain.doFilter(req, res); // User is logged in, just continue request.

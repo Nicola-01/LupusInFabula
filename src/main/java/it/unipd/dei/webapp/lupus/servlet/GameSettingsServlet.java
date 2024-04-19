@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.RoleId;
@@ -185,7 +186,7 @@ public class GameSettingsServlet extends AbstractDatabaseServlet {
 
                     // TODO add master
                     HttpSession session = request.getSession(false);
-                    Player gameMaster = (Player) session.getAttribute("user");
+                    Player gameMaster = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
                     int masterID = new SearchRoleByNameDAO(getConnection(), "master").access().getOutputParam().getId();
 
                     PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, masterID);

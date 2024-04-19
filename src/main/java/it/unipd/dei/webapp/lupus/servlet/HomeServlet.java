@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.PlayerInGameDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,7 +17,7 @@ public class HomeServlet extends AbstractDatabaseServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             HttpSession session = req.getSession(false);
-            Player player = (Player) session.getAttribute("player");
+            Player player = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
 
             int gameID = new PlayerInGameDAO(getConnection(), player.getUsername()).access().getOutputParam();
 

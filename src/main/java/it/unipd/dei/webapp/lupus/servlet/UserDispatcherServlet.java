@@ -1,8 +1,13 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.rest.DeleteFriendRR;
+import it.unipd.dei.webapp.lupus.rest.UserMeDeleteRR;
+import it.unipd.dei.webapp.lupus.rest.UserMePutRR;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -73,13 +78,16 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             if (path.equals("/me")) {
 
                 switch (method) {
+                    case "GET":
+                        String username = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                        //new UserUsernameGetRR(req, resp, getConnection(), username).serve(); // TODO: Jacopo
+                        break;
                     case "PUT":
-                        //new UserMePutRR(req, resp, getConnection()).serve(); // TODO: Jacopo
+                        new UserMePutRR(req, resp, getConnection()).serve();
                         LOGGER.info("Updating user");
                         break;
                     case "DELETE":
-                        //new UserMeDeleteRR(req, resp, getConnection()).serve(); // TODO: Jacopo
-                        LOGGER.info("Deleting user");
+                        new UserMeDeleteRR(req, resp, getConnection()).serve();
                         break;
                     default:
                         LOGGER.warn("Unknown method: %s.", method);
@@ -103,7 +111,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         LOGGER.info("Posting user's friend");
                         break;
                     case "DELETE":
-                        //new UserMeFriendDeleteRR(req, resp, getConnection()).serve();
+                        new DeleteFriendRR(req, resp, getConnection()).serve();
                         LOGGER.info("Deleting user's friend");
                         break;
                     default:
@@ -121,11 +129,15 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         else if (path.contains("/logs") || path.contains("/statistic")) {
 
             if (path.contains("/logs") && method.equals("GET")) {
+
                 //new UserLogsGetRR(req, resp, getConnection()).serve();
                 LOGGER.info("Getting user's logs");
+
             } else if (path.contains("/statistic") && method.equals("GET")) {
+
                 //new UserStatisticGetRR(req, resp, getConnection()).serve();
                 LOGGER.info("Getting user's statistic");
+
             } else {
 
                 LOGGER.warn("Unknown method: %s.", method);
@@ -138,8 +150,21 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         }
         //possible URI: /user/{username}
         else if (new SearchPlayerByUsernameDAO(getConnection(), uri.substring(uri.lastIndexOf("/") + 1)).access().getOutputParam() != null) {
-            //new UserUsernameGetRR(req, resp, getConnection()).serve(); // TODO: Jacopo
-            LOGGER.info("Getting username (uri: /user/username)");
+            if (method.equals("GET")) {
+
+                String username =  uri.substring(uri.lastIndexOf("/") + 1);
+                //new UserUsernameGetRR(req, resp, getConnection(), username).serve(); // TODO: Jacopo
+                LOGGER.info("Getting username (uri: /user/username)");
+
+            } else {
+
+                LOGGER.warn("Unknown method: %s.", method);
+                m = new Message("Unsupported operation for URI /user/{username}.", "E4A5", String.format("Requested operation %s, but required GET.", method));
+                resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                m.toJSON(resp.getOutputStream());
+
+            }
+
         } else {
 
             LOGGER.warn("Unknown URI: %s.", uri);
