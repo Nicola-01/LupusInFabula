@@ -34,7 +34,12 @@ public final class Actions {
 
 	public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
-    /**
+	/**
+	 * The addition of a friend
+	 */
+	public static final String ADD_FRIEND = "ADD_FRIEND";
+
+	/**
      * The deletion of a friend
      */
     public static final String DELETE_FRIEND = "DELETE_FRIEND";

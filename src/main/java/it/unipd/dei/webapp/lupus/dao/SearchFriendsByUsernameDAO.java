@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.Friend;
 import it.unipd.dei.webapp.lupus.resource.Is_Friend_With;
 
 import java.sql.Connection;
@@ -9,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Is_Friend_With>> {
+public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Friend>> {
 
     private static final String STATEMENT = "SELECT * FROM Is_Friend_With WHERE LOWER(player_username) = LOWER(?)";
 
@@ -25,7 +26,7 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Is_Friend_With>
         PreparedStatement pstmt = null;
         ResultSet rs = null;
 
-        List<Is_Friend_With> friendship = new ArrayList<>();
+        final List<Friend> friendList = new ArrayList<>();
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
@@ -33,12 +34,14 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Is_Friend_With>
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                Is_Friend_With friend = new Is_Friend_With(rs.getString("player_username"),
-                        rs.getString("friend_username"), rs.getDate("date"));
-                friendship.add(friend);
+                //Friend friend = new Friend(rs.getString("friend_username"), rs.getDate("date"));
+                friendList.add(new Friend(rs.getString("friend_username"), rs.getDate("date")));
+                //LOGGER.info("Friend found: " + friend.getUsername() + " " + friend.getFriendshipDate().toString());
                 LOGGER.info("Friend found: " + rs.getString("friend_username") + " " + rs.getDate("date"));
+                for(Friend f : friendList)
+                    LOGGER.info(f.getUsername());
             }
-            if (friendship.isEmpty()){
+            if (friendList.isEmpty()){
                 LOGGER.info("No friend found " + user);
             }
 
@@ -50,6 +53,8 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Is_Friend_With>
                 rs.close();
             }
         }
-        this.outputParam = friendship;
+        for(Friend f : friendList)
+            LOGGER.info(f.getUsername());
+        this.outputParam = friendList;
     }
 }
