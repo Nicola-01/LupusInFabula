@@ -22,18 +22,10 @@ public class GameSettingsGetRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        // list of friends of the player creating the game
-//        HttpSession session = req.getSession();
-//        Player user = (Player) session.getAttribute("user");
-//        List<Is_Friend_With> friends = null;
-
-
         List<Role> roles = new ArrayList<>();
         Message m = null;
 
         try {
-//            friends = new SearchFriendsByUsernameDAO(ds.getConnection(), user.getUsername()).access().getOutputParam();
-//            LOGGER.info("Searching friends by username: " + user.getUsername());
             roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
             LOGGER.info("Searching roles");
 

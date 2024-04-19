@@ -46,6 +46,11 @@ public final class LogContext {
 	private static final String RESOURCE = "RESOURCE";
 
 	/**
+	 * The current game
+	 */
+	private static final String GAME = "GAME";
+
+	/**
 	 * Sets the {@code user} currently performing actions.
 	 * <p>
 	 * If {@code null}, it simply returns.
@@ -125,6 +130,26 @@ public final class LogContext {
 	 */
 	public static void removeResource() {
 		ThreadContext.remove(RESOURCE);
+	}
+
+	/**
+	 * Sets the current {@code game}.
+	 * <p>
+	 * If {@code null}, it simply returns.
+	 *
+	 * @param game current public game ID.
+	 */
+	public static void setGame(final String game) {
+		if (game != null && !game.isEmpty()) {
+			ThreadContext.put(GAME, game);
+		}
+	}
+
+	/**
+	 * Removes the resource currently processed.
+	 */
+	public static void removeGame() {
+		ThreadContext.remove(GAME);
 	}
 
 	/**

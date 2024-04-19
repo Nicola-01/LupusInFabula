@@ -82,8 +82,7 @@
 
 <!--    <filter-mapping>-->
 <!--        <filter-name>GameMasterFilter</filter-name>-->
-<!--        <url-pattern>/game/currentgame/master</url-pattern>-->
-<!--        <url-pattern>/game/currentgame/log</url-pattern>-->
+<!--        <url-pattern>/game/*</url-pattern>-->
 <!--    </filter-mapping>-->
 
 </web-app>

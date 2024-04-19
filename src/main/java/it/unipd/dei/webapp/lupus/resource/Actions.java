@@ -18,26 +18,31 @@ package it.unipd.dei.webapp.lupus.resource;
 
 /**
  * Contains constants for the actions performed by the application.
- *
  */
 public final class Actions {
 
-	/**
-	 * The creation of a player
-	 */
-	public static final String INSERT_PLAYER = "INSERT_PLAYER";
+    /**
+     * The creation of a player
+     */
+    public static final String INSERT_PLAYER = "INSERT_PLAYER";
 
-	/**
-	 * The search of player by their username/email and password
-	 */
-	public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
+    /**
+     * The search of player by their username/email and password
+     */
+    public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
 
-	public static final String ADD_ACTIONS = "ADD_ACTIONS";
+    public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
-	/**
-	 * This class can be neither instantiated nor sub-classed.
-	 */
-	private Actions() {
-		throw new AssertionError(String.format("No instances of %s allowed.", Actions.class.getName()));
-	}
+
+    /**
+     * The authentication of a master
+     */
+    public static final String AUTHENTICATE_MASTER = "AUTHENTICATE_MASTER";
+
+    /**
+     * This class can be neither instantiated nor sub-classed.
+     */
+    private Actions() {
+        throw new AssertionError(String.format("No instances of %s allowed.", Actions.class.getName()));
+    }
 }

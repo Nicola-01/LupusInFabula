@@ -1,7 +1,7 @@
 package it.unipd.dei.webapp.lupus.utils;
 
 public enum GameRole {
-    MASTER(-1, "master"),
+    MASTER(1, "master"),
     WOLF(16, "wolf");
 
     private final int id;

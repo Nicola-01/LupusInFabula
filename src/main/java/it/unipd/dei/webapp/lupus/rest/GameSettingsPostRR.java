@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GameRole;
@@ -170,7 +171,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, masterID);
                     new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn).access();
 
-                    session.setAttribute("master", gameID);
+                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
 //                    session.setAttribute("gameID", gameID);
 
 
