@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.sql.Date;
 
 public class Friend extends AbstractResource {
+
     private static String username;
     private static Date friendship_date;
 
@@ -78,7 +79,7 @@ public class Friend extends AbstractResource {
                             jp.nextToken();
                             jUsername = jp.getText();
                             break;
-                        case "salary":
+                        case "friendship_date":
                             jp.nextToken();
                             jFriendship_date = jp.getText();
                             break;

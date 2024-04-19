@@ -33,6 +33,42 @@ public final class Actions {
 
     public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
+	/**
+	 * The addition of a friend
+	 */
+	public static final String ADD_FRIEND = "ADD_FRIEND";
+
+	/**
+     * The deletion of a friend
+     */
+    public static final String DELETE_FRIEND = "DELETE_FRIEND";
+
+    /**
+     *  The list of all the friends
+     */
+    public static final String LIST_FRIENDS = "LIST_FRIENDS";
+
+	/**
+	 * The deletion of the user logged in
+	 */
+	public static final String DELETE_USER = "DELETE_USER";
+
+	/**
+	 * The update of the user logged in
+	 */
+	public static final String UPDATE_USER = "UPDATE_USER";
+
+	/**
+	 * The authentication of a user
+	 */
+	public static final String AUTHENTICATE_USER = "AUTHENTICATE_USER";
+
+    /**
+	 * This class can be neither instantiated nor sub-classed.
+	 */
+	private Actions() {
+		throw new AssertionError(String.format("No instances of %s allowed.", Actions.class.getName()));
+	}
     /**
      * If arrive GET request to the page login, signup and logout, it will be redirected.
      */
