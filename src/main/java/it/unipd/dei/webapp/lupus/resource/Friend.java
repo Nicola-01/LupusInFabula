@@ -12,8 +12,8 @@ import java.sql.Date;
 
 public class Friend extends AbstractResource {
 
-    private static String username;
-    private static Date friendship_date;
+    private final String username;
+    private final Date friendship_date;
 
 
     public Friend(final String username, final Date friendship_date){
