@@ -5,12 +5,33 @@ import it.unipd.dei.webapp.lupus.resource.Player;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-public class SingupPlayerDAO extends AbstractDAO{
+
+/**
+ * Insert the user into the database
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class SignupPlayerDAO extends AbstractDAO {
+
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "INSERT INTO player VALUES (?, LOWER(?), md5(?), CURRENT_DATE)";
 
+    /**
+     * The player to be inserted in the database
+     */
     private final Player player;
 
-    public SingupPlayerDAO(final Connection con, final Player player) {
+    /**
+     * Creates a new object for insert the player into the database.
+     *
+     * @param con    the connection to the database.
+     * @param player the username of the player.
+     */
+    public SignupPlayerDAO(final Connection con, final Player player) {
         super(con);
 
         if (player == null) {
@@ -30,9 +51,8 @@ public class SingupPlayerDAO extends AbstractDAO{
             pstmt.setString(3, player.getPassword());
 
             pstmt.execute();
-        }
-        finally {
-            if(pstmt != null) {
+        } finally {
+            if (pstmt != null) {
                 pstmt.close();
             }
             con.close();

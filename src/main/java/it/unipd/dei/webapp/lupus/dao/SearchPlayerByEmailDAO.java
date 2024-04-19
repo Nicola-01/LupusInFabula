@@ -7,14 +7,34 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Search a user by email
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class SearchPlayerByEmailDAO extends AbstractDAO<Player> {
+
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT * FROM player WHERE LOWER(email) = LOWER(?)";
 
-    private final String user;
+    /**
+     * The email to search
+     */
+    private final String email;
 
-    public SearchPlayerByEmailDAO(final Connection con, final String user) {
+    /**
+     * Creates a new object for searching player by email.
+     *
+     * @param con   the connection to the database.
+     * @param email the email of the player.
+     */
+    public SearchPlayerByEmailDAO(final Connection con, final String email) {
         super(con);
-        this.user = user;
+        this.email = email;
     }
 
     @Override
@@ -26,7 +46,7 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player> {
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setString(1, user);
+            pstmt.setString(1, email);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
@@ -34,7 +54,7 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player> {
                         rs.getString("password"), rs.getDate("registration_date"));
                 LOGGER.info("Player found: " + rs.getString("username") + " " + rs.getString("email"));
             } else {
-                LOGGER.info("No record found for player " + user);
+                LOGGER.info("No record found for player " + email);
             }
 
         } finally {

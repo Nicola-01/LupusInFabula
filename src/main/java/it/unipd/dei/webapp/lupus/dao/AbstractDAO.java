@@ -7,6 +7,13 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Abstract DAO object class.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractDAO<T> implements DataAccessObject<T> {
 
     /**

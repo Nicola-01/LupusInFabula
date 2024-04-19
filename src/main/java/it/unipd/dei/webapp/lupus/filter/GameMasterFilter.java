@@ -20,7 +20,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
-import java.util.Objects;
 
 public class GameMasterFilter implements Filter {
     /**
@@ -132,7 +131,8 @@ public class GameMasterFilter implements Filter {
 
                         // try to authenticate the user
 
-                        Player currentPlayer = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
+                        // TODO UserFilter.USER_ATTRIBUTE
+                        Player currentPlayer = (Player) session.getAttribute("user"); // master's username
                         LOGGER.info("Trying to authenticate the currentPlayer %s in the game %d", currentPlayer.getUsername(), gameID);
 
                         String masterOfGame = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
@@ -198,7 +198,8 @@ public class GameMasterFilter implements Filter {
 
         LogContext.setAction(Actions.AUTHENTICATE_MASTER);
         HttpSession session = req.getSession(true);
-        Player gameMaster = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
+        // TODO UserFilter.USER_ATTRIBUTE
+        Player gameMaster = (Player) session.getAttribute("user"); // master's username
         LOGGER.info("Trying to authenticate the gameMaster %s in the game %d", gameMaster.getUsername(), gameID);
 
 

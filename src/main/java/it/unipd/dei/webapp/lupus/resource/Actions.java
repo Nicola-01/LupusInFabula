@@ -33,6 +33,14 @@ public final class Actions {
 
     public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
+    /**
+     * If arrive GET request to the page login, signup and logout, it will be redirected.
+     */
+    public static final String LOGIN_REDIRECT_ACTION = "LOGIN_REDIRECT_ACTION";
+
+    public static final String LOGIN_ACTION = "LOGIN_ACTION";
+
+    public static final String SIGNUT_ACTION = "SIGNUT_ACTION";
 
     /**
      * The authentication of a master
