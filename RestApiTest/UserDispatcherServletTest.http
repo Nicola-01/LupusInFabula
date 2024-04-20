@@ -1,3 +1,6 @@
+###
+GET http://localhost:8080/lupus/logout HTTP/1.1
+
 ###Test for the UserMeDeleteRR added in the UserDispatcherServlet
 POST http://localhost:8080/lupus/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -8,6 +11,12 @@ password = password123
 ###
 DELETE http://localhost:8080/lupus/user/me HTTP/1.1
 Content-Type: application/json
+
+{
+  "userUpdate": {
+    "oldPassword": "password12"
+  }
+}
 
 
 
@@ -88,6 +97,17 @@ Content-Type: application/json
 
 
 
+###Test for the UserUsernameGetRR added in the UserDispatcherServlet
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = user1 &
+password = ciao1
+
 ###
-GET http://localhost:8080/lupus/user/esempio HTTP/1.1
+GET http://localhost:8080/lupus/user/user5 HTTP/1.1
+Content-Type: application/json
+
+###
+GET http://localhost:8080/lupus/user/me HTTP/1.1
 Content-Type: application/json

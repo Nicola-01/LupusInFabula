@@ -12,7 +12,7 @@ public class UserUpdate extends AbstractResource {
 
     private static final String JSON_NAME = "userUpdate";
 
-    private final String oldPassword;
+    private final String oldPassword; //can also be used as a confirmation password (e.g. when deleting the account)
     private final String newPassword;
     private final String repeatNewPassword;
 

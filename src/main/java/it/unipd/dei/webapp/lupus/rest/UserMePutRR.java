@@ -116,16 +116,21 @@ public class UserMePutRR extends AbstractRR {
             //LOGGER.info("Something went wrong");
 
         } catch (SQLException e) {
-            m = new Message("Unable to update the account");
-            LOGGER.info("Unable to update the account");
+
+            // TODO --> check the error code
+            m = new Message("User not found", "E200", e.getMessage());
+            LOGGER.info("Unable to send response", e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             m.toJSON(res.getOutputStream());
+
         } catch (Exception e) {
-            m = new Message("Unable to update the account");
-            LOGGER.info("Unable to update the account");
+
+            // TODO --> check the error code
+            m = new Message("Unable to update the account", "E200", e.getMessage());
+            LOGGER.info("Unable to update the account", e);
             res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             m.toJSON(res.getOutputStream());
-            //throw new RuntimeException();
+
         } finally {
             //LogContext.removeIPAddress()
             //LogContext.removeAction();

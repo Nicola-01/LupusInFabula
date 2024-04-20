@@ -5,12 +5,8 @@ import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.rest.*;
 import it.unipd.dei.webapp.lupus.rest.DeleteFriendRR;
-import it.unipd.dei.webapp.lupus.rest.UserMeDeleteRR;
-import it.unipd.dei.webapp.lupus.rest.UserMePutRR;
-import it.unipd.dei.webapp.lupus.rest.AddFriendRR;
-import it.unipd.dei.webapp.lupus.rest.DeleteFriendRR;
-import it.unipd.dei.webapp.lupus.rest.ListFriendsRR;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -72,7 +68,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             return false;
 
         //save the path /user/... into a variable
-        String path = uri.substring(uri.lastIndexOf("/user") + 5);
+        String path = uri.substring(uri.lastIndexOf("/lupus/user") + 11);
 
         //possible URIs: /user/me , /user/me/{username} , /user/me/friend
         if (path.contains("/me")) {
@@ -83,7 +79,8 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                 switch (method) {
                     case "GET":
                         String username = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-                        //new UserUsernameGetRR(req, resp, getConnection(), username).serve(); // TODO: Jacopo
+                        LOGGER.info("GET with /me");
+                        new UserUsernameGetRR(username, req, resp, getDataSource()).serve();
                         break;
                     case "PUT":
                         new UserMePutRR(req, resp, getDataSource()).serve();
@@ -124,12 +121,19 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         break;
                 }
 
+            } else {
+
+                LOGGER.warn("Unknown URI: %s.", uri);
+                m = new Message("Unknown URI", "E4A5", String.format("This is URI (%s) isn't supported", uri));
+                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                m.toJSON(resp.getOutputStream());
+
             }
 
         }
         //possible URIs: /user/{username}/logs , /user/{username}/statistic
         else if (path.contains("/logs") || path.contains("/statistic")) {
-
+            //I must take the username from the URI
             if (path.contains("/logs") && method.equals("GET")) {
 
                 //new UserLogsGetRR(req, resp, getConnection()).serve();
@@ -143,7 +147,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             } else {
 
                 LOGGER.warn("Unknown method: %s.", method);
-                m = new Message("Unsuported operation for URI /user/*/logs or /user/*/statistic}.", "E4A5", String.format("Requested operation %s, but required GET.", method));
+                m = new Message("Unsuported operation for URI /user/*/logs or /user/*/statistic.", "E4A5", String.format("Requested operation %s, but required GET.", method));
                 resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 m.toJSON(resp.getOutputStream());
 
@@ -156,8 +160,8 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             if (method.equals("GET")) {
 
                 String username =  uri.substring(uri.lastIndexOf("/") + 1);
-                //new UserUsernameGetRR(req, resp, getConnection(), username).serve(); // TODO: Jacopo
-                LOGGER.info("Getting username (uri: /user/username)");
+                new UserUsernameGetRR(username, req, resp, getDataSource()).serve();
+                LOGGER.info("GET without /me ");
 
             } else {
 
