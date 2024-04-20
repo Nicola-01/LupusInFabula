@@ -31,3 +31,12 @@ INSERT INTO Role (name, type, with_who_wins, max_number, description) VALUES
                     ('jester', 2, 3, 1, 'The Jester wins, alone, if he is burnt at the stake.'),
                     ('illusionist', 3, 1, 1, 'He chooses a player during the night and blocks his power for that night.'),
                     ('plague spreader', 3, 0, 1, 'He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right).');
+
+INSERT INTO game (id, public_id, start, game_duration, who_wins, number_of_rounds) VALUES
+                    (1, 'hamster-jester', '2024-04-18 12:00:00', NULL, NULL, 2),
+                    (2, 'wolf-puppy', '2024-04-10 14:00:00', NULL, NULL, 5);
+
+INSERT INTO plays_as_in (player_username, game_id, role_id, round_of_death, phase_of_death, duration_of_life)  VALUES
+                    ('user1', 1, 3, NULL, NULL, NULL),
+                    ('user2', 1, 2, NULL, NULL, NULL),
+                    ('user3', 2, 5, NULL, NULL, NULL);
