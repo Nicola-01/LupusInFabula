@@ -1,9 +1,7 @@
 package it.unipd.dei.webapp.lupus.filter;
 
-import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPubblicGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
-import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
-import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
@@ -23,6 +21,15 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 
+/**
+ * Filter to manage access to Master protected resources.<br>
+ * This filter allows access to certain resources only to the game master,
+ * such as returning all information when the game is not yet finished.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameMasterFilter implements Filter {
     /**
      * A LOGGER available for all the subclasses.
@@ -107,7 +114,7 @@ public class GameMasterFilter implements Filter {
                 final String publicGame = path.substring(0, path.lastIndexOf("/master"));
 
                 LOGGER.info("Pubblic GameId found on URL: " + publicGame);
-                int gameID = new GetGameIdFormPubblicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
+                int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
 
                 // if we do not have a session, try to authenticate the user
                 if (session == null) {

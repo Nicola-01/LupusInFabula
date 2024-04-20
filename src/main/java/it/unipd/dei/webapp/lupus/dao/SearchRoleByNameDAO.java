@@ -6,14 +6,32 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
+/**
+ * Searches for a role by its name in the database.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class SearchRoleByNameDAO extends AbstractDAO<Role> {
 
+    /**
+     * The SQL statement to be executed
+     */
     private final static String STATEMENT = "SELECT * FROM role WHERE LOWER(name) = lower(?)";
+
+    /**
+     * The name of the role.
+     */
     private final String name;
 
+    /**
+     * Creates a new object for search a role by the name.
+     *
+     * @param con  the connection to the database.
+     * @param type the name of the role to search for.
+     */
     public SearchRoleByNameDAO(final Connection con, final String type) {
         super(con);
         this.name = type;

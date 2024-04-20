@@ -1,22 +1,38 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.resource.Player;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.Timestamp;
 
+/**
+ * Searches if a player is already in a game.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class PlayerInGameDAO extends AbstractDAO<Integer> {
 
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT g.id FROM game g join public.plays_as_in pai on g.id = pai.game_id " +
-            "where g.number_of_rounds IS NULL and player_username = ?";
+            "where g.who_wins IS NULL and player_username = ?";
 
-    private final String user;
+    /**
+     * The username to search
+     */
+    private final String username;
 
-    public PlayerInGameDAO(final Connection con, final String user) {
+    /**
+     * Creates a new object to search if the player is already in a game.
+     *
+     * @param con      the connection to the database.
+     * @param username the username of the player to search if already in a game.
+     */
+    public PlayerInGameDAO(final Connection con, final String username) {
         super(con);
-        this.user = user;
+        this.username = username;
     }
 
     @Override
@@ -28,12 +44,12 @@ public class PlayerInGameDAO extends AbstractDAO<Integer> {
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setString(1, user);
+            pstmt.setString(1, username);
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
                 gameId = rs.getInt("id");
-                LOGGER.info("Player " + user + " found in a gameID: " + gameId);
+                LOGGER.info("Player " + username + " found in a gameID: " + gameId);
             }
 
         } finally {

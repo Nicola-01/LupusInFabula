@@ -9,10 +9,25 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectRoleDAO extends AbstractDAO<List<Role>>{
+/**
+ * Get all roles
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class SelectRoleDAO extends AbstractDAO<List<Role>> {
 
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT * FROM role";
 
+    /**
+     * Creates a new object to return all roles.
+     *
+     * @param con the connection to the database.
+     */
     public SelectRoleDAO(final Connection con) {
         super(con);
     }

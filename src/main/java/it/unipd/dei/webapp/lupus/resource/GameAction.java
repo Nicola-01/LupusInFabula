@@ -10,37 +10,95 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Represents a game action performed by a player.<br>
+ * This class is used to store information about an action of a player with a role towards a target.
+ * It is utilized in the {@link it.unipd.dei.webapp.lupus.rest.GameActionsRR} class.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameAction extends AbstractResource {
 
+    /**
+     * The JSON field name for role cardinality.
+     */
     private static final String JSON_NAME = "gameAction";
 
+    /**
+     * The player who performed the action.
+     */
     private final String player;
+
+    /**
+     * The role of the player who performed the action.
+     */
     private final String role;
+
+    /**
+     * The target of the action performed by the player.
+     */
     private final String target;
 
+    /**
+     * Constructs a GameAction object.
+     *
+     * @param player The player who performed the action.
+     * @param role   The role of the player.
+     * @param target The target of the action.
+     */
     public GameAction(String player, String role, String target) {
         this.player = player;
         this.role = role;
         this.target = target;
     }
 
+    /**
+     * Gets the player who performed the action.
+     *
+     * @return The player who performed the action.
+     */
     public String getPlayer() {
         return player;
     }
 
+    /**
+     * Gets the role of the player who performed the action.
+     *
+     * @return The role of the player.
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Gets the target of the action.
+     *
+     * @return The target of the action.
+     */
     public String getTarget() {
         return target;
     }
 
+    /**
+     * Writes JSON representation of the object to the output stream.
+     *
+     * @param out The output stream to write JSON to.
+     * @throws UnsupportedOperationException If the method is not implemented.
+     */
     @Override
-    protected void writeJSON(OutputStream out) throws Exception {
+    protected void writeJSON(OutputStream out) throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("writeJSON method is not yet implemented.");
     }
 
+    /**
+     * Parses a JSON input stream to create a list of GameAction objects.
+     *
+     * @param in The input stream containing JSON data.
+     * @return A list of GameAction objects parsed from the JSON input stream.
+     * @throws IOException If an error occurs while parsing JSON.
+     */
     public static List<GameAction> fromJSON(final InputStream in) throws IOException {
         List<GameAction> gameActions = new ArrayList<>();
 
@@ -74,6 +132,13 @@ public class GameAction extends AbstractResource {
         }
     }
 
+    /**
+     * Handles parsing of a JSON representation of a game action.
+     *
+     * @param jp The JSON parser containing the data to parse.
+     * @return A GameAction object representing the parsed game action.
+     * @throws IOException If an error occurs during parsing.
+     */
     private static GameAction handleGameAction(final JsonParser jp) throws IOException {
 
         String jPlayer = null;
@@ -109,5 +174,4 @@ public class GameAction extends AbstractResource {
 
         return new GameAction(jPlayer, jRole, jTarget);
     }
-
 }

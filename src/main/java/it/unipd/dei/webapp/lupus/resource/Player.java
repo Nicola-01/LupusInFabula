@@ -11,15 +11,48 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a player in the system.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class Player extends AbstractResource {
 
+    /**
+     * The JSON field name for role cardinality.
+     */
     private static final String JSON_NAME = "player";
 
+    /**
+     * The username of the player.
+     */
     private final String username;
+
+    /**
+     * The email address of the player.
+     */
     private final String email;
+
+    /**
+     * The password of the player.
+     */
     private final String password;
+
+    /**
+     * The registration date of the player.
+     */
     private Date registration_date;
 
+    /**
+     * Constructs a Player object with the specified username, email, password, and registration date.
+     *
+     * @param username The username of the player.
+     * @param email The email address of the player.
+     * @param password The password of the player.
+     * @param registration_date The registration date of the player.
+     */
     public Player(final String username, final String email,
                   final String password, final Date registration_date) {
         this.username = username;
@@ -28,33 +61,73 @@ public class Player extends AbstractResource {
         this.registration_date = registration_date;
     }
 
+    /**
+     * Constructs a Player object with the specified username, email, and password.
+     *
+     * @param username The username of the player.
+     * @param email The email address of the player.
+     * @param password The password of the player.
+     */
     public Player(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
     }
 
+    /**
+     * Gets the username of the player.
+     *
+     * @return The username of the player.
+     */
     public final String getUsername() {
         return username;
     }
 
+    /**
+     * Gets the email address of the player.
+     *
+     * @return The email address of the player.
+     */
     public final String getEmail() {
         return email;
     }
 
+    /**
+     * Gets the password of the player.
+     *
+     * @return The password of the player.
+     */
     public final String getPassword() {
         return password;
     }
 
+    /**
+     * Gets the registration date of the player.
+     *
+     * @return The registration date of the player.
+     */
     public final Date getRegistration_date() {
         return registration_date;
     }
 
+    /**
+     * Writes JSON representation of the player to the output stream.
+     *
+     * @param out The output stream to write JSON to.
+     * @throws Exception If an error occurs while writing JSON.
+     */
     @Override
     protected void writeJSON(OutputStream out) throws Exception {
-        // TODO: probabilmente da implementare
+        // TODO: To implement
     }
 
+    /**
+     * Parses JSON input stream and returns a list of player usernames.
+     *
+     * @param in The input stream containing JSON data.
+     * @return A list of player usernames.
+     * @throws IOException If an error occurs while parsing JSON.
+     */
     public static List<String> fromJSON(final InputStream in) throws IOException {
         List<String> players = new ArrayList<>();
 
@@ -88,7 +161,14 @@ public class Player extends AbstractResource {
         }
     }
 
-    // TODO forse deve diventare un array di Player
+    // TODO maybe it needs to become an array of Players
+    /**
+     * Handles parsing of a JSON representation of a player and returns the username.
+     *
+     * @param jp The JSON parser containing the data to parse.
+     * @return The username of the parsed player.
+     * @throws IOException If an error occurs during parsing.
+     */
     private static String handlePlayerJSON(JsonParser jp) throws IOException {
 
         String jUsername = null;

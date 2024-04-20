@@ -16,6 +16,13 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.util.Base64;
 
+/**
+ * Filter to manage access to the protected resources.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class UserFilter implements Filter {
     /**
      * A LOGGER available for all the subclasses.

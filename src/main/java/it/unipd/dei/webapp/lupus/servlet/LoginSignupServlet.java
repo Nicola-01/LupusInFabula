@@ -117,7 +117,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
      */
     public void signup(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            LogContext.setAction(Actions.SIGNUT_ACTION);
+            LogContext.setAction(Actions.SIGNUP_ACTION);
 
             // recover all necessary parameters
             String username = request.getParameter("username");

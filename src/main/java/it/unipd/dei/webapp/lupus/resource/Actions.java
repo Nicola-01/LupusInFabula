@@ -63,24 +63,44 @@ public final class Actions {
      */
     public static final String GET_USERNAME = "GET_USERNAME";
 
+
     /**
-     * The authentication of a user
+     * The authentication of a user.
      */
     public static final String AUTHENTICATE_USER = "AUTHENTICATE_USER";
+
+    /**
+     * The authentication of a master.
+     */
+    public static final String AUTHENTICATE_MASTER = "AUTHENTICATE_MASTER";
+
 
     /**
      * If arrive GET request to the page login, signup and logout, it will be redirected.
      */
     public static final String LOGIN_REDIRECT_ACTION = "LOGIN_REDIRECT_ACTION";
 
+    /**
+     * The login action of a user.
+     */
     public static final String LOGIN_ACTION = "LOGIN_ACTION";
 
-    public static final String SIGNUT_ACTION = "SIGNUT_ACTION";
+    /**
+     * The sign-up action of a user.
+     */
+    public static final String SIGNUP_ACTION = "SIGNUP_ACTION";
 
     /**
-     * The authentication of a master
+     * GET request of game settings.
      */
-    public static final String AUTHENTICATE_MASTER = "AUTHENTICATE_MASTER";
+    public static final String GET_SETTINGS_ACTION = "GET_SETTINGS_ACTION";
+
+    /**
+     * POST request of game settings.
+     */
+    public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
+
+
 
     /**
      * This class can be neither instantiated nor sub-classed.
