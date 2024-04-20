@@ -1,4 +1,11 @@
 GET http://localhost:8080/lupus/game/wolf-puppy/player HTTP/1.1
 
 ### game 2
-GET http://localhost:8080/lupus/game/2 HTTP/1.1
+GET http://localhost:8080/lupus/game/hamster-jester HTTP/1.1
+
+### Correct Login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123

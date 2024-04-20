@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.rest;
 
+import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameInfoDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
@@ -16,11 +17,11 @@ import java.util.List;
 
 public class PlayerGameInfoRR extends AbstractRR {
 
-    private final int gameID;
+    private final String publicGameID;
 
-    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
+    public PlayerGameInfoRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, String publicGameID) {
         super(Actions.ADD_ACTIONS, req, res, ds);
-        this.gameID = gameID;
+        this.publicGameID = publicGameID;
     }
 
     @Override
@@ -36,7 +37,10 @@ public class PlayerGameInfoRR extends AbstractRR {
             //final int gameID = Integer.parseInt(path.substring(1));
 
             // creates a new DAO for accessing the database and lists the players of a match
-            el = new GetGameInfoDAO(ds.getConnection(), this.gameID).access().getOutputParam();
+            int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGameID).access().getOutputParam();
+            LOGGER.info("Found gameID="+gameID+" from publicGameID="+publicGameID);
+            
+            el = new GetGameInfoDAO(ds.getConnection(), gameID).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");

@@ -49,7 +49,7 @@ public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<Integer> {
             if (rs.next()) {
                 gameID = rs.getInt("ID");
             }
-            LOGGER.info(String.format("Found ID %d, from pubblicGame %s", gameID, publicGameId));
+            LOGGER.info(String.format("Found ID %d, from publicGame %s", gameID, publicGameId));
         } finally {
             if (rs != null) {
                 rs.close();

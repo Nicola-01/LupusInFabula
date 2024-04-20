@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
+import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -139,19 +140,17 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
         // /game/{gameID}/master
         else{
             // extract gameID
-            // right now the path is something like /{idgame}/words
+            // right now the path is something like /{idgame}/master
             // or it could be /{idgame}
-            int i = 1;
-            char c = path.charAt(i);
-            String gameID = "-1";
-            while((c >= '0' && c <= '9') && i < path.length() )
-            {
-                if(i == 1) gameID = "";
-                gameID = gameID + c;
-                i++;
-                if(i < path.length()) c = path.charAt(i);
-            }
-            LOGGER.info("gameID="+gameID);
+            path = path.substring(path.lastIndexOf("/") + 1); // remove first /
+            // now path is {gameID} or {gameID}/master
+            String publicGame = "";
+            if (path.contains("/")) // so it contains /master
+                publicGame = path.substring(0, path.lastIndexOf("/"));
+            else
+                publicGame = path;
+
+            LOGGER.info("Public GameID found on URL: " + publicGame);
 
             if (!req.getMethod().equals("GET")) {
                 LOGGER.warn("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master: %s.", method);
@@ -172,7 +171,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
             //else if(path.endsWith("/master"))
                  // new GameStatusRR(req, res, getConnection()).serve();
             else
-                new PlayerGameInfoRR(req, res, getDataSource(), Integer.parseInt(gameID)).serve();
+                new PlayerGameInfoRR(req, res, getDataSource(), publicGame).serve();
         }
         return true;
     }

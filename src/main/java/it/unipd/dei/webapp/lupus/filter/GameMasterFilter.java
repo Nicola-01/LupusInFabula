@@ -46,7 +46,7 @@ public class GameMasterFilter implements Filter {
     /**
      * The name of the user attribute in the session
      */
-    public static final String GAMEMASTER_ATTRIBUTE = "mater";
+    public static final String GAMEMASTER_ATTRIBUTE = "master";
 
     /**
      * The configuration for the filter
