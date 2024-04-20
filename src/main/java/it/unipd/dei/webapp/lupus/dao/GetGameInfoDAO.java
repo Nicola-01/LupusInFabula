@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
-    private static final String STATEMENT = "SELECT * FROM plays_as_in WHERE game_id = ?";
+    private static final String STATEMENT = "SELECT plays_as_in.*, role.name FROM plays_as_in JOIN role ON plays_as_in.role_id = role.id WHERE plays_as_in.game_id = ?";
+
     private final int gameID;
 
     public GetGameInfoDAO(final Connection con, final int gameID){
@@ -36,7 +37,8 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
                         rs.getInt("role_id"),
                         rs.getInt("round_of_death"),
                         rs.getInt("phase_of_death"),
-                        rs.getFloat("duration_of_life")
+                        rs.getFloat("duration_of_life"),
+                        rs.getString("name")
                 ));
             }
             String infos = "logs contains " + join.size() + " plays_as_in";

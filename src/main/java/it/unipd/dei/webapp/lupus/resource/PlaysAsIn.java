@@ -13,6 +13,7 @@ public class PlaysAsIn extends AbstractResource {
     private int roundOfDeath;
     private int phaseOfDeath;
     private float durationOfLife;
+    private String rolename;
 
     public PlaysAsIn(final String playerUsername, final int gameId, final int roleId,
                      final int roundOfDeath, final int phaseOfDeath, final float durationOfLife) {
@@ -22,6 +23,17 @@ public class PlaysAsIn extends AbstractResource {
         this.roundOfDeath = roundOfDeath;
         this.phaseOfDeath = phaseOfDeath;
         this.durationOfLife = durationOfLife;
+    }
+
+    public PlaysAsIn(final String playerUsername, final int gameId, final int roleId,
+                     final int roundOfDeath, final int phaseOfDeath, final float durationOfLife, final String rolename) {
+        this.playerUsername = playerUsername;
+        this.gameId = gameId;
+        this.roleId = roleId;
+        this.roundOfDeath = roundOfDeath;
+        this.phaseOfDeath = phaseOfDeath;
+        this.durationOfLife = durationOfLife;
+        this.rolename = rolename;
     }
 
     public PlaysAsIn(final String playerUsername, final int gameId, final int roleId) {
@@ -34,18 +46,20 @@ public class PlaysAsIn extends AbstractResource {
     protected void writeJSON(final OutputStream out) throws IOException {
         final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
 
-        //jg.writeStartObject();
+        jg.writeStartObject();
 
-        //jg.writeFieldName("playsAsIn");
+        jg.writeFieldName("playsAsIn");
         jg.writeStartObject();
 
         jg.writeStringField("username", this.playerUsername); // Write the username field
         jg.writeNumberField("gameID", this.gameId);
         jg.writeNumberField("roleID", this.roleId);
+        jg.writeStringField("roleName", this.rolename);
+        jg.writeBooleanField("isDead", this.roundOfDeath > 0);
 
         jg.writeEndObject();
 
-        //jg.writeEndObject();
+        jg.writeEndObject();
 
         jg.flush();
     }
