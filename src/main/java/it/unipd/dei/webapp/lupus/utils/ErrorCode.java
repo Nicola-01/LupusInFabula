@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.utils;
 
 import jakarta.servlet.http.HttpServletResponse;
+import org.json.JSONObject;
 
 /**
  * Enumeration representing error codes and their associated error messages and HTTP status codes.
@@ -117,5 +118,19 @@ public enum ErrorCode {
      */
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * Converts the error code and message to a JSON object.
+     *
+     * @return The JSON object containing the error code and message.
+     */
+    public JSONObject toJSON() {
+        JSONObject data = new JSONObject();
+        data.put("code", errorCode);
+        data.put("message", errorMessage);
+        JSONObject info = new JSONObject();
+        info.put("error", data);
+        return info;
     }
 }
