@@ -142,15 +142,15 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
             // extract gameID
             // right now the path is something like /{idgame}/master
             // or it could be /{idgame}
-            path = path.substring(path.lastIndexOf("/") + 1); // remove first /
+            path = path.substring(1); // remove first /
             // now path is {gameID} or {gameID}/master
             String publicGame = "";
             if (path.contains("/")) // so it contains /master
-                publicGame = path.substring(0, path.lastIndexOf("/"));
+                publicGame = path.substring(0, path.indexOf('/'));
             else
                 publicGame = path;
 
-            LOGGER.info("Public GameID found on URL: " + publicGame);
+            LOGGER.info("Public GameID: "+publicGame+" found on URL: " + path);
 
             if (!req.getMethod().equals("GET")) {
                 LOGGER.warn("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master: %s.", method);
