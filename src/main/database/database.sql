@@ -84,10 +84,11 @@ CREATE TABLE Game
 (
     ID               SERIAL PRIMARY KEY,
     public_ID        CHARACTER VARYING UNIQUE NOT NULL,
-    start            TIMESTAMP NOT NULL,
+    start            TIMESTAMP                NOT NULL,
     game_duration    TIME,
     who_wins         SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
-    number_of_rounds INTEGER
+    number_of_rounds SMALLINT                                        DEFAULT 0,
+    phase            SMALLINT                                        DEFAULT 0
 );
 
 COMMENT ON TABLE Game IS 'Represents a game played.';

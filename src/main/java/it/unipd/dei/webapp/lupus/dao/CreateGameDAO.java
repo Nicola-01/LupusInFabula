@@ -65,7 +65,8 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getDate("start"));
+                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getDate("start"), rs.getTime("game_duration"),
+                        rs.getInt("who_wins"), rs.getInt("number_of_rounds"), rs.getInt("phase"));
             }
         } finally {
             if (pstmt != null) {
