@@ -82,6 +82,7 @@ public class Game extends AbstractResource {
         this.id = id;
         this.public_ID = public_ID;
         this.start = start;
+        who_win = -1;
     }
 
     /**

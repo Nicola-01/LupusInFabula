@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class GameDispatcherServlet extends AbstractDatabaseServlet{
+public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
     private static final String JSON_UTF_8_MEDIA_TYPE = "application/json; charset=utf-8";
 
@@ -17,6 +17,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
     protected void service(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
 
         LogContext.setIPAddress(req.getRemoteAddr());
+        LogContext.setAction("DISPATCH_GAME");
 
         final OutputStream out = res.getOutputStream();
 
@@ -52,6 +53,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
             }
 
             LogContext.removeIPAddress();
+            LogContext.removeAction();
         }
     }
 
@@ -60,9 +62,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
      *
      * @param req the HTTP request.
      * @param res the HTTP response.
-     *
-     * @return {@code true} if the request was for an {@code Employee}; {@code false} otherwise.
-     *
+     * @return {@code true} if the request was for an {@code game}; {@code false} otherwise.
      * @throws Exception if any error occurs.
      */
     private boolean processGame(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -71,16 +71,28 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
         String path = req.getRequestURI();
         Message m = null;
 
-        if (!path.contains("/game"))
+        if (!path.startsWith("/lupus/game"))
             return false;
 
-        // /game/settings/dada
+        // supported links:
+        // GET  /game/settings
+        // POST /game/settings
+
+        // POST /game/actions/{gameID}
+        // GET /game/status/{gameID}
+        // GET /game/status/{gameID}/master
+        // GET /game/players/{gameID}
+        // GET /game/players/{gameID}/master
+        // GET /game/logs/{gameID}
+        // GET /game/logs/{gameID}/master
+
         path = path.substring(path.lastIndexOf("/game") + 5);
 
-
-        // /game/settings
-        if(path.equals("/settings")){
-            switch(method){
+        // GET  /game/settings
+        // POST /game/settings
+        // -> /setting
+        if (path.equals("/settings")) {
+            switch (method) {
                 case "GET":
                     new GameSettingsGetRR(req, res, getDataSource()).serve();
                     break;
@@ -94,85 +106,86 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet{
                             String.format("Requested operation %s, but required GET or POST.", method));
                     res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                     m.toJSON(res.getOutputStream());
-                    break;
             }
+            return true;
         }
-        // /game/actions
-        else if(path.equals("/actions")){
-            if (!req.getMethod().equals("POST")) {
+        // GET /game/actions/
+        // GET  /game/status/{gameID}
+        // GET  /game/status/{gameID}/master
+        // GET  /game/players/{gameID}
+        // GET  /game/players/{gameID}/master
+        // GET  /game/logs/{gameID}
+        // GET  /game/logs/{gameID}/master
+
+        // ->
+        // GET  /status/{gameID}
+        // GET  /status/{gameID}/master
+        // GET  /players/{gameID}
+        // GET  /players/{gameID}/master
+        // GET  /logs/{gameID}
+        // GET  /logs/{gameID}/master
+
+        // POST /actions/{gameID}
+
+        String[] splitedPath = path.split("/");
+
+        if (!(splitedPath.length == 3 || (splitedPath.length == 4 && splitedPath[3].equals("master"))))
+            return false;
+
+        boolean isMaster = splitedPath.length == 4;
+
+        // splitedPath[0] is empty
+        String requestURI = splitedPath[1];
+        String publicGameID = splitedPath[2];
+        int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
+
+        if (gameID == -1) {
+            LOGGER.warn("Invalid gameID, the game %s not exists.", publicGameID);
+
+            // todo CAMBIARE ERROR
+            m = new Message("Invalid game, the game \'" + publicGameID + "\' not exists.", "E4A5", // TODO cambiare errore
+                    String.format("Requested operation %s, but required GET or POST.", method));
+            res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            m.toJSON(res.getOutputStream());
+
+            return true;
+        }
+
+        if (requestURI.equals("actions")) {
+            if (!method.equals("POST")) {
                 LOGGER.warn("Unsupported operation for URI /game/actions: %s.", method); // TODO cambiare errore
 
                 m = new Message("Unsupported operation for URI /game/actions.", "E4A5", // TODO cambiare errore
                         String.format("Requested operation %s, but required POST.", method));
                 res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
                 m.toJSON(res.getOutputStream());
+                return true;
             }
-            else
-                new GameActionsRR(req, res, getDataSource()).serve();
+            new GameActionsRR(gameID, req, res, getDataSource()).serve();
+            return true;
         }
-        // /game/log/{gameID}
-        // /game/log/{gameID}/master
-        else if(path.contains("/log")){
-            path = path.substring(path.lastIndexOf("/log/") + 5); // {gameID} or {gameID}/master
-            if (!req.getMethod().equals("GET")) {
-                LOGGER.warn("Unsupported operation for URI /game/log/{gameID} or URI /game/log/{gameID}/master.", method); // TODO cambiare errore
 
-                m = new Message("Unsupported operation for URI /game/log/{gameID} or URI /game/log/{gameID}/master.", "E4A5", // TODO cambiare errore
-                        String.format("Requested operation %s, but required GET.", method));
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                m.toJSON(res.getOutputStream());
-            }
-            else if (path.contains("/") && !path.endsWith("/master")) {
-                LOGGER.warn("Wrong format for URI /game/log/{gameID}/master: URI doesn't end with /master.", path);
+        if (!method.equals("GET")) {
+            LOGGER.warn("Unsupported operation: %s.", method); // TODO cambiare errore
 
-                m = new Message("Wrong format for URI /game/log/{gameID}/master.", "E4A5", // TODO cambiare errore
-                        String.format("Requested URI %s, but required /game/log/{gameID}/master", req.getRequestURI()));
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                m.toJSON(res.getOutputStream());
-            }
-            else if(path.endsWith("/master"))
-                ; // new GameLogRR(req, res, getConnection()).serve();
-            else
-                ; // new GameLogMasterRR(req, res, getConnection()).serve();
-
+            m = new Message("Unsupported operation.", "E4A5", // TODO cambiare errore
+                    String.format("Requested operation %s, but required GET.", method));
+            res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            m.toJSON(res.getOutputStream());
+            return true;
         }
-        // /game/{gameID}
-        // /game/{gameID}/master
-        else{
-            // extract gameID
-            // right now the path is something like /{idgame}/master
-            // or it could be /{idgame}
-            path = path.substring(1); // remove first /
-            // now path is {gameID} or {gameID}/master
-            String publicGame = "";
-            if (path.contains("/")) // so it contains /master
-                publicGame = path.substring(0, path.indexOf('/'));
-            else
-                publicGame = path;
 
-            LOGGER.info("Public GameID: "+publicGame+" found on URL: " + path);
-
-            if (!req.getMethod().equals("GET")) {
-                LOGGER.warn("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master: %s.", method);
-
-                m = new Message("Unsupported operation for URI /game/{gameID} or URI /game/{gameID}/master.", "E4A5", // TODO cambiare errore
-                        String.format("Requested operation %s, but required GET.", method));
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                m.toJSON(res.getOutputStream());
-            }
-            /*else if (path.contains("/") && !path.endsWith("/master")) {
-                LOGGER.warn("Wrong format for URI /game/{gameID}/master: URI doesn't end with /master.");
-
-                m = new Message("Wrong format for URI /game/{gameID}/master.", "E4A5", // TODO cambiare errore
-                        String.format("Requested URI %s, but required /game/{gameID}/master", req.getRequestURI()));
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-                m.toJSON(res.getOutputStream());
-            }*/
-            //else if(path.endsWith("/master"))
-                 // new GameStatusRR(req, res, getConnection()).serve();
-            else
-                new PlayerGameInfoRR(req, res, getDataSource(), publicGame).serve();
-        }
-        return true;
+        return switch (requestURI) {
+            case "status" ->
+                // new GameStatusRR(gameID, isMaster, req, res, getDataSource()).serve();
+                    true;
+            case "players" ->
+                // new GamePlayersRR(gameID, isMaster, req, res, getDataSource()).serve();
+                    true;
+            case "logs" ->
+                // new GameLogRR(gameID, isMaster, req, res, getDataSource(), gameID).serve();
+                    true;
+            default -> false;
+        };
     }
 }

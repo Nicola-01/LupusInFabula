@@ -2,10 +2,12 @@ package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Role;
+import it.unipd.dei.webapp.lupus.utils.GameRole;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -50,7 +52,9 @@ public class CreateGameDAO extends AbstractDAO<Game> {
         String publicID = null;
 
         try {
-            publicID = generatePublicID(new SelectRoleDAO(ds.getConnection()).access().getOutputParam());
+            List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
+            roles.removeIf(role -> Objects.equals(role.getName(), GameRole.MASTER.getName()));
+            publicID = generatePublicID(roles);
 
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);
             pstmt.setString(1, publicID);
@@ -87,6 +91,8 @@ public class CreateGameDAO extends AbstractDAO<Game> {
 
         String randomID = null;
 
+        boolean repeat = true;
+
         // Loop until a unique public game ID is generated
         do {
             // Generate random indices for three roles
@@ -95,8 +101,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             int role3 = rand.nextInt(roles.size());
 
             // Ensure no repetition of the same role
-            if (role1 == role2 || role1 == role3 || role2 == role3)
-                continue;
+            if (role1 == role2 || role1 == role3 || role2 == role3) continue;
 
             // Concatenate role names to form the public game ID
             randomID = roles.get(role1).getName() + "-" +
@@ -106,7 +111,9 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             // Remove spaces from the role names, if any
             randomID = randomID.replaceAll(" ", "");
 
-        } while (new GetGameIdFormPublicGameIdDAO(ds.getConnection(), randomID).access().getOutputParam() == -1);
+            repeat = (new GetGameIdFormPublicGameIdDAO(ds.getConnection(), randomID).access().getOutputParam() != -1);
+
+        } while (repeat);
 
         return randomID;
     }

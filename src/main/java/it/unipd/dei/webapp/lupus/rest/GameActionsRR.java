@@ -6,12 +6,11 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.util.List;
 
 public class GameActionsRR extends AbstractRR {
 
-    public GameActionsRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+    public GameActionsRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.ADD_ACTIONS, req, res, ds);
     }
 

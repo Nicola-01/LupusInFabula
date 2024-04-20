@@ -107,11 +107,8 @@ public class GameMasterFilter implements Filter {
 
                 final HttpSession session = req.getSession(false);
 
-                path = path.substring(path.lastIndexOf("/game/") + 6);
-                if (path.contains("log/"))
-                    path = path.substring(path.lastIndexOf("log/") + 4);
-
-                final String publicGame = path.substring(0, path.lastIndexOf("/master"));
+                path = path.replace("/master", "");
+                final String publicGame = path.substring(path.lastIndexOf("/") + 1);
 
                 LOGGER.info("Pubblic GameId found on URL: " + publicGame);
                 int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
@@ -145,21 +142,20 @@ public class GameMasterFilter implements Filter {
 
                         String masterOfGame = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-                        if(masterOfGame == null){
+                        if (masterOfGame == null) {
                             LOGGER.warn("There is no game with id %s", publicGame);
 
-                            ErrorCode ec = ErrorCode.NOT_LOGGED;
+                            ErrorCode ec = ErrorCode.GAME_NOT_EXIST;
                             res.setStatus(ec.getHTTPCode());
                             Message m = new Message("There is no game with id " + publicGame, "" + ec.getErrorCode(), ec.getErrorMessage());
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
-                        }
-                        else if (masterOfGame.equals(currentPlayer.getUsername())) {
+                        } else if (masterOfGame.equals(currentPlayer.getUsername())) {
                             session.setAttribute(GAMEMASTER_ATTRIBUTE, gameID);
                         } else {
-                            LOGGER.warn("%s is not the gamemaster in game %s" , currentPlayer.getUsername(), publicGame);
+                            LOGGER.warn("%s is not the gamemaster in game %s", currentPlayer.getUsername(), publicGame);
 
                             ErrorCode ec = ErrorCode.NOT_MASTER;
                             res.setStatus(ec.getHTTPCode());
@@ -178,7 +174,9 @@ public class GameMasterFilter implements Filter {
 
                             ErrorCode ec = ErrorCode.DIFFERENT_GAMEID;
                             res.setStatus(ec.getHTTPCode());
+
                             Message m = new Message("Different gameID founded", "" + ec.getErrorCode(), ec.getErrorMessage());
+                            LOGGER.info("Different gameID founded: %d != %d", sessionGameID, gameID);
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");

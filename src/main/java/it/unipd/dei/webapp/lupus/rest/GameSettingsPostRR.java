@@ -135,7 +135,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     Message m = new Message("ROLE " + roleCardinality.getRole() + " does not exist", "" + ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
-                    LOGGER.error("ROLE %s does not exist", roleCardinality.getRole());
+                    LOGGER.warn("ROLE %s does not exist", roleCardinality.getRole());
                     exit = true;
                 }
 

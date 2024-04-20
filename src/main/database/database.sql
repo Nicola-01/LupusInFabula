@@ -4,12 +4,8 @@ DROP TABLE IF EXISTS Action;
 DROP TABLE IF EXISTS TYPE_ACTION;
 DROP TABLE IF EXISTS HAS_ROLES;
 DROP TABLE IF EXISTS PLAYS_AS_IN;
-DROP TYPE IF EXISTS cycle_phase;
 DROP TABLE IF EXISTS Game;
-DROP TYPE IF EXISTS winning_faction;
 DROP TABLE IF EXISTS Role;
-DROP TYPE IF EXISTS alignment;
-DROP TYPE IF EXISTS faction;
 DROP TABLE IF EXISTS IS_FRIEND_WITH;
 DROP TABLE IF EXISTS Player;
 
@@ -90,7 +86,7 @@ CREATE TABLE Game
     public_ID        CHARACTER VARYING UNIQUE NOT NULL,
     start            TIMESTAMP NOT NULL,
     game_duration    TIME,
-    who_wins         SMALLINT CHECK ( who_wins IN (0, 1, 2, 3) ),
+    who_wins         SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
     number_of_rounds INTEGER
 );
 
