@@ -91,7 +91,7 @@ public class GameLogGetRR extends AbstractRR
 
         if(!this.isMaster.equals(MASTEROLE) && r.size()>0)
         {
-            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer)))//to do mod;
+            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer)));//to do mod;
         }
 
         return r;
