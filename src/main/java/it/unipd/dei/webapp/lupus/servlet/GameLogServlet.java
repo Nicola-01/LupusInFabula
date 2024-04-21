@@ -3,7 +3,6 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByEmailDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 
 public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
 
-    private static final String STATEMENT = "SELECT MAX(game_id) FROM plays_as_in WHERE player_username = LOWER(?)";
+    private static final String STATEMENT = "SELECT MAX(game_id) as game_id FROM plays_as_in WHERE player_username = LOWER(?)";
     private final String playerUsername;
 
     public GetGameIdByPlayerUsernameDAO(final Connection con, final String playerUsername) {
