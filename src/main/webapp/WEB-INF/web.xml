@@ -4,8 +4,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
 
-<display-name>Lupus in Fabula</display-name>
-    
+    <display-name>Lupus in Fabula</display-name>
+
     <welcome-file-list>
         <welcome-file>jsp/home.jsp</welcome-file>
     </welcome-file-list>
@@ -42,6 +42,12 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.GameDispatcherServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>UserDispatcherServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserDispatcherServlet</servlet-class>
+    </servlet>
+
+
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
         <url-pattern>/signup</url-pattern>
@@ -59,31 +65,40 @@
         <url-pattern>/game/*</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>UserDispatcherServlet</servlet-name>
+        <url-pattern>/user/*</url-pattern>
+    </servlet-mapping>
 
-<!--    <filter>-->
-<!--        <filter-name>LoginFilter</filter-name>-->
-<!--        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>-->
-<!--    </filter>-->
+    <!--    <servlet-mapping>-->
+    <!--        <servlet-name>User</servlet-name>-->
+    <!--        <url-pattern>/user/*</url-pattern>-->
+    <!--    </servlet-mapping>-->
 
-<!--    <filter>-->
-<!--        <filter-name>GameMasterFilter</filter-name>-->
-<!--        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>-->
-<!--    </filter>-->
+    <!--    <filter>-->
+    <!--        <filter-name>LoginFilter</filter-name>-->
+    <!--        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>-->
+    <!--    </filter>-->
+
+    <!--    <filter>-->
+    <!--        <filter-name>GameMasterFilter</filter-name>-->
+    <!--        <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>-->
+    <!--    </filter>-->
 
 
-<!--    <filter-mapping>-->
-<!--        <filter-name>LoginFilter</filter-name>-->
-<!--        <url-pattern>/logout</url-pattern>-->
-<!--        <url-pattern>/user/me</url-pattern>-->
-<!--        <url-pattern>/user/friend</url-pattern>-->
-<!--        <url-pattern>/game/settings</url-pattern>-->
-<!--        <url-pattern>/home</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>LoginFilter</filter-name>-->
+    <!--        <url-pattern>/logout</url-pattern>-->
+    <!--        <url-pattern>/user/me</url-pattern>-->
+    <!--        <url-pattern>/user/friend</url-pattern>-->
+    <!--        <url-pattern>/game/settings</url-pattern>-->
+    <!--        <url-pattern>/home</url-pattern>-->
+    <!--    </filter-mapping>-->
 
-<!--    <filter-mapping>-->
-<!--        <filter-name>GameMasterFilter</filter-name>-->
-<!--        <url-pattern>/game/currentgame/master</url-pattern>-->
-<!--        <url-pattern>/game/currentgame/log</url-pattern>-->
-<!--    </filter-mapping>-->
+    <!--    <filter-mapping>-->
+    <!--        <filter-name>GameMasterFilter</filter-name>-->
+    <!--        <url-pattern>/game/currentgame/master</url-pattern>-->
+    <!--        <url-pattern>/game/currentgame/log</url-pattern>-->
+    <!--    </filter-mapping>-->
 
 </web-app>

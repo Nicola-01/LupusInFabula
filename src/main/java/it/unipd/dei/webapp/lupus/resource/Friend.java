@@ -78,7 +78,7 @@ public class Friend extends AbstractResource {
                             jp.nextToken();
                             jUsername = jp.getText();
                             break;
-                        case "salary":
+                        case "friendship_date":
                             jp.nextToken();
                             jFriendship_date = jp.getText();
                             break;
