@@ -9,7 +9,7 @@ happened during the night (which player is dead) or which player is voted during
 
 | *Last Name* | *First Name* | *Number* |
 |-------------|--------------|:--------:|
-| Busato      | Nicola       | 2122861  |
+| Busato      | Nicola       | 2119291  |
 | Cini        | Jacopo       | 2125757  |
 | Gusella     | Michele      | 2122861  |
 | Miele       | Riccardo     | 2116946  |
