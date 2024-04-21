@@ -88,7 +88,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
                 ErrorCode ec = ErrorCode.INVALID_USERNAME_FORMAT;
                 res.setStatus(ec.getHTTPCode());
 
-                m = new Message("Friend_username not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Friend_username not valid", ec.getErrorCode(), ec.getErrorMessage());
                 req.setAttribute("message", m);
 
                 LOGGER.info("Friend_username not valid");
@@ -96,7 +96,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
                 ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                 res.setStatus(ec.getHTTPCode());
 
-                m = new Message("This player doesn't exist", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("This player doesn't exist", ec.getErrorCode(), ec.getErrorMessage());
 
 
                 LOGGER.info("This player doesn't exist");
@@ -135,7 +135,7 @@ public class FriendServlet extends AbstractDatabaseServlet{
                 ErrorCode ec = ErrorCode.INVALID_USERNAME_FORMAT;
                 res.setStatus(ec.getHTTPCode());
 
-                m = new Message("Friend_username not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Friend_username not valid", ec.getErrorCode(), ec.getErrorMessage());
                 
 
                 LOGGER.info("Friend_username not valid");

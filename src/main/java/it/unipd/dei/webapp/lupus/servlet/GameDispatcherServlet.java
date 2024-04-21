@@ -3,12 +3,20 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Servlet that manages the REST calls for the game section.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
     private static final String JSON_UTF_8_MEDIA_TYPE = "application/json; charset=utf-8";
@@ -17,15 +25,12 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
     protected void service(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
 
         LogContext.setIPAddress(req.getRemoteAddr());
-        LogContext.setAction("DISPATCH_GAME");
+        LogContext.setAction(Actions.GAME_DISPATCHER_ACTION);
 
         final OutputStream out = res.getOutputStream();
 
         try {
-
-            // todo sistemare error code
-
-            // if the requested resource was a Game, delegate its processing and return
+            // Check if the requested URL exists, and if it does, handle it
             if (processGame(req, res)) {
                 return;
             }
@@ -33,16 +38,20 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             // if none of the above process methods succeeds, it means an unknown resource has been requested
             LOGGER.warn("Unknown resource requested: %s.", req.getRequestURI());
 
-            final Message m = new Message("Unknown resource requested.", "E4A6",
+            ErrorCode ec = ErrorCode.UNKNOWN_RESOURCE;
+            final Message m = new Message("Unknown resource requested.", ec.getErrorCode(),
                     String.format("Requested resource is %s.", req.getRequestURI()));
-            res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            res.setStatus(ec.getHTTPCode());
+
             res.setContentType(JSON_UTF_8_MEDIA_TYPE);
             m.toJSON(out);
         } catch (Throwable t) {
-            LOGGER.error("Unexpected error while processing the REST resource.", t);
 
-            final Message m = new Message("Unexpected error.", "E5A1", t.getMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            LOGGER.error("Unexpected error while processing the REST resource %s.", req.getRequestURI(), t);
+            final Message m = new Message("Unexpected error.", ec.getErrorCode(), t.getMessage());
+            res.setStatus(ec.getHTTPCode());
+
             m.toJSON(out);
         } finally {
 
@@ -58,11 +67,12 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
     }
 
     /**
-     * Checks whether the request is and processes it.
+     * Checks whether the request is for a game and processes it.
      *
      * @param req the HTTP request.
      * @param res the HTTP response.
-     * @return {@code true} if the request was for an {@code game}; {@code false} otherwise.
+     * @return {@code true} if the request was for a game, and it has been handled;
+     * {@code false} otherwise.
      * @throws Exception if any error occurs.
      */
     private boolean processGame(final HttpServletRequest req, final HttpServletResponse res) throws Exception {
@@ -100,11 +110,13 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
                     new GameSettingsPostRR(req, res, getDataSource()).serve();
                     break;
                 default:
-                    LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method); // TODO cambiare errore
+                    LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method);
 
-                    m = new Message("Unsupported operation for URI /game/settings.", "E4A5", // TODO cambiare errore
+                    ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                    m = new Message("Unsupported operation for URI /game/settings.", ec.getErrorCode(),
                             String.format("Requested operation %s, but required GET or POST.", method));
-                    res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                    res.setStatus(ec.getHTTPCode());
+
                     m.toJSON(res.getOutputStream());
             }
             return true;
@@ -142,50 +154,61 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         if (gameID == -1) {
             LOGGER.warn("Invalid gameID, the game %s not exists.", publicGameID);
 
-            // todo CAMBIARE ERROR
-            m = new Message("Invalid game, the game \'" + publicGameID + "\' not exists.", "E4A5", // TODO cambiare errore
+            ErrorCode ec = ErrorCode.GAME_NOT_FOUND;
+            m = new Message("Invalid game, the game \'" + publicGameID + "\' not exists.", ec.getErrorCode(),
                     String.format("Requested operation %s, but required GET or POST.", method));
-            res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-            m.toJSON(res.getOutputStream());
+            res.setStatus(ec.getHTTPCode());
 
+            m.toJSON(res.getOutputStream());
             return true;
         }
 
         if (requestURI.equals("actions")) {
             if (!method.equals("POST")) {
-                LOGGER.warn("Unsupported operation for URI /game/actions: %s.", method); // TODO cambiare errore
+                LOGGER.warn("Unsupported operation for URI /game/actions: %s.", method);
 
-                m = new Message("Unsupported operation for URI /game/actions.", "E4A5", // TODO cambiare errore
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsupported operation for URI /game/actions.", ec.getErrorCode(),
                         String.format("Requested operation %s, but required POST.", method));
-                res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+                res.setStatus(ec.getHTTPCode());
+
                 m.toJSON(res.getOutputStream());
+
                 return true;
             }
             new GameActionsRR(gameID, req, res, getDataSource()).serve();
             return true;
         }
 
-        if (!method.equals("GET")) {
-            LOGGER.warn("Unsupported operation: %s.", method); // TODO cambiare errore
+        if (!(requestURI.equals("status") || requestURI.equals("players") || requestURI.equals("logs"))) {
+            return false;
+        }
 
-            m = new Message("Unsupported operation.", "E4A5", // TODO cambiare errore
+        if (!method.equals("GET")) {
+            LOGGER.warn("Unsupported operation for URI /game/%s: %s.", requestURI, method);
+
+            ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+
+            m = new Message("Unsupported operation for URI /game/" + requestURI + ".", ec.getErrorCode(),
                     String.format("Requested operation %s, but required GET.", method));
-            res.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+            res.setStatus(ec.getHTTPCode());
+
             m.toJSON(res.getOutputStream());
+
             return true;
         }
 
-        return switch (requestURI) {
-            case "status" ->
+        switch (requestURI) {
+            case "status":
                 // new GameStatusRR(gameID, isMaster, req, res, getDataSource()).serve();
-                    true;
-            case "players" ->
+                break;
+            case "players":
                 // new GamePlayersRR(gameID, isMaster, req, res, getDataSource()).serve();
-                    true;
-            case "logs" ->
+                break;
+            case "logs":
                 // new GameLogRR(gameID, isMaster, req, res, getDataSource(), gameID).serve();
-                    true;
-            default -> false;
-        };
+                break;
+        }
+        return true;
     }
 }

@@ -17,7 +17,7 @@ public class PlayerInGameDAO extends AbstractDAO<Integer> {
      * The SQL statement to be executed
      */
     private static final String STATEMENT = "SELECT g.id FROM game g join public.plays_as_in pai on g.id = pai.game_id " +
-            "where g.who_wins IS NULL and player_username = ?";
+            "where g.who_wins = -1 and player_username = ?";
 
     /**
      * The username to search

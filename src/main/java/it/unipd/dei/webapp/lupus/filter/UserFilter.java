@@ -103,7 +103,7 @@ public class UserFilter implements Filter {
 
                 ErrorCode ec = ErrorCode.NOT_LOGGED;
                 res.setStatus(ec.getHTTPCode());
-                Message m = new Message("Authentication required", "" + ec.getErrorCode(), ec.getErrorMessage());
+                Message m = new Message("Authentication required", ec.getErrorCode(), ec.getErrorMessage());
 
                 m.toJSON(res.getOutputStream());
 //                res.sendRedirect(req.getContextPath() + "/jsp/login.jsp");
@@ -123,7 +123,7 @@ public class UserFilter implements Filter {
 
                     ErrorCode ec = ErrorCode.NOT_LOGGED;
                     res.setStatus(ec.getHTTPCode());
-                    Message m = new Message("Authentication required, not logged in", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Authentication required, not logged in", ec.getErrorCode(), ec.getErrorMessage());
 
                     m.toJSON(res.getOutputStream());
 

@@ -18,6 +18,10 @@ package it.unipd.dei.webapp.lupus.resource;
 
 /**
  * Contains constants for the actions performed by the application.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
  */
 public final class Actions {
 
@@ -100,6 +104,13 @@ public final class Actions {
      */
     public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
 
+
+    // Dispatcher
+
+    /**
+     *
+     */
+    public static final String GAME_DISPATCHER_ACTION = "GAME_DISPATCHER_ACTION";
 
 
     /**

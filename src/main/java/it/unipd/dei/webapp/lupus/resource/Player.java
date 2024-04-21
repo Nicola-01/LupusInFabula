@@ -136,7 +136,7 @@ public class Player extends AbstractResource {
 
             // while we are not on the start of an element or the element is not
             // a token element, advance to the next element (if any)
-            while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !JSON_NAME.equals(jp.getCurrentName())) { //TODO controllare il nome
+            while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !JSON_NAME.equals(jp.getCurrentName())) {
 
                 // there are no more events
                 if (jp.nextToken() == null) {
@@ -161,7 +161,6 @@ public class Player extends AbstractResource {
         }
     }
 
-    // TODO maybe it needs to become an array of Players
     /**
      * Handles parsing of a JSON representation of a player and returns the username.
      *

@@ -5,44 +5,64 @@ import org.json.JSONObject;
 
 /**
  * Enumeration representing error codes and their associated error messages and HTTP status codes.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
  */
 public enum ErrorCode {
+    // errorCode -> E + <acronym> + <progressive number>
+    // USR -> USER
+    // GME -> GAME
+    // JSN -> JSON
+    // SES -> SESSION
+    // DSP -> DISPATCHER
+    // DTB -> DATABASE
+    // INT -> INTERNAL
 
-//    WRONG_FORMAT(-100, HttpServletResponse.SC_BAD_REQUEST,"Wrong format."),
+    // TODO: check error code
+
+    //    WRONG_FORMAT(-100, HttpServletResponse.SC_BAD_REQUEST,"Wrong format."),
 //    NO_HOMEWORKS_TO_PUBLISH(-101, HttpServletResponse.SC_NOT_FOUND, "No homeworks to publish."),
     // Login or edit credentials
-    EMPTY_INPUT_FIELDS(-101, HttpServletResponse.SC_BAD_REQUEST, "One or more input fields are empty."),
-    INVALID_USERNAME_FORMAT(-102, HttpServletResponse.SC_BAD_REQUEST, "Invalid username format."),
-    INVALID_EMAIL_FORMAT(-103, HttpServletResponse.SC_BAD_REQUEST, "Invalid email format."),
-    INVALID_PASSWORD_FORMAT(-104, HttpServletResponse.SC_BAD_REQUEST, "Invalid password format."),
-    PASSWORD_NOT_MATCH(-104, HttpServletResponse.SC_BAD_REQUEST, "Passwords do not match."),
-    USERNAME_ALREADY_USED(-105, HttpServletResponse.SC_CONFLICT, "Username already used"),
-    EMAIL_ALREADY_USED(-106, HttpServletResponse.SC_CONFLICT, "Email already used"),
-    WRONG_CREDENTIALS(-107, HttpServletResponse.SC_BAD_REQUEST, "Submitted credentials are wrong"),
+    EMPTY_INPUT_FIELDS("EUSR1", HttpServletResponse.SC_BAD_REQUEST, "One or more input fields are empty."),
+    INVALID_USERNAME_FORMAT("EUSR2", HttpServletResponse.SC_BAD_REQUEST, "Invalid username format."),
+    INVALID_EMAIL_FORMAT("EUSR3", HttpServletResponse.SC_BAD_REQUEST, "Invalid email format."),
+    INVALID_PASSWORD_FORMAT("EUSR4", HttpServletResponse.SC_BAD_REQUEST, "Invalid password format."),
+    PASSWORD_NOT_MATCH("EUSR5", HttpServletResponse.SC_BAD_REQUEST, "Passwords do not match."),
+    USERNAME_ALREADY_USED("EUSR6", HttpServletResponse.SC_CONFLICT, "Username already used"),
+    EMAIL_ALREADY_USED("EUSR7", HttpServletResponse.SC_CONFLICT, "Email already used"),
+    WRONG_CREDENTIALS("EUSR8", HttpServletResponse.SC_BAD_REQUEST, "Submitted credentials are wrong"),
+
+    // game
+    PLAYER_NOT_EXIST("EGME1", HttpServletResponse.SC_BAD_REQUEST, "One or more players does not exist."),
+    PLAYER_ALREADY_IN_GAME("EGME2", HttpServletResponse.SC_BAD_REQUEST, "One or more players are already in a game."),
+    MASTER_ALREADY_IN_GAME("EGME3", HttpServletResponse.SC_BAD_REQUEST, "The gamemaster is already in a game."),
+    ROLE_NOT_EXIST("EGME4", HttpServletResponse.SC_BAD_REQUEST, "One or more roles does not exist."),
+    NUMBER_PLAYERS_ROLES_NOT_MATCH("EGME5", HttpServletResponse.SC_BAD_REQUEST, "Number of players entered does not correspond to the number of roles."),
+    NOT_ENOUGH_PLAYERS("EGME6", HttpServletResponse.SC_BAD_REQUEST, "Not enough players."),
+    INVALID_GAMESETTINGS("EGME7", HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist."),
+    INVALID_ROLES_CARDINALITY("EGME8", HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality."),
+
+    GAME_NOT_FOUND("EGME9", HttpServletResponse.SC_NOT_FOUND, "Game not found."),
 
     // invalid data
-    INVALID_JSON_FORMAT(-116, HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON"),
-
-    // game creation
-    PLAYER_NOT_EXIST(-108, HttpServletResponse.SC_BAD_REQUEST, "One or more players does not exist"),
-    PLAYER_ALREADY_IN_GAME(-109, HttpServletResponse.SC_BAD_REQUEST, "One or more players are already in a game"),
-    MASTER_ALREADY_IN_GAME(-110, HttpServletResponse.SC_BAD_REQUEST, "The gamemaster is already in a game"),
-    ROLE_NOT_EXIST(-111, HttpServletResponse.SC_BAD_REQUEST, "One or more roles does not exist"),
-    NUMBER_PLAYERS_ROLES_NOT_MATCH(-112, HttpServletResponse.SC_BAD_REQUEST, "Number of players entered does not correspond to the number of roles"),
-    NOT_ENOUGH_PLAYERS(-113, HttpServletResponse.SC_BAD_REQUEST, "Not enough players"),
-    INVALID_GAMESETTINGS(-114, HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist"),
-    INVALID_ROLES_CARDINALITY(-115, HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality"),
+    INVALID_JSON_FORMAT("EJSON1", HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON."),
 
     // session
 //    INVALID_SESSION(-200, HttpServletResponse.SC_BAD_REQUEST, "Invalid session"),
-    NOT_LOGGED(-201, HttpServletResponse.SC_FORBIDDEN, "Account not logged in"),
-    NOT_MASTER(-201, HttpServletResponse.SC_FORBIDDEN, "The account is not a gamemaster"),
-    GAME_NOT_EXIST(-201, HttpServletResponse.SC_NOT_FOUND, "The game doesn't exist"),
-    DIFFERENT_GAMEID(-202, HttpServletResponse.SC_CONFLICT, "The gameIDs do not match"),
+    NOT_LOGGED("ESES1", HttpServletResponse.SC_FORBIDDEN, "Account not logged in."),
+    NOT_MASTER("ESES2", HttpServletResponse.SC_FORBIDDEN, "The account is not a gamemaster."),
+    NO_GAME_SESSION("ESES3", HttpServletResponse.SC_NOT_FOUND, "The game doesn't exist."),
+    DIFFERENT_GAME_SESSION("ESES4", HttpServletResponse.SC_CONFLICT, "The gameIDs do not match."),
+
+    // dispatcher
+    UNKNOWN_RESOURCE("EDSP1", HttpServletResponse.SC_NOT_FOUND, "Unknown resource requested."),
+    METHOD_NOT_ALLOWED("EDSP2", HttpServletResponse.SC_METHOD_NOT_ALLOWED, "The method is not allowed"),
 
     // errors
-    DATABASE_ERROR(-203, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error"),
-    INTERNAL_ERROR(-999, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal Error");
+    DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),
+    INTERNAL_ERROR("EINT1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error.");
 
     //    EMAIL_MISSING(-103, HttpServletResponse.SC_BAD_REQUEST, "Email missing"),
 //    COURSEID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Courseid missing"),
@@ -69,7 +89,7 @@ public enum ErrorCode {
     /**
      * The error code associated with the error.
      */
-    private final int errorCode;
+    private final String errorCode;
 
     /**
      * The HTTP status code associated with the error.
@@ -88,17 +108,18 @@ public enum ErrorCode {
      * @param httpCode     The HTTP status code.
      * @param errorMessage The error message.
      */
-    ErrorCode(int errorCode, int httpCode, String errorMessage) {
+    ErrorCode(String errorCode, int httpCode, String errorMessage) {
         this.errorCode = errorCode;
         this.httpCode = httpCode;
         this.errorMessage = errorMessage;
     }
+
     /**
      * Gets the error code.
      *
      * @return The error code.
      */
-    public int getErrorCode() {
+    public String getErrorCode() {
         return errorCode;
     }
 

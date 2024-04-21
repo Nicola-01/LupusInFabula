@@ -1,0 +1,39 @@
+### Correct Login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123
+
+###
+GET http://localhost:8080/lupus/game/settings
+
+###
+POST http://localhost:8080/lupus/game/settings
+Content-Type: application/json
+
+###
+PUT http://localhost:8080/lupus/game/settings
+Content-Type: application/json
+
+### REQUIRED populate_db_optional.sql
+
+###
+GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer
+Content-Type: application/json
+
+###
+POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer
+Content-Type: application/json
+
+###
+POST http://localhost:8080/lupus/game/notExist/dorky-farmer-explorer
+Content-Type: application/json
+
+###
+POST http://localhost:8080/lupus/game/status/dorky-farmer-explorer
+Content-Type: application/json
+
+###
+GET http://localhost:8080/lupus/game/status/dorky-farmer-explorer
+Content-Type: application/json

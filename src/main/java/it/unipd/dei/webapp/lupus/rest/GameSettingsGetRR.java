@@ -49,7 +49,7 @@ public class GameSettingsGetRR extends AbstractRR {
         } catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
-            Message m = new Message("Cannot search for roles: unexpected error while accessing the database.", ""+ec.getErrorCode(), e.getMessage());
+            Message m = new Message("Cannot search for roles: unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
             LOGGER.error("Cannot search for roles: unexpected error while accessing the database.", e);
             m.toJSON(res.getOutputStream());
         }

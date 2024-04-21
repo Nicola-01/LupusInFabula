@@ -49,17 +49,17 @@ public class GameSettingsPostRR extends AbstractRR {
             LogContext.setIPAddress(req.getRemoteAddr());
             LogContext.setUser(gameMaster.getUsername());
 
-            boolean exit = false;
+            List<Message> messages = new ArrayList<>();
 
             if (new PlayerInGameDAO(ds.getConnection(), gameMaster.getUsername()).access().getOutputParam() != -1) {
                 ErrorCode ec = ErrorCode.MASTER_ALREADY_IN_GAME;
                 res.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("The player " + gameMaster.getUsername() + " is already in a game", "" + ec.getErrorCode(), ec.getErrorMessage());
-                m.toJSON(res.getOutputStream());
+                Message m = new Message("The player " + gameMaster.getUsername() + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
+                messages.add(m);
+                // m.toJSON(res.getOutputStream());
 
                 LOGGER.warn("the USER %s is already in a game", gameMaster.getUsername());
-                exit = true;
             }
 
             LOGGER.info("The player %s is creating new game", gameMaster.getUsername());
@@ -91,16 +91,15 @@ public class GameSettingsPostRR extends AbstractRR {
 
                 // Check if the username exists
                 if (validPlayer == null) {
-                    // TODO, message and error
                     ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("PLAYER " + username + " does not exist", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    m.toJSON(res.getOutputStream());
+                    Message m = new Message("PLAYER " + username + " does not exist", ec.getErrorCode(), ec.getErrorMessage());
+                    messages.add(m);
+                    // m.toJSON(res.getOutputStream());
 
                     // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("USER %s does not exist", username);
-                    exit = true;
                     break;
                 }
                 // if the user exists, retrieve the correct name (lowercase and lowercase)
@@ -111,11 +110,11 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("PLAYER " + username + " is already in a game", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    m.toJSON(res.getOutputStream());
+                    Message m = new Message("PLAYER " + username + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
+                    messages.add(m);
+                    // m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("USER %s is already in a game", username);
-                    exit = true;
                 }
 
                 // add the player to the list
@@ -132,16 +131,16 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.ROLE_NOT_EXIST;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("ROLE " + roleCardinality.getRole() + " does not exist", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    m.toJSON(res.getOutputStream());
+                    Message m = new Message("ROLE " + roleCardinality.getRole() + " does not exist", ec.getErrorCode(), ec.getErrorMessage());
+                    messages.add(m);
+                    // m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("ROLE %s does not exist", roleCardinality.getRole());
-                    exit = true;
                 }
 
             }
 
-            if (!exit) {
+            if (messages.isEmpty()) {
                 // check the validity of the settings, e.g. number of roles in comparison with number of players
                 int totalPlayers = selectedPlayers.size();
 
@@ -149,7 +148,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.NOT_ENOUGH_PLAYERS;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Not enough players. Player number passed: " + totalPlayers + ". A minimum of 5 players is required.", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Not enough players. Player number passed: " + totalPlayers + ". A minimum of 5 players is required.", ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Not enough players, player number: %d minimum required 5", totalPlayers);
@@ -160,7 +159,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.INVALID_ROLES_CARDINALITY;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("One or more roles have exceeded the maximum cardinality", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("One or more roles have exceeded the maximum cardinality", ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("One or more roles have exceeded the maximum cardinality", totalPlayers, totalRoles);
@@ -171,7 +170,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.NUMBER_PLAYERS_ROLES_NOT_MATCH;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Player number " + totalPlayers + " does not match the number of roles " + totalRoles, "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Player number " + totalPlayers + " does not match the number of roles " + totalRoles, ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
@@ -215,19 +214,24 @@ public class GameSettingsPostRR extends AbstractRR {
                     createdGame.toJSON(res.getOutputStream());
                 }
             } else { // there was an error during player or role validation
+                // return the message(s)
+                if(messages.size() == 1)
+                    messages.get(0).toJSON(res.getOutputStream());
+                else
+                    new ResourceList<>(messages).toJSON(res.getOutputStream());
 //                request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
             }
         } catch (IOException e) {
             ErrorCode ec = ErrorCode.INVALID_JSON_FORMAT;
             res.setStatus(ec.getHTTPCode());
 
-            Message m = new Message("Invalid JSON format", "" + ec.getErrorCode(), e.getMessage());
+            Message m = new Message("Invalid JSON format", ec.getErrorCode(), e.getMessage());
             m.toJSON(res.getOutputStream());
             LOGGER.warn("Invalid JSON format", e);
         } catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
-            Message m = new Message("Unexpected error while accessing the database.", "" + ec.getErrorCode(), e.getMessage());
+            Message m = new Message("Unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
             LOGGER.error("Unexpected error while accessing the database.", e);
             m.toJSON(res.getOutputStream());
         } finally {

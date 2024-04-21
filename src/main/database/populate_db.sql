@@ -1,15 +1,3 @@
-INSERT INTO Player (username, email, password, registration_date)
-VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), CURRENT_DATE),
-       ('user1', LOWER('user1@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user2', LOWER('user2@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user3', LOWER('user3@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user4', LOWER('user41@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user5', LOWER('user5@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user6', LOWER('user6@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user7', LOWER('user7@test.com'), md5('ciao'), CURRENT_DATE),
-       ('user8', LOWER('user8@test.com'), md5('ciao'), CURRENT_DATE);
-
-
 INSERT INTO Role
 VALUES (1, 'master', -1, -1, 1, 'The player who runs the game'),
        (2, 'carpenter', 0, 0, 1, 'He is the villager who provides wood for the bonfire. If he is voted out, he will refuse to provide the wood, and there will be no bonfire for that day. The power can only be used once.'),
@@ -31,12 +19,3 @@ VALUES (1, 'master', -1, -1, 1, 'The player who runs the game'),
        (18, 'jester', 2, 3, 1, 'The Jester wins, alone, if he is burnt at the stake.'),
        (19, 'illusionist', 3, 1, 1, 'He chooses a player during the night and blocks his power for that night.'),
        (20, 'plague spreader', 3, 0, 1, 'He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right).');
-
--- INSERT INTO game (id, public_id, start, game_duration, who_wins, number_of_rounds) VALUES
---                     (1, 'hamster-jester', '2024-04-18 12:00:00', NULL, NULL, 2),
---                     (2, 'wolf-puppy', '2024-04-10 14:00:00', NULL, NULL, 5);
---
--- INSERT INTO plays_as_in (player_username, game_id, role_id, round_of_death, phase_of_death, duration_of_life)  VALUES
---                     ('user1', 1, 3, NULL, NULL, NULL),
---                     ('user2', 1, 2, NULL, NULL, NULL),
---                     ('user3', 2, 5, NULL, NULL, NULL);

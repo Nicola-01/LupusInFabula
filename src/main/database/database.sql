@@ -93,10 +93,12 @@ CREATE TABLE Game
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
 COMMENT ON COLUMN Game.ID IS 'The unique identifier for each game.';
+COMMENT ON COLUMN Game.public_ID  IS ''; -- TODO description
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
 COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
 COMMENT ON COLUMN Game.number_of_rounds IS 'The total number of rounds played in the game.';
+COMMENT ON COLUMN Game.phase IS ''; -- TODO description
 
 
 

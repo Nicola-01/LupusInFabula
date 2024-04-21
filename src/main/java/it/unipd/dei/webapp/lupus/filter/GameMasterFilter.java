@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.filter;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
+import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
@@ -37,7 +38,6 @@ public class GameMasterFilter implements Filter {
     protected static final Logger LOGGER = LogManager.getLogger(GameMasterFilter.class,
             StringFormatterMessageFactory.INSTANCE);
 
-
     /**
      * The Base64 Decoder
      */
@@ -46,7 +46,7 @@ public class GameMasterFilter implements Filter {
     /**
      * The name of the user attribute in the session
      */
-    public static final String GAMEMASTER_ATTRIBUTE = "master";
+    public static final String GAMEMASTER_ATTRIBUTE = "gamemaster";
 
     /**
      * The configuration for the filter
@@ -68,10 +68,6 @@ public class GameMasterFilter implements Filter {
         }
         this.config = config;
 
-        /*
-        Here we could pass configuration parameters to the filter, if needed.
-         */
-
         // the JNDI lookup context
         InitialContext cxt;
 
@@ -91,6 +87,7 @@ public class GameMasterFilter implements Filter {
             IOException, ServletException {
 
         LogContext.setIPAddress(servletRequest.getRemoteAddr());
+        LogContext.setAction(Actions.AUTHENTICATE_MASTER);
 
         try {
             if (!(servletRequest instanceof HttpServletRequest req) || !(servletResponse instanceof HttpServletResponse res)) {
@@ -101,69 +98,72 @@ public class GameMasterFilter implements Filter {
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
 
-            // this filter accept only request that start with /game/*
-            if (path.endsWith("/master")) {
+            // this filter accept only request that start with /game/* and end with /master
+            if (path.startsWith("/game") && path.endsWith("/master")) {
                 // if the path contain /master check if the user is the master in the game
 
                 final HttpSession session = req.getSession(false);
 
-                path = path.replace("/master", "");
-                final String publicGame = path.substring(path.lastIndexOf("/") + 1);
 
-                LOGGER.info("Pubblic GameId found on URL: " + publicGame);
-                int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
-
-                // if we do not have a session, try to authenticate the user
+                // if the session not exists
                 if (session == null) {
                     LOGGER.warn("Authentication required to access resource %s with method %s.", req.getRequestURI(),
                             req.getMethod());
 
                     ErrorCode ec = ErrorCode.NOT_LOGGED;
                     res.setStatus(ec.getHTTPCode());
-                    Message m = new Message("Authentication required, not logged in", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Authentication required, not logged in", ec.getErrorCode(), ec.getErrorMessage());
 
                     m.toJSON(res.getOutputStream());
-
                     return; // in this case the master is not even logged in
                 } else {
+                    // n.b there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
+
+                    path = path.replace("/master", "");
+                    final String publicGame = path.substring(path.lastIndexOf("/") + 1);
+
+                    LOGGER.info("Pubblic GameId found on URL: " + publicGame);
+                    int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
 
                     final Object gmAttribute = session.getAttribute(GAMEMASTER_ATTRIBUTE);
 
-                    // there might exist a session but without any user in it
+                    // there might exist a session but without any master in it
                     if (gmAttribute == null) {
 
                         LOGGER.warn(
                                 "Authentication required to access resource %s with method %s. Session %s exists but no GameID found in session.",
                                 req.getRequestURI(), req.getMethod(), session.getId());
 
-
+                        // Attempt to authenticate the master even if they don't have the "gamemaster" session attribute.
+                        // This filter is executed after the UserFilter, so the login session attribute is already valid.
                         Player currentPlayer = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
-                        LOGGER.info("Trying to authenticate the currentPlayer %s in the game %d", currentPlayer.getUsername(), gameID);
+                        LOGGER.info("Trying to authenticate the currentPlayer %s as a gamemaster in the game %d", currentPlayer.getUsername(), gameID);
 
                         String masterOfGame = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
 
                         if (masterOfGame == null) {
                             LOGGER.warn("There is no game with id %s", publicGame);
 
-                            ErrorCode ec = ErrorCode.GAME_NOT_EXIST;
+                            ErrorCode ec = ErrorCode.NO_GAME_SESSION;
                             res.setStatus(ec.getHTTPCode());
-                            Message m = new Message("There is no game with id " + publicGame, "" + ec.getErrorCode(), ec.getErrorMessage());
+                            Message m = new Message("There is no game with id " + publicGame, ec.getErrorCode(), ec.getErrorMessage());
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
-                        } else if (masterOfGame.equals(currentPlayer.getUsername())) {
-                            session.setAttribute(GAMEMASTER_ATTRIBUTE, gameID);
-                        } else {
+                        } else if (!masterOfGame.equals(currentPlayer.getUsername())) {
                             LOGGER.warn("%s is not the gamemaster in game %s", currentPlayer.getUsername(), publicGame);
 
                             ErrorCode ec = ErrorCode.NOT_MASTER;
                             res.setStatus(ec.getHTTPCode());
-                            Message m = new Message("You are not the gamemaster in game " + publicGame, "" + ec.getErrorCode(), ec.getErrorMessage());
+                            Message m = new Message("You are not the gamemaster in game " + publicGame, ec.getErrorCode(), ec.getErrorMessage());
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
+                        } else {
+                            // the player is the master in the game
+                            session.setAttribute(GAMEMASTER_ATTRIBUTE, gameID);
                         }
 
                     } else {
@@ -172,16 +172,17 @@ public class GameMasterFilter implements Filter {
                         if (sessionGameID != gameID) {
                             LOGGER.warn("Different gameID");
 
-                            ErrorCode ec = ErrorCode.DIFFERENT_GAMEID;
+                            ErrorCode ec = ErrorCode.DIFFERENT_GAME_SESSION;
                             res.setStatus(ec.getHTTPCode());
 
-                            Message m = new Message("Different gameID founded", "" + ec.getErrorCode(), ec.getErrorMessage());
+                            Message m = new Message("Different gameID founded", ec.getErrorCode(), ec.getErrorMessage());
                             LOGGER.info("Different gameID founded: %d != %d", sessionGameID, gameID);
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
                             return;
                         }
+                        // else the player is the master in the game
                     }
                 }
             }

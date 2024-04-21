@@ -94,6 +94,8 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
         LOGGER.info("Access using POST, operation: %s", op);
 
+        request.getSession().invalidate();
+
         switch (op) {
             case "signup":
                 signup(request, response);
@@ -101,6 +103,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             case "login":
                 login(request, response);
                 break;
+            // case "logout": -> the session is already invalidated
         }
 
         LogContext.removeAction();
@@ -140,7 +143,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Some fields are empty");
-                m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Some fields are empty", ec.getErrorCode(), ec.getErrorMessage());
                 request.setAttribute("message", m);
 
                 LogContext.removeIPAddress();
@@ -154,7 +157,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Username not valid");
-                m = new Message("Username not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Username not valid", ec.getErrorCode(), ec.getErrorMessage());
             }
             // checks if the email respect the regex
             else if (!emailRegexPattern.matcher(email).matches()) {
@@ -162,7 +165,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Email not valid");
-                m = new Message("Email not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Email not valid", ec.getErrorCode(), ec.getErrorMessage());
             }
             // checks if the password respect the regex
             else if (!passwordRegexPattern.matcher(password).matches()) {
@@ -170,7 +173,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Passwords not complex enough");
-                m = new Message("Passwords not complex enough", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Passwords not complex enough", ec.getErrorCode(), ec.getErrorMessage());
             }
             // checks if the password and the repeat password ar the same
             else if (!password.equals(password_rp)) {
@@ -178,7 +181,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Passwords do not match");
-                m = new Message("Passwords do not match", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Passwords do not match", ec.getErrorCode(), ec.getErrorMessage());
             } else {
                 // searches if already exist users with that username or email
                 Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
@@ -190,7 +193,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     response.setStatus(ec.getHTTPCode());
 
                     LOGGER.info("Username already used");
-                    m = new Message("Username already used", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    m = new Message("Username already used", ec.getErrorCode(), ec.getErrorMessage());
                 }
                 // email already used
                 else if (player_email != null) {
@@ -198,7 +201,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     response.setStatus(ec.getHTTPCode());
 
                     LOGGER.info("Email already used");
-                    m = new Message("Email already used", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    m = new Message("Email already used", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
                     // creates the user
                     Player signupPlayer = new Player(username, email, password);
@@ -268,7 +271,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 response.setStatus(ec.getHTTPCode());
 
                 LOGGER.info("Some fields are empty");
-                m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("Some fields are empty", ec.getErrorCode(), ec.getErrorMessage());
 
             } else {
                 // queries the database to find the user
@@ -280,7 +283,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     response.setStatus(ec.getHTTPCode());
 
                     LOGGER.info("Credentials are wrong");
-                    m = new Message("Credentials are wrong", "" + ec.getErrorCode(), ec.getErrorMessage());
+                    m = new Message("Credentials are wrong", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
