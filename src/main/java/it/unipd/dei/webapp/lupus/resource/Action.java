@@ -5,9 +5,6 @@ import java.sql.SQLException;
 
 public class Action extends GameAction
 {
-    public static final int DAY = 0;
-    public static final int NIGHT = 1;
-
     private final int gameId;
 
     private int    round;

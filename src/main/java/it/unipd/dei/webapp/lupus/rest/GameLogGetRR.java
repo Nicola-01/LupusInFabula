@@ -1,9 +1,11 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetActionByIdGameDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameRoundDAO;
 import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.servlet.GameLogServlet;
+import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -18,24 +21,43 @@ import java.util.ArrayList;
 public class GameLogGetRR extends AbstractRR
 {
     private final int POSIDPART = 7;
-    public static final String USERROLE = "USER";
+    private final int POSISMASTER= POSIDPART + 1;
+    public static final String MASTEROLE = "master";
+    //GamePhase
 
     private interface HttpServletFunct {public void exe(HttpServletRequest request, HttpServletResponse response);}
 
-    public GameLogGetRR(final HttpServletRequest request, final HttpServletResponse response, DataSource ds) {super(Actions.ADD_ACTIONS, request, response, ds);}
+    private final String idPart;
+    private final String isMaster;
+    private final String nmPlayer;
+    private final int round;//round of game
+
+
+
+    public GameLogGetRR(final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
+    {
+        super(Actions.ADD_ACTIONS, request, response, ds);
+        this.idPart = getPartUrl(POSIDPART, req);//id of game;
+        this.isMaster = getPartUrl(POSISMASTER, req);
+        this.nmPlayer ="";//((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        int app=0;
+        try {app = new GetGameRoundDAO(ds.getConnection(), this.idPart).getOutputParam();}
+        catch (SQLException e) {LOGGER.error("Fatal error while try to get round.");}
+        this.round = app;
+    }
+
+
 
     @Override
     protected void doServe() throws IOException
     {
-        GameLogGetRR.HttpServletFunct a = (req, res)->
+        HttpServletFunct a = (req, res)->
         {
-            String idPart = getPartUrl(POSIDPART, req);//id of game
-            int phase = Integer.parseInt(req.getParameter("phase"));//phase of game
             Message m = null;
 
-            ArrayList<Action> r = getLog(idPart, USERROLE, phase);
             try
             {
+                ArrayList<Action> r = this.getLog();
                 if (r != null)
                 {
                     LOGGER.info("Action successfully listed.");
@@ -52,25 +74,24 @@ public class GameLogGetRR extends AbstractRR
                     m.toJSON(res.getOutputStream());
                 }
             }
-            catch (IOException e)  {LOGGER.error("Cannot list Action: unexpected database error.", e);}
+            catch (SQLException e) {LOGGER.error("Cannot list Action: unexpected database error.", e);}
+            catch (IOException e)  {LOGGER.error("Cannot list Action: unexpected database error.", e);}//to do change error
 
         };
 
         log(a, req, res);
     }
 
-    public ArrayList<Action> getLog(String idPart, String role, int phase)
+    private ArrayList<Action> getLog() throws SQLException
     {
         ArrayList<Action> r = new ArrayList<Action>();
         final int max;
 
-        try {r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();}
-        catch (SQLException e) {LOGGER.error("Cannot list Action: unexpected database error.", e);}
+       r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
 
-        if(role.equals(USERROLE) && r.size()>0)
+        if(!this.isMaster.equals(MASTEROLE) && r.size()>0)
         {
-            max = r.get(r.size() - 1).getRound();//query make in order
-            r.removeIf(x -> (x.getRound() == max && x.getSubphase() == phase));
+            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer)))//to do mod;
         }
 
         return r;
@@ -85,7 +106,7 @@ public class GameLogGetRR extends AbstractRR
         return i<s.length ? s[i]: "";
     }
 
-    private void log(GameLogGetRR.HttpServletFunct function, HttpServletRequest request, HttpServletResponse response)
+    private void log(HttpServletFunct function, HttpServletRequest request, HttpServletResponse response)
     {
         LogContext.setIPAddress(request.getRemoteAddr());
         function.exe(request, response);
