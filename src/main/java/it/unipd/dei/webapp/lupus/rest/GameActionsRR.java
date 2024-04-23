@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRole;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,25 +33,17 @@ public class GameActionsRR extends AbstractRR {
 
     @Override
     protected void doServe() throws IOException {
-
         try {
-            //LOGGER.info("Handling game actions");
 
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo da gestire throws IOException
-//            for (GameAction gameAction : gameActions) {
-//                LOGGER.info(gameAction.getPlayer() + " " +
-//                        gameAction.getRole() + " " +
-//                        gameAction.getTarget()
-//                );
-//            }
 
             // check of the correctness of the actions
-            correctnessOfActions(gameActions);
+            if (!correctnessOfActions(gameActions))
+                return;
+
             LOGGER.info("correctness of actions done");
             // contain all player in the game (gameID) with their role
             // first String: playerUsername , second String: role of the player
-            Map<String, String> playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playerRole);
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
             int currentRound = game.getRounds();
@@ -68,22 +61,24 @@ public class GameActionsRR extends AbstractRR {
                 currentPhase = GamePhase.NIGHT.getId();
             }
 
-            LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
-            for (GameAction gameAction : gameActions) {
+            if (currentPhase == GamePhase.NIGHT.getId()) {
+                if (handleNightPhase(gameActions)) return;
+            } else if (handleDayPhase()) return;
 
-                if (nightAction.get(gameAction.getRole()) != null) {
-                    Action action = new Action(gameID, gameAction.getPlayer(), currentRound, currentPhase, 0,
-                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : "vote", gameAction.getTarget());
-                    new InsertIntoActionDAO(ds.getConnection(), action).access();
-                }
-
-            }
-
-            // check of the actions
-            actionCheck(actionsMap, playerRole);
             LOGGER.info("Checked all actions");
 
+
             // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
+
+            for (GameAction gameAction : gameActions) {
+                if (nightAction.get(gameAction.getRole()) != null) {
+                    new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, gameAction.getPlayer(), currentRound, currentPhase, 0,
+                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : "vote", gameAction.getTarget())
+                    ).access();
+                }
+            }
+
+            LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
             new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
             LOGGER.info("updating game");
         } catch (SQLException | IOException e) {
@@ -92,7 +87,28 @@ public class GameActionsRR extends AbstractRR {
 
     }
 
-    private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException {
+    // TODO
+    private boolean handleDayPhase() {
+        return true;
+    }
+
+    // TODO
+    private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
+
+        Map<String, String> playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playerRole);
+
+        if (actionsMap == null)
+            return false;
+
+        // check of the actions
+        if (!actionCheck(actionsMap, playerRole))
+            return false;
+
+        return true;
+    }
+
+    private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
         // TODO --> fix the Logger.info error
         // TODO --> check if every role with an effect has done its action, and if are alive or dead
         Message m;
@@ -101,41 +117,36 @@ public class GameActionsRR extends AbstractRR {
 
             int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
             //check if the player is in the game
-            if (game_id == gameID) {
-                LOGGER.info("OK, the player " + gameAction.getPlayer() + " is in the game");
-            } else {
+            if (game_id != gameID) {
                 m = new Message("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
                 LOGGER.info("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
+                m.toJSON(res.getOutputStream());
                 return false;
             }
 
             game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
             //check if target is in the game
-            if (game_id == gameID) {
-                LOGGER.info("OK, the target " + gameAction.getTarget() + " is in the game");
-            } else {
+            if (game_id != gameID) {
                 m = new Message("ERROR, the target " + gameAction.getTarget() + " is not in the game");
                 LOGGER.info("ERROR, the target " + gameAction.getTarget() + " is not in the game");
+                m.toJSON(res.getOutputStream());
                 return false;
             }
 
             String playerRole = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
             //check if the player has the correct role in the game
-            if (playerRole.equals(gameAction.getRole())) {
-                LOGGER.info("OK, the player " + gameAction.getPlayer() + " has the correct role (" + gameAction.getRole() + ") in the game");
-            } else {
-                m = new Message("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole +") in the game");
-                LOGGER.info("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole +") in the game");
+            if (!playerRole.equals(gameAction.getRole())) {
+                m = new Message("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
+                LOGGER.info("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
+                m.toJSON(res.getOutputStream());
                 return false;
             }
-
         }
 
         return true;
-
     }
 
-    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws SQLException {
+    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws SQLException, IOException {
 
         // first String: playerUsername , second String: action , boolean: if playerUsername is the target of action
         Map<String, Map<String, Boolean>> action = new HashMap<>();
@@ -162,6 +173,10 @@ public class GameActionsRR extends AbstractRR {
 
             } else {
                 LOGGER.warn("ERROR, the action is null");
+                // todo --> to change
+                // ErrorCode ec = ErrorCode.
+                Message m = new Message("ERROR, the action is null");
+                m.toJSON(res.getOutputStream());
                 return null;
             }
 
@@ -171,11 +186,12 @@ public class GameActionsRR extends AbstractRR {
 
     }
 
-    private void actionCheck(Map<String, Map<String, Boolean>> actionsMap, Map<String, String> playerRole) throws SQLException {
+    private boolean actionCheck(Map<String, Map<String, Boolean>> actionsMap, Map<String, String> playerRole) throws SQLException, IOException {
 
         //example: key: "user1" , value: (key1: maul , value1: true)
         Map<String, Boolean> areDead = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
+        // for all targeted players
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
 
             String player = entry.getKey();
@@ -184,9 +200,11 @@ public class GameActionsRR extends AbstractRR {
             Map<String, Boolean> actionTarget = entry.getValue();
 
             if (areDead.get(player)) {
-                LOGGER.info("The player " + player + " is dead");
+                // Todo -> to change
+                LOGGER.warn("The player " + player + " is dead");
+                Message m = new Message("The player " + player + " is dead");
                 //nope --> log - Error
-                return;
+                return false;
             }
 
             for (Map.Entry<String, Boolean> entry1 : actionTarget.entrySet()) {
@@ -196,12 +214,15 @@ public class GameActionsRR extends AbstractRR {
                 if (target) {
                     LOGGER.info(nightAction.get(roleOfPlayer) + " " + action + " " + player + " " + roleOfPlayer);
                     //check if player can be a target of the action
-                    if (nightAction.get(roleOfPlayer).equals(action)
+                    if (nightAction.get(roleOfPlayer) != null
+                            && nightAction.get(roleOfPlayer).equals(action)
                             && !roleOfPlayer.equals(GameRole.KNIGHT.getName())
                             && !roleOfPlayer.equals(GameRole.PLAGUE_SPREADER.getName())) {
-                        LOGGER.info("Errror, the target of " + action + " is not a valid target");
+                        LOGGER.warn("Errror, the target of " + action + " is not a valid target");
+                        Message m = new Message("Errror, the target of " + action + " is not a valid target");
+                        m.toJSON(res.getOutputStream());
                         //nope --> log - Error
-                        return;
+                        return false;
                     }
                 } else {
                     //nothing
@@ -210,6 +231,7 @@ public class GameActionsRR extends AbstractRR {
 
         }
 
+        return true;
     }
 
 }
@@ -217,7 +239,8 @@ public class GameActionsRR extends AbstractRR {
 //check all the actions (e.g. wolf attacks x, but x is protected so x doesn't die) --> implementation of all the controls of lupus
 //save in the table action everything that happens --> implement dao that insert data into action
 
-/** TODO: controls to implement:
+/**
+ * TODO: controls to implement:
  * priority: farmer, wolf, sam, knight, seer, plague_spreader, hamster, hobbit, illusionist, jester, sheriff
  * - if berserker activate his effect he dies, but he bypass the protection of the knight
  * - if carpenter has as target himself, the bonfire won't be that night

@@ -62,7 +62,7 @@ Content-Type: application/json
     {
       "player":"user1",
       "role":"wolf",
-      "target":"user1"
+      "target":"user3"
     },
     {
       "player":"user2",
@@ -72,7 +72,7 @@ Content-Type: application/json
     {
       "player":"user4",
       "role":"wolf",
-      "target":"user4"
+      "target":"user5"
     }
   ]
 }
