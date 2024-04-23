@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### Test with first two Actions ok, the last wrong (player0 not in the same game)
-POST http://localhost:8080/lupus/game/actions HTTP/1.1
+POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -54,7 +54,7 @@ Content-Type: application/json
 }
 
 ### Test with all Actions ok
-POST http://localhost:8080/lupus/game/actions HTTP/1.1
+POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -70,8 +70,8 @@ Content-Type: application/json
       "target":"user1"
     },
     {
-      "player":"user3",
-      "role":"jester",
+      "player":"user4",
+      "role":"wolf",
       "target":"user4"
     }
   ]

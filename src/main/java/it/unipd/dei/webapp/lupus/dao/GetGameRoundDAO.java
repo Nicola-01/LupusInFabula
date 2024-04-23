@@ -11,7 +11,7 @@ import java.util.List;
 
 public class GetGameRoundDAO extends AbstractDAO<Integer>
 {
-    private static final String STATEMENT = "SELECT number_of_rounds FROM Game WHERE ID = ?";
+    private static final String STATEMENT = "SELECT rounds FROM Game WHERE ID = ?";
     private final String gameID;
 
     public GetGameRoundDAO(final Connection con, final String gameID)
@@ -33,7 +33,7 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
             q.setString(1, gameID);
 
             rs = q.executeQuery();
-            r = rs.getInt("number_of_rounds");
+            r = rs.getInt("rounds");
         }
         finally
         {

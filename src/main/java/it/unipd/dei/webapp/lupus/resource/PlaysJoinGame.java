@@ -7,17 +7,17 @@ public class PlaysJoinGame {
     private final int game_id;
     private final Timestamp start;
     private final Time game_duration;
-    private final int number_of_rounds;
+    private final int rounds;
     private final String name;
     private final boolean has_won;
     //    private final int with_who_wins;
   //  private final int who_wins;
 
-    public PlaysJoinGame(int game_id, Timestamp start, Time game_duration, int number_of_rounds, String name, int with_who_wins, int who_wins) {
+    public PlaysJoinGame(int game_id, Timestamp start, Time game_duration, int rounds, String name, int with_who_wins, int who_wins) {
         this.game_id = game_id;
         this.start = start;
         this.game_duration = game_duration;
-        this.number_of_rounds = number_of_rounds;
+        this.rounds = rounds;
         this.name = name;
         this.has_won = with_who_wins == who_wins;
     }
@@ -34,8 +34,8 @@ public class PlaysJoinGame {
         return game_duration;
     }
 
-    public int getNumberOfRounds() {
-        return number_of_rounds;
+    public int getRounds() {
+        return rounds;
     }
 
     public String getName() {

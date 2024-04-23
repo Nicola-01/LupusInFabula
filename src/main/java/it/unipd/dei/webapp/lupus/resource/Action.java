@@ -1,51 +1,79 @@
 package it.unipd.dei.webapp.lupus.resource;
 
+import jakarta.servlet.http.HttpServlet;
+
+import java.io.OutputStream;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Action extends GameAction
-{
+public class Action extends AbstractResource{
+
     private final int gameId;
+    private final String player;
+    private final int round;
+    private final int phase;
+    private final int subphase;
+    //private final String description;
+    private final String typeAction;
+    private final String target;
 
-    private int    round;
-    private int    phase;
-    private int    subphase;
-    private String description;
-    private String typeAction;
-
-    public Action(String player, String target, int gameId, int round, int phase, int subphase, String description, String typeAction)
-    {
-        super(player, "", target);
+    public Action(int gameId, String player, int round, int phase, int subphase /**,String description*/, String typeAction, String target) {
         this.gameId = gameId;
+        this.player = player;
         this.round = round;
         this.phase = phase;
         this.subphase = subphase;
-        this.description = description;
+        //this.description = description;
         this.typeAction = typeAction;
-    }
-    public Action(ResultSet r) throws SQLException
-    {
-        this(r.getString("player_username"),
-             r.getString("target"),
-             r.getInt("game_id"),
-             r.getInt("round"),
-             r.getInt("phase"),
-             r.getInt("subphase"),
-             r.getString("description"),
-             r.getString("name"));
+        this.target = target;
     }
 
-    public int    getGameId()      {return gameId;}
-    public int    getRound()       {return round;}
-    public int    getPhase()       {return phase;}
-    public int    getSubphase()    {return subphase;}
-    public String getDescription() {return description;}
-    public String getTypeAction()  {return typeAction;}
+    public Action(ResultSet r) throws SQLException {
+        this(r.getInt("game_id"),
+                r.getString("player_username"),
+                r.getInt("round"),
+                r.getInt("phase"),
+                r.getInt("subphase"),
+                //r.getString("description"),
+                r.getString("typeAction"),
+                r.getString("target"));
+    }
 
+    public int getGameId() {
+        return gameId;
+    }
 
-    public void setRound(int round)                {this.round = round;}
-    public void setPhase(int phase)                {this.phase = phase;}
-    public void setSubphase(int subphase)          {this.subphase = subphase;}
-    public void setDescription(String description) {this.description = description;}
-    public void setTypeAction(String typeAction)   {this.typeAction = typeAction;}
+    public String getPlayer() {
+        return player;
+    }
+
+    public int getRound() {
+        return round;
+    }
+
+    public int getPhase() {
+        return phase;
+    }
+
+    public int getSubphase() {
+        return subphase;
+    }
+
+//    public String getDescription() {
+//        return description;
+//    }
+
+    public String getTypeAction() {
+        return typeAction;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    // TODO --> to implement
+    @Override
+    protected void writeJSON(OutputStream out) throws Exception {
+
+    }
 }

@@ -87,7 +87,7 @@ CREATE TABLE Game
     start            TIMESTAMP                NOT NULL,
     game_duration    TIME,
     who_wins         SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
-    number_of_rounds SMALLINT                                        DEFAULT 0,
+    rounds           SMALLINT                                        DEFAULT 0,
     phase            SMALLINT                                        DEFAULT 0
 );
 
@@ -97,7 +97,7 @@ COMMENT ON COLUMN Game.public_ID  IS ''; -- TODO description
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
 COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
-COMMENT ON COLUMN Game.number_of_rounds IS 'The total number of rounds played in the game.';
+COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
 COMMENT ON COLUMN Game.phase IS ''; -- TODO description
 
 
@@ -150,6 +150,7 @@ COMMENT ON COLUMN HAS_ROLES.role_id IS 'The ID of the role associated with the g
 COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the role associated with the game.';
 
 
+-- TODO --> remove it (?)
 -- #################################################################################################
 -- ## Creation of the table type_action                                                           ##
 -- #################################################################################################
@@ -181,10 +182,10 @@ CREATE TABLE Action
     round           INTEGER                                  NOT NULL,
     phase           INTEGER                                  NOT NULL,
     subphase        INTEGER                                  NOT NULL,
-    description     CHARACTER VARYING,
-    type_of_action  SERIAL REFERENCES type_action (ID)       NOT NULL,
+    type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
-    PRIMARY KEY (game_id, player_username, round, phase, subphase)
+    PRIMARY KEY (game_id, player_username, round, phase, subphase),
+    CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
 COMMENT ON TABLE Action IS 'Represents actions performed by players during the game.';
@@ -193,6 +194,6 @@ COMMENT ON COLUMN Action.player_username IS 'The username of the player who perf
 COMMENT ON COLUMN Action.round IS 'The round number in which the action occurred.';
 COMMENT ON COLUMN Action.phase IS 'The phase of the round in which the action occurred.';
 COMMENT ON COLUMN Action.subphase IS 'The subphase of the phase in which the action occurred.';
-COMMENT ON COLUMN Action.description IS 'A description of the action.';
+--COMMENT ON COLUMN Action.description IS 'A description of the action.';
 COMMENT ON COLUMN Action.type_of_action IS 'The type of action performed by the player.';
 COMMENT ON COLUMN Action.target IS 'The username of the target player of the action.';
