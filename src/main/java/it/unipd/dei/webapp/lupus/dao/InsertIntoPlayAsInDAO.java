@@ -42,7 +42,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, playsAsIn.getPlayerUsername());
             pstmt.setInt(2, playsAsIn.getGameId());
-            pstmt.setInt(3, playsAsIn.getRoleId());
+            pstmt.setString(3, playsAsIn.getRole());
 
             pstmt.execute();
         } finally {

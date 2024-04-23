@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 
 public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
 
-    private static final String STATEMENT = "SELECT r.name FROM plays_as_in JOIN role r on plays_as_in.role_id = r.id WHERE game_id = ? AND player_username = LOWER(?)";
+    private static final String STATEMENT = "SELECT r.name FROM plays_as_in JOIN role r on plays_as_in.role = r.name WHERE game_id = ? AND player_username = LOWER(?)";
     private final int gameId;
     private final String playerUsername;
 

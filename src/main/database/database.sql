@@ -59,16 +59,16 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 
 CREATE TABLE Role
 (
-    ID            SERIAL PRIMARY KEY,
-    name          CHARACTER VARYING NOT NULL UNIQUE,
-    type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
-    with_who_wins SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
-    max_number    SMALLINT          NOT NULL,
+--     ID            SERIAL PRIMARY KEY,
+    name          VARCHAR(20) PRIMARY KEY,
+    type          SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    with_who_wins SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    max_number    SMALLINT NOT NULL,
     description   CHARACTER VARYING
 );
 
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
-COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
+-- COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
 COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
@@ -82,24 +82,24 @@ COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
 CREATE TABLE Game
 (
-    ID               SERIAL PRIMARY KEY,
-    public_ID        CHARACTER VARYING UNIQUE NOT NULL,
-    start            TIMESTAMP                NOT NULL,
-    game_duration    TIME,
-    who_wins         SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
-    rounds           SMALLINT                                        DEFAULT 0,
-    phase            SMALLINT                                        DEFAULT 0
+    ID            SERIAL PRIMARY KEY,
+    public_ID     CHARACTER VARYING UNIQUE NOT NULL,
+    start         TIMESTAMP                NOT NULL,
+    game_duration TIME,
+    who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
+    rounds        SMALLINT                                        DEFAULT 0,
+    phase         SMALLINT                                        DEFAULT 0
 );
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
 COMMENT ON COLUMN Game.ID IS 'The unique identifier for each game.';
-COMMENT ON COLUMN Game.public_ID  IS ''; -- TODO description
+COMMENT ON COLUMN Game.public_ID IS ''; -- TODO description
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
 COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
 COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
-COMMENT ON COLUMN Game.phase IS ''; -- TODO description
-
+COMMENT ON COLUMN Game.phase IS '';
+-- TODO description
 
 
 -- COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
@@ -114,17 +114,17 @@ CREATE TABLE PLAYS_AS_IN
 (
     player_username  VARCHAR(20) REFERENCES Player (username),
     game_id          SERIAL REFERENCES Game (ID),
-    role_id          SERIAL REFERENCES Role (ID),
+    role             VARCHAR(20) REFERENCES Role (name),
     round_of_death   INTEGER,
     phase_of_death   SMALLINT,
     duration_of_life FLOAT,
-    PRIMARY KEY (player_username, game_id, role_id)
+    PRIMARY KEY (player_username, game_id, role)
 );
 
 COMMENT ON TABLE PLAYS_AS_IN IS 'Represents the role played by a player in a game.';
 COMMENT ON COLUMN PLAYS_AS_IN.player_username IS 'The username of the player who played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.game_id IS 'The ID of the game in which the player played the role.';
-COMMENT ON COLUMN PLAYS_AS_IN.role_id IS 'The ID of the role played by the player.';
+COMMENT ON COLUMN PLAYS_AS_IN.role IS 'The ID of the role played by the player.';
 COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (optional).';
 COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (N, D or M (Night, Day or Master)).';
 COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The percentage of time in which the player has stayed alive during the game.';
@@ -135,19 +135,19 @@ COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The percentage of time in whi
 -- #################################################################################################
 --
 -- This table represents the number of instances for each role in a game
-
-CREATE TABLE HAS_ROLES
-(
-    game_id         SERIAL REFERENCES Game (ID),
-    role_id         SERIAL REFERENCES Role (ID),
-    number_of_roles SMALLINT NOT NULL,
-    PRIMARY KEY (game_id, role_id)
-);
-
-COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';
-COMMENT ON COLUMN HAS_ROLES.game_id IS 'The ID of the game in which roles are associated.';
-COMMENT ON COLUMN HAS_ROLES.role_id IS 'The ID of the role associated with the game.';
-COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the role associated with the game.';
+-- TODO to remove maybe
+-- CREATE TABLE HAS_ROLES
+-- (
+--     game_id         SERIAL REFERENCES Game (ID),
+--     role_id         SERIAL REFERENCES Role (ID),
+--     number_of_roles SMALLINT NOT NULL,
+--     PRIMARY KEY (game_id, role_id)
+-- );
+--
+-- COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';
+-- COMMENT ON COLUMN HAS_ROLES.game_id IS 'The ID of the game in which roles are associated.';
+-- COMMENT ON COLUMN HAS_ROLES.role_id IS 'The ID of the role associated with the game.';
+-- COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the role associated with the game.';
 
 
 -- TODO --> remove it (?)
@@ -157,16 +157,15 @@ COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the r
 --
 -- This table represents the type of actions possible in a game
 
-CREATE TABLE TYPE_ACTION
-(
-    ID   SERIAL PRIMARY KEY,
-    name CHARACTER VARYING NOT NULL
-);
-
-COMMENT ON TABLE TYPE_ACTION IS 'Represents different types of actions.';
-COMMENT ON COLUMN TYPE_ACTION.ID IS 'The unique identifier for each type of action.';
-COMMENT ON COLUMN TYPE_ACTION.name IS 'The name of the type of action.';
-
+-- CREATE TABLE TYPE_ACTION
+-- (
+--     ID   SERIAL PRIMARY KEY,
+--     name CHARACTER VARYING NOT NULL
+-- );
+--
+-- COMMENT ON TABLE TYPE_ACTION IS 'Represents different types of actions.';
+-- COMMENT ON COLUMN TYPE_ACTION.ID IS 'The unique identifier for each type of action.';
+-- COMMENT ON COLUMN TYPE_ACTION.name IS 'The name of the type of action.';
 
 
 -- #################################################################################################

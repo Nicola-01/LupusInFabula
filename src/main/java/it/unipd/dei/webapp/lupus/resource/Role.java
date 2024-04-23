@@ -6,24 +6,18 @@ import java.io.OutputStream;
 
 public class Role extends AbstractResource {
 
-    private final int id;
     private final String name;
     private final int type;
     private final int with_who_wins;
     private final int max_number;
     private final String description;
 
-    public Role(int id, String name, int type, int with_who_wins, int maxNumber, String description) {
-        this.id = id;
+    public Role(String name, int type, int with_who_wins, int maxNumber, String description) {
         this.name = name;
         this.type = type;
         this.with_who_wins = with_who_wins;
         this.max_number = maxNumber;
         this.description = description;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public String getName() {
@@ -54,7 +48,6 @@ public class Role extends AbstractResource {
         jg.writeStartObject();
         jg.writeFieldName("role");
         jg.writeStartObject();
-        jg.writeNumberField("id", id);
         jg.writeStringField("name", name);
         jg.writeNumberField("type", type);
         jg.writeNumberField("with_who_wins", with_who_wins);

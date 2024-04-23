@@ -1,17 +1,16 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.utils.GameRole;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,String>> {
 
-    private static final String STATEMENT = "SELECT player_username, r.name FROM plays_as_in JOIN role r on plays_as_in.role_id = r.id WHERE game_id = ? AND r.name != ?";
+    private static final String STATEMENT = "SELECT player_username, r.name FROM plays_as_in JOIN role r on plays_as_in.role = r.name WHERE game_id = ? AND r.name != ?";
     private final int gameId;
 
     public SelectPlayersAndRolesByGameIdDAO(final Connection con, int gameId) {
@@ -30,7 +29,7 @@ public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,Str
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, gameId);
-            pstmt.setString(2, GameRole.MASTER.getName());
+            pstmt.setString(2, GameRoleAction.MASTER.getName());
             rs = pstmt.executeQuery();
 
             while (rs.next()) {

@@ -32,8 +32,8 @@ public class SelectRoleByTypeDAO extends AbstractDAO<List<Role>> {
             rs = ps.executeQuery();
 
             while (rs.next()) {
-                roles.add(new Role(rs.getInt("id"), rs.getString("name"), rs.getInt("type"),
-                        rs.getInt("with_who_wins"), rs.getInt("max_number"), rs.getString("description")));
+                roles.add(new Role(rs.getString("name"), rs.getInt("type"), rs.getInt("with_who_wins"),
+                        rs.getInt("max_number"), rs.getString("description")));
             }
 
             LOGGER.info("Role(s) with type = %s found", type);

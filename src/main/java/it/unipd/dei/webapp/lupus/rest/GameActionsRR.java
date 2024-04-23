@@ -2,9 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.resource.*;
-import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
-import it.unipd.dei.webapp.lupus.utils.GameRole;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -26,7 +25,7 @@ public class GameActionsRR extends AbstractRR {
         super(Actions.ADD_ACTIONS, req, res, ds);
         this.gameID = gameID;
 
-        for (GameRole role : GameRole.values())
+        for (GameRoleAction role : GameRoleAction.values())
             if (role.getAction() != null)
                 nightAction.put(role.getName(), role.getAction());
     }
@@ -216,8 +215,8 @@ public class GameActionsRR extends AbstractRR {
                     //check if player can be a target of the action
                     if (nightAction.get(roleOfPlayer) != null
                             && nightAction.get(roleOfPlayer).equals(action)
-                            && !roleOfPlayer.equals(GameRole.KNIGHT.getName())
-                            && !roleOfPlayer.equals(GameRole.PLAGUE_SPREADER.getName())) {
+                            && !roleOfPlayer.equals(GameRoleAction.KNIGHT.getName())
+                            && !roleOfPlayer.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
                         LOGGER.warn("Errror, the target of " + action + " is not a valid target");
                         Message m = new Message("Errror, the target of " + action + " is not a valid target");
                         m.toJSON(res.getOutputStream());

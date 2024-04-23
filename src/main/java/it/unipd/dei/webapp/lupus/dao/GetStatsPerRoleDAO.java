@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GetStatsPerRoleDAO extends  AbstractDAO<List<StatsRole>>{
-    private static final String STATEMENT = "SELECT name, COUNT(*) AS games_played_as, COUNT(*) FILTER (WHERE with_who_wins = who_wins) AS wins FROM plays_as_in JOIN public.game g on g.id = plays_as_in.game_id join public.role r on plays_as_in.role_id = r.id WHERE lower(player_username) = lower(?) GROUP BY name";
+    private static final String STATEMENT = "SELECT name, COUNT(*) AS games_played_as, COUNT(*) FILTER (WHERE with_who_wins = who_wins) AS wins FROM plays_as_in JOIN public.game g on g.id = plays_as_in.game_id join public.role r on plays_as_in.role = r.name WHERE lower(player_username) = lower(?) GROUP BY name";
     private final String username;
 
     public GetStatsPerRoleDAO(final Connection con, final String username) {

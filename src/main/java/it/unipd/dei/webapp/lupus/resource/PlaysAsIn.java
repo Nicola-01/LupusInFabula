@@ -9,37 +9,25 @@ public class PlaysAsIn extends AbstractResource {
 
     private final String playerUsername;
     private final int gameId;
-    private final int roleId;
+    private final String role;
     private int roundOfDeath;
     private int phaseOfDeath;
     private float durationOfLife;
-    private String rolename;
 
-    public PlaysAsIn(final String playerUsername, final int gameId, final int roleId,
+    public PlaysAsIn(final String playerUsername, final int gameId, final String role,
                      final int roundOfDeath, final int phaseOfDeath, final float durationOfLife) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
-        this.roleId = roleId;
+        this.role = role;
         this.roundOfDeath = roundOfDeath;
         this.phaseOfDeath = phaseOfDeath;
         this.durationOfLife = durationOfLife;
     }
 
-    public PlaysAsIn(final String playerUsername, final int gameId, final int roleId,
-                     final int roundOfDeath, final int phaseOfDeath, final float durationOfLife, final String rolename) {
+    public PlaysAsIn(final String playerUsername, final int gameId, final String role) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
-        this.roleId = roleId;
-        this.roundOfDeath = roundOfDeath;
-        this.phaseOfDeath = phaseOfDeath;
-        this.durationOfLife = durationOfLife;
-        this.rolename = rolename;
-    }
-
-    public PlaysAsIn(final String playerUsername, final int gameId, final int roleId) {
-        this.playerUsername = playerUsername;
-        this.gameId = gameId;
-        this.roleId = roleId;
+        this.role = role;
     }
 
     @Override
@@ -53,8 +41,7 @@ public class PlaysAsIn extends AbstractResource {
 
         jg.writeStringField("username", this.playerUsername); // Write the username field
         jg.writeNumberField("gameID", this.gameId);
-        jg.writeNumberField("roleID", this.roleId);
-        jg.writeStringField("roleName", this.rolename);
+        jg.writeStringField("role", this.role);
         jg.writeBooleanField("isDead", this.roundOfDeath > 0);
 
         jg.writeEndObject();
@@ -72,8 +59,8 @@ public class PlaysAsIn extends AbstractResource {
         return gameId;
     }
 
-    public int getRoleId() {
-        return roleId;
+    public String getRole() {
+        return role;
     }
 
     public int getRoundOfDeath() {

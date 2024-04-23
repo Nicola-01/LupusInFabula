@@ -2,7 +2,7 @@ package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Role;
-import it.unipd.dei.webapp.lupus.utils.GameRole;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -53,7 +53,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
 
         try {
             List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
-            roles.removeIf(role -> Objects.equals(role.getName(), GameRole.MASTER.getName()));
+            roles.removeIf(role -> Objects.equals(role.getName(), GameRoleAction.MASTER.getName()));
             publicID = generatePublicID(roles);
 
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);

@@ -16,7 +16,7 @@ public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
             "JOIN public.game g " +
             "on g.id = plays_as_in.game_id join " +
             "public.role r " +
-            "on plays_as_in.role_id = r.id " +
+            "on plays_as_in.role = r.name " +
             "        WHERE lower(player_username) = lower(?)";
     private final String username;
 
