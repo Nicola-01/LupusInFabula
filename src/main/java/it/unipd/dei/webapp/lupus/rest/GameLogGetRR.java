@@ -90,9 +90,8 @@ public class GameLogGetRR extends AbstractRR
        r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
 
         if(!this.isMaster.equals(MASTEROLE) && r.size()>0)
-        {
-            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer)));//to do mod;
-        }
+            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
+
 
         return r;
     }

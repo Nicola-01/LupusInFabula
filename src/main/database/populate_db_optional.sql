@@ -19,9 +19,21 @@ VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), CURRENT_DAT
        ('player8', LOWER('player8@test.com'), md5('ciao'), CURRENT_DATE),
        ('player9', LOWER('player9@test.com'), md5('ciao'), CURRENT_DATE);
 
-INSERT INTO public.game
-VALUES (1, 'dorky-farmer-explorer', '2024-04-21 14:01:49.305661', null, -1, 0, 0),
-       (2, 'farmer-wolf-sam', '2024-04-21 14:02:33.348046', null, -1, 0, 0);
+INSERT INTO public.TYPE_ACTION
+VALUES (1, 'mangia'),
+       (2, 'attacca'),
+       (3, 'test');
+
+INSERT INTO public.Action
+VALUES (1, 'player0', 1, 0, 1, 'test', 1, 'player3'),
+       (1, 'player2', 3, 1, 1, 'test', 2, 'player3'),
+       (1, 'player3', 4, 0, 1, 'test', 3, 'player3'),
+       (1, 'player4', 3, 1, 1, 'test', 1, 'player3'),
+       (1, 'player3', 1, 0, 1, 'test', 1, 'player3'),
+       (1, 'player5', 5, 1, 1, 'test', 2, 'player3'),
+       (1, 'player6', 6, 0, 1, 'test', 3, 'player3'),
+       (1, 'player7', 7, 1, 2, 'test', 1, 'player3'),
+
 
 INSERT INTO public.plays_as_in (player_username, game_id, role_id, round_of_death, phase_of_death, duration_of_life)
 VALUES ('esempio', 1, 1, null, null, null), -- esempio is the master
