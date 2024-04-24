@@ -13,6 +13,8 @@ public class Action extends AbstractResource
 
     public static final String JSON_NAME = "Action";
 
+    public final static String VOTE = "vote";
+
     private final int gameId;
     private final String player;
     private final int round;

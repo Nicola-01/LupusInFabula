@@ -139,23 +139,23 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         // POST /actions/{gameID}
 
-        String[] splitedPath = path.split("/");
+        String[] splittedPath = path.split("/");
 
-        if (!(splitedPath.length == 3 || (splitedPath.length == 4 && splitedPath[3].equals("master"))))
+        if (!(splittedPath.length == 3 || (splittedPath.length == 4 && splittedPath[3].equals("master"))))
             return false;
 
-        boolean isMaster = splitedPath.length == 4;
+        boolean isMaster = splittedPath.length == 4;
 
-        // splitedPath[0] is empty
-        String requestURI = splitedPath[1];
-        String publicGameID = splitedPath[2];
+        // splittedPath[0] is empty
+        String requestURI = splittedPath[1];
+        String publicGameID = splittedPath[2];
         int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
 
         if (gameID == -1) {
-            LOGGER.warn("Invalid gameID, the game %s not exists.", publicGameID);
+            LOGGER.warn("Invalid gameID, the game %s doesn't exists.", publicGameID);
 
             ErrorCode ec = ErrorCode.GAME_NOT_FOUND;
-            m = new Message("Invalid game, the game \'" + publicGameID + "\' not exists.", ec.getErrorCode(),
+            m = new Message("Invalid game, the game \'" + publicGameID + "\' doesn't exists.", ec.getErrorCode(),
                     String.format("Requested operation %s, but required GET or POST.", method));
             res.setStatus(ec.getHTTPCode());
 
@@ -164,19 +164,22 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         }
 
         if (requestURI.equals("actions")) {
-            if (!method.equals("POST")) {
+            if (!method.equals("GET") && !method.equals("POST")) {
                 LOGGER.warn("Unsupported operation for URI /game/actions: %s.", method);
 
                 ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
                 m = new Message("Unsupported operation for URI /game/actions.", ec.getErrorCode(),
-                        String.format("Requested operation %s, but required POST.", method));
+                        String.format("Requested operation %s, but required GET or POST.", method));
                 res.setStatus(ec.getHTTPCode());
 
                 m.toJSON(res.getOutputStream());
 
                 return true;
             }
-            new GameActionsRR(gameID, req, res, getDataSource()).serve();
+            if (method.equals("GET"))
+                new GameActionsGetRR(gameID, req, res, getDataSource()).serve();
+            else
+                new GameActionsRR(gameID, req, res, getDataSource()).serve();
             return true;
         }
 
@@ -200,7 +203,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         switch (requestURI) {
             case "status":
-                // new GameStatusRR(gameID, isMaster, req, res, getDataSource()).serve();
+                new GameInfoRR(req, res, getDataSource(), gameID, isMaster).serve();
                 break;
             case "players":
                 // new GamePlayersRR(gameID, isMaster, req, res, getDataSource()).serve();

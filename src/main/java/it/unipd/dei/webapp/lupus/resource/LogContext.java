@@ -146,6 +146,15 @@ public final class LogContext {
 	}
 
 	/**
+	 * Sets the current {@code game}.
+	 *
+	 * @param game current game ID.
+	 */
+	public static void setGame(final int game) {
+		setGame(String.valueOf(game));
+	}
+
+	/**
 	 * Removes the resource currently processed.
 	 */
 	public static void removeGame() {

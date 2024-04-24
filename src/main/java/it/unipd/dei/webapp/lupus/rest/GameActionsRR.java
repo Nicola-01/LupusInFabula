@@ -34,7 +34,7 @@ public class GameActionsRR extends AbstractRR {
     protected void doServe() throws IOException {
         try {
 
-            List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo da gestire throws IOException
+            List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo to handle throws IOException
 
             // check of the correctness of the actions
             if (!correctnessOfActions(gameActions))
@@ -72,7 +72,7 @@ public class GameActionsRR extends AbstractRR {
             for (GameAction gameAction : gameActions) {
                 if (nightAction.get(gameAction.getRole()) != null) {
                     new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, gameAction.getPlayer(), currentRound, currentPhase, 0,
-                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : "vote", gameAction.getTarget())
+                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : Action.VOTE, gameAction.getTarget())
                     ).access();
                 }
             }
@@ -194,7 +194,6 @@ public class GameActionsRR extends AbstractRR {
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
 
             String player = entry.getKey();
-            // i can use the map nightAction
             String roleOfPlayer = playerRole.get(player);
             Map<String, Boolean> actionTarget = entry.getValue();
 
@@ -202,6 +201,7 @@ public class GameActionsRR extends AbstractRR {
                 // Todo -> to change
                 LOGGER.warn("The player " + player + " is dead");
                 Message m = new Message("The player " + player + " is dead");
+                m.toJSON(res.getOutputStream());
                 //nope --> log - Error
                 return false;
             }
@@ -217,14 +217,12 @@ public class GameActionsRR extends AbstractRR {
                             && nightAction.get(roleOfPlayer).equals(action)
                             && !roleOfPlayer.equals(GameRoleAction.KNIGHT.getName())
                             && !roleOfPlayer.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
-                        LOGGER.warn("Errror, the target of " + action + " is not a valid target");
-                        Message m = new Message("Errror, the target of " + action + " is not a valid target");
+                        LOGGER.warn("Error, the target of " + action + " is not a valid target");
+                        Message m = new Message("Error, the target of " + action + " is not a valid target");
                         m.toJSON(res.getOutputStream());
                         //nope --> log - Error
                         return false;
                     }
-                } else {
-                    //nothing
                 }
             }
 

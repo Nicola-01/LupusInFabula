@@ -13,10 +13,12 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
     private static final String STATEMENT = "SELECT * FROM plays_as_in WHERE plays_as_in.game_id = ?";
 
     private final int gameID;
+    private final boolean URIisMaster;
 
-    public GetGameInfoDAO(final Connection con, final int gameID){
+    public GetGameInfoDAO(final Connection con, final int gameID, boolean isMaster){
         super(con);
         this.gameID = gameID;
+        this.URIisMaster = isMaster;
     }
 
     @Override
@@ -30,17 +32,39 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
 
             rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                join.add(new PlaysAsIn(
-                        rs.getString("player_username"),
-                        rs.getInt("game_id"),
-                        rs.getString("role"),
-                        rs.getInt("round_of_death"),
-                        rs.getInt("phase_of_death"),
-                        rs.getFloat("duration_of_life")
-                ));
+            // if the request uri is /game/status/{gameID}/master
+            // I can send all the info about the game (username and roles)
+            if(URIisMaster)
+            {
+                while (rs.next())
+                {
+                    join.add(new PlaysAsIn(
+                            rs.getString("player_username"),
+                            rs.getInt("game_id"),
+                            rs.getString("role"),
+                            rs.getInt("round_of_death"),
+                            rs.getInt("phase_of_death"),
+                            rs.getFloat("duration_of_life")
+                    ));
+                }
             }
-            String infos = "logs contains " + join.size() + " plays_as_in";
+            // otherwise I send the list of players but only the role of the player who's calling
+            // the request URI
+            else
+            {
+                while (rs.next())
+                {
+                    join.add(new PlaysAsIn(
+                            rs.getString("player_username"),
+                            rs.getInt("game_id"),
+                            rs.getString("role"),
+                            rs.getInt("round_of_death"),
+                            rs.getInt("phase_of_death"),
+                            rs.getFloat("duration_of_life")
+                    ));
+                }
+            }
+            String infos = "Game "+gameID+" contains " + join.size() + " players";
             LOGGER.info(infos);
         } finally {
             if (rs != null) {
