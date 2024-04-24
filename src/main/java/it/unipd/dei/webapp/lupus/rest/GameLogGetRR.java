@@ -18,54 +18,44 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-
+/**
+ * class to manege the log of a game
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameLogGetRR extends AbstractRR
 {
-    private final int POSIDPART = 7;
-    private final int POSISMASTER= POSIDPART + 1;
-    public static final String MASTEROLE = "master";
-    //GamePhase
-
     private interface HttpServletFunct {public void exe(HttpServletRequest request, HttpServletResponse response);}
 
     private final int idPart;
     private final boolean isMaster;
     private final String nmPlayer;
-    private final int round;//round of game
 
 
-
-   /* public GameLogGetRR(final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
-    {
-        super(Actions.ADD_ACTIONS, request, response, ds);
-        this.idPart = getPartUrl(POSIDPART, req);//id of game;
-        this.isMaster = getPartUrl(POSISMASTER, req);
-        this.nmPlayer ="";//((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-        int app=0;
-        try {app = new GetGameRoundDAO(ds.getConnection(), this.idPart).getOutputParam();}
-        catch (SQLException e) {LOGGER.error("Fatal error while try to get round.");}
-        this.round = app;
-    }*/
-
+    /**
+     * Constructor for the class
+     *
+     * @param  request  request arrive from the server
+     * @param  response response to return
+     * @param  isMaster boolean that represent if a user logged is a master or not
+     * @param  idPart numeric identifier for the game
+     */
     public GameLogGetRR(int idPart, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
     {
         super(Actions.ADD_ACTIONS, request, response, ds);
         this.idPart = idPart;
         this.isMaster = isMaster;
         this.nmPlayer =((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-        int app=0;
-        try {app = new GetGameRoundDAO(ds.getConnection(), String.valueOf(this.idPart)).access().getOutputParam();}
-        catch (SQLException e) {LOGGER.error("Fatal error while try to get round.");}
-        this.round = app;
     }
 
-
-
+    /**
+     * function to serve the te request make to the url game/logs/{idPart} and game/logs/{idPart}/master
+     */
     @Override
     protected void doServe() throws IOException
     {
-        LOGGER.error("son qui");
-
         HttpServletFunct a = (req, res)->
         {
             Message m = null;
@@ -76,10 +66,8 @@ public class GameLogGetRR extends AbstractRR
                 if (r != null)
                 {
                     LOGGER.info("Action successfully listed.");
-
                     res.setStatus(HttpServletResponse.SC_OK);
-                    // TODO --> to implement the writeJSON method in the action.java class
-                    new ResourceList<Action>(r).toJSON(res.getOutputStream());//to do return ???
+                    new ResourceList<Action>(r).toJSON(res.getOutputStream());
                 }
                 else
                 {
@@ -98,29 +86,25 @@ public class GameLogGetRR extends AbstractRR
         log(a, req, res);
     }
 
+    /**
+     * function to get all log from db
+     */
     private ArrayList<Action> getLog() throws SQLException
     {
-        ArrayList<Action> r = new ArrayList<Action>();
-        final int max;
-
-       r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
+        ArrayList<Action> r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
 
         if(!this.isMaster && r.size()>0)
             r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
 
-
         return r;
     }
 
-
-
-    private String getPartUrl(int i, HttpServletRequest req)
-    {
-        String[] s = req.getRequestURL().toString().split("/");
-
-        return i<s.length ? s[i]: "";
-    }
-
+    /**
+     * function to get all log from db
+     * @param  request  request arrive from the server
+     * @param  response response to return
+     * @param  function function to exec between LogContext
+     */
     private void log(HttpServletFunct function, HttpServletRequest request, HttpServletResponse response)
     {
         LogContext.setIPAddress(request.getRemoteAddr());

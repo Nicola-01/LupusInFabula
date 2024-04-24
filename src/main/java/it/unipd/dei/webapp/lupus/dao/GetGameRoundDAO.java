@@ -9,17 +9,32 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class to get the last round in a game
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GetGameRoundDAO extends AbstractDAO<Integer>
 {
     private static final String STATEMENT = "SELECT rounds FROM Game WHERE ID = ?";
-    private final String gameID;
+    private final String idPart;
 
-    public GetGameRoundDAO(final Connection con, final String gameID)
+    /**
+     * Constructor for the class
+     *
+     * @param  con  connection with the database
+     * @param  idPart numeric identifier for the game
+     */
+    public GetGameRoundDAO(final Connection con, final String idPart)
     {
         super(con);
-        this.gameID = gameID;
+        this.idPart = idPart;
     }
 
+    /**
+     * function to exec the query on db
+     */
     @Override
     protected void doAccess() throws SQLException
     {
@@ -30,7 +45,7 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
         try
         {
             q = con.prepareStatement(STATEMENT);
-            q.setString(1, gameID);
+            q.setString(1, idPart);
 
             rs = q.executeQuery();
             r = rs.getInt("rounds");
@@ -40,9 +55,6 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
             if(rs != null) rs.close();
             if(q != null) q.close();
         }
-
-        LOGGER.error(r);
-
         this.outputParam = r;
     }
 }

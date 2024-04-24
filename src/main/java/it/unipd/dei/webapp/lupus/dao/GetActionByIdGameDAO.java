@@ -11,23 +11,38 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
-    private static final String STATEMENT = "SELECT * "+
-    "FROM type_action ty JOIN action a ON(a.type_of_action=ty.id) "+
-    "WHERE a.game_id = ? "+
-    "ORDER BY a.round, a.phase, a.subphase";
 
-    /*
-    SELECT *  FROM Action a, TYPE_ACTION t, Game g JOIN a.type_of_action=t.ID AND g.ID=a.game_id WHERE g.public_ID = ? ORDER BY a.round, a.phase, a.subphase;*/
+/**
+ * Class to get all the action associate to a game join with the name of the action and order by round, phase and subphase
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
+{
+    private static final String STATEMENT = "SELECT * "                                                     +
+                                            "FROM type_action ty JOIN action a ON(a.type_of_action=ty.id) " +
+                                            "WHERE a.game_id = ? "                                          +
+                                            "ORDER BY a.round, a.phase, a.subphase";
 
     private final int idPart;
 
+    /**
+     * Constructor for the class
+     *
+     * @param  con  connection with the database
+     * @param  idPart numeric identifier for the game
+     */
     public GetActionByIdGameDAO(final Connection con, final int idPart)
     {
         super(con);
         this.idPart = idPart;
     }
 
+    /**
+     * function to exec the query on db
+     */
     @Override
     public final void doAccess() throws SQLException
     {
@@ -39,8 +54,6 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
         {
             query = con.prepareStatement(STATEMENT);
             query.setInt(1, idPart);
-
-            LOGGER.info(query);
 
             rs = query.executeQuery();
 
