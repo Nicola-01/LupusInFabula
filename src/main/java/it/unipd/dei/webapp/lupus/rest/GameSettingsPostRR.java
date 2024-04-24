@@ -4,7 +4,7 @@ import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
-import it.unipd.dei.webapp.lupus.utils.GameRole;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -77,7 +77,7 @@ public class GameSettingsPostRR extends AbstractRR {
 
             // recover all roles, and remove the master
             List<Role> realRoles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
-            realRoles.removeIf(role -> Objects.equals(role.getName(), GameRole.MASTER.getName()));
+            realRoles.removeIf(role -> Objects.equals(role.getName(), GameRoleAction.MASTER.getName()));
 
             // create a map with all the roles and their cardinality
             Map<String, Integer> selectedRoles = new HashMap<>();
@@ -190,7 +190,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     LOGGER.info("GAME created, gameID: (%d, %s), game master %s", gameID, publicID, gameMaster.getUsername());
 
                     // set the gamemaster role to the player who created the game
-                    PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRole.MASTER.getId());
+                    PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
                     new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn).access();
 
                     // add a session attribute to the user corresponding to the private game ID
@@ -202,13 +202,13 @@ public class GameSettingsPostRR extends AbstractRR {
                         String selectedRole = randomRole(selectedRoles);
 
                         // Get the ID of the selected role from the database
-                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
+//                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
 
                         // Create a PlaysAsIn for the player with the selected role and game ID, and insert into the database
-                        PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRoleID);
+                        PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
                         new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn).access();
 
-                        LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), playsAsIn.getRoleId());
+                        LOGGER.info("Player %s assigned role ID %d", selectedPlayers.get(i), selectedRole);
                     }
                     // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
                     createdGame.toJSON(res.getOutputStream());

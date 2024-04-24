@@ -44,7 +44,7 @@ public class Game extends AbstractResource {
     /**
      * The number of rounds played in the game.
      */
-    private int number_of_rounds;
+    private int rounds;
 
     /**
      * The start date of the game.
@@ -63,18 +63,18 @@ public class Game extends AbstractResource {
      * @param public_ID        The public ID of the game.
      * @param game_duration    The duration of the game.
      * @param who_win          The ID of the winning team or player.
-     * @param number_of_rounds The number of rounds played in the game.
+     * @param rounds The number of rounds played in the game.
      * @param start            The start date of the game.
      * @param phase            The phase of the game.
      */
     public Game(final int id, final String public_ID, final Date start, final Time game_duration,
-                final int who_win, final int number_of_rounds, final int phase) {
+                final int who_win, final int rounds, final int phase) {
         this.id = id;
         this.public_ID = public_ID;
         this.start = start;
         this.game_duration = game_duration;
         this.who_win = who_win;
-        this.number_of_rounds = number_of_rounds;
+        this.rounds = rounds;
         this.phase = phase;
     }
 
@@ -119,8 +119,8 @@ public class Game extends AbstractResource {
      *
      * @return The number of rounds played in the game.
      */
-    public final int getNumbers_of_round() {
-        return number_of_rounds;
+    public final int getRounds() {
+        return rounds;
     }
 
     /**
@@ -164,7 +164,7 @@ public class Game extends AbstractResource {
         jg.writeStringField("game_duration", duration);
 
         jg.writeNumberField("who_win", who_win);
-        jg.writeNumberField("number_of_rounds", number_of_rounds);
+        jg.writeNumberField("rounds", rounds);
         jg.writeNumberField("phase", phase);
 
         jg.writeEndObject();

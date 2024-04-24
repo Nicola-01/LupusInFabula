@@ -11,12 +11,12 @@ import java.util.List;
 
 public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
     //private static final String STATEMENT = "SELECT * FROM GAME INNER JOIN PLAYS_AS_IN ON LOWER(GAME.id) = LOWER(PLAYS_AS_IN.id) WHERE LOWER(PLAYS_AS_IN.username) = LOWER(?)";
-    private static final String STATEMENT = "SELECT game_id, start, game_duration, number_of_rounds, name, with_who_wins, who_wins " +
+    private static final String STATEMENT = "SELECT game_id, start, game_duration, rounds, name, with_who_wins, who_wins " +
             "FROM plays_as_in " +
             "JOIN public.game g " +
             "on g.id = plays_as_in.game_id join " +
             "public.role r " +
-            "on plays_as_in.role_id = r.id " +
+            "on plays_as_in.role = r.name " +
             "        WHERE lower(player_username) = lower(?)";
     private final String username;
 
@@ -40,7 +40,7 @@ public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
                         rs.getInt("game_id"),
                         rs.getTimestamp("start"),
                         rs.getTime("game_duration"),
-                        rs.getInt("number_of_rounds"),
+                        rs.getInt("rounds"),
                         rs.getString("name"),
                         rs.getInt("with_who_wins"),
                         rs.getInt("who_wins")

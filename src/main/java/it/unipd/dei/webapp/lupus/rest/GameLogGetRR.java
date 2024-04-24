@@ -63,6 +63,7 @@ public class GameLogGetRR extends AbstractRR
                     LOGGER.info("Action successfully listed.");
 
                     res.setStatus(HttpServletResponse.SC_OK);
+                    // TODO --> to implement the writeJSON method in the action.java class
                     new ResourceList<Action>(r).toJSON(res.getOutputStream());//to do return ???
                 }
                 else

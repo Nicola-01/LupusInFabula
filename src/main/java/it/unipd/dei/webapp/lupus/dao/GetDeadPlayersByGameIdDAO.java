@@ -1,21 +1,19 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,String>> {
+public class GetDeadPlayersByGameIdDAO extends AbstractDAO<Map<String, Boolean>> {
 
-    private static final String STATEMENT = "SELECT player_username, r.name FROM plays_as_in JOIN role r on plays_as_in.role = r.name WHERE game_id = ? AND r.name != ?";
+    private static final String STATEMENT = "SELECT round_of_death, player_username FROM plays_as_in WHERE game_id = ?";
     private final int gameId;
 
-    public SelectPlayersAndRolesByGameIdDAO(final Connection con, int gameId) {
+    public GetDeadPlayersByGameIdDAO(final Connection con, final int gameId) {
         super(con);
-        this.gameId = gameId;
+        this.gameId = gameId    ;
     }
 
     @Override
@@ -23,17 +21,15 @@ public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,Str
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        Map<String,String> map =  new HashMap<String, String>();
+        Map<String, Boolean> map = new HashMap<>();
 
         try {
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, gameId);
-            pstmt.setString(2, GameRoleAction.MASTER.getName());
             rs = pstmt.executeQuery();
-
             while (rs.next()) {
-                map.put(rs.getString("player_username"), rs.getString("name"));
+                map.put(rs.getString("player_username"), rs.getInt("round_of_death") > 0);
             }
 
         } finally {

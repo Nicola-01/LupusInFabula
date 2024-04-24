@@ -1,13 +1,13 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.utils.GameRole;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class GetMasterFromIdGameDAO extends AbstractDAO<String> {
-    private static final String STATEMENT = "SELECT player_username from plays_as_in where game_id = ? and role_id = ?";
+    private static final String STATEMENT = "SELECT player_username from plays_as_in where game_id = ? and role = ?";
 
     private final int gameId;
 
@@ -28,7 +28,7 @@ public class GetMasterFromIdGameDAO extends AbstractDAO<String> {
         try {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, gameId);
-            pstmt.setInt(2, GameRole.MASTER.getId());
+            pstmt.setString(2, GameRoleAction.MASTER.getName());
 
             rs = pstmt.executeQuery();
 
