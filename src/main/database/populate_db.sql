@@ -31,3 +31,39 @@ INSERT INTO Role (name, type, with_who_wins, max_number, description) VALUES
                     ('jester', 2, 3, 1, 'The Jester wins, alone, if he is burnt at the stake.'),
                     ('illusionist', 3, 1, 1, 'He chooses a player during the night and blocks his power for that night.'),
                     ('plague spreader', 3, 0, 1, 'He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right).');
+
+
+
+-- #################################################################################################
+-- ## Popolation for testing getlogs                                                              ##
+-- #################################################################################################
+
+--INSERT INTO player VALUES ('nicola', 'nic@gmail.com', 12345, now());
+
+INSERT INTO game
+VALUES (1, now(), null, 1, 12),
+       (2, now(), null, 0, 5);
+INSERT INTO game
+VALUES (3, now(), null, 0, 6),
+       (4, now(), null, 0, 7),
+       (5, now(), null, 1, 7),
+       (6, now(), null, 1, 5),
+       (7, now(), null, 0, 7),
+       (8, now(), null, 1, 7),
+       (9, now(), null, 0, 7),
+       (10, now(), null, 0, 7);
+
+
+--Drop table plays_as_in;
+
+INSERT INTO plays_as_in
+VALUES ('user1', 1, 20, null, null, 12),
+       ('user1', 2, 20, null, null, 5),
+       ('user1', 3, 1, null, null, 6),
+       ('user1', 4, 6, null, null, 7),
+       ('user1', 5, 6, null, null, 7),
+       ('user1', 6, 1, null, null, 5),
+       ('user1', 7, 20, null, null, 7),
+       ('user1', 8, 20, null, null, 7),
+       ('user1', 9, 6, null, null, 7),
+       ('user1', 10, 13, null, null, 7);

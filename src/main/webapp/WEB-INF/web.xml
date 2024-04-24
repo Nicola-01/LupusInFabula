@@ -39,10 +39,10 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomeServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>StatisticsLogsServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.StatisticsLogsServlet</servlet-class>
-    </servlet>
+<!--    <servlet>-->
+<!--        <servlet-name>StatisticsLogsServlet</servlet-name>-->
+<!--        <servlet-class>it.unipd.dei.webapp.lupus.servlet.StatisticsLogsServlet</servlet-class>-->
+<!--    </servlet>-->
 
 
     <servlet>
@@ -72,16 +72,16 @@
         <url-pattern>/game/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>StatisticsLogsServlet</servlet-name>
-        <url-pattern>/user/user1/logs</url-pattern>
-        <url-pattern>/user/user1/statistics</url-pattern>
-<!--        <url-pattern>/user/*/statistics</url-pattern>-->
-<!--        <url-pattern>/user/*/logs</url-pattern>-->
-    </servlet-mapping>
+<!--    <servlet-mapping>-->
+<!--        <servlet-name>StatisticsLogsServlet</servlet-name>-->
+<!--        <url-pattern>/user/user1/logs</url-pattern>-->
+<!--        <url-pattern>/user/user1/statistics</url-pattern>-->
+<!--        &lt;!&ndash;        <url-pattern>/user/*/statistics</url-pattern>&ndash;&gt;-->
+<!--        &lt;!&ndash;        <url-pattern>/user/*/logs</url-pattern>&ndash;&gt;-->
+<!--    </servlet-mapping>-->
 
 
-<!--    <filter>-->
+    <!--    <filter>-->
 <!--        <filter-name>LoginFilter</filter-name>-->
 <!--        <filter-class>it.unipd.dei.webapp.lupus.filter.LoginFilter</filter-class>-->
 <!--    </filter>-->
