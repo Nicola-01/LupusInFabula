@@ -90,6 +90,9 @@ public abstract class AbstractRR implements RestResource {
             throw new NullPointerException("The connection cannot be null.");
         }
         this.ds = ds;
+
+        // TODO -> maybe to remove, but useful for test
+        res.setContentType(JSON_UTF_8_MEDIA_TYPE);
     }
 
     @Override

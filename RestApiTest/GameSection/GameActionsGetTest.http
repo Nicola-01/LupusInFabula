@@ -1,0 +1,9 @@
+### Login with the master
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123
+
+### Test to return possible actions of the game
+GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1

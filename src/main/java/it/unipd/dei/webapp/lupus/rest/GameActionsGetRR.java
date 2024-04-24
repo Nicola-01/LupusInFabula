@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.rest;
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
@@ -90,8 +91,21 @@ public class GameActionsGetRR extends AbstractRR {
             else
                 handleNightPhase();
 
-        } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+        } catch (SQLException e) {
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            Message m = new Message("Cannot search for roles: unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
+            LOGGER.error("Cannot search for roles: unexpected error while accessing the database.", e);
+            m.toJSON(res.getOutputStream());
+        }
+        catch (IOException e) {
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            Message m = new Message("Cannot return the possible actions: unexpected error", ec.getErrorCode(), e.getMessage());
+            LOGGER.error("Error to return the possible actions.", e);
+            // An error occurred while processing the request. Unable to generate role search
+            // results due to an unexpected database access error.
+            m.toJSON(res.getOutputStream());
         }finally {
             LogContext.removeAction();
             LogContext.removeGame();

@@ -304,8 +304,10 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
             }
         } catch (SQLException | ServletException e) {
-            ErrorCode er = ErrorCode.INTERNAL_ERROR;
-            response.setStatus(er.getHTTPCode());
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            response.setStatus(ec.getHTTPCode());
+            LOGGER.error("Unexpected error", e);
+            final Message m = new Message("Unexpected error.", ec.getErrorCode(), e.getMessage());
             LOGGER.error("stacktrace:", e);
         } finally {
             LogContext.removeIPAddress();
