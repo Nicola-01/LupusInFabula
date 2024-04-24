@@ -41,6 +41,8 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
             if(q != null) q.close();
         }
 
+        LOGGER.error(r);
+
         this.outputParam = r;
     }
 }
