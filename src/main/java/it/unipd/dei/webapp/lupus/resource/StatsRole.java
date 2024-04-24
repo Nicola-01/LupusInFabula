@@ -1,7 +1,10 @@
 package it.unipd.dei.webapp.lupus.resource;
 
-public class StatsRole {
-    private final String name;
+import com.fasterxml.jackson.core.JsonGenerator;
+
+import java.io.OutputStream;
+
+public class StatsRole extends AbstractResource{    private final String name;
     private final int countName;
     private final int countWins;
 
@@ -21,6 +24,32 @@ public class StatsRole {
 
     public int getCountWins() {
         return countWins;
+    }
+
+    @Override
+
+    protected void writeJSON(OutputStream out) throws Exception {
+
+        final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
+
+        jg.writeStartObject();
+
+        jg.writeFieldName("StatsRole");
+
+        jg.writeStartObject();
+
+        jg.writeStringField("name", name);
+
+        jg.writeNumberField("countName", countName);
+
+        jg.writeNumberField("countWins", countWins);
+
+        jg.writeEndObject();
+
+        jg.writeEndObject();
+
+        jg.flush();
+
     }
 }
 

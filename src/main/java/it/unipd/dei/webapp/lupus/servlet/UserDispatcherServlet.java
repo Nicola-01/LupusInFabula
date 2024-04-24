@@ -131,12 +131,19 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             }
 
         }
+
         //possible URIs: /user/{username}/logs , /user/{username}/statistic
         else if (path.contains("/logs") || path.contains("/statistic")) {
             //I must take the username from the URI
+            String username = "user1";
+            //TODO RECUPERO USERNAME DA URI
+
+            username = uri.split("/")[3];
+
             if (path.contains("/logs") && method.equals("GET")) {
 
-                //new UserLogsGetRR(req, resp, getConnection()).serve();
+                new UserLogsGetRR(username,req, resp, getDataSource()).serve();
+                //getConnection()).serve();
                 LOGGER.info("Getting user's logs");
 
             } else if (path.contains("/statistic") && method.equals("GET")) {
