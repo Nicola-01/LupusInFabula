@@ -12,11 +12,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
-    private static final String STATEMENT = "SELECT * "                     +
-                                            "FROM Action a, TYPE_ACTION t " +
-                                            "JOIN a.type_of_action=t.ID "   +
-                                            "WHERE a.game_id = ? "          +
+    private static final String STATEMENT = "SELECT * "                                     +
+                                            "FROM Action a, TYPE_ACTION t, Game g"          +
+                                            "JOIN a.type_of_action=t.ID AND g.ID=a.game_id" +
+                                            "WHERE g.public_ID = ? "                        +
                                             "ORDER BY a.round, a.phase, a.subphase";
+
+    /*
+    SELECT *  FROM Action a, TYPE_ACTION t, Game g JOIN a.type_of_action=t.ID AND g.ID=a.game_id WHERE g.public_ID = ? ORDER BY a.round, a.phase, a.subphase;*/
 
     private final String idPart;
 
