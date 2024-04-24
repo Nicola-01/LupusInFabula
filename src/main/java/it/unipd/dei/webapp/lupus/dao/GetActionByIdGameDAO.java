@@ -12,18 +12,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
-    private static final String STATEMENT = "SELECT * "                                     +
-                                            "FROM Action a, TYPE_ACTION t, Game g"          +
-                                            "JOIN a.type_of_action=t.ID AND g.ID=a.game_id" +
-                                            "WHERE g.public_ID = ? "                        +
-                                            "ORDER BY a.round, a.phase, a.subphase";
+    private static final String STATEMENT = "SELECT * "+
+    "FROM type_action ty JOIN action a ON(a.type_of_action=ty.id) "+
+    "WHERE a.game_id = ? "+
+    "ORDER BY a.round, a.phase, a.subphase";
 
     /*
     SELECT *  FROM Action a, TYPE_ACTION t, Game g JOIN a.type_of_action=t.ID AND g.ID=a.game_id WHERE g.public_ID = ? ORDER BY a.round, a.phase, a.subphase;*/
 
-    private final String idPart;
+    private final int idPart;
 
-    public GetActionByIdGameDAO(final Connection con, final String idPart)
+    public GetActionByIdGameDAO(final Connection con, final int idPart)
     {
         super(con);
         this.idPart = idPart;
@@ -39,7 +38,10 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
         try
         {
             query = con.prepareStatement(STATEMENT);
-            query.setString(1, idPart);
+            query.setInt(1, idPart);
+
+            LOGGER.info(query);
+
             rs = query.executeQuery();
 
             while (rs.next()) r.add(new Action(rs));

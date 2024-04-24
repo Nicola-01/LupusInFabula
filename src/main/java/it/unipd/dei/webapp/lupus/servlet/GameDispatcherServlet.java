@@ -206,7 +206,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
                 // new GamePlayersRR(gameID, isMaster, req, res, getDataSource()).serve();
                 break;
             case "logs":
-                // new GameLogRR(gameID, isMaster, req, res, getDataSource(), gameID).serve();
+                 new GameLogGetRR(gameID, isMaster, req, res, getDataSource()).serve();
                 break;
         }
         return true;

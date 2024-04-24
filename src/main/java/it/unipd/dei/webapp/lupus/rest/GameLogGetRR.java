@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.rest;
 import it.unipd.dei.webapp.lupus.dao.GetActionByIdGameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameRoundDAO;
 import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.servlet.GameLogServlet;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
@@ -27,14 +28,14 @@ public class GameLogGetRR extends AbstractRR
 
     private interface HttpServletFunct {public void exe(HttpServletRequest request, HttpServletResponse response);}
 
-    private final String idPart;
-    private final String isMaster;
+    private final int idPart;
+    private final boolean isMaster;
     private final String nmPlayer;
     private final int round;//round of game
 
 
 
-    public GameLogGetRR(final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
+   /* public GameLogGetRR(final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
     {
         super(Actions.ADD_ACTIONS, request, response, ds);
         this.idPart = getPartUrl(POSIDPART, req);//id of game;
@@ -44,6 +45,18 @@ public class GameLogGetRR extends AbstractRR
         try {app = new GetGameRoundDAO(ds.getConnection(), this.idPart).getOutputParam();}
         catch (SQLException e) {LOGGER.error("Fatal error while try to get round.");}
         this.round = app;
+    }*/
+
+    public GameLogGetRR(int idPart, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
+    {
+        super(Actions.ADD_ACTIONS, request, response, ds);
+        this.idPart = idPart;
+        this.isMaster = isMaster;
+        this.nmPlayer =((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        int app=0;
+        try {app = new GetGameRoundDAO(ds.getConnection(), String.valueOf(this.idPart)).access().getOutputParam();}
+        catch (SQLException e) {LOGGER.error("Fatal error while try to get round.");}
+        this.round = app;
     }
 
 
@@ -51,6 +64,8 @@ public class GameLogGetRR extends AbstractRR
     @Override
     protected void doServe() throws IOException
     {
+        LOGGER.error("son qui");
+
         HttpServletFunct a = (req, res)->
         {
             Message m = null;
@@ -90,7 +105,7 @@ public class GameLogGetRR extends AbstractRR
 
        r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
 
-        if(!this.isMaster.equals(MASTEROLE) && r.size()>0)
+        if(!this.isMaster && r.size()>0)
             r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
 
 
