@@ -108,9 +108,14 @@ public final class Actions {
     // Dispatcher
 
     /**
-     *
+     * Dispatcher in the game saction
      */
     public static final String GAME_DISPATCHER_ACTION = "GAME_DISPATCHER_ACTION";
+
+    /**
+     * GET request of game actions.
+     */
+    public static final String GET_GAME_ACTIONS_ACTION = "GET_GAME_ACTIONS_ACTION";
 
 
     /**

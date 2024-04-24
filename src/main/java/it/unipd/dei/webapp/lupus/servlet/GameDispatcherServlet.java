@@ -164,19 +164,22 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         }
 
         if (requestURI.equals("actions")) {
-            if (!method.equals("POST")) {
+            if (!method.equals("GET") && !method.equals("POST")) {
                 LOGGER.warn("Unsupported operation for URI /game/actions: %s.", method);
 
                 ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
                 m = new Message("Unsupported operation for URI /game/actions.", ec.getErrorCode(),
-                        String.format("Requested operation %s, but required POST.", method));
+                        String.format("Requested operation %s, but required GET or POST.", method));
                 res.setStatus(ec.getHTTPCode());
 
                 m.toJSON(res.getOutputStream());
 
                 return true;
             }
-            new GameActionsRR(gameID, req, res, getDataSource()).serve();
+            if (method.equals("GET"))
+                new GameActionsGetRR(gameID, req, res, getDataSource()).serve();
+            else
+                new GameActionsRR(gameID, req, res, getDataSource()).serve();
             return true;
         }
 

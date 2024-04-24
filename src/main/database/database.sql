@@ -87,8 +87,10 @@ CREATE TABLE Game
     start         TIMESTAMP                NOT NULL,
     game_duration TIME,
     who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
-    rounds        SMALLINT                                        DEFAULT 0,
-    phase         SMALLINT                                        DEFAULT 0
+    rounds        SMALLINT CHECK ( rounds >= 0)                   DEFAULT 0,
+    phase         SMALLINT CHECK ( phase IN (0, 1) )              DEFAULT 0,
+    subphase      SMALLINT CHECK ( subphase IN (0, 1, 2, 3) )     DEFAULT 0,
+    CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
@@ -99,6 +101,7 @@ COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
 COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
 COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
 COMMENT ON COLUMN Game.phase IS '';
+COMMENT ON COLUMN Game.subphase IS '';
 -- TODO description
 
 

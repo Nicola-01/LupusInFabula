@@ -57,18 +57,24 @@ public class Game extends AbstractResource {
     private final int phase;
 
     /**
+     * The subphase of the game.
+     */
+    private final int subphase;
+
+    /**
      * Constructs a new Game object with the specified parameters.
      *
-     * @param id               The private ID of the game.
-     * @param public_ID        The public ID of the game.
-     * @param game_duration    The duration of the game.
-     * @param who_win          The ID of the winning team or player.
-     * @param rounds The number of rounds played in the game.
-     * @param start            The start date of the game.
-     * @param phase            The phase of the game.
+     * @param id            The private ID of the game.
+     * @param public_ID     The public ID of the game.
+     * @param game_duration The duration of the game.
+     * @param who_win       The ID of the winning team or player.
+     * @param rounds        The number of rounds played in the game.
+     * @param start         The start date of the game.
+     * @param phase         The phase of the game.
+     * @param subphase      The subphase of the game.
      */
     public Game(final int id, final String public_ID, final Date start, final Time game_duration,
-                final int who_win, final int rounds, final int phase) {
+                final int who_win, final int rounds, final int phase, final int subphase) {
         this.id = id;
         this.public_ID = public_ID;
         this.start = start;
@@ -76,6 +82,7 @@ public class Game extends AbstractResource {
         this.who_win = who_win;
         this.rounds = rounds;
         this.phase = phase;
+        this.subphase = subphase;
     }
 
     /**
@@ -142,6 +149,15 @@ public class Game extends AbstractResource {
     }
 
     /**
+     * Gets the subphase of the game.
+     *
+     * @return The subphase of the game.
+     */
+    public final int getSubphase() {
+        return subphase;
+    }
+
+    /**
      * Writes JSON representation of the object to the output stream.
      *
      * @param out The output stream to write JSON to.
@@ -166,6 +182,7 @@ public class Game extends AbstractResource {
         jg.writeNumberField("who_win", who_win);
         jg.writeNumberField("rounds", rounds);
         jg.writeNumberField("phase", phase);
+        jg.writeNumberField("subphase", subphase);
 
         jg.writeEndObject();
         jg.writeEndObject();

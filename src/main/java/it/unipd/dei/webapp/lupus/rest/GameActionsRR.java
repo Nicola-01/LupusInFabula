@@ -72,7 +72,7 @@ public class GameActionsRR extends AbstractRR {
             for (GameAction gameAction : gameActions) {
                 if (nightAction.get(gameAction.getRole()) != null) {
                     new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, gameAction.getPlayer(), currentRound, currentPhase, 0,
-                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : "vote", gameAction.getTarget())
+                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : Action.VOTE, gameAction.getTarget())
                     ).access();
                 }
             }
