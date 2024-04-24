@@ -7,3 +7,6 @@ password = password123
 
 ### Test to return possible actions of the game
 GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+
+### Test to return possible actions of the game
+GET http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
