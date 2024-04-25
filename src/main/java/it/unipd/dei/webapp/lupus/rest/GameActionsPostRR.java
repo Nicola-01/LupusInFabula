@@ -108,11 +108,16 @@ public class GameActionsPostRR extends AbstractRR {
         if (!actionCheck(actionsMap, playersRole))
             return false;
 
-        // count of wolf still alive for the hobbit effect
+        // count of wolves still alive for the hobbit effect
         int number_of_wolves = 0;
         Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         for (Map.Entry<String, String> playerRole : playersRole.entrySet())
-            if(playerRole.getKey().equals(GameRoleAction.WOLF.getName()) && !deadPlayers.get(playerRole.getKey()))
+            if((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
+                    || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
+                    || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName())
+                    || playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
+                    || playerRole.getValue().equals(GameRoleAction.DORKY.getName()))
+                    && !deadPlayers.get(playerRole.getKey()))
                 number_of_wolves++;
 
         LOGGER.info("Number of wolves in the game " + number_of_wolves);
@@ -122,6 +127,20 @@ public class GameActionsPostRR extends AbstractRR {
 
             String player = entry.getKey();
             Map<String, Boolean> actionPlayerMap = entry.getValue();
+
+            // check for the "explore" action --> EXPLORER
+            // (he can explore only once in a game, so if he decides to do it, after that he will become a normal wolf)
+            if (actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())) {
+                LOGGER.info("The player " + player + " has been killed by the explorer");
+
+                String explorer = "";
+                for (GameAction gameAction : gameActions)
+                    if (gameAction.getTarget().equals(player))
+                        explorer = gameAction.getPlayer();
+
+                new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, explorer).access();
+                //LOGGER.info("The explorer " + explorer + " has been demoted to wolf");
+            }
 
             // check of the "block" action --> ILLUSIONIST
             // (if the player is blocked his action must be blocked (put them to false)
@@ -150,9 +169,11 @@ public class GameActionsPostRR extends AbstractRR {
                 //LOGGER.info(new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) + " " + (number_of_wolves <= 1));
                 if ((!actionPlayerMap.get(GameRoleAction.KNIGHT.getAction())
                         && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
-                        || (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())
-                        && number_of_wolves <= 1)) {
-                    //player will die
+                        && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())) {
+
+                    LOGGER.info("The player " + player + " has been killed by the wolves during the night");
+
+                } else if (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) && (number_of_wolves <= 1)) {
                     LOGGER.info("The player " + player + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
                 }
 
@@ -160,6 +181,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             // check of the "investigate" action --> SEER
             if (actionPlayerMap.get(GameRoleAction.SEER.getAction())) {
+                // in case the seer sees the puppy he will see that is a good role
                 LOGGER.info("The player " + player + " has been seen during the night");
             }
 
@@ -216,7 +238,13 @@ public class GameActionsPostRR extends AbstractRR {
                 }
             }
 
-            // check for the
+            // check for the "rage" action --> BERSERKER
+            // he can maul two target (so in the json he will appear two time), bypassing the knight and dying after he activated his effect
+            if (actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())) {
+
+                LOGGER.info("The player " + player + " has been killed by the berserker");
+
+            }
 
 
         }
