@@ -1,7 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Friend;
-import it.unipd.dei.webapp.lupus.resource.Is_Friend_With;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,17 +9,38 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Friend>> {
+/**
+ * DAO (Data Access Object) for retrieving a list of friends for a given user from the database.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
 
-    private static final String STATEMENT = "SELECT * FROM Is_Friend_With WHERE LOWER(player_username) = LOWER(?)";
+    private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?)";
 
+    /**
+     * The username of the player
+     */
     private final String user;
 
-    public SearchFriendsByUsernameDAO(final Connection con, final String user) {
+    /**
+     * Constructs a new ListFriendsDAO with the given database connection and user.
+     *
+     * @param con  the database connection
+     * @param user the username of the user whose friends are to be retrieved
+     */
+    public ListFriendsDAO(final Connection con, final String user) {
         super(con);
         this.user = user;
     }
 
+    /**
+     * Executes the DAO operation to retrieve the list of friends.
+     *
+     * @throws SQLException if a database access error occurs
+     */
     @Override
     public final void doAccess() throws SQLException{
         PreparedStatement pstmt = null;
@@ -34,12 +54,8 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Friend>> {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                //Friend friend = new Friend(rs.getString("friend_username"), rs.getDate("date"));
                 friendList.add(new Friend(rs.getString("friend_username"), rs.getDate("date")));
-                //LOGGER.info("Friend found: " + friend.getUsername() + " " + friend.getFriendshipDate().toString());
                 LOGGER.info("Friend found: " + rs.getString("friend_username") + " " + rs.getDate("date"));
-                for(Friend f : friendList)
-                    LOGGER.info(f.getUsername());
             }
             if (friendList.isEmpty()){
                 LOGGER.info("No friend found " + user);
@@ -53,8 +69,6 @@ public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Friend>> {
                 rs.close();
             }
         }
-        for(Friend f : friendList)
-            LOGGER.info(f.getUsername());
         this.outputParam = friendList;
     }
 }

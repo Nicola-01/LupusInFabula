@@ -14,11 +14,16 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
 
     private final int gameID;
     private final boolean URIisMaster;
+    private final String playerUsername;
+    private final String role;
 
-    public GetGameInfoDAO(final Connection con, final int gameID, boolean isMaster){
+    public GetGameInfoDAO(final Connection con, final int gameID, boolean isMaster, String playerUsername, String role){
         super(con);
         this.gameID = gameID;
         this.URIisMaster = isMaster;
+        this.playerUsername = playerUsername;
+        this.role = role;
+
     }
 
     @Override
@@ -48,16 +53,22 @@ public class GetGameInfoDAO extends AbstractDAO<List<PlaysAsIn>> {
                     ));
                 }
             }
-            // otherwise I send the list of players but only the role of the player who's calling
+            // otherwise I send the list of players without role, but only the role of the player who's calling
             // the request URI
+            // Only exception: If the user's role is "wolf", he can see all the other players role if they are "wolf" as well
             else
             {
                 while (rs.next())
                 {
+                    String playerRole = rs.getString("role");
+                    String sentUsername = rs.getString("player_username");
+                    if(! (this.playerUsername.equals(sentUsername) || (this.role.equals("wolf") && playerRole.equals("wolf"))))
+                        playerRole = "";
+
                     join.add(new PlaysAsIn(
-                            rs.getString("player_username"),
+                            sentUsername,
                             rs.getInt("game_id"),
-                            rs.getString("role"),
+                            playerRole,
                             rs.getInt("round_of_death"),
                             rs.getInt("phase_of_death"),
                             rs.getFloat("duration_of_life")

@@ -1,10 +1,8 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameInfoDAO;
-import it.unipd.dei.webapp.lupus.resource.Actions;
-import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
-import it.unipd.dei.webapp.lupus.resource.ResourceList;
+import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
+import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,7 +33,9 @@ public class GameInfoRR extends AbstractRR {
             //String path = req.getRequestURI();
             //path = path.substring(path.lastIndexOf("gameID") + 8);
             //final int gameID = Integer.parseInt(path.substring(1));
-            el = new GetGameInfoDAO(ds.getConnection(), gameID, URIisMaster).access().getOutputParam();
+            String username = ((Player) req.getSession().getAttribute("user")).getUsername();
+            String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
+            el = new GetGameInfoDAO(ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");

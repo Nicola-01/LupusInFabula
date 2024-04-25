@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 
 public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
 
-    private static final String STATEMENT = "SELECT r.name FROM plays_as_in JOIN role r on plays_as_in.role = r.name WHERE game_id = ? AND player_username = LOWER(?)";
+    private static final String STATEMENT = "SELECT role FROM plays_as_in WHERE game_id = ? AND player_username = LOWER(?)";
     private final int gameId;
     private final String playerUsername;
 
@@ -32,7 +32,7 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                role = rs.getString("name");
+                role = rs.getString("role");
                 LOGGER.info("The player " + playerUsername + " has the role (" + role + ") in the game " + gameId);
             } else {
                 LOGGER.info("The player " + playerUsername + " has not correct role in the game " + gameId);

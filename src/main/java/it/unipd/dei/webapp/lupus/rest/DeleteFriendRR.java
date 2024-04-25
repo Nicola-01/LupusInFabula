@@ -10,13 +10,32 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DeleteFriendRR extends AbstractRR{
+/**
+ * Rest Resource for deleting a friend relationship.
+ * handle the DELETE request to delete one friend of the player
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class DeleteFriendRR extends AbstractRR {
 
+    /**
+     * Constructs a new DeleteFriendRR with the given request, response, and data source.
+     *
+     * @param req the HttpServletRequest object
+     * @param res the HttpServletResponse object
+     * @param ds  the DataSource object for database access
+     */
     public DeleteFriendRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.DELETE_FRIEND, req, res, ds);
     }
 
-
+    /**
+     * Serves the request to delete a friend relationship.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doServe() throws IOException {
 
@@ -27,13 +46,13 @@ public class DeleteFriendRR extends AbstractRR{
             String friend_username = Friend.fromJSON(req.getInputStream()).getUsername();
 
             // creates a new DAO for accessing the database and deletes the employee
-            int result = new DeleteFriendDAO(ds.getConnection(), player.getUsername(), friend_username).access().getOutputParam();
+            Friend f = new DeleteFriendDAO(ds.getConnection(), player.getUsername(), friend_username).access().getOutputParam();
 
-            if(result == 1) {
+            if(f != null) {
                 LOGGER.info("Friend successfully deleted.");
 
                 res.setStatus(HttpServletResponse.SC_OK);
-                //result.toJSON(res.getOutputStream());
+                f.toJSON(res.getOutputStream());
             } else {
                 LOGGER.warn("Friend not found. Cannot delete it.");
 
@@ -64,5 +83,4 @@ public class DeleteFriendRR extends AbstractRR{
             }
         }
     }
-
 }
