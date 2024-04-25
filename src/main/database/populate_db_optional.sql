@@ -32,12 +32,12 @@ INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, 
 VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master
        ('user1', 1, 'wolf', null, null, null),
        ('user2', 1, 'seer', null, null, null),
-       ('user3', 1, 'jester', null, null, null),
+       ('user3', 1, 'kamikaze', null, null, null),
        ('user4', 1, 'wolf', null, null, null),
        ('user5', 1, 'farmer', null, null, null),
        ('user6', 1, 'hamster', null, null, null),
        ('user7', 1, 'knight', null, null, null),
-       ('user8', 1, 'farmer', null, null, null),
+       ('user8', 1, 'sheriff', null, null, null),
        -- Game 2
        ('player0', 2, 'master', null, null, null), -- player0 is the master
        ('player1', 2, 'knight', null, null, null),

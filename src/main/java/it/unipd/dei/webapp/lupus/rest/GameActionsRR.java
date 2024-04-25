@@ -6,10 +6,12 @@ import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,15 +96,112 @@ public class GameActionsRR extends AbstractRR {
     // TODO
     private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
 
-        Map<String, String> playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-        Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playerRole);
+        Map<String, String> playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
 
         if (actionsMap == null)
             return false;
 
         // check of the actions
-        if (!actionCheck(actionsMap, playerRole))
+        if (!actionCheck(actionsMap, playersRole))
             return false;
+
+        // TODO --> to fix and test with the hobbit as target of the "maul" action
+        // count of wolf still alive for the hobbit effect
+        int number_of_wolves = new GetNumberOfRolesByGameIdAndRoleNameDAO(ds.getConnection(), gameID, GameRoleAction.WOLF.getName()).access().getOutputParam();
+        for (Map.Entry<String, String> aliveOrDead : playersRole.entrySet()) {
+            Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+            // if the player is a wolf
+            if (aliveOrDead.getValue().equals(GameRoleAction.WOLF.getName()))
+                // if the player is in the map of deadPlayers increment the number of dead wolves
+                if (deadPlayers.containsKey(aliveOrDead.getKey()))
+                    number_of_wolves--;
+        }
+
+        // for each player in the map i check the associated map. Then for each element in this map i check if the player is a target of what action
+        for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
+
+            String player = entry.getKey();
+            Map<String, Boolean> actionPlayerMap = entry.getValue();
+
+            // check of the "block" action --> ILLUSIONIST
+            // (if the player is blocked his action must be blocked (put them to false)
+            if (actionPlayerMap.get(GameRoleAction.ILLUSIONIST.getAction())) {
+
+                String playerTarget = "";
+                String player_role = "";
+                for (GameAction gameAction : gameActions)
+                    if (gameAction.getPlayer().equals(player)) {
+                        playerTarget = gameAction.getTarget();
+                        player_role = gameAction.getRole();
+                    }
+
+                Map<String, Boolean> tmp = actionsMap.get(playerTarget);
+                String player_action = nightAction.get(player_role);
+                tmp.put(player_action, false);
+                actionsMap.put(playerTarget, tmp);
+
+                LOGGER.info("The player " + player + " has been blocked during the night");
+            }
+
+            // check of the "maul" action --> WOLVES
+            // (if the player is protected, or is the hamster, or is the hobbit and in the game are still alive more than 1 wolf, then the player will not die)
+            if (actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
+                //LOGGER.info(!actionPlayerMap.get(GameRoleAction.KNIGHT.getAction()) + " " + !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()));
+                //LOGGER.info(new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) + " " + (number_of_wolves <= 1));
+                if ((!actionPlayerMap.get(GameRoleAction.KNIGHT.getAction())
+                        && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
+                        || (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())
+                        && number_of_wolves <= 1)) {
+                    //player will die
+                    LOGGER.info("The player " + player + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
+                }
+
+            }
+
+            // check of the "investigate" action --> SEER
+            if (actionPlayerMap.get(GameRoleAction.SEER.getAction())) {
+                LOGGER.info("The player " + player + " has been seen during the night");
+            }
+
+            // check of the "shot" action --> SHERIFF
+            // (if the player is a member of the wolf pack or a victory stealer he will die, otherwise the sheriff will die)
+            if (actionPlayerMap.get(GameRoleAction.SHERIFF.getAction())) {
+
+                GameRoleAction player_role = GameRoleAction.valueOfName(playersRole.get(player));
+                assert player_role != null;
+                if (player_role.getRoleType().getType() == 1 || player_role.getRoleType().getType() == 2) {
+                    LOGGER.info("The player " + player + " has been killed by the sheriff during the night");
+                } else {
+                    String sheriff = "";
+                    for (GameAction gameAction : gameActions)
+                        if (gameAction.getTarget().equals(player))
+                            sheriff = gameAction.getPlayer();
+
+                    LOGGER.info("The sheriff " + sheriff + " has killed himself during the night");
+                }
+
+            }
+
+            // check for the "blowup" action --> KAMIKAZE
+            // if the player is the kamikaze and the action is true, the kamikaze kill himself and the wolf
+            if (playersRole.get(player).equals(GameRoleAction.KAMIKAZE.getName()) && actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
+                String wolf = "";
+                for (GameAction gameAction : gameActions) {
+                    if (gameAction.getTarget().equals(player))
+                        wolf = gameAction.getPlayer();
+                }
+                LOGGER.info("The player " + player + " is blown up with the wolf " + wolf);
+            }
+
+            // check for the "plague" action --> PLAGUE SPREADER
+            if (actionPlayerMap.get(GameRoleAction.PLAGUE_SPREADER.getAction())) {
+                LOGGER.info("The player " + player + " is anointed");
+            }
+
+
+
+        }
 
         return true;
     }
@@ -110,6 +209,7 @@ public class GameActionsRR extends AbstractRR {
     private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
         // TODO --> fix the Logger.info error
         // TODO --> check if every role with an effect has done its action, and if are alive or dead
+        // TODO --> there can be only one "maul" action if the attacker is a normal wolf and not the berserker
         Message m;
 
         for (GameAction gameAction : gameActions) {
@@ -118,7 +218,7 @@ public class GameActionsRR extends AbstractRR {
             //check if the player is in the game
             if (game_id != gameID) {
                 m = new Message("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
-                LOGGER.info("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
+                LOGGER.warn("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
                 m.toJSON(res.getOutputStream());
                 return false;
             }
@@ -127,7 +227,7 @@ public class GameActionsRR extends AbstractRR {
             //check if target is in the game
             if (game_id != gameID) {
                 m = new Message("ERROR, the target " + gameAction.getTarget() + " is not in the game");
-                LOGGER.info("ERROR, the target " + gameAction.getTarget() + " is not in the game");
+                LOGGER.warn("ERROR, the target " + gameAction.getTarget() + " is not in the game");
                 m.toJSON(res.getOutputStream());
                 return false;
             }
@@ -145,7 +245,7 @@ public class GameActionsRR extends AbstractRR {
         return true;
     }
 
-    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws SQLException, IOException {
+    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws IOException {
 
         // first String: playerUsername , second String: action , boolean: if playerUsername is the target of action
         Map<String, Map<String, Boolean>> action = new HashMap<>();
@@ -187,6 +287,9 @@ public class GameActionsRR extends AbstractRR {
 
     private boolean actionCheck(Map<String, Map<String, Boolean>> actionsMap, Map<String, String> playerRole) throws SQLException, IOException {
 
+        if (actionsMap == null)
+            return false;
+
         //example: key: "user1" , value: (key1: maul , value1: true)
         Map<String, Boolean> areDead = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
@@ -209,9 +312,9 @@ public class GameActionsRR extends AbstractRR {
             for (Map.Entry<String, Boolean> entry1 : actionTarget.entrySet()) {
                 String action = entry1.getKey();
                 Boolean target = entry1.getValue();
-                LOGGER.info("The action " + action + " is " + target + " " + player + " " + roleOfPlayer);
+                //LOGGER.info("The action " + action + " is " + target + " " + player + " " + roleOfPlayer);
                 if (target) {
-                    LOGGER.info(nightAction.get(roleOfPlayer) + " " + action + " " + player + " " + roleOfPlayer);
+                    //LOGGER.info(nightAction.get(roleOfPlayer) + " " + action + " " + player + " " + roleOfPlayer);
                     //check if player can be a target of the action
                     if (nightAction.get(roleOfPlayer) != null
                             && nightAction.get(roleOfPlayer).equals(action)
@@ -225,9 +328,7 @@ public class GameActionsRR extends AbstractRR {
                     }
                 }
             }
-
         }
-
         return true;
     }
 
