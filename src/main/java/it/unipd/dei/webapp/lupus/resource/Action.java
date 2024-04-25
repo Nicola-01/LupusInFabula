@@ -10,9 +10,7 @@ import java.sql.SQLException;
 
 public class Action extends AbstractResource
 {
-
     public static final String JSON_NAME = "Action";
-
     public final static String VOTE = "vote";
 
     private final int gameId;
@@ -20,7 +18,6 @@ public class Action extends AbstractResource
     private final int round;
     private final int phase;
     private final int subphase;
-    private final String description;
     private final String typeAction;
     private final String target;
 
@@ -42,19 +39,6 @@ public class Action extends AbstractResource
         this.round = round;
         this.phase = phase;
         this.subphase = subphase;
-        this.description = "";
-        this.typeAction = typeAction;
-        this.target = target;
-    }
-    //eliminabile to do
-    public Action(int gameId, String player, int round, int phase, int subphase ,String description, String typeAction, String target)
-    {
-        this.gameId = gameId;
-        this.player = player;
-        this.round = round;
-        this.phase = phase;
-        this.subphase = subphase;
-        this.description = description;
         this.typeAction = typeAction;
         this.target = target;
     }
@@ -70,7 +54,6 @@ public class Action extends AbstractResource
              r.getInt("round"),
              r.getInt("phase"),
              r.getInt("subphase"),
-             r.getString("description"),
              r.getString("name"),
              r.getString("target"));
     }
@@ -96,10 +79,6 @@ public class Action extends AbstractResource
      **/
     public int    getSubphase()    {return subphase;}
     /**
-     * functions to get the description
-     **/
-    public String getDescription() {return description;}
-    /**
      * functions to get the typeAction
      **/
     public String getTypeAction() {return typeAction;}
@@ -123,7 +102,8 @@ public class Action extends AbstractResource
         jg.writeStartObject();
 
         for(Field i : this.getClass().getDeclaredFields())
-            if(!i.getName().equals("JSON_NAME")) jg.writeObjectField(i.getName(), i.get(this));
+            if(!i.getName().equals("JSON_NAME") || !i.getName().equals("VOTE"))
+                jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
         jg.flush();
