@@ -1,7 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Friend;
-import it.unipd.dei.webapp.lupus.resource.Is_Friend_With;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,13 +9,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFriendsByUsernameDAO extends AbstractDAO<List<Friend>> {
+public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
 
-    private static final String STATEMENT = "SELECT * FROM Is_Friend_With WHERE LOWER(player_username) = LOWER(?)";
+    private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?)";
 
     private final String user;
 
-    public SearchFriendsByUsernameDAO(final Connection con, final String user) {
+    public ListFriendsDAO(final Connection con, final String user) {
         super(con);
         this.user = user;
     }

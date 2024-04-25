@@ -27,13 +27,13 @@ public class DeleteFriendRR extends AbstractRR{
             String friend_username = Friend.fromJSON(req.getInputStream()).getUsername();
 
             // creates a new DAO for accessing the database and deletes the employee
-            int result = new DeleteFriendDAO(ds.getConnection(), player.getUsername(), friend_username).access().getOutputParam();
+            Friend f = new DeleteFriendDAO(ds.getConnection(), player.getUsername(), friend_username).access().getOutputParam();
 
-            if(result == 1) {
+            if(f != null) {
                 LOGGER.info("Friend successfully deleted.");
 
                 res.setStatus(HttpServletResponse.SC_OK);
-                //result.toJSON(res.getOutputStream());
+                f.toJSON(res.getOutputStream());
             } else {
                 LOGGER.warn("Friend not found. Cannot delete it.");
 

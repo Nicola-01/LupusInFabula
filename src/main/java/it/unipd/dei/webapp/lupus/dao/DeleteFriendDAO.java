@@ -1,12 +1,14 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.Friend;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DeleteFriendDAO extends AbstractDAO<Integer>{
-    private static final String DELETE_STATEMENT = "DELETE FROM Is_Friend_With WHERE LOWER(player_username) = LOWER(?) AND LOWER(friend_username) = LOWER(?)";
+public class DeleteFriendDAO extends AbstractDAO<Friend>{
+    private static final String DELETE_STATEMENT = "DELETE FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?) AND LOWER(friend_username) = LOWER(?) RETURNING *";
 
     private final String player_username;
     private final String friend_username;
@@ -20,16 +22,21 @@ public class DeleteFriendDAO extends AbstractDAO<Integer>{
     @Override
     public final void doAccess() throws SQLException{
         PreparedStatement pstmt = null;
-        int rs = 0;
+        ResultSet rs = null;
+
+        Friend f = null;
+
         try{
             pstmt = con.prepareStatement(DELETE_STATEMENT);
             pstmt.setString(1, player_username);
             pstmt.setString(2, friend_username);
-            rs = pstmt.executeUpdate();
-            if(rs == 1){
-                LOGGER.info("Delete friend {}", friend_username);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()){
+                f = new Friend(rs.getString("friend_username"), rs.getDate("date"));
+                LOGGER.info("Delete friend %s", f.getUsername());
             }else{
-                LOGGER.info("No friend {} found", friend_username);
+                LOGGER.info("No friend found", friend_username);
             }
 
         } finally {
@@ -37,6 +44,6 @@ public class DeleteFriendDAO extends AbstractDAO<Integer>{
                 pstmt.close();
             }
         }
-        this.outputParam = rs;
+        this.outputParam = f;
     }
 }

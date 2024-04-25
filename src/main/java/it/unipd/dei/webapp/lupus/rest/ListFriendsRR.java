@@ -1,13 +1,12 @@
 package it.unipd.dei.webapp.lupus.rest;
 
-import it.unipd.dei.webapp.lupus.dao.SearchFriendsByUsernameDAO;
+import it.unipd.dei.webapp.lupus.dao.ListFriendsDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -27,7 +26,7 @@ public class ListFriendsRR extends AbstractRR{
         try {
 
             // creates a new DAO for accessing the database and lists the employee(s)
-            fl = new SearchFriendsByUsernameDAO(ds.getConnection(), player.getUsername()).access().getOutputParam();
+            fl = new ListFriendsDAO(ds.getConnection(), player.getUsername()).access().getOutputParam();
 
             if (fl != null) {
                 LOGGER.info("Friend(s) successfully listed.");

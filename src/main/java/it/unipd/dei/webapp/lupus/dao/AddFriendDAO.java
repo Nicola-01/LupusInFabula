@@ -1,9 +1,11 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.Friend;
+
 import java.sql.*;
 
-public class AddFriendDAO extends AbstractDAO<Integer>{
-    private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH VALUES (?,?,?)";
+public class AddFriendDAO extends AbstractDAO<Friend>{
+    private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH VALUES (?,?,?) RETURNING *";
 
     private final String player_username;
     private final String friend_username;
@@ -19,7 +21,8 @@ public class AddFriendDAO extends AbstractDAO<Integer>{
     @Override
     public void doAccess() throws SQLException {
         PreparedStatement pstmt = null;
-        int rs = 0;
+        ResultSet rs = null;
+        Friend f = null;
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
@@ -27,9 +30,10 @@ public class AddFriendDAO extends AbstractDAO<Integer>{
             pstmt.setString(2, friend_username);
             pstmt.setDate(3, date);
 
-            rs = pstmt.executeUpdate();
-            if(rs == 1){
-                LOGGER.info("friend added");
+            rs = pstmt.executeQuery();
+            if(rs.next()){
+                f = new Friend(rs.getString("friend_username"), rs.getDate("date"));
+                LOGGER.info("friend %s added", f.getUsername());
 
             }else{
                 LOGGER.info("friend NOT added");
@@ -45,7 +49,7 @@ public class AddFriendDAO extends AbstractDAO<Integer>{
             con.close();
         }
 
-        this.outputParam = rs;
+        this.outputParam = f;
 
     }
 }
