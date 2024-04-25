@@ -70,13 +70,8 @@ Content-Type: application/json
       "target":"user8"
     },
     {
-      "player":"user5",
-      "role":"berserker",
-      "target":"user8"
-    },
-    {
-      "player":"user5",
-      "role":"berserker",
+      "player":"user8",
+      "role":"sheriff",
       "target":"user7"
     }
   ]

@@ -34,7 +34,7 @@ VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master
        ('user2', 1, 'farmer', null, null, null),
        ('user3', 1, 'kamikaze', null, null, null),
        ('user4', 1, 'hobbit', null, null, null),
-       ('user5', 1, 'berserker', null, null, null),
+       ('user5', 1, 'wolf', null, null, null),
        ('user6', 1, 'hamster', null, null, null),
        ('user7', 1, 'knight', null, null, null),
        ('user8', 1, 'sheriff', null, null, null),

@@ -13,12 +13,14 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GameActionsPostRR extends AbstractRR {
 
     // Contain the role name and his action
     private static final Map<String, String> nightAction = new HashMap<>();
-    private Map<String, Boolean> deadPlayers = new HashMap<>();
+    private final Map<String, Boolean> deadPlayers;
+    private final Map<String, String> playersRole;
     private final int gameID;
 
     public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
@@ -30,6 +32,7 @@ public class GameActionsPostRR extends AbstractRR {
                 nightAction.put(role.getName(), role.getAction());
 
         deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
     }
 
     @Override
@@ -98,7 +101,6 @@ public class GameActionsPostRR extends AbstractRR {
     // TODO
     private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
 
-        Map<String, String> playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
 
         if (actionsMap == null)
@@ -108,7 +110,7 @@ public class GameActionsPostRR extends AbstractRR {
         if (!actionCheck(actionsMap, playersRole))
             return false;
 
-        // count of wolves still alive for the hobbit effect
+        // count of wolves still alive for some effects
         int number_of_wolves = 0;
         Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         for (Map.Entry<String, String> playerRole : playersRole.entrySet())
@@ -122,7 +124,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         LOGGER.info("Number of wolves in the game " + number_of_wolves);
 
-        // for each player in the map i check the associated map. Then for each element in this map i check if the player is a target of what action
+        // for each player in the map i check the associated map. Then for each element in this map i check if the player is a target of which action
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
 
             String player = entry.getKey();
@@ -246,7 +248,6 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-
         }
 
         return true;
@@ -254,7 +255,6 @@ public class GameActionsPostRR extends AbstractRR {
 
     private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
         // TODO --> fix the Logger.info error
-        // TODO --> check if every role with an effect has done its action, and if are alive or dead
         // TODO --> there can be only one "maul" action if the attacker is a normal wolf and not the berserker
         Message m;
 
@@ -282,10 +282,32 @@ public class GameActionsPostRR extends AbstractRR {
             //check if the player has the correct role in the game
             if (!playerRole.equals(gameAction.getRole())) {
                 m = new Message("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
-                LOGGER.info("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
+                LOGGER.warn("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
                 m.toJSON(res.getOutputStream());
                 return false;
             }
+
+        }
+
+        //map with the player and his role in the game (only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him))
+        Map<String, String> rolesWithEffect = new HashMap<>();
+        for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
+            GameRoleAction gameRoleAction = GameRoleAction.valueOfName(playerRoleEntry.getValue());
+            assert gameRoleAction != null;
+            if (gameRoleAction.getAction() != null
+                    && !rolesWithEffect.containsValue(playerRoleEntry.getValue())
+                    && !gameRoleAction.getName().equals(GameRoleAction.KAMIKAZE.getName())) {
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+                //LOGGER.info("prova " + playerRoleEntry.getKey() + " " + playerRoleEntry.getValue());
+            }
+        }
+
+        //check if each role with an effect has done the action
+        if (rolesWithEffect.size() != gameActions.size()) {
+            m = new Message("ERROR, someone has not done his action this turn");
+            LOGGER.warn("ERROR, someone has not done his action this turn");
+            m.toJSON(res.getOutputStream());
+            return false;
         }
 
         return true;
