@@ -6,30 +6,30 @@ import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GameActionsRR extends AbstractRR {
+public class GameActionsPostRR extends AbstractRR {
 
     // Contain the role name and his action
     private static final Map<String, String> nightAction = new HashMap<>();
-
+    private Map<String, Boolean> deadPlayers = new HashMap<>();
     private final int gameID;
 
-    public GameActionsRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.ADD_ACTIONS, req, res, ds);
         this.gameID = gameID;
 
         for (GameRoleAction role : GameRoleAction.values())
             if (role.getAction() != null)
                 nightAction.put(role.getName(), role.getAction());
+
+        deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
     }
 
     @Override
@@ -50,6 +50,12 @@ public class GameActionsRR extends AbstractRR {
             int currentRound = game.getRounds();
             int currentPhase = game.getPhase();
 
+            if (currentPhase == GamePhase.NIGHT.getId()) {
+                if (handleNightPhase(gameActions))
+                    return;
+            } else if (handleDayPhase())
+                return;
+
             if (currentRound != 0) {
                 if (currentPhase == GamePhase.DAY.getId()) {
                     currentRound++;
@@ -61,10 +67,6 @@ public class GameActionsRR extends AbstractRR {
                 currentRound = 1;
                 currentPhase = GamePhase.NIGHT.getId();
             }
-
-            if (currentPhase == GamePhase.NIGHT.getId()) {
-                if (handleNightPhase(gameActions)) return;
-            } else if (handleDayPhase()) return;
 
             LOGGER.info("Checked all actions");
 
@@ -106,17 +108,14 @@ public class GameActionsRR extends AbstractRR {
         if (!actionCheck(actionsMap, playersRole))
             return false;
 
-        // TODO --> to fix and test with the hobbit as target of the "maul" action
         // count of wolf still alive for the hobbit effect
-        int number_of_wolves = new GetNumberOfRolesByGameIdAndRoleNameDAO(ds.getConnection(), gameID, GameRoleAction.WOLF.getName()).access().getOutputParam();
-        for (Map.Entry<String, String> aliveOrDead : playersRole.entrySet()) {
-            Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            // if the player is a wolf
-            if (aliveOrDead.getValue().equals(GameRoleAction.WOLF.getName()))
-                // if the player is in the map of deadPlayers increment the number of dead wolves
-                if (deadPlayers.containsKey(aliveOrDead.getKey()))
-                    number_of_wolves--;
-        }
+        int number_of_wolves = 0;
+        Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        for (Map.Entry<String, String> playerRole : playersRole.entrySet())
+            if(playerRole.getKey().equals(GameRoleAction.WOLF.getName()) && !deadPlayers.get(playerRole.getKey()))
+                number_of_wolves++;
+
+        LOGGER.info("Number of wolves in the game " + number_of_wolves);
 
         // for each player in the map i check the associated map. Then for each element in this map i check if the player is a target of what action
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
@@ -187,10 +186,10 @@ public class GameActionsRR extends AbstractRR {
             // if the player is the kamikaze and the action is true, the kamikaze kill himself and the wolf
             if (playersRole.get(player).equals(GameRoleAction.KAMIKAZE.getName()) && actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
                 String wolf = "";
-                for (GameAction gameAction : gameActions) {
+                for (GameAction gameAction : gameActions)
                     if (gameAction.getTarget().equals(player))
                         wolf = gameAction.getPlayer();
-                }
+
                 LOGGER.info("The player " + player + " is blown up with the wolf " + wolf);
             }
 
@@ -199,6 +198,25 @@ public class GameActionsRR extends AbstractRR {
                 LOGGER.info("The player " + player + " is anointed");
             }
 
+            // check for the "point" action --> DORKY
+            // (if the target player is a member of the pack, then the dorky becomes a wolf)
+            if (actionPlayerMap.get(GameRoleAction.DORKY.getAction())) {
+                String dorky = "";
+                GameRoleAction player_role = GameRoleAction.valueOfName(playersRole.get(player));
+                for (GameAction gameAction : gameActions)
+                    if (gameAction.getTarget().equals(player))
+                        dorky = gameAction.getPlayer();
+
+                assert player_role != null;
+                // TODO --> to fix the number of wolves
+                if (player_role.getRoleType().getType() == 1 || number_of_wolves == 0) {
+                    // update of the role of dorky into wolf (update the database)
+                    new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, dorky).access();
+                    LOGGER.info("The dorky " + dorky + " has been promoted to wolf");
+                }
+            }
+
+            // check for the
 
 
         }
@@ -290,9 +308,6 @@ public class GameActionsRR extends AbstractRR {
         if (actionsMap == null)
             return false;
 
-        //example: key: "user1" , value: (key1: maul , value1: true)
-        Map<String, Boolean> areDead = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-
         // for all targeted players
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
 
@@ -300,7 +315,7 @@ public class GameActionsRR extends AbstractRR {
             String roleOfPlayer = playerRole.get(player);
             Map<String, Boolean> actionTarget = entry.getValue();
 
-            if (areDead.get(player)) {
+            if (deadPlayers.get(player)) {
                 // Todo -> to change
                 LOGGER.warn("The player " + player + " is dead");
                 Message m = new Message("The player " + player + " is dead");

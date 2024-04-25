@@ -179,7 +179,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             if (method.equals("GET"))
                 new GameActionsGetRR(gameID, req, res, getDataSource()).serve();
             else
-                new GameActionsRR(gameID, req, res, getDataSource()).serve();
+                new GameActionsPostRR(gameID, req, res, getDataSource()).serve();
             return true;
         }
 
