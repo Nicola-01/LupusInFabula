@@ -11,17 +11,37 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * Handles the GET request for /game/status.
+ * Returns the list of players with their respective roles that are playing a specific match.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameInfoRR extends AbstractRR {
 
     private final int gameID;
     private final boolean URIisMaster;
 
+    /**
+     * Creates a new GameInfo REST resource.
+     *
+     * @param req the HTTP request.
+     * @param res the HTTP response.
+     * @param ds the dataSource for the connection.
+     * @param gameID the ID of the game
+     * @param URIisMaster whether the requested URI contained /master at the end
+     */
     public GameInfoRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID, boolean URIisMaster) {
         super(Actions.ADD_ACTIONS, req, res, ds);
         this.gameID = gameID;
         this.URIisMaster = URIisMaster;
     }
 
+    /**
+     * function to serve the request made to the url /game/status/{publicID} or /game/status/{publicID}/master
+     */
     @Override
     protected void doServe() throws IOException {
 
@@ -29,10 +49,6 @@ public class GameInfoRR extends AbstractRR {
         Message m = null;
 
         try {
-            // The professor take a parameter as input like this
-            //String path = req.getRequestURI();
-            //path = path.substring(path.lastIndexOf("gameID") + 8);
-            //final int gameID = Integer.parseInt(path.substring(1));
             String username = ((Player) req.getSession().getAttribute("user")).getUsername();
             String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
             el = new GetGameInfoDAO(ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();

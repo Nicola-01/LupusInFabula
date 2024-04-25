@@ -63,7 +63,7 @@ public class GameLogGetRR extends AbstractRR
     }
 
     /**
-     * function to serve the te request make to the url game/logs/{idPart} and game/logs/{idPart}/master
+     * function to serve the request made to the url game/logs/{idPart} and game/logs/{idPart}/master
      */
     @Override
     protected void doServe() throws IOException
