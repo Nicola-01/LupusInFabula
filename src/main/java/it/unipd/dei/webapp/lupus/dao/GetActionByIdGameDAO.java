@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
 {
     private static final String STATEMENT = "SELECT * "                                                     +
-                                            "FROM type_action ty JOIN action a ON(a.type_of_action=ty.id) " +
+                                            "FROM  action a "+
                                             "WHERE a.game_id = ? "                                          +
                                             "ORDER BY a.round, a.phase, a.subphase";
 

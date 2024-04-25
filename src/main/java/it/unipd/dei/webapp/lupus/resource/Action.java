@@ -8,6 +8,13 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * class to manage the row of table action in database
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class Action extends AbstractResource
 {
     public static final String JSON_NAME = "Action";
@@ -54,7 +61,7 @@ public class Action extends AbstractResource
              r.getInt("round"),
              r.getInt("phase"),
              r.getInt("subphase"),
-             r.getString("name"),
+             r.getString("type_of_action"),
              r.getString("target"));
     }
 
@@ -102,7 +109,7 @@ public class Action extends AbstractResource
         jg.writeStartObject();
 
         for(Field i : this.getClass().getDeclaredFields())
-            if(!i.getName().equals("JSON_NAME") || !i.getName().equals("VOTE"))
+            if(!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
                 jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
