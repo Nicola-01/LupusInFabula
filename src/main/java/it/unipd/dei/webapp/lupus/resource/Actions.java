@@ -109,6 +109,11 @@ public final class Actions {
      */
     public static final String GET_LOGS_USER = "GET_LOGS_USER";
 
+    /**
+     * GET request of stats for user.
+     */
+    public static final String GET_STATS_USER = "GET_STATS_USER";
+
 
     // Dispatcher
 

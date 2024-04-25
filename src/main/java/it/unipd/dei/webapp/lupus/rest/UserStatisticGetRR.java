@@ -1,12 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
-import it.unipd.dei.webapp.lupus.dao.GetLogsDAO;
 import it.unipd.dei.webapp.lupus.dao.GetStatsPerRoleDAO;
-import it.unipd.dei.webapp.lupus.resource.Actions;
-import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.PlaysJoinGame;
-import it.unipd.dei.webapp.lupus.resource.StatsRole;
-import jakarta.servlet.ServletException;
+import it.unipd.dei.webapp.lupus.resource.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -19,8 +14,9 @@ import java.util.List;
 public class UserStatisticGetRR extends AbstractRR {
 
     private final String username;
+
     public UserStatisticGetRR(String username, HttpServletRequest req, HttpServletResponse res, DataSource ds) {
-        super(Actions.GET_LOGS_USER, req, res, ds);
+        super(Actions.GET_STATS_USER, req, res, ds);
         this.username = username;
     }
 
@@ -28,8 +24,10 @@ public class UserStatisticGetRR extends AbstractRR {
 
     @Override
     protected void doServe() throws IOException {
+
         Message m = null;
         List<StatsRole> stats = null;
+
         try {
             // logs.add(new GetLogsDAO(getConnection(), username).access().getOutputParam());
             stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
@@ -49,48 +47,19 @@ public class UserStatisticGetRR extends AbstractRR {
             }
 
             String infos = "stats of the player " + username + " that has played " + size + " different roles.";
-
             LOGGER.info(infos);
-            req.setAttribute("stats", stats);
-            req.setAttribute("m", m);
-            ///////////////////
+            m = new Message(infos);
 
-            List<PlaysJoinGame> logs = null; // =new ArrayList<>();
+            res.setStatus(HttpServletResponse.SC_OK);
+            m.toJSON(res.getOutputStream());
 
-            try {
-                // logs.add(new GetLogsDAO(getConnection(), username).access().getOutputParam());
-                logs = new GetLogsDAO(ds.getConnection(), username).access().getOutputParam();
-                LOGGER.info("Logs successfully for user: %s", username);
 
-            } catch (SQLException e) {
-                String error = "Cannot search logs for user " + username + ": unexpected error while accessing the database.";
-                m = new Message(error, "E200", e.getMessage());
-                LOGGER.info(error, e);
-            }
-
-            try {
-                int size1 = 0;
-
-                if (logs != null) {
-                    size1 = logs.size();
-                }
-
-                String infos1 = "logs of the player " + username + " has played " + size + " games.";
-
-                LOGGER.info(infos1);
-                req.setAttribute("logs", logs);
-            } catch (Exception e) {
-                LOGGER.error("Unable to send response when creating the logs list", e);
-                throw e;
-            } finally {
-            }
-
-            ////////////////////////
-            req.getRequestDispatcher("/jsp/stats.jsp").forward(req, res);
+            res.setStatus(HttpServletResponse.SC_OK);
+            new ResourceList<StatsRole>(stats).toJSON(res.getOutputStream());
 
         } catch (Exception e) {
-            LOGGER.error("Unable to send response when creating the logs list", e);
 
+            LOGGER.error("Unable to send response when creating the logs list", e);
             throw e;
         } finally {
         }

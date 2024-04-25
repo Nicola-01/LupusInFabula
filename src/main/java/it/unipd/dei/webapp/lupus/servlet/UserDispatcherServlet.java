@@ -143,12 +143,11 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             if (path.contains("/logs") && method.equals("GET")) {
 
                 new UserLogsGetRR(username,req, resp, getDataSource()).serve();
-                //getConnection()).serve();
                 LOGGER.info("Getting user's logs");
 
             } else if (path.contains("/statistic") && method.equals("GET")) {
 
-                //new UserStatisticGetRR(req, resp, getConnection()).serve();
+                new UserStatisticGetRR(username, req, resp, getDataSource()).serve();
                 LOGGER.info("Getting user's statistic");
 
             } else {
