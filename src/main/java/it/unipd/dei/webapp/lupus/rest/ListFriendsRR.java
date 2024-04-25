@@ -10,13 +10,32 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ListFriendsRR extends AbstractRR{
+/**
+ * Rest Resource for listing friends of a player.
+ * handles the GET request to retrieve the list of friends
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class ListFriendsRR extends AbstractRR {
 
+    /**
+     * Constructs a new ListFriendsRR with the given request, response, and data source.
+     *
+     * @param req the HttpServletRequest object
+     * @param res the HttpServletResponse object
+     * @param ds  the DataSource object for database access
+     */
     public ListFriendsRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.LIST_FRIENDS, req, res, ds);
     }
 
-
+    /**
+     * Serves the request to list friends of a player.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doServe() throws IOException {
 

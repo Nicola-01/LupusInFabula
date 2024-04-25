@@ -13,13 +13,32 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 
-public class AddFriendRR extends AbstractRR{
+/**
+ * Rest Resource for adding a friend relationship.
+ * handles the POST request to add a friend
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class AddFriendRR extends AbstractRR {
 
+    /**
+     * Constructs a new AddFriendRR with the given request, response, and data source.
+     *
+     * @param req the HttpServletRequest object
+     * @param res the HttpServletResponse object
+     * @param ds  the DataSource object for database access
+     */
     public AddFriendRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.ADD_FRIEND, req, res, ds);
     }
 
-
+    /**
+     * Serves the request to add a friend relationship.
+     *
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doServe() throws IOException {
 
