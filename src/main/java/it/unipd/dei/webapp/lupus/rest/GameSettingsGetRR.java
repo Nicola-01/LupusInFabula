@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * Handles the GET request for /game/settings.
- * Returns all the roles that can be used to the game.
+ * Returns all the roles that can be used into a game.
  *
  * @author LupusInFabula Group
  * @version 1.0
