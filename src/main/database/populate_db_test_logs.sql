@@ -5,6 +5,8 @@
 INSERT INTO player
 VALUES ('superuser', LOWER('superuser@test.com'), md5('ciao'), CURRENT_DATE);
 
+INSERT INTO player VALUES ('superuser2', LOWER('superuser2@test.com'), md5('ciao'), CURRENT_DATE);
+
 INSERT INTO public.game
 VALUES
     (100, 'sup1', now(), '00:10:07', 0),
@@ -26,14 +28,14 @@ INSERT INTO public.game VALUES
 --Drop table plays_as_in;
 
 INSERT INTO plays_as_in
-VALUES ('superuser', 101, 'wolf', null, null, 12),
-       ('superuser', 102, 'wolf', null, null, 12),
-       ('superuser', 103, 'farmer', null, null, 5),
-       ('superuser', 104, 'farmer', null, null, 6),
-       ('superuser', 105, 'knight', null, null, 7),
-       ('superuser', 106, 'knight', null, null, 7),
-       ('superuser', 107, 'wolf', null, null, 5),
-       ('superuser', 108, 'seer', null, null, 7),
-       ('superuser', 109, 'master', null, null, 7),
-       ('superuser', 110, 'wolf', null, null, 7),
-       ('superuser', 111, 'farmer', null, null, 7);
+VALUES ('superuser', 101, 'wolf', 0, null, 12),
+       ('superuser', 102, 'wolf', 5, null, 12),
+       ('superuser', 103, 'farmer', 7, null, 5),
+       ('superuser', 104, 'farmer', 9, null, 6),
+       ('superuser', 105, 'knight', 1, null, 7),
+       ('superuser', 106, 'knight', 1, null, 7),
+       ('superuser', 107, 'wolf', 23, null, 5),
+       ('superuser', 108, 'seer', 12, null, 7),
+       ('superuser', 109, 'master', 1, null, 7),
+       ('superuser', 110, 'wolf', 0, null, 7),
+       ('superuser', 111, 'farmer', 1, null, 7);
