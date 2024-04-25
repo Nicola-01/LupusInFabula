@@ -140,16 +140,16 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         // POST /actions/{gameID}
 
-        String[] splittedPath = path.split("/");
-
-        if (!(splittedPath.length == 3 || (splittedPath.length == 4 && splittedPath[3].equals("master"))))
+        String[] splitPath = path.split("/");
+        
+        if (!(splitPath.length == 3 || (splitPath.length == 4 && path.endsWith("/master"))))
             return false;
 
-        boolean isMaster = splittedPath.length == 4;
+        boolean isMaster = splitPath.length == 4;
 
-        // splittedPath[0] is empty
-        String requestURI = splittedPath[1];
-        String publicGameID = splittedPath[2];
+        // splitPath[0] is empty
+        String requestURI = splitPath[1];
+        String publicGameID = splitPath[2];
         int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
 
         if (gameID == -1) {
