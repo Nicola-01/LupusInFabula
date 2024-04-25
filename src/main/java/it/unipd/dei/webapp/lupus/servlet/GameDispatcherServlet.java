@@ -80,6 +80,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         String path = req.getRequestURI();
         Message m = null;
+        res.setContentType(JSON_UTF_8_MEDIA_TYPE);
 
         if (!path.startsWith("/lupus/game"))
             return false;

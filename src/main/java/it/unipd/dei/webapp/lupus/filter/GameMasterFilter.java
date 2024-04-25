@@ -120,13 +120,13 @@ public class GameMasterFilter implements Filter {
                     m.toJSON(res.getOutputStream());
                     return; // in this case the master is not even logged in
                 } else {
-                    // n.b there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
+                    // n.b. there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
 
                     path = path.replace("/master", "");
                     final String publicGame = path.substring(path.lastIndexOf("/") + 1);
                     LogContext.setGame(publicGame);
 
-                    LOGGER.info("Pubblic GameId found on URL: " + publicGame);
+                    LOGGER.info("Public GameId found on URL: " + publicGame);
                     int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
 
                     final Object gmAttribute = session.getAttribute(GAMEMASTER_ATTRIBUTE);
