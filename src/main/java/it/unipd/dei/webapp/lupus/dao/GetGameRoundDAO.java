@@ -17,7 +17,13 @@ import java.util.List;
  */
 public class GetGameRoundDAO extends AbstractDAO<Integer>
 {
+    /**
+     * query to fill with the id of game
+     * */
     private static final String STATEMENT = "SELECT rounds FROM Game WHERE ID = ?";
+    /**
+     * numeric identifier for the game
+     * */
     private final String idPart;
 
     /**

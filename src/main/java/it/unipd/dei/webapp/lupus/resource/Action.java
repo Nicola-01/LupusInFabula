@@ -8,20 +8,49 @@ import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * class to manage the row of table action in database
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class Action extends AbstractResource
 {
-
+    /**
+     * name for the json file
+     * */
     public static final String JSON_NAME = "Action";
-
+    /***/
     public final static String VOTE = "vote";
 
+    /**
+     * numeric identifier for the game
+     * */
     private final int gameId;
+    /**
+     * player that make the action
+     * */
     private final String player;
+    /**
+     * round where it was the action
+     * */
     private final int round;
+    /**
+     * phase where it was the action
+     * */
     private final int phase;
+    /**
+     * subphase where it was the action
+     * */
     private final int subphase;
-    private final String description;
+    /**
+     * rapresent the name of the type of action
+     * */
     private final String typeAction;
+    /**
+     * player that suffers the action
+     * */
     private final String target;
 
     /**
@@ -42,19 +71,6 @@ public class Action extends AbstractResource
         this.round = round;
         this.phase = phase;
         this.subphase = subphase;
-        this.description = "";
-        this.typeAction = typeAction;
-        this.target = target;
-    }
-    //eliminabile to do
-    public Action(int gameId, String player, int round, int phase, int subphase ,String description, String typeAction, String target)
-    {
-        this.gameId = gameId;
-        this.player = player;
-        this.round = round;
-        this.phase = phase;
-        this.subphase = subphase;
-        this.description = description;
         this.typeAction = typeAction;
         this.target = target;
     }
@@ -70,8 +86,7 @@ public class Action extends AbstractResource
              r.getInt("round"),
              r.getInt("phase"),
              r.getInt("subphase"),
-             r.getString("description"),
-             r.getString("name"),
+             r.getString("type_of_action"),
              r.getString("target"));
     }
 
@@ -96,10 +111,6 @@ public class Action extends AbstractResource
      **/
     public int    getSubphase()    {return subphase;}
     /**
-     * functions to get the description
-     **/
-    public String getDescription() {return description;}
-    /**
      * functions to get the typeAction
      **/
     public String getTypeAction() {return typeAction;}
@@ -123,7 +134,8 @@ public class Action extends AbstractResource
         jg.writeStartObject();
 
         for(Field i : this.getClass().getDeclaredFields())
-            if(!i.getName().equals("JSON_NAME")) jg.writeObjectField(i.getName(), i.get(this));
+            if(!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
+                jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
         jg.flush();

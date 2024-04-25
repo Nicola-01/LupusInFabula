@@ -27,10 +27,22 @@ import java.util.ArrayList;
  */
 public class GameLogGetRR extends AbstractRR
 {
+    /**
+     * interface to create ab object that represent a function that don't have a return parameter and take as parameter the request and response for a url
+     * */
     private interface HttpServletFunct {public void exe(HttpServletRequest request, HttpServletResponse response);}
 
+    /**
+     * numeric identifier for the game
+     * */
     private final int idPart;
+    /**
+     * boolean that represent if a user logged is a master or not
+     * */
     private final boolean isMaster;
+    /***
+     * username of the logged in player
+     */
     private final String nmPlayer;
 
 
@@ -79,7 +91,7 @@ public class GameLogGetRR extends AbstractRR
                 }
             }
             catch (SQLException e) {LOGGER.error("Cannot list Action: unexpected database error.", e);}
-            catch (IOException e)  {LOGGER.error("Cannot list Action: unexpected database error.", e);}//to do change error
+            catch (IOException e)  {LOGGER.error("Cannot list Action: unexpected input output error.", e);}//to do change error
 
         };
 

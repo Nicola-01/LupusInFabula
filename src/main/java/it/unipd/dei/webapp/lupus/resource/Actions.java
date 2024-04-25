@@ -104,6 +104,16 @@ public final class Actions {
      */
     public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
 
+    /**
+     * GET request of logs for user.
+     */
+    public static final String GET_LOGS_USER = "GET_LOGS_USER";
+
+    /**
+     * GET request of stats for user.
+     */
+    public static final String GET_STATS_USER = "GET_STATS_USER";
+
 
     // Dispatcher
 
