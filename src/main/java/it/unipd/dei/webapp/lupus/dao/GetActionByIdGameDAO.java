@@ -21,11 +21,16 @@ import java.util.ArrayList;
  */
 public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
 {
+    /**
+     * query to fill with the id of game
+     * */
     private static final String STATEMENT = "SELECT * "                                                     +
                                             "FROM  action a "+
                                             "WHERE a.game_id = ? "                                          +
                                             "ORDER BY a.round, a.phase, a.subphase";
-
+    /**
+     * numeric identifier for the game
+     * */
     private final int idPart;
 
     /**

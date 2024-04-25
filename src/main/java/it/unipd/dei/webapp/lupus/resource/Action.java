@@ -17,15 +17,40 @@ import java.sql.SQLException;
  */
 public class Action extends AbstractResource
 {
+    /**
+     * name for the json file
+     * */
     public static final String JSON_NAME = "Action";
+    /***/
     public final static String VOTE = "vote";
 
+    /**
+     * numeric identifier for the game
+     * */
     private final int gameId;
+    /**
+     * player that make the action
+     * */
     private final String player;
+    /**
+     * round where it was the action
+     * */
     private final int round;
+    /**
+     * phase where it was the action
+     * */
     private final int phase;
+    /**
+     * subphase where it was the action
+     * */
     private final int subphase;
+    /**
+     * rapresent the name of the type of action
+     * */
     private final String typeAction;
+    /**
+     * player that suffers the action
+     * */
     private final String target;
 
     /**
