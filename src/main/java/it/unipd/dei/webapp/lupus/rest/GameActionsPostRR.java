@@ -255,8 +255,9 @@ public class GameActionsPostRR extends AbstractRR {
 
     private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
         // TODO --> fix the Logger.info error
-        // TODO --> there can be only one "maul" action if the attacker is a normal wolf and not the berserker
         Message m;
+        Boolean wolfActionDone = false;
+        int berserkerCount = 2;
 
         for (GameAction gameAction : gameActions) {
 
@@ -287,28 +288,65 @@ public class GameActionsPostRR extends AbstractRR {
                 return false;
             }
 
+            //check for the correct number of wolf pack action
+            if (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
+                    || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                    || gameAction.getRole().equals(GameRoleAction.BERSERKER.getName())) {
+
+                if (!gameAction.getRole().equals(GameRoleAction.BERSERKER.getName())) {
+                    if (!wolfActionDone) {
+                        wolfActionDone = true;
+                    } else {
+                        m = new Message("ERROR, the wolves has already done their action this night");
+                        LOGGER.warn("ERROR, the wolves has already done their action this night");
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
+                } else {
+                    if (!wolfActionDone) {
+                        switch (berserkerCount) {
+                            case 2:
+                                berserkerCount--;
+                                break;
+                            case 1:
+                                berserkerCount--;
+                                wolfActionDone = true;
+                                break;
+                        }
+                    } else {
+                        m = new Message("ERROR, there's too many action for the wolf pack");
+                        LOGGER.warn("ERROR, there's too many action for the wolf pack");
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
+                }
+            }
         }
 
         //map with the player and his role in the game (only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him))
+        //if in the game there's the berserker he can do two action
         Map<String, String> rolesWithEffect = new HashMap<>();
         for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
             GameRoleAction gameRoleAction = GameRoleAction.valueOfName(playerRoleEntry.getValue());
             assert gameRoleAction != null;
             if (gameRoleAction.getAction() != null
-                    && !rolesWithEffect.containsValue(playerRoleEntry.getValue())
+                    && (!rolesWithEffect.containsValue(GameRoleAction.WOLF.getName())
+                            || !rolesWithEffect.containsValue(GameRoleAction.EXPLORER.getName())
+                            || !rolesWithEffect.containsValue(GameRoleAction.BERSERKER.getName()))
                     && !gameRoleAction.getName().equals(GameRoleAction.KAMIKAZE.getName())) {
+
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
                 //LOGGER.info("prova " + playerRoleEntry.getKey() + " " + playerRoleEntry.getValue());
             }
         }
 
         //check if each role with an effect has done the action
-        if (rolesWithEffect.size() != gameActions.size()) {
-            m = new Message("ERROR, someone has not done his action this turn");
-            LOGGER.warn("ERROR, someone has not done his action this turn");
-            m.toJSON(res.getOutputStream());
-            return false;
-        }
+//        if (rolesWithEffect.size() != gameActions.size()) {
+//            m = new Message("ERROR, someone has not done his action this turn");
+//            LOGGER.warn("ERROR, someone has not done his action this turn");
+//            m.toJSON(res.getOutputStream());
+//            return false;
+//        }
 
         return true;
     }

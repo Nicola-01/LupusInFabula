@@ -61,18 +61,18 @@ Content-Type: application/json
   "gameAction": [
     {
       "player":"user1",
-      "role":"wolf",
+      "role":"explorer",
+      "target":"user7"
+    },
+    {
+      "player":"user5",
+      "role":"berserker",
       "target":"user4"
     },
     {
-      "player":"user7",
-      "role":"knight",
+      "player":"user5",
+      "role":"berserker",
       "target":"user8"
-    },
-    {
-      "player":"user8",
-      "role":"sheriff",
-      "target":"user7"
     }
   ]
 }
