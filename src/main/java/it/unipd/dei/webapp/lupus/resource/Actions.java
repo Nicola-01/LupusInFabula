@@ -67,6 +67,10 @@ public final class Actions {
      */
     public static final String GET_USERNAME = "GET_USERNAME";
 
+    /**
+     * The get for logs knowing the game id
+     */
+    public static final String GET_LOGS = "GET_LOGS";
 
     /**
      * The authentication of a user.

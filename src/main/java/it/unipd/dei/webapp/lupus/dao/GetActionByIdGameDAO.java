@@ -69,6 +69,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
             if (query != null) query.close();
             if (rs != null)    rs.close();
         }
+        LOGGER.info(String.format("Found for game with id %d, %d logs.", idPart, r.size()));
         this.outputParam = r;
     }
 }
