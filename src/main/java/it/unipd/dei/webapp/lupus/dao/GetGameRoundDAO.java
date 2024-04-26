@@ -61,6 +61,7 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
             if(rs != null) rs.close();
             if(q != null) q.close();
         }
+        LOGGER.info(String.format("Found for game with id %d, %d round.", idPart, r));
         this.outputParam = r;
     }
 }

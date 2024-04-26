@@ -46,6 +46,9 @@ public enum ErrorCode {
 
     GAME_NOT_FOUND("EGME9", HttpServletResponse.SC_NOT_FOUND, "Game not found."),
 
+    //game logs
+    LOGS_NOT_EXIST("EGLN1", HttpServletResponse.SC_NOT_FOUND, "Logs not found."),
+
     // invalid data
     INVALID_JSON_FORMAT("EJSON1", HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON."),
 

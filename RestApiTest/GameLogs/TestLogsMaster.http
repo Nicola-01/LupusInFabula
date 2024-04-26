@@ -1,5 +1,6 @@
 ###
 POST http://localhost:8080/lupus/login HTTP/1.1
+#user master for the game with id 1 and public id dorky-farmer-explorer
 Content-Type: application/x-www-form-urlencoded
 
 user = esempio &

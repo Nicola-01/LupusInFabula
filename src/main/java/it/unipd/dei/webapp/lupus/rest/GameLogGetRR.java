@@ -6,6 +6,7 @@ import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.servlet.GameLogServlet;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import static it.unipd.dei.webapp.lupus.utils.ErrorCode.LOGS_NOT_EXIST;
 
 /**
  * class to manege the log of a game
@@ -56,14 +59,14 @@ public class GameLogGetRR extends AbstractRR
      */
     public GameLogGetRR(int idPart, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
     {
-        super(Actions.ADD_ACTIONS, request, response, ds);
+        super(Actions.GET_LOGS, request, response, ds);
         this.idPart = idPart;
         this.isMaster = isMaster;
         this.nmPlayer =((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
     }
 
     /**
-     * function to serve the request made to the url game/logs/{idPart} and game/logs/{idPart}/master
+     * function to serve the te request make to the url game/logs/{idPart} and game/logs/{idPart}/master
      */
     @Override
     protected void doServe() throws IOException
@@ -77,15 +80,15 @@ public class GameLogGetRR extends AbstractRR
                 ArrayList<Action> r = this.getLog();
                 if (r != null)
                 {
-                    LOGGER.info("Action successfully listed.");
+                    LOGGER.info(String.format("Action successfully listed for game %d.", idPart));
                     res.setStatus(HttpServletResponse.SC_OK);
                     new ResourceList<Action>(r).toJSON(res.getOutputStream());
                 }
                 else
                 {
-                    LOGGER.error("Fatal error while listing Action.");
+                    LOGGER.error("Fatal error while listing Action or logs not exist.");
 
-                    m = new Message("Cannot list Action: unexpected error.", "E5A1", null);
+                    m = new Message("Cannot list Action: unexpected error or log not exist.", LOGS_NOT_EXIST.getErrorCode(),  null);
                     res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                     m.toJSON(res.getOutputStream());
                 }
@@ -120,7 +123,13 @@ public class GameLogGetRR extends AbstractRR
     private void log(HttpServletFunct function, HttpServletRequest request, HttpServletResponse response)
     {
         LogContext.setIPAddress(request.getRemoteAddr());
+        LogContext.setGame(idPart);
+        LogContext.setUser(nmPlayer);
+
         function.exe(request, response);
+
         LogContext.removeIPAddress();
+        LogContext.removeGame();
+        LogContext.removeUser();
     }
 }
