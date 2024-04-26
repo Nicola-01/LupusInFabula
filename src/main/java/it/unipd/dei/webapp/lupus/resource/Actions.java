@@ -117,6 +117,11 @@ public final class Actions {
     public static final String GET_GAME_STATUS_ACTION = "GET_GAME_STATUS_ACTION";
 
     /**
+     * GET request of game players .
+     */
+    public static final String GET_GAME_PLAYERS_ACTION = "GET_GAME_STATUS_ACTION";
+
+    /**
      * GET request of logs for user.
      */
     public static final String GET_LOGS_USER = "GET_LOGS_USER";
