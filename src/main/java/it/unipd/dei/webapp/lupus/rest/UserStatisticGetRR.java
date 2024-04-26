@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetStatsPerRoleDAO;
+import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,6 +11,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 /**
  * Handles the GET request for retrieving statistics for a specific user.
@@ -47,17 +49,27 @@ public class UserStatisticGetRR extends AbstractRR {
         try {
             LogContext.setUser(username);
 
-            stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
+             if(new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam() != null)
+             {
+                 stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
 
-            LOGGER.info("Stats successfully collected for user: %s", username);
+                 LOGGER.info("Stats successfully collected for user: %s", username);
 
-            m = new Message("Access to stats of Player " + username + " that has played " + stats.size() + " roles");
-            res.setStatus(HttpServletResponse.SC_OK);
-            m.toJSON(res.getOutputStream());
+                 m = new Message("Access to stats of Player " + username + " that has played " + stats.size() + " roles");
+                 res.setStatus(HttpServletResponse.SC_OK);
+                 m.toJSON(res.getOutputStream());
 
-            new ResourceList<StatsRole>(stats).toJSON(res.getOutputStream());
-
-        } catch (SQLException e) {
+                 new ResourceList<StatsRole>(stats).toJSON(res.getOutputStream());
+             }
+             else {
+                 ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
+                 res.setStatus(ec.getHTTPCode());
+                 m = new Message("Cannot search stats for user " + username + ": user not exists in the database.", ec.getErrorCode(), "One player does not exist.");
+                 LOGGER.info("Cannot search stats for user %s: user not exists in the database.", username, ec);
+                 m.toJSON(res.getOutputStream());
+             }
+        }
+        catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
             m = new Message("Cannot search stats for user " + username + ": unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());

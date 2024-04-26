@@ -1,6 +1,5 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.PlaysJoinGame;
 
 import java.sql.Connection;
@@ -18,7 +17,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
+public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
 
     /**
      * The SQL statement to be executed.
@@ -42,7 +41,7 @@ public class GetLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
      * @param con      the connection to the database.
      * @param username the username of the player.
      */
-    public GetLogsDAO(final Connection con, final String username) {
+    public GetPlayerLogsDAO(final Connection con, final String username) {
         super(con);
         this.username = username;
     }
