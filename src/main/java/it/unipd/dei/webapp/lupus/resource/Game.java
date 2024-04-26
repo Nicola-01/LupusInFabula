@@ -135,7 +135,7 @@ public class Game extends AbstractResource {
      *
      * @return The start date of the game.
      */
-    public final Date getGameDate() {
+    public final Date getStart() {
         return start;
     }
 

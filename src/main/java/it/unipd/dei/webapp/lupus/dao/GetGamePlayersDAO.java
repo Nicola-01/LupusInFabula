@@ -84,7 +84,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                             rs.getString("role"),
                             rs.getInt("round_of_death"),
                             rs.getInt("phase_of_death"),
-                            rs.getFloat("duration_of_life")
+                            rs.getTime("duration_of_life")
                     ));
                 }
             }
@@ -106,7 +106,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                             playerRole,
                             rs.getInt("round_of_death"),
                             rs.getInt("phase_of_death"),
-                            rs.getFloat("duration_of_life")
+                            rs.getTime("duration_of_life")
                     ));
                 }
             }

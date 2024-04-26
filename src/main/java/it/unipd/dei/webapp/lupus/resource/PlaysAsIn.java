@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.sql.Time;
 
 /**
  * Represents an entity containing information about a player inside a game.
@@ -37,19 +38,20 @@ public class PlaysAsIn extends AbstractResource {
     /**
      * total amount of time the player has lived
      */
-    private float durationOfLife;
+    private Time durationOfLife;
 
     /**
      * Creates a new PlaysAsIn object with the specified parameters
+     *
      * @param playerUsername the username of the player
-     * @param gameId the id of the game
-     * @param role the role of the player in this game
-     * @param roundOfDeath the round during which the player died
-     * @param phaseOfDeath the phase during which the player died
+     * @param gameId         the id of the game
+     * @param role           the role of the player in this game
+     * @param roundOfDeath   the round during which the player died
+     * @param phaseOfDeath   the phase during which the player died
      * @param durationOfLife the total amount of time the player has lived
      */
     public PlaysAsIn(final String playerUsername, final int gameId, final String role,
-                     final int roundOfDeath, final int phaseOfDeath, final float durationOfLife) {
+                     final int roundOfDeath, final int phaseOfDeath, final Time durationOfLife) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
         this.role = role;
@@ -58,6 +60,13 @@ public class PlaysAsIn extends AbstractResource {
         this.durationOfLife = durationOfLife;
     }
 
+    /**
+     * Creates a new PlaysAsIn object with the specified parameters
+     *
+     * @param playerUsername the username of the player
+     * @param gameId         the id of the game
+     * @param role           the role of the player in this game
+     */
     public PlaysAsIn(final String playerUsername, final int gameId, final String role) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
@@ -65,9 +74,22 @@ public class PlaysAsIn extends AbstractResource {
     }
 
     /**
-     * Method to represent this object through JSON
-     * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
+     * Creates a new PlaysAsIn object with the specified parameters
      *
+     * @param playerUsername the username of the player
+     * @param gameId         the id of the game
+     * @param role           the role of the player in this game
+     * @param roundOfDeath   the round during which the player died
+     * @param phaseOfDeath   the phase during which the player died
+     */
+    public PlaysAsIn(final String playerUsername, final int gameId, final String role, final int roundOfDeath, final int phaseOfDeath) {
+        this(playerUsername, gameId, role, roundOfDeath, phaseOfDeath, null);
+    }
+
+    /**
+     * Method to represent this object through JSON
+     *
+     * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
      * @throws IOException
      */
     @Override
@@ -111,7 +133,7 @@ public class PlaysAsIn extends AbstractResource {
         return phaseOfDeath;
     }
 
-    public float getDurationOfLife() {
+    public Time getDurationOfLife() {
         return durationOfLife;
     }
 }
