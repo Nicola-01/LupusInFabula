@@ -33,9 +33,9 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
 
             if (rs.next()) {
                 role = rs.getString("role");
-                LOGGER.info("The player " + playerUsername + " has the role (" + role + ") in the game " + gameId);
+                //LOGGER.info("The player " + playerUsername + " has the role (" + role + ") in the game " + gameId);
             } else {
-                LOGGER.info("The player " + playerUsername + " has not correct role in the game " + gameId);
+                LOGGER.warn("The player " + playerUsername + " has not correct role in the game " + gameId);
             }
 
         }finally {

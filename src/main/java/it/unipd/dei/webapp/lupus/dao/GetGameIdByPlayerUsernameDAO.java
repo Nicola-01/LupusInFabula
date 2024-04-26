@@ -29,9 +29,9 @@ public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
 
             if (rs.next()) {
                 game_id = rs.getInt("game_id");
-                LOGGER.info("The player " + playerUsername + " is in the game " + game_id);
+                //LOGGER.info("The player " + playerUsername + " is in the game " + game_id);
             } else {
-                LOGGER.info("The player " + playerUsername + " is not in the game");
+                LOGGER.warn("The player " + playerUsername + " is not in the game");
             }
 
         } finally {

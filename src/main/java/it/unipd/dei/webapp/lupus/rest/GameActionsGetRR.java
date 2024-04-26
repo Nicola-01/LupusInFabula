@@ -57,7 +57,7 @@ public class GameActionsGetRR extends AbstractRR {
      * @throws SQLException If an SQL error occurs.
      */
     public GameActionsGetRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
-        super(Actions.ADD_ACTIONS, req, res, ds);
+        super(Actions.GET_GAME_ACTIONS_ACTION, req, res, ds);
         this.gameID = gameID;
 
         playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
@@ -74,7 +74,6 @@ public class GameActionsGetRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
         try {
-            LogContext.setAction(Actions.GET_GAME_ACTIONS_ACTION);
             LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();

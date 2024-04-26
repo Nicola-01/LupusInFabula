@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import it.unipd.dei.webapp.lupus.rest.GameActionsPostRR;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -13,7 +14,7 @@ import java.util.List;
 /**
  * Represents a game action performed by a player.<br>
  * This class is used to store information about an action of a player with a role towards a target.
- * It is utilized in the {@link it.unipd.dei.webapp.lupus.rest.GameActionsRR} class.
+ * It is utilized in the {@link GameActionsPostRR} class.
  *
  * @author LupusInFabula Group
  * @version 1.0

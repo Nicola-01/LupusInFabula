@@ -62,17 +62,17 @@ Content-Type: application/json
     {
       "player":"user1",
       "role":"wolf",
-      "target":"user3"
+      "target":"user4"
     },
     {
-      "player":"user2",
-      "role":"seer",
-      "target":"user1"
+      "player":"user7",
+      "role":"knight",
+      "target":"user8"
     },
     {
-      "player":"user4",
-      "role":"wolf",
-      "target":"user5"
+      "player":"user8",
+      "role":"sheriff",
+      "target":"user7"
     }
   ]
 }

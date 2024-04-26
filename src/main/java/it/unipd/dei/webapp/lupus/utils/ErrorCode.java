@@ -57,7 +57,7 @@ public enum ErrorCode {
     NOT_LOGGED("ESES1", HttpServletResponse.SC_FORBIDDEN, "Account not logged in."),
     NOT_MASTER("ESES2", HttpServletResponse.SC_FORBIDDEN, "The account is not a gamemaster."),
     NO_GAME_SESSION("ESES3", HttpServletResponse.SC_NOT_FOUND, "The game doesn't exist."),
-    DIFFERENT_GAME_SESSION("ESES4", HttpServletResponse.SC_CONFLICT, "The gameIDs do not match."),
+    DIFFERENT_GAME_SESSION("ESES4", HttpServletResponse.SC_CONFLICT, "The player isn't the gamemaster of this game."),
 
     // dispatcher
     UNKNOWN_RESOURCE("EDSP1", HttpServletResponse.SC_NOT_FOUND, "Unknown resource requested."),

@@ -95,6 +95,9 @@ public class GameMasterFilter implements Filter {
                 throw new ServletException("Only HTTP requests/responses are allowed.");
             }
 
+
+            LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
 
@@ -117,12 +120,13 @@ public class GameMasterFilter implements Filter {
                     m.toJSON(res.getOutputStream());
                     return; // in this case the master is not even logged in
                 } else {
-                    // n.b there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
+                    // n.b. there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
 
                     path = path.replace("/master", "");
                     final String publicGame = path.substring(path.lastIndexOf("/") + 1);
+                    LogContext.setGame(publicGame);
 
-                    LOGGER.info("Pubblic GameId found on URL: " + publicGame);
+                    LOGGER.info("Public GameId found on URL: " + publicGame);
                     int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
 
                     final Object gmAttribute = session.getAttribute(GAMEMASTER_ATTRIBUTE);
@@ -156,7 +160,7 @@ public class GameMasterFilter implements Filter {
 
                             ErrorCode ec = ErrorCode.NOT_MASTER;
                             res.setStatus(ec.getHTTPCode());
-                            Message m = new Message("You are not the gamemaster in game " + publicGame, ec.getErrorCode(), ec.getErrorMessage());
+                            Message m = new Message("You are not the gamemaster in game \'" + publicGame + "\'.", ec.getErrorCode(), ec.getErrorMessage());
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
@@ -175,8 +179,8 @@ public class GameMasterFilter implements Filter {
                             ErrorCode ec = ErrorCode.DIFFERENT_GAME_SESSION;
                             res.setStatus(ec.getHTTPCode());
 
-                            Message m = new Message("Different gameID founded", ec.getErrorCode(), ec.getErrorMessage());
-                            LOGGER.info("Different gameID founded: %d != %d", sessionGameID, gameID);
+                            Message m = new Message("You are not the game master of the game \'" + publicGame + "\'.", ec.getErrorCode(), ec.getErrorMessage());
+                            LOGGER.warn("Different gameID founded: %d != %d", sessionGameID, gameID);
 
                             m.toJSON(res.getOutputStream());
 //                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
@@ -198,6 +202,7 @@ public class GameMasterFilter implements Filter {
             LogContext.removeUser();
             LogContext.removeIPAddress();
             LogContext.removeAction();
+            LogContext.removeGame();
         }
     }
 
