@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS IS_FRIEND_WITH;
 DROP TABLE IF EXISTS Player;
 
 
+
 -- #################################################################################################
 -- ## Creation of the table Player                                                                ##
 -- #################################################################################################
@@ -69,7 +70,8 @@ CREATE TABLE Role
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
-COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
+COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3). Special case master(-1)).';
+COMMENT ON COLUMN Role.max_number IS 'The max number of that role in a game.';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
 
@@ -94,12 +96,12 @@ CREATE TABLE Game
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
 COMMENT ON COLUMN Game.ID IS 'The unique identifier for each game.';
-COMMENT ON COLUMN Game.public_ID IS ''; -- TODO description
+COMMENT ON COLUMN Game.public_ID IS 'The public identifier, it is composition of three role taken at random from the ones in the game.';
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
-COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
+COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game (farmers(0), wolves(1), hamster(2) or jester(3). If the game is not finished yet (-1)).';
 COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
-COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game';
+COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game (N or D (Night or Day))';
 COMMENT ON COLUMN Game.subphase IS 'The current subphase if the game is not finished or the last subphase of the game';
 
 
@@ -114,9 +116,9 @@ CREATE TABLE PLAYS_AS_IN
     player_username  VARCHAR(20) REFERENCES Player (username),
     game_id          SERIAL REFERENCES Game (ID),
     role             VARCHAR(20) REFERENCES Role (name),
-    round_of_death   INTEGER,
+    round_of_death   INTEGER DEFAULT 0,
     phase_of_death   SMALLINT,
-    duration_of_life FLOAT,
+    duration_of_life TIME,
     PRIMARY KEY (player_username, game_id, role)
 );
 
@@ -124,47 +126,9 @@ COMMENT ON TABLE PLAYS_AS_IN IS 'Represents the role played by a player in a gam
 COMMENT ON COLUMN PLAYS_AS_IN.player_username IS 'The username of the player who played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.game_id IS 'The ID of the game in which the player played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.role IS 'The ID of the role played by the player.';
-COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (optional).';
-COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (N, D or M (Night, Day or Master)).';
-COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The percentage of time in which the player has stayed alive during the game.';
-
-
--- #################################################################################################
--- ## Creation of the table has_roles                                                             ##
--- #################################################################################################
---
--- This table represents the number of instances for each role in a game
--- TODO to remove maybe
--- CREATE TABLE HAS_ROLES
--- (
---     game_id         SERIAL REFERENCES Game (ID),
---     role_id         SERIAL REFERENCES Role (ID),
---     number_of_roles SMALLINT NOT NULL,
---     PRIMARY KEY (game_id, role_id)
--- );
---
--- COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';
--- COMMENT ON COLUMN HAS_ROLES.game_id IS 'The ID of the game in which roles are associated.';
--- COMMENT ON COLUMN HAS_ROLES.role_id IS 'The ID of the role associated with the game.';
--- COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the role associated with the game.';
-
-
--- TODO --> remove it (?)
--- #################################################################################################
--- ## Creation of the table type_action                                                           ##
--- #################################################################################################
---
--- This table represents the type of actions possible in a game
-
--- CREATE TABLE TYPE_ACTION
--- (
---     ID   SERIAL PRIMARY KEY,
---     name CHARACTER VARYING NOT NULL
--- );
---
--- COMMENT ON TABLE TYPE_ACTION IS 'Represents different types of actions.';
--- COMMENT ON COLUMN TYPE_ACTION.ID IS 'The unique identifier for each type of action.';
--- COMMENT ON COLUMN TYPE_ACTION.name IS 'The name of the type of action.';
+COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (0 if the player is alive and the game is not finished or the player has not died in that game).';
+COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (N or D (Night or Day)).';
+COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The duration of of life of the player in the game.';
 
 
 -- #################################################################################################
@@ -192,6 +156,5 @@ COMMENT ON COLUMN Action.player_username IS 'The username of the player who perf
 COMMENT ON COLUMN Action.round IS 'The round number in which the action occurred.';
 COMMENT ON COLUMN Action.phase IS 'The phase of the round in which the action occurred.';
 COMMENT ON COLUMN Action.subphase IS 'The subphase of the phase in which the action occurred.';
---COMMENT ON COLUMN Action.description IS 'A description of the action.';
 COMMENT ON COLUMN Action.type_of_action IS 'The type of action performed by the player.';
 COMMENT ON COLUMN Action.target IS 'The username of the target player of the action.';

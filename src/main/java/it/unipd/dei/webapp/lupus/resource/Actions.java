@@ -35,6 +35,9 @@ public final class Actions {
      */
     public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
 
+    /**
+     * The addition of actions
+     */
     public static final String ADD_ACTIONS = "ADD_ACTIONS";
 
     /**

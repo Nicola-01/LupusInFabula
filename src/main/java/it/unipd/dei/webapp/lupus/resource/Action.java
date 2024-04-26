@@ -120,11 +120,11 @@ public class Action extends AbstractResource
     public String getTarget() {return target;}
 
 
-/**
- * Performs the actual writing of JSON.
- *
- * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
- */
+    /**
+     * Performs the actual writing of JSON.
+     *
+     * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
+     */
     @Override
     protected void writeJSON(OutputStream out) throws Exception
     {
