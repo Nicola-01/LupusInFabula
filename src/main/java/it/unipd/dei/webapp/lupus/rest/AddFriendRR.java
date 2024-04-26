@@ -1,7 +1,9 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.AddFriendDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.postgresql.util.PSQLException;
@@ -41,11 +43,13 @@ public class AddFriendRR extends AbstractRR {
      */
     @Override
     protected void doServe() throws IOException {
+        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+        LogContext.setIPAddress(req.getRemoteAddr());
 
         Message m = null;
 
         try {
-            Player player = (Player) req.getSession().getAttribute("user");
+            Player player = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE));
             String friend_username = Friend.fromJSON(req.getInputStream()).getUsername();
             Date date = new Date(System.currentTimeMillis());
 
@@ -57,12 +61,6 @@ public class AddFriendRR extends AbstractRR {
 
                 res.setStatus(HttpServletResponse.SC_CREATED);
                 f.toJSON(res.getOutputStream());
-            } else { // it should not happen
-                LOGGER.error("Fatal error while adding friend.");
-
-                m = new Message("Cannot create the friend: unexpected error.", "E5A1", null);
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                m.toJSON(res.getOutputStream());
             }
         } catch (EOFException ex) {
             LOGGER.warn("Cannot add the friend: no Friend JSON object found in the request.", ex);
@@ -72,24 +70,40 @@ public class AddFriendRR extends AbstractRR {
             res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             m.toJSON(res.getOutputStream());
         } catch (SQLException ex) {
-            if ("23505".equals(ex.getSQLState())) {
-                LOGGER.warn("Cannot add the friend: it already exists.");
 
-                m = new Message("Cannot add the friend: it already exists.", "E5A2", ex.getMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+            if ("23505".equals(ex.getSQLState())) {
+                ErrorCode ec = ErrorCode.FRIEND_ALREADY_EXIST;
+                res.setStatus(ec.getHTTPCode());
+                LOGGER.warn("Cannot add the friend: it already exists.");
+                m = new Message("Cannot add the friend: it already exists.", ec.getErrorCode(), ex.getMessage());
                 m.toJSON(res.getOutputStream());
             } else if (ex.getMessage().contains("is_friend_with_friend_username_fkey")) {
-                LOGGER.warn("Cannot add the friend: friend username does not exist in the 'player' table.");
-                m = new Message("Cannot add the friend: friend username does not exist in the 'player' table.", "E5A3", ex.getMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                m.toJSON(res.getOutputStream());
-            }else {
-                LOGGER.error("Cannot add the friend: unexpected database error.", ex);
 
-                m = new Message("Cannot add the friend: unexpected database error.", "E5A1", ex.getMessage());
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
+                res.setStatus(ec.getHTTPCode());
+                LOGGER.warn("Cannot add the friend: friend username does not exist in the 'player' table.");
+                m = new Message("Cannot add the friend: friend username does not exist in the 'player' table.", ec.getErrorCode(), ex.getMessage());
+                m.toJSON(res.getOutputStream());
+            } else {
+                ErrorCode ec = ErrorCode.DATABASE_ERROR;
+                res.setStatus(ec.getHTTPCode());
+                LOGGER.error("Cannot add the friend: unexpected database error.", ex);
+                m = new Message("Cannot add the friend: unexpected database error.", ec.getErrorCode(), ex.getMessage());
                 m.toJSON(res.getOutputStream());
             }
+
+        }catch (IOException e) {
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            m = new Message("Cannot return the possible actions: unexpected error", ec.getErrorCode(), e.getMessage());
+            LOGGER.error("Error to return the possible actions.", e);
+            // An error occurred while processing the request. Unable to generate role search
+            // results due to an unexpected database access error.
+            m.toJSON(res.getOutputStream());
+        }finally{
+            LogContext.removeUser();
+            LogContext.removeIPAddress();
+            LogContext.removeAction();
         }
     }
 }

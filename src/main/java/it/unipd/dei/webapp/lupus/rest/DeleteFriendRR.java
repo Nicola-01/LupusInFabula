@@ -1,7 +1,9 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.DeleteFriendDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -38,11 +40,13 @@ public class DeleteFriendRR extends AbstractRR {
      */
     @Override
     protected void doServe() throws IOException {
+        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+        LogContext.setIPAddress(req.getRemoteAddr());
 
         Message m = null;
 
         try{
-            Player player = (Player) req.getSession().getAttribute("user");
+            Player player = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE));
             String friend_username = Friend.fromJSON(req.getInputStream()).getUsername();
 
             // creates a new DAO for accessing the database and deletes the employee
@@ -54,33 +58,32 @@ public class DeleteFriendRR extends AbstractRR {
                 res.setStatus(HttpServletResponse.SC_OK);
                 f.toJSON(res.getOutputStream());
             } else {
+                ErrorCode ec = ErrorCode.FRIEND_NOT_EXIST;
+                res.setStatus(ec.getHTTPCode());
                 LOGGER.warn("Friend not found. Cannot delete it.");
-
-                m = new Message(String.format("Friend not found. Cannot delete it."), "E5A3", null);
+                m = new Message(String.format("Friend not found. Cannot delete it."), ec.getErrorCode(), null);
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 m.toJSON(res.getOutputStream());
             }
-        } catch(IndexOutOfBoundsException | NumberFormatException ex) {
-            LOGGER.warn("Cannot delete the friend", ex);
 
-            m = new Message("Cannot delete the friend", "E4A7",
-                    ex.getMessage());
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            m.toJSON(res.getOutputStream());
         } catch (SQLException ex) {
-            if ("23503".equals(ex.getSQLState())) {
-                LOGGER.warn("Cannot delete the friend");
-
-                m = new Message("Cannot delete the friend", "E5A4", ex.getMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
-                m.toJSON(res.getOutputStream());
-            } else {
-                LOGGER.error("Cannot delete the friend: unexpected database error.", ex);
-
-                m = new Message("Cannot delete the friend: unexpected database error.", "E5A1", ex.getMessage());
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-                m.toJSON(res.getOutputStream());
-            }
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            LOGGER.error("Cannot delete the friend: unexpected database error.", ex);
+            m = new Message("Cannot delete the friend: unexpected database error.", ec.getErrorCode(), ex.getMessage());
+            m.toJSON(res.getOutputStream());
+        } catch (IOException e) {
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            m = new Message("Cannot return the possible actions: unexpected error", ec.getErrorCode(), e.getMessage());
+            LOGGER.error("Error to return the possible actions.", e);
+            // An error occurred while processing the request. Unable to generate role search
+            // results due to an unexpected database access error.
+            m.toJSON(res.getOutputStream());
+        }finally{
+            LogContext.removeUser();
+            LogContext.removeIPAddress();
+            LogContext.removeAction();
         }
     }
 }
