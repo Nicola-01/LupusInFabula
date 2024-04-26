@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS Role;
 DROP TABLE IF EXISTS IS_FRIEND_WITH;
 DROP TABLE IF EXISTS Player;
 
+
 -- #################################################################################################
 -- ## Creation of the table Player                                                                ##
 -- #################################################################################################
@@ -28,7 +29,6 @@ COMMENT ON COLUMN Player.username IS 'The unique username of the player.';
 COMMENT ON COLUMN Player.email IS 'The email address of the player.';
 COMMENT ON COLUMN Player.password IS 'The password of the player.';
 COMMENT ON COLUMN Player.registration_date IS 'The date when the player registered.';
-
 
 
 -- #################################################################################################
@@ -59,7 +59,6 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 
 CREATE TABLE Role
 (
---     ID            SERIAL PRIMARY KEY,
     name          VARCHAR(20) PRIMARY KEY,
     type          SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
     with_who_wins SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
@@ -68,11 +67,11 @@ CREATE TABLE Role
 );
 
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
--- COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
 COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
+
 
 -- #################################################################################################
 -- ## Creation of the table Game                                                                  ##
@@ -98,14 +97,11 @@ COMMENT ON COLUMN Game.ID IS 'The unique identifier for each game.';
 COMMENT ON COLUMN Game.public_ID IS ''; -- TODO description
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
-COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
+COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
 COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
-COMMENT ON COLUMN Game.phase IS '';
-COMMENT ON COLUMN Game.subphase IS '';
--- TODO description
+COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game';
+COMMENT ON COLUMN Game.subphase IS 'The current subphase if the game is not finished or the last subphase of the game';
 
-
--- COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 
 -- #################################################################################################
 -- ## Creation of the table plays_as_in                                                           ##

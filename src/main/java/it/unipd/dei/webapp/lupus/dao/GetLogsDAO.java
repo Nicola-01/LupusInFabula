@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.PlaysJoinGame;
 
 import java.sql.Connection;

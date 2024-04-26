@@ -21,12 +21,17 @@
     <section class="centered-box">
         <div class="box">
             <h2>Player</h2>
+            <a href="<c:url value="/login"/>">
+                <button>Login</button>
+            </a>
             <button>Personal Area</button>
             <button>Statistics</button>
         </div>
         <div class="box">
             <h2>Game</h2>
-            <a href="<c:url value="/rules"/>"><button>Game Rules</button></a>
+            <a href="<c:url value="/rules"/>">
+                <button>Game Rules</button>
+            </a>
             <button>Create a Game</button>
             <button>Join a Game</button>
         </div>

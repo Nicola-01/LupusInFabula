@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetStatsPerRoleDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -44,29 +45,35 @@ public class UserStatisticGetRR extends AbstractRR {
         List<StatsRole> stats = null;
 
         try {
+            LogContext.setUser(username);
+
             stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
+
             LOGGER.info("Stats successfully collected for user: %s", username);
-
-        } catch (SQLException e) {
-            m = new Message("Cannot search stats for user " + username + ": unexpected error while accessing the database.", "E200", e.getMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            m.toJSON(res.getOutputStream());
-            LOGGER.info("Cannot search stats for user %s: unexpected error while accessing the database.", username, e);
-        }
-
-        try {
 
             m = new Message("Access to stats of Player " + username + " that has played " + stats.size() + " roles");
             res.setStatus(HttpServletResponse.SC_OK);
             m.toJSON(res.getOutputStream());
+
             new ResourceList<StatsRole>(stats).toJSON(res.getOutputStream());
 
-        } catch (Exception e) {
-            m = new Message("Stats not found for user " + username, "E200", e.getMessage());
-            LOGGER.error("Stats not found for user %s", username, e);
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (SQLException e) {
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            m = new Message("Cannot search stats for user " + username + ": unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
+            LOGGER.info("Cannot search stats for user %s: unexpected error while accessing the database.", username, e);
+            m.toJSON(res.getOutputStream());
+        }
+        catch (IOException e) {
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            m = new Message("Cannot return the stats for user " + username + ": unexpected error.", ec.getErrorCode(), e.getMessage());
+            LOGGER.error("Cannot return the stats for user %s: unexpected error.", username, e);
             m.toJSON(res.getOutputStream());
             throw e;
+        }
+        finally {
+            LogContext.removeUser();
         }
     }
 }

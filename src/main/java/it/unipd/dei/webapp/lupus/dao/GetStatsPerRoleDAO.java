@@ -1,6 +1,8 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.StatsRole;
+import org.apache.juli.logging.Log;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
