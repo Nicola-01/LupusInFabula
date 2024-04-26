@@ -69,7 +69,8 @@ public enum ErrorCode {
 
     // errors
     DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),
-    INTERNAL_ERROR("EINT1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error.");
+    INTERNAL_ERROR("EINT1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error."),
+    NULL_OBJECT_ERROR("EINT2", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Null object internal error.");
 
     //    EMAIL_MISSING(-103, HttpServletResponse.SC_BAD_REQUEST, "Email missing"),
 //    COURSEID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Courseid missing"),

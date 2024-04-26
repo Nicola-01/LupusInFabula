@@ -101,7 +101,7 @@ COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has sta
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
 COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game (farmers(0), wolves(1), hamster(2) or jester(3). If the game is not finished yet (-1)).';
 COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
-COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game (N or D (Night or Day))';
+COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game (0 or 1 (Night or Day))';
 COMMENT ON COLUMN Game.subphase IS 'The current subphase if the game is not finished or the last subphase of the game';
 
 
@@ -127,7 +127,7 @@ COMMENT ON COLUMN PLAYS_AS_IN.player_username IS 'The username of the player who
 COMMENT ON COLUMN PLAYS_AS_IN.game_id IS 'The ID of the game in which the player played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.role IS 'The ID of the role played by the player.';
 COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (0 if the player is alive and the game is not finished or the player has not died in that game).';
-COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (N or D (Night or Day)).';
+COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (0 or 1 (Night or Day)).';
 COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The duration of of life of the player in the game.';
 
 
