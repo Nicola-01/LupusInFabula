@@ -23,7 +23,14 @@ import java.util.List;
  */
 public class GamePlayersRR extends AbstractRR {
 
+    /**
+     * The ID of the game.
+     */
     private final int gameID;
+
+    /**
+     * If the requested URI contained /master at the end.
+     */
     private final boolean URIisMaster;
 
     /**

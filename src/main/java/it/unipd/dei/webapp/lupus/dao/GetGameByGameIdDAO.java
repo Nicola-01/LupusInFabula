@@ -7,11 +7,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * Retrieves the status of a game by its game ID.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GetGameByGameIdDAO extends AbstractDAO<Game> {
 
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT * FROM Game WHERE ID = ?";
+
+    /**
+     * The ID of the game to retrieve
+     */
     private final int gameID;
 
+    /**
+     * Constructs a new GetGameByGameIdDAO for create a new game.
+     *
+     * @param con    the connection to the database.
+     * @param gameID the ID of the game to retrieve.
+     */
     public GetGameByGameIdDAO(final Connection con, int gameID) {
         super(con);
         this.gameID = gameID;
