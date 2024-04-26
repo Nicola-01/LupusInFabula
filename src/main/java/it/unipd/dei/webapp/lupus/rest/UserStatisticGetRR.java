@@ -65,7 +65,7 @@ public class UserStatisticGetRR extends AbstractRR {
                  ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                  res.setStatus(ec.getHTTPCode());
                  m = new Message("Cannot search stats for user " + username + ": user not exists in the database.", ec.getErrorCode(), "One player does not exist.");
-                 LOGGER.info("Cannot search stats for user %s: user not exists in the database.", username, ec);
+                 LOGGER.warn("Cannot search stats for user %s: user not exists in the database.", username);
                  m.toJSON(res.getOutputStream());
              }
         }
@@ -73,7 +73,7 @@ public class UserStatisticGetRR extends AbstractRR {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
             m = new Message("Cannot search stats for user " + username + ": unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
-            LOGGER.info("Cannot search stats for user %s: unexpected error while accessing the database.", username, e);
+            LOGGER.error("Cannot search stats for user %s: unexpected error while accessing the database.", username, e);
             m.toJSON(res.getOutputStream());
         }
         catch (IOException e) {

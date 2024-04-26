@@ -64,11 +64,11 @@ public class UserLogsGetRR extends AbstractRR {
                 ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                 res.setStatus(ec.getHTTPCode());
                 m = new Message("Cannot search logs for user " + username + ": user not exists in the database.", ec.getErrorCode(), "One player does not exist.");
-                LOGGER.info("Cannot search logs for user %s: user not exists in the database.", username, ec);
+                LOGGER.warn("Cannot search logs for user %s: user not exists in the database.", username);
                 m.toJSON(res.getOutputStream());
             }
-
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
             m = new Message("Cannot search logs for user " + username + ": unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
