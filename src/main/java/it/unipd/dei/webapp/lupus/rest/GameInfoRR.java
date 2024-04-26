@@ -2,7 +2,9 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameInfoDAO;
 import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -34,7 +36,7 @@ public class GameInfoRR extends AbstractRR {
      * @param URIisMaster whether the requested URI contained /master at the end
      */
     public GameInfoRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID, boolean URIisMaster) {
-        super(Actions.ADD_ACTIONS, req, res, ds);
+        super(Actions.GET_GAME_STATUS_ACTION, req, res, ds);
         this.gameID = gameID;
         this.URIisMaster = URIisMaster;
     }
@@ -48,8 +50,11 @@ public class GameInfoRR extends AbstractRR {
         List<PlaysAsIn> el = null;
         Message m = null;
 
+        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        LogContext.setUser(username);
+        LogContext.setIPAddress(req.getRemoteAddr());
+        LogContext.setGame(gameID);
         try {
-            String username = ((Player) req.getSession().getAttribute("user")).getUsername();
             String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
             el = new GetGameInfoDAO(ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
 
@@ -67,11 +72,19 @@ public class GameInfoRR extends AbstractRR {
                 m.toJSON(res.getOutputStream());
             }
         } catch (SQLException ex) {
-            LOGGER.error("Cannot list players: unexpected database error.", ex);
+            LOGGER.error("Cannot return game info: unexpected database error.", ex);
 
-            m = new Message("Cannot list players: unexpected database error.", "E5A1", ex.getMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            m = new Message("Cannot return game info: unexpected database error.", ec.getErrorCode(), ex.getMessage());
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
+        }
+        finally
+        {
+            LogContext.removeAction();
+            LogContext.removeUser();
+            LogContext.removeIPAddress();
+            LogContext.removeGame();
         }
     }
 }

@@ -112,6 +112,11 @@ public final class Actions {
     public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
 
     /**
+     * GET request of game status.
+     */
+    public static final String GET_GAME_STATUS_ACTION = "GET_GAME_STATUS_ACTION";
+
+    /**
      * GET request of logs for user.
      */
     public static final String GET_LOGS_USER = "GET_LOGS_USER";
@@ -125,7 +130,7 @@ public final class Actions {
     // Dispatcher
 
     /**
-     * Dispatcher in the game saction
+     * Dispatcher in the game section
      */
     public static final String GAME_DISPATCHER_ACTION = "GAME_DISPATCHER_ACTION";
 
