@@ -18,6 +18,7 @@ import java.util.Random;
  * @since 1.0
  */
 public class CreateGameDAO extends AbstractDAO<Game> {
+
     /**
      * SQL statement for creating a new game record in the database.
      */

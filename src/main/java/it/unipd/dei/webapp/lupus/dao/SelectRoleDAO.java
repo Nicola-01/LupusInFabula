@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Get all roles
+ * Retrives all roles
  *
  * @author LupusInFabula Group
  * @version 1.0
@@ -32,8 +32,13 @@ public class SelectRoleDAO extends AbstractDAO<List<Role>> {
         super(con);
     }
 
+    /**
+     * Retrives all roles from the database
+     *
+     * @throws Exception
+     */
     @Override
-    public final void doAccess() throws SQLException {
+    public final void doAccess() throws Exception {
         PreparedStatement ps = null;
         ResultSet rs = null;
         final List<Role> roles = new ArrayList<Role>();

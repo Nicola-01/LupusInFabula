@@ -145,7 +145,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         // count of wolves still alive for some effects
         int number_of_wolves = 0;
-        Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         for (Map.Entry<String, String> playerRole : playersRole.entrySet())
             if((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
                     || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
@@ -172,7 +172,7 @@ public class GameActionsPostRR extends AbstractRR {
                 for (GameAction gameAction : gameActions)
                     if (gameAction.getTarget().equals(player))
                         explorer = gameAction.getPlayer();
-
+                // TODO --> to check the implementation of the update
                 new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, explorer).access();
                 //LOGGER.info("The explorer " + explorer + " has been demoted to wolf");
             }

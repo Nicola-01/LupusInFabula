@@ -11,6 +11,7 @@ import java.util.List;
 
 /**
  * Class to get the last round in a game
+ *
  * @author LupusInFabula Group
  * @version 1.0
  * @since 1.0
@@ -18,11 +19,11 @@ import java.util.List;
 public class GetGameRoundDAO extends AbstractDAO<Integer>
 {
     /**
-     * query to fill with the id of game
+     * Query to fill with the id of game
      * */
     private static final String STATEMENT = "SELECT rounds FROM Game WHERE ID = ?";
     /**
-     * numeric identifier for the game
+     * Numeric identifier for the game
      * */
     private final String idPart;
 
@@ -39,7 +40,7 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
     }
 
     /**
-     * function to exec the query on db
+     * Function to exec the query on db
      */
     @Override
     protected void doAccess() throws SQLException
