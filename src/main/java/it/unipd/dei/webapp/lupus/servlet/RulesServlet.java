@@ -1,8 +1,12 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.SelectRoleByTypeDAO;
+import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Role;
+import it.unipd.dei.webapp.lupus.resource.Actions;
+
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -41,38 +45,51 @@ public final class RulesServlet extends AbstractDatabaseServlet {
      */
     public void doGet(final HttpServletRequest req, final HttpServletResponse resp) throws ServletException, IOException {
 
-        //LogContext.setIPAddress(req.getRemoteAddr());
-        //LogContext.setAction(Actions.SELECT_ROLE_BY_TYPE);
+        LogContext.setIPAddress(req.getRemoteAddr());
+        LogContext.setAction(Actions.GET_ALL_ROLES);
+
         List<List<Role>> roles = new ArrayList<>();
-        Message m = null;
+        Message m;
 
         try {
 
+            req.setAttribute("roles", roles);
+
             for (int i = 0; i < 4; i++) {
                 roles.add(new SelectRoleByTypeDAO(getConnection(), i).access().getOutputParam());
-                LOGGER.info("Roles successfully selected by type: %d", i);
+                //LOGGER.info("Roles successfully selected by type: %d", i);
             }
             m = new Message("Roles successfully selected");
             LOGGER.info("Roles successfully selected by type");
 
+            req.getRequestDispatcher("/jsp/rules.jsp").forward(req, resp);
+
         } catch (SQLException e) {
-            m = new Message("Cannot search for roles: unexpected error while accessing the database.", "E200",
-                    e.getMessage());
-            LOGGER.info("Cannot search for roles: unexpected error while accessing the database.", e);
+
+            LOGGER.error("Cannot search for roles: unexpected error while accessing the database.", e);
+
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            m = new Message("Cannot search for roles: unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
+            resp.setStatus(ec.getHTTPCode());
+            m.toJSON(resp.getOutputStream());
+
+        } finally {
+            LogContext.removeAction();
+            LogContext.removeIPAddress();
         }
 
-        try {
-            req.setAttribute("roles", roles);
-            req.setAttribute("m", m);
-            req.getRequestDispatcher("/jsp/rules.jsp").forward(req, resp);
-        } catch (Exception e) {
-            LOGGER.error("Unable to send response when creating the roles list", e);
-            throw e;
-        } finally {
-            //LogContext.removeIPAddress()
-            //LogContext.removeAction();
-            //LogContext.removeUser();
-        }
+//        try {
+//
+//
+//            req.setAttribute("m", m);
+//
+//
+//        } catch (Exception e) {
+//
+//            LOGGER.error("Unable to send response when creating the roles list", e);
+//            throw e;
+//
+//        }
 
     }
 

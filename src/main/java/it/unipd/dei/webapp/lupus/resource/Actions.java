@@ -131,6 +131,10 @@ public final class Actions {
      */
     public static final String GET_STATS_USER = "GET_STATS_USER";
 
+    /**
+     * GET request for all the roles in the game.
+     */
+    public static final String GET_ALL_ROLES = "GET_ALL_ROLES";
 
     // Dispatcher
 
@@ -144,6 +148,10 @@ public final class Actions {
      */
     public static final String GET_GAME_ACTIONS_ACTION = "GET_GAME_ACTIONS_ACTION";
 
+    /**
+     * Dispatcher for user operations
+     */
+    public static final String USER_DISPATCHER_ACTION = "USER_DISPATCHER_ACTION";
 
     /**
      * This class can be neither instantiated nor sub-classed.

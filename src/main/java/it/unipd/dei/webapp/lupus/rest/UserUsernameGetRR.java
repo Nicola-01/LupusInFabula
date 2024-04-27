@@ -2,8 +2,10 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
+import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -56,15 +58,15 @@ public class UserUsernameGetRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        //LogContext.setIPAddress(req.getRemoteAddr());
-        //LogContext.setAction(Actions.SELECT_ROLE_BY_TYPE);
+        LogContext.setIPAddress(req.getRemoteAddr());
+
         //I take the substring after the last /
         Player player;
-        Message m;
 
         try {
 
             player = new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam();
+            Message m;
 
             if (player != null) {
 
@@ -77,9 +79,11 @@ public class UserUsernameGetRR extends AbstractRR {
 
             } else {
 
-                m = new Message("Username " + username + " not found");
-                LOGGER.info("Username %s not found", username);
-                res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                LOGGER.error("Username %s not found", username);
+
+                ErrorCode ec = ErrorCode.USER_NOT_FOUND;
+                m = new Message("Username " + username + " not found", ec.getErrorCode(), ec.getErrorMessage());
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 m.toJSON(res.getOutputStream());
                 // TODO --> insert the jsp file linked to this servlet (the jsp for the error)
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
@@ -88,21 +92,16 @@ public class UserUsernameGetRR extends AbstractRR {
 
         } catch (SQLException e) {
 
-            // TODO --> check the error code
-            m = new Message("Username not found", "E200", e.getMessage());
-            LOGGER.info("Unable to send a response", e);
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            LOGGER.error("Unable to send a response", e);
+
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("Username not found", ec.getErrorCode(), e.getMessage());
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
 
-        } catch (Exception e) {
-
-            LOGGER.error("Unable to send response", e);
-            throw e;
-
         } finally {
-            //LogContext.removeIPAddress()
-            //LogContext.removeAction();
-            //LogContext.removeUser();
+            LogContext.removeAction();
+            LogContext.removeIPAddress();
         }
     }
 }

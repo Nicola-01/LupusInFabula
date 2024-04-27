@@ -2,11 +2,13 @@ package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
+import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.rest.*;
 import it.unipd.dei.webapp.lupus.rest.DeleteFriendRR;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -52,6 +54,8 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
     protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
 
         LogContext.setIPAddress(req.getRemoteAddr());
+        LogContext.setAction(Actions.USER_DISPATCHER_ACTION);
+
         final OutputStream out = resp.getOutputStream();
 
         try {
@@ -63,18 +67,22 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             // if none of the above process methods succeeds, it means an unknown resource has been requested
             LOGGER.warn("Unknown resource requested: %s.", req.getRequestURI());
 
-            final Message m = new Message("Unknown resource requested.", "E4A6",
+            ErrorCode ec = ErrorCode.UNKNOWN_RESOURCE;
+            final Message m = new Message("Unknown resource requested.", ec.getErrorCode(),
                     String.format("Requested resource is %s.", req.getRequestURI()));
             resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
             resp.setContentType(JSON_UTF_8_MEDIA_TYPE);
-            m.toJSON(out);
+            m.toJSON(resp.getOutputStream());
 
         } catch (Throwable t) {
+
             LOGGER.error("Unexpected error while processing the REST resource.", t);
 
-            final Message m = new Message("Unexpected error.", "E5A1", t.getMessage());
-            resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            m.toJSON(out);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            final Message m = new Message("Unexpected error.", ec.getErrorCode(), t.getMessage());
+            resp.setStatus(ec.getHTTPCode());
+            m.toJSON(resp.getOutputStream());
+
         } finally {
 
             // ensure to always flush and close the output stream
@@ -83,6 +91,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                 out.close();
             }
 
+            LogContext.removeAction();
             LogContext.removeIPAddress();
         }
     }

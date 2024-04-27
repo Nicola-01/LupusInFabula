@@ -34,6 +34,9 @@ public enum ErrorCode {
     EMAIL_ALREADY_USED("EUSR7", HttpServletResponse.SC_CONFLICT, "Email already used"),
     WRONG_CREDENTIALS("EUSR8", HttpServletResponse.SC_BAD_REQUEST, "Submitted credentials are wrong"),
 
+    //user
+    USER_NOT_FOUND("EUSR9", HttpServletResponse.SC_NOT_FOUND, "User not found"),
+
     // game
     PLAYER_NOT_EXIST("EGME1", HttpServletResponse.SC_BAD_REQUEST, "One or more players does not exist."),
     PLAYER_ALREADY_IN_GAME("EGME2", HttpServletResponse.SC_BAD_REQUEST, "One or more players are already in a game."),

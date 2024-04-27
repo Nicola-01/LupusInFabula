@@ -2,10 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.DeletePlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
-import it.unipd.dei.webapp.lupus.resource.Actions;
-import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.Player;
-import it.unipd.dei.webapp.lupus.resource.UserUpdate;
+import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -56,15 +54,15 @@ public class UserMeDeleteRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        //LogContext.setIPAddress(req.getRemoteAddr());
-        //LogContext.setAction(Actions.SELECT_ROLE_BY_TYPE);
-        Message m;
+        String username = ((Player) req.getSession().getAttribute("user")).getUsername();
+        LogContext.setUser(username);
+        LogContext.setIPAddress(req.getRemoteAddr());
+
+        LOGGER.info("Username: " + username + " --> trying to delete the account");
 
         try {
 
             // TODO --> implement the password verification of the user
-            String username = ((Player) req.getSession().getAttribute("user")).getUsername();
-            LOGGER.info("Username: " + username + " --> trying to delete the account");
 
             // Implementation of user confirmation password before deleting the account
             InputStream stream = req.getInputStream();
@@ -75,6 +73,7 @@ public class UserMeDeleteRR extends AbstractRR {
             if (player != null) {
 
                 int result = new DeletePlayerDAO(ds.getConnection(), username).access().getOutputParam();
+                Message m;
 
                 if (result == 1) {
 
@@ -87,9 +86,11 @@ public class UserMeDeleteRR extends AbstractRR {
 
                 } else {
 
-                    m = new Message("User not found");
-                    LOGGER.info("User not found");
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND); //check
+                    LOGGER.error("User not found");
+
+                    ErrorCode ec = ErrorCode.USER_NOT_FOUND;
+                    m = new Message("User " + username + "not found", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                     m.toJSON(res.getOutputStream());
                     //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
@@ -97,9 +98,11 @@ public class UserMeDeleteRR extends AbstractRR {
 
             } else {
 
-                m = new Message("Password incorrect");
-                LOGGER.info("Password incorrect");
-                res.setStatus(HttpServletResponse.SC_UNAUTHORIZED); //check
+                LOGGER.error("Password incorrect");
+
+                ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
+                Message m = new Message("Password incorrect", ec.getErrorCode(), ec.getErrorMessage());
+                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 m.toJSON(res.getOutputStream());
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
@@ -107,24 +110,17 @@ public class UserMeDeleteRR extends AbstractRR {
 
         } catch (SQLException e) {
 
-            // TODO --> check the error code
-            m = new Message("User not found", "E200", e.getMessage());
             LOGGER.info("Unable to send response", e);
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            m.toJSON(res.getOutputStream());
 
-        } catch (Exception e) {
-
-            // TODO --> check the error code
-            m = new Message("Unable to delete the account", "E200", e.getMessage());
-            LOGGER.info("Unable to delete the account", e);
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("User not found", ec.getErrorCode(), e.getMessage());
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
 
         } finally {
-            //LogContext.removeIPAddress()
-            //LogContext.removeAction();
-            //LogContext.removeUser();
+            LogContext.removeAction();
+            LogContext.removeUser();
+            LogContext.removeIPAddress();
         }
 
     }
