@@ -1,5 +1,6 @@
 package it.unipd.dei.webapp.lupus.resource;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 
@@ -118,7 +119,21 @@ public class Player extends AbstractResource {
      */
     @Override
     protected void writeJSON(OutputStream out) throws Exception {
-        // TODO: To implement
+
+        final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
+
+        jg.writeStartObject();
+        jg.writeFieldName(JSON_NAME);
+        jg.writeStartObject();
+
+        jg.writeStringField("username", username); // Write the username field
+        jg.writeStringField("email", email);
+        jg.writeStringField("registration_date", registration_date.toString());
+
+        jg.writeEndObject();
+        jg.writeEndObject();
+
+        jg.flush();
     }
 
     /**

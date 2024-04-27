@@ -70,10 +70,9 @@ public class UserUsernameGetRR extends AbstractRR {
 
             if (player != null) {
 
-                m = new Message("User " + username + " successfully found.");
                 LOGGER.info("User %s successfully found.", username);
                 res.setStatus(HttpServletResponse.SC_OK);
-                m.toJSON(res.getOutputStream());
+                player.toJSON(res.getOutputStream());
                 // TODO insert the jsp file linked to this servlet
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
 

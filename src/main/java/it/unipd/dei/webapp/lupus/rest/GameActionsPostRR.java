@@ -42,7 +42,6 @@ public class GameActionsPostRR extends AbstractRR {
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo to handle throws IOException
 
             // check of the correctness of the actions
-            // todo uncomment this line
             if (!correctnessOfActions(gameActions))
                 return;
 
@@ -179,8 +178,7 @@ public class GameActionsPostRR extends AbstractRR {
                 for (GameAction gameAction : gameActions)
                     if (gameAction.getTarget().equals(player))
                         explorer = gameAction.getPlayer();
-                // TODO --> to check the implementation of the update
-                //new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, explorer).access();
+
                 //LOGGER.info("The explorer " + explorer + " has been demoted to wolf");
             }
 
