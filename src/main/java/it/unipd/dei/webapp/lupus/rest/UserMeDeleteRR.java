@@ -6,23 +6,53 @@ import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.UserUpdate;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Represents a REST resource handler for handling DELETE requests related to the current user's account.
+ * <p>
+ * This class handles DELETE requests initiated by the current user to delete their account. It verifies the
+ * user's identity by checking their session information and confirms the deletion operation by verifying the
+ * user's password provided in the request payload.
+ * </p>
+ * <p>
+ * If the user's password is correct and the account deletion is successful, an appropriate success message is
+ * returned. If the password is incorrect, or the user is not found, corresponding error messages are returned.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class UserMeDeleteRR extends AbstractRR {
 
+    /**
+     * Constructs a new UserMeDeleteRR object with the specified HTTP request, response, and data source.
+     *
+     * @param req the HTTP request
+     * @param res the HTTP response
+     * @param ds  the data source
+     */
     public UserMeDeleteRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.DELETE_USER, req, res, ds);
     }
 
+    /**
+     * Handles the DELETE request for deleting the current user's account.
+     * <p>
+     * This method verifies the user's identity, checks the provided confirmation password,
+     * and initiates the account deletion operation. It returns appropriate success or error messages
+     * based on the outcome of the deletion operation.
+     * </p>
+     *
+     * @throws IOException if an I/O error occurs while processing the request or sending the response
+     */
     @Override
     protected void doServe() throws IOException {
 

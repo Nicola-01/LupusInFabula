@@ -23,7 +23,7 @@ public enum ErrorCode {
     // TODO: check error code
 
     //    WRONG_FORMAT(-100, HttpServletResponse.SC_BAD_REQUEST,"Wrong format."),
-//    NO_HOMEWORKS_TO_PUBLISH(-101, HttpServletResponse.SC_NOT_FOUND, "No homeworks to publish."),
+    //    NO_HOMEWORKS_TO_PUBLISH(-101, HttpServletResponse.SC_NOT_FOUND, "No homeworks to publish."),
     // Login or edit credentials
     EMPTY_INPUT_FIELDS("EUSR1", HttpServletResponse.SC_BAD_REQUEST, "One or more input fields are empty."),
     INVALID_USERNAME_FORMAT("EUSR2", HttpServletResponse.SC_BAD_REQUEST, "Invalid username format."),
@@ -57,7 +57,7 @@ public enum ErrorCode {
     INVALID_JSON_FORMAT("EJSON1", HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON."),
 
     // session
-//    INVALID_SESSION(-200, HttpServletResponse.SC_BAD_REQUEST, "Invalid session"),
+    //    INVALID_SESSION(-200, HttpServletResponse.SC_BAD_REQUEST, "Invalid session"),
     NOT_LOGGED("ESES1", HttpServletResponse.SC_FORBIDDEN, "Account not logged in."),
     NOT_MASTER("ESES2", HttpServletResponse.SC_FORBIDDEN, "The account is not a gamemaster."),
     NO_GAME_SESSION("ESES3", HttpServletResponse.SC_NOT_FOUND, "The game doesn't exist."),

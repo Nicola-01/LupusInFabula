@@ -13,10 +13,41 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Represents a servlet responsible for dispatching requests related to user resources in the Lupus web application.
+ * <p>
+ * This servlet handles various HTTP methods (GET, PUT, DELETE) for user-related operations, such as retrieving user information, updating user profiles, managing friends, and
+ * accessing user logs and statistics. It parses the incoming requests and delegates them to specific REST resources
+ * (Request Resources - RR) based on the requested URI and HTTP method. If the requested URI or method is not supported,
+ * it returns an appropriate error response.
+ * </p>
+ * <p>
+ * Supported URIs:
+ * <ul>
+ *     <li>/user/me: Operations related to the current user's profile</li>
+ *     <li>/user/me/friend: Operations related to managing the current user's friends</li>
+ *     <li>/user/{username}/logs: Operations related to accessing logs for a specific user</li>
+ *     <li>/user/{username}/statistic: Operations related to accessing statistics for a specific user</li>
+ *     <li>/user/{username}: Operations related to accessing profile information of a specific user</li>
+ * </ul>
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
     private static final String JSON_UTF_8_MEDIA_TYPE = "application/json; charset=utf-8";
 
+    /**
+     * Processes incoming HTTP requests and dispatches them to specific REST resources based on the requested URI
+     * and HTTP method.
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @throws IOException if an I/O error occurs while processing the request
+     */
     @Override
     protected void service(final HttpServletRequest req, final HttpServletResponse resp) throws IOException {
 
@@ -56,6 +87,20 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         }
     }
 
+    /**
+     * Processes user-related requests based on the requested URI and HTTP method and delegates them to specific REST
+     * resources (Request Resources - RR).
+     * <p>
+     * This method examines the requested URI and method to determine the type of user-related operation being
+     * requested. It then delegates the request to the appropriate REST resource (RR) for further processing. If the
+     * requested URI or method is not supported, it returns an appropriate error response.
+     * </p>
+     *
+     * @param req  the HTTP servlet request
+     * @param resp the HTTP servlet response
+     * @return {@code true} if the request was successfully processed and dispatched, {@code false} otherwise
+     * @throws Exception if an error occurs while processing the request
+     */
     private boolean processUser(final HttpServletRequest req, final HttpServletResponse resp) throws Exception {
 
         //take the method and the URI of the request
@@ -131,14 +176,10 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             }
 
         }
-
         //possible URIs: /user/{username}/logs , /user/{username}/statistic
         else if (path.contains("/logs") || path.contains("/statistic")) {
-            //I must take the username from the URI
-            String username = "user1";
-            //TODO RECUPERO USERNAME DA URI
-
-            username = uri.split("/")[3];
+            //takes username from the URI
+            String username = uri.split("/")[3];
 
             if (path.contains("/logs") && method.equals("GET")) {
 
@@ -188,6 +229,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
         }
 
         return true;
+
     }
 
 }

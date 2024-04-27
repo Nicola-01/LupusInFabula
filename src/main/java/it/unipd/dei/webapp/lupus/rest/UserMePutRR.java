@@ -8,20 +8,51 @@ import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.UserUpdate;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Represents a REST resource handler for handling PUT requests related to updating the current user's account.
+ * <p>
+ * This class handles PUT requests initiated by the current user to update their account information, including
+ * password and email address. It verifies the user's identity by checking their session information and ensures
+ * the validity of the requested updates.
+ * </p>
+ * <p>
+ * If the update operation is successful, appropriate success messages are returned. If there are any errors, such
+ * as incorrect password or inability to update the email, corresponding error messages are returned.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class UserMePutRR extends AbstractRR {
 
+    /**
+     * Constructs a new UserMePutRR object with the specified HTTP request, response, and data source.
+     *
+     * @param req the HTTP request
+     * @param res the HTTP response
+     * @param ds  the data source
+     */
     public UserMePutRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.UPDATE_USER, req, res, ds);
     }
 
+    /**
+     * Handles the PUT request for updating the current user's account.
+     * <p>
+     * This method processes the update request sent by the user, including changes to the password or email address.
+     * It verifies the user's identity, validates the requested updates, and performs the corresponding database
+     * operations. It returns appropriate success or error messages based on the outcome of the update operation.
+     * </p>
+     *
+     * @throws IOException if an I/O error occurs while processing the request or sending the response
+     */
     @Override
     protected void doServe() throws IOException {
 
