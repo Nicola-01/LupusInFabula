@@ -204,7 +204,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         switch (requestURI) {
             case "status":
-                // new GameStatusRR(req, res, getDataSource(), gameID, isMaster).serve();
+                new GameStatusRR(req, res, getDataSource(), gameID).serve();
                 break;
             case "players":
                 new GamePlayersRR(req, res, getDataSource(), gameID, isMaster).serve();

@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.*;
 
 public class GameActionsPostRR extends AbstractRR {
@@ -19,6 +20,8 @@ public class GameActionsPostRR extends AbstractRR {
     private final Map<String, Boolean> deadPlayers;
     private final Map<String, String> playersRole;
     private final int gameID;
+
+    int currentRound, currentPhase;
 
     public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.ADD_ACTIONS, req, res, ds);
@@ -48,8 +51,8 @@ public class GameActionsPostRR extends AbstractRR {
             // first String: playerUsername , second String: role of the player
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            int currentRound = game.getRounds();
-            int currentPhase = game.getPhase();
+            currentRound = game.getRounds();
+            currentPhase = game.getPhase();
 
             if (currentPhase == GamePhase.NIGHT.getId()) {
                 if (handleNightPhase(gameActions))
@@ -70,6 +73,8 @@ public class GameActionsPostRR extends AbstractRR {
             }
 
             LOGGER.info("Checked all actions");
+
+            // updatePlayerDeath(username); // TODO --> update player death
 
 
             // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
@@ -471,6 +476,11 @@ public class GameActionsPostRR extends AbstractRR {
             }
         }
         return true;
+    }
+
+    private void updatePlayerDeath(String player) throws SQLException {
+        PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
+        new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
     }
 
 }

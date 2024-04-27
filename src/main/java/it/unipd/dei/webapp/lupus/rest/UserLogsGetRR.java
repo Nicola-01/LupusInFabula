@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
-import it.unipd.dei.webapp.lupus.dao.GetLogsDAO;
+import it.unipd.dei.webapp.lupus.dao.GetPlayerLogsDAO;
+import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,19 +46,29 @@ public class UserLogsGetRR extends AbstractRR {
         List<PlaysJoinGame> logs = null;
 
         try {
-            LogContext.setUser(username);
+            if (new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam() != null)
+            {
+                LogContext.setUser(username);
 
-            logs = new GetLogsDAO(ds.getConnection(), username).access().getOutputParam();
+                logs = new GetPlayerLogsDAO(ds.getConnection(), username).access().getOutputParam();
 
-            LOGGER.info("Logs successfully collected for user: %s", username);
+                LOGGER.info("Logs successfully collected for user: %s", username);
 
-            m = new Message("Access to logs of Player " + username + " that has played " + logs.size() + " games");
-            res.setStatus(HttpServletResponse.SC_OK);
-            m.toJSON(res.getOutputStream());
+                m = new Message("Access to logs of Player " + username + " that has played " + logs.size() + " games");
+                res.setStatus(HttpServletResponse.SC_OK);
+                m.toJSON(res.getOutputStream());
 
-            new ResourceList<PlaysJoinGame>(logs).toJSON(res.getOutputStream());
-
-        } catch (SQLException e) {
+                new ResourceList<PlaysJoinGame>(logs).toJSON(res.getOutputStream());
+            }
+            else {
+                ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
+                res.setStatus(ec.getHTTPCode());
+                m = new Message("Cannot search logs for user " + username + ": user not exists in the database.", ec.getErrorCode(), "One player does not exist.");
+                LOGGER.warn("Cannot search logs for user %s: user not exists in the database.", username);
+                m.toJSON(res.getOutputStream());
+            }
+        }
+        catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             res.setStatus(ec.getHTTPCode());
             m = new Message("Cannot search logs for user " + username + ": unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
