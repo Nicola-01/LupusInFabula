@@ -10,10 +10,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 public class GameActionsPostRR extends AbstractRR {
 
@@ -42,8 +39,9 @@ public class GameActionsPostRR extends AbstractRR {
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo to handle throws IOException
 
             // check of the correctness of the actions
-            if (!correctnessOfActions(gameActions))
-                return;
+            // todo uncomment this line
+            //if (!correctnessOfActions(gameActions))
+            //    return;
 
             LOGGER.info("correctness of actions done");
             // contain all player in the game (gameID) with their role
@@ -56,7 +54,7 @@ public class GameActionsPostRR extends AbstractRR {
             if (currentPhase == GamePhase.NIGHT.getId()) {
                 if (handleNightPhase(gameActions))
                     return;
-            } else if (handleDayPhase())
+            } else if (handleDayPhase(gameActions))
                 return;
 
             if (currentRound != 0) {
@@ -94,7 +92,37 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     // TODO
-    private boolean handleDayPhase() {
+    private boolean handleDayPhase(List<GameAction> gameActions) throws SQLException, IOException {
+        //The first thing to do is handling the vote
+        //Then update the database based on the action and the death player
+        Map<String, Integer> votesMap = getVotesMap(gameActions);
+
+        for(GameAction gameAction: gameActions){
+            String player = gameAction.getPlayer();
+            String role = gameAction.getRole();
+            String target = gameAction.getTarget();
+            LOGGER.info("%s with role %s has voted %s", player, role, target);
+
+            // DAO for add the action to the database
+
+            votesMap.put(target, votesMap.get(target) + 1);
+        }
+
+        List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
+        Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        for (Map.Entry<String, Integer> entry : votesList) {
+            LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
+        }
+
+        if(votesList.get(0).getValue() == votesList.get(1).getValue()){
+            LOGGER.info("Ballottaggio");
+        }
+
+        LOGGER.info("Players %s is voted", votesList.get(0).getKey());
+
+        //DAO for update the database with the dead of the player
+
         return true;
     }
 
@@ -389,6 +417,16 @@ public class GameActionsPostRR extends AbstractRR {
 
         return action;
 
+    }
+
+    private Map<String, Integer> getVotesMap(List<GameAction> gameActions) throws IOException{
+        Map<String, Integer> votesMap = new HashMap<>();
+
+        for(GameAction gameAction : gameActions){
+            votesMap.put(gameAction.getPlayer() , 0);
+        }
+
+        return votesMap;
     }
 
     private boolean actionCheck(Map<String, Map<String, Boolean>> actionsMap, Map<String, String> playerRole) throws SQLException, IOException {
