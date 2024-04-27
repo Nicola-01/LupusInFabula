@@ -61,21 +61,22 @@ Content-Type: application/json
   "gameAction": [
     {
       "player":"user1",
-      "role":"explorer",
+      "role":"wolf",
       "target":"user7"
     },
     {
-      "player":"user5",
-      "role":"berserker",
-      "target":"user4"
+      "player":"user7",
+      "role":"knight",
+      "target":"user8"
     },
     {
-      "player":"user5",
-      "role":"berserker",
-      "target":"user8"
+      "player":"user8",
+      "role":"sheriff",
+      "target":"user7"
     }
   ]
 }
+
 
 ### login as master player0
 POST http://localhost:8080/lupus/login HTTP/1.1

@@ -62,7 +62,7 @@ public class UserMeDeleteRR extends AbstractRR {
 
         try {
 
-            // TODO --> implement the password verification of the user
+            // TODO --> to check
 
             // Implementation of user confirmation password before deleting the account
             InputStream stream = req.getInputStream();

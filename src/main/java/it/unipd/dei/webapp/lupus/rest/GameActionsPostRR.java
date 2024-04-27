@@ -10,12 +10,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.*;
 
 public class GameActionsPostRR extends AbstractRR {
 
-    // Contain the role name and his action
+    // Contain the role name and his action during the night
     private static final Map<String, String> nightAction = new HashMap<>();
     private final Map<String, Boolean> deadPlayers;
     private final Map<String, String> playersRole;
@@ -37,14 +36,15 @@ public class GameActionsPostRR extends AbstractRR {
 
     @Override
     protected void doServe() throws IOException {
+
         try {
 
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo to handle throws IOException
 
             // check of the correctness of the actions
             // todo uncomment this line
-            //if (!correctnessOfActions(gameActions))
-            //    return;
+            if (!correctnessOfActions(gameActions))
+                return;
 
             LOGGER.info("correctness of actions done");
             // contain all player in the game (gameID) with their role
@@ -90,6 +90,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
             new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
             LOGGER.info("updating game");
+
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
@@ -131,10 +132,27 @@ public class GameActionsPostRR extends AbstractRR {
         return true;
     }
 
+    private int wolfCount() {
+
+        // count of wolves still alive for some effects (puppy doesn't count since it can't kill anyone till he's a puppy)
+        int number_of_wolves = 0;
+        //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        for (Map.Entry<String, String> playerRole : playersRole.entrySet())
+            if((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
+                    || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
+                    || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName())
+                    || playerRole.getValue().equals(GameRoleAction.DORKY.getName()))
+                    && !deadPlayers.get(playerRole.getKey()))
+                number_of_wolves++;
+
+        return number_of_wolves;
+    }
+
     // TODO
     private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
 
         Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
+        int number_of_wolves = wolfCount();
 
         if (actionsMap == null)
             return false;
@@ -143,19 +161,7 @@ public class GameActionsPostRR extends AbstractRR {
         if (!actionCheck(actionsMap, playersRole))
             return false;
 
-        // count of wolves still alive for some effects
-        int number_of_wolves = 0;
-        //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-        for (Map.Entry<String, String> playerRole : playersRole.entrySet())
-            if((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
-                    || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
-                    || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName())
-                    || playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
-                    || playerRole.getValue().equals(GameRoleAction.DORKY.getName()))
-                    && !deadPlayers.get(playerRole.getKey()))
-                number_of_wolves++;
-
-        LOGGER.info("Number of wolves in the game " + number_of_wolves);
+        //LOGGER.info("Number of wolves in the game " + number_of_wolves);
 
         // for each player in the map i check the associated map. Then for each element in this map i check if the player is a target of which action
         for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
@@ -166,14 +172,15 @@ public class GameActionsPostRR extends AbstractRR {
             // check for the "explore" action --> EXPLORER
             // (he can explore only once in a game, so if he decides to do it, after that he will become a normal wolf)
             if (actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())) {
-                LOGGER.info("The player " + player + " has been killed by the explorer");
+                if (!new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
+                    LOGGER.info("The player " + player + " has been killed by the explorer");
 
                 String explorer = "";
                 for (GameAction gameAction : gameActions)
                     if (gameAction.getTarget().equals(player))
                         explorer = gameAction.getPlayer();
                 // TODO --> to check the implementation of the update
-                new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, explorer).access();
+                //new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, explorer).access();
                 //LOGGER.info("The explorer " + explorer + " has been demoted to wolf");
             }
 
@@ -197,6 +204,9 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.info("The player " + player + " has been blocked during the night");
             }
 
+            // check for the "protect" action --> KNIGHT
+            // (if the current target is the same as the previous turn target, tha knight has to change target)
+
             // check of the "maul" action --> WOLVES
             // (if the player is protected, or is the hamster, or is the hobbit and in the game are still alive more than 1 wolf, then the player will not die)
             if (actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
@@ -206,9 +216,11 @@ public class GameActionsPostRR extends AbstractRR {
                         && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
                         && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())) {
 
+                    updatePlayerDeath(player);
                     LOGGER.info("The player " + player + " has been killed by the wolves during the night");
 
                 } else if (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) && (number_of_wolves <= 1)) {
+                    updatePlayerDeath(player);
                     LOGGER.info("The player " + player + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
                 }
 
@@ -265,10 +277,9 @@ public class GameActionsPostRR extends AbstractRR {
                         dorky = gameAction.getPlayer();
 
                 assert player_role != null;
-                // TODO --> to fix the number of wolves
                 if (player_role.getRoleType().getType() == 1 || number_of_wolves == 0) {
                     // update of the role of dorky into wolf (update the database)
-                    new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, dorky).access();
+                    //new UpdateRoleInPlayAsInByUsernameAndGameIdDAO(ds.getConnection(), GameRoleAction.WOLF.getName(), gameID, dorky).access();
                     LOGGER.info("The dorky " + dorky + " has been promoted to wolf");
                 }
             }
@@ -277,8 +288,25 @@ public class GameActionsPostRR extends AbstractRR {
             // he can maul two target (so in the json he will appear two time), bypassing the knight and dying after he activated his effect
             if (actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())) {
 
-                LOGGER.info("The player " + player + " has been killed by the berserker");
+                if (!new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction())) {
+                    LOGGER.info("The player " + player + " has been killed by the berserker");
+                    LOGGER.info("The berserker has killed also himself during the night");
+                }
 
+            }
+
+            // check for the promotion of PUPPY
+            // (if he's the last wolf pack member he becomes a wolf himself, and he can maul)
+//            if (actionPlayerMap.get(GameRoleAction.PUPPY.getAction())) {
+//                if (wolfCount() == 0) {
+//                    //update puppy to wolf that can kill
+//                }
+//            }
+
+            // check for the "look" action --> MEDIUM
+            // (he looks at the RoleType of the player that died by the stake during the day)
+            if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())) {
+                LOGGER.info("The player " + player + " have seen if the stake dead player is good, evil or neutral");
             }
 
         }
@@ -289,8 +317,8 @@ public class GameActionsPostRR extends AbstractRR {
     private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
         // TODO --> fix the Logger.info error
         Message m;
-        Boolean wolfActionDone = false;
-        int berserkerCount = 2;
+        boolean wolfActionDone = false;
+        int berserkerCount = 0;
 
         for (GameAction gameAction : gameActions) {
 
@@ -338,11 +366,11 @@ public class GameActionsPostRR extends AbstractRR {
                 } else {
                     if (!wolfActionDone) {
                         switch (berserkerCount) {
-                            case 2:
-                                berserkerCount--;
+                            case 0:
+                                berserkerCount++;
                                 break;
                             case 1:
-                                berserkerCount--;
+                                berserkerCount++;
                                 wolfActionDone = true;
                                 break;
                         }
@@ -363,9 +391,6 @@ public class GameActionsPostRR extends AbstractRR {
             GameRoleAction gameRoleAction = GameRoleAction.valueOfName(playerRoleEntry.getValue());
             assert gameRoleAction != null;
             if (gameRoleAction.getAction() != null
-                    && (!rolesWithEffect.containsValue(GameRoleAction.WOLF.getName())
-                            || !rolesWithEffect.containsValue(GameRoleAction.EXPLORER.getName())
-                            || !rolesWithEffect.containsValue(GameRoleAction.BERSERKER.getName()))
                     && !gameRoleAction.getName().equals(GameRoleAction.KAMIKAZE.getName())) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
@@ -374,17 +399,34 @@ public class GameActionsPostRR extends AbstractRR {
         }
 
         //check if each role with an effect has done the action
-//        if (rolesWithEffect.size() != gameActions.size()) {
-//            m = new Message("ERROR, someone has not done his action this turn");
-//            LOGGER.warn("ERROR, someone has not done his action this turn");
-//            m.toJSON(res.getOutputStream());
-//            return false;
-//        }
+        if (berserkerCount == 0) {
+            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                m = new Message("ERROR, someone has not done his action, or has done too many actions this turn");
+                LOGGER.warn("ERROR, someone has not done his action, or has done too many actions this turn");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+        } else if (berserkerCount == 1) {
+            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                m = new Message("ERROR, someone has not done his action this turn");
+                LOGGER.warn("ERROR, someone has not done his action this turn "  + rolesWithEffect.size() + " " + gameActions.size() + " " + wolfCount());
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+        } else if (berserkerCount == 2) {
+            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
+                m = new Message("ERROR, someone has not done his action, or has done too many actions this turn (berserker case)");
+                LOGGER.warn("ERROR, someone has not done his action, or has done too many actions this turn (berserker case)");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+        }
 
         return true;
+
     }
 
-    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws IOException {
+    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws IOException, SQLException {
 
         // first String: playerUsername , second String: action , boolean: if playerUsername is the target of action
         Map<String, Map<String, Boolean>> action = new HashMap<>();
@@ -393,8 +435,18 @@ public class GameActionsPostRR extends AbstractRR {
 
             Map<String, Boolean> tmp = new HashMap<>();
             // take each action in nightAction and put it in tmp
-            for (Map.Entry<String, String> entry1 : nightAction.entrySet())
-                tmp.put(entry1.getValue(), false);
+            for (Map.Entry<String, String> entry1 : nightAction.entrySet()) {
+                // TODO --> to test
+                if (entry1.getKey().equals(GameRoleAction.DORKY.getName()))
+                    if (!new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+                        tmp.put(entry1.getValue(), false);
+                    else
+                        tmp.put(GameRoleAction.WOLF.getAction(), false);
+                else
+                    tmp.put(entry1.getValue(), false);
+
+
+            }
 
             // take each playerUsername and the map tmp and put them into action
             action.put(entry.getKey(), tmp);
@@ -446,6 +498,7 @@ public class GameActionsPostRR extends AbstractRR {
             String roleOfPlayer = playerRole.get(player);
             Map<String, Boolean> actionTarget = entry.getValue();
 
+            // check if the player is already dead
             if (deadPlayers.get(player)) {
                 // Todo -> to change
                 LOGGER.warn("The player " + player + " is dead");
@@ -487,13 +540,3 @@ public class GameActionsPostRR extends AbstractRR {
 
 //check all the actions (e.g. wolf attacks x, but x is protected so x doesn't die) --> implementation of all the controls of lupus
 //save in the table action everything that happens --> implement dao that insert data into action
-
-/**
- * TODO: controls to implement:
- * priority: farmer, wolf, sam, knight, seer, plague_spreader, hamster, hobbit, illusionist, jester, sheriff
- * - if berserker activate his effect he dies, but he bypass the protection of the knight
- * - if carpenter has as target himself, the bonfire won't be that night
- * - if dorky has as target a wolf he will become a wolf - if the dorky is the last evil in the game he will become a wolf
- * - if dorky has a target, the protection of the knight will be useless (this can be done only one during the game)
- * - ...
- */

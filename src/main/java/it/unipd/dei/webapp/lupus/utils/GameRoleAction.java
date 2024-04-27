@@ -12,7 +12,7 @@ public enum GameRoleAction {
     KAMIKAZE(RoleType.GOOD,"kamikaze", "blowup"),
     KNIGHT(RoleType.GOOD,"knight", "protect"),
     MEDIUM(RoleType.GOOD,"medium", "look"),
-    SAM(RoleType.GOOD,"sam", null),
+    SAM(RoleType.GOOD,"sam", null), // TODO --> think to the day action
     SEER(RoleType.GOOD,"seer", "investigate"),
     SHERIFF(RoleType.GOOD,"sheriff", "shot"),
     BERSERKER(RoleType.EVIL,"berserker", "rage"),

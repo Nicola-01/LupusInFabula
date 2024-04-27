@@ -8,7 +8,7 @@ GET http://localhost:8080/lupus/user/esempio111 HTTP/1.1
 
 
 ### Correct delete of a player, logged in, by the username
-POST http://localhost:8080/lupus/player/login HTTP/1.1
+POST http://localhost:8080/lupus/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = esempio &
@@ -26,12 +26,15 @@ user = esempio &
 password = password234
 
 ###
-POST http://localhost:8080/lupus/user/me HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
+PUT http://localhost:8080/lupus/user/me HTTP/1.1
+Content-Type: application/json
 
-oldPassword = password234 &
-newPassword = password123 &
-repeatNewPassword = password123
+{ "userUpdate": {
+  "oldPassword": "password123",
+  "newPassword": "password234",
+  "repeatNewPassword": "password234"
+}}
+
 
 
 ###Correct and wrong email update of a logged in user
