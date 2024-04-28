@@ -19,7 +19,7 @@ public enum GameRoleAction {
     DORKY(RoleType.EVIL,"dorky", "point"),
     EXPLORER(RoleType.EVIL,"explorer", "explore"),
     GIUDA(RoleType.EVIL,"giuda", null),
-    PUPPY(RoleType.EVIL,"puppy", null),
+    PUPPY(RoleType.EVIL,"puppy", "wait"),
     WOLF(RoleType.EVIL,"wolf", "maul"),
     HAMSTER(RoleType.VICTORY_STEALER,"hamster", null),
     JESTER(RoleType.VICTORY_STEALER,"jester", null),
@@ -44,6 +44,7 @@ public enum GameRoleAction {
     /**
      * Constructs a GameRole enum constant with the specified ID, name and action.
      *
+     * @param roleType The RoleType of a role.
      * @param name   The name of the role.
      * @param action The action of the role.
      */

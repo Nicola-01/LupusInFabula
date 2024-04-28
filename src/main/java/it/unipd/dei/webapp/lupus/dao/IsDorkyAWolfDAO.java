@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
 
-    private static final String STATEMENT = "SELECT player_username FROM action WHERE game_id = ? AND type_of_action = 'point'";
+    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = 'point'";
     private final int gameId;
     private final DataSource ds;
 
@@ -42,7 +42,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                playersList.add(rs.getString("player_username"));
+                playersList.add(rs.getString("target"));
             }
 
             wolfMap = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();

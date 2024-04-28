@@ -18,7 +18,7 @@ Content-Type: application/json
    },
    {
      "player":"user2",
-     "role":"seer",
+     "role":"dorky",
      "target":"player2"
    },
    {
@@ -61,18 +61,18 @@ Content-Type: application/json
   "gameAction": [
     {
       "player":"user1",
-      "role":"wolf",
-      "target":"user7"
-    },
-    {
-      "player":"user7",
-      "role":"knight",
+      "role":"puppy",
       "target":"user8"
     },
     {
       "player":"user8",
       "role":"sheriff",
       "target":"user7"
+    },
+    {
+      "player":"user7",
+      "role":"knight",
+      "target":"user1"
     }
   ]
 }

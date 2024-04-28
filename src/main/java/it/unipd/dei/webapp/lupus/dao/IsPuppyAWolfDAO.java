@@ -18,7 +18,7 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean>{
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT round_of_death FROM plays_as_in WHERE game_id = ? AND role = ? and round_of_death IS NULL";
+    private static final String STATEMENT = "SELECT round_of_death FROM plays_as_in WHERE game_id = ? AND role IN (?, ?, ?, ?) and round_of_death IS NULL";
 
     /**
      * The ID of the game to retrieve
@@ -47,6 +47,9 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean>{
 
             pstmt.setInt(1, gameID);
             pstmt.setString(2, GameRoleAction.WOLF.getName());
+            pstmt.setString(3, GameRoleAction.BERSERKER.getName());
+            pstmt.setString(4, GameRoleAction.DORKY.getName());
+            pstmt.setString(5, GameRoleAction.EXPLORER.getName());
 
             rs = pstmt.executeQuery();
 
