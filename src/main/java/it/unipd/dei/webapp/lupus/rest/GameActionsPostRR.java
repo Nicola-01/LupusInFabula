@@ -54,7 +54,9 @@ public class GameActionsPostRR extends AbstractRR {
         this.gameID = gameID;
 
         for (GameRoleAction role : GameRoleAction.values())
-            if (role.getAction() != null)
+            if (role.getAction() != null
+                    && !role.getAction().equals(GameRoleAction.SAM.getAction())
+                    && !role.getAction().equals(GameRoleAction.CARPENTER.getAction()))
                 nightAction.put(role.getName(), role.getAction());
 
         deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();

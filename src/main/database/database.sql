@@ -146,7 +146,7 @@ CREATE TABLE Action
     subphase        INTEGER                                  NOT NULL,
     type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
-    PRIMARY KEY (game_id, player_username, round, phase, subphase),
+    PRIMARY KEY (game_id, player_username, round, phase, subphase, target),
     CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
