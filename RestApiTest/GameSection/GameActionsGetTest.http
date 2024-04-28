@@ -10,3 +10,14 @@ GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
 
 ### The player is not the master of the game
 GET http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+
+### Game with all roles
+# login as master
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = allRoleMaster &
+password = allRole
+
+### Get actions
+GET http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1

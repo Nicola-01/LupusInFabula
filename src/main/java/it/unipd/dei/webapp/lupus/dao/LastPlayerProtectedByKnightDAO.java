@@ -54,8 +54,6 @@ public class LastPlayerProtectedByKnightDAO extends AbstractDAO<String> {
 
             if (rs.next()) {
                 target = rs.getString("target");
-            } else {
-                LOGGER.warn("No player protected by the Knight");
             }
 
         } finally {

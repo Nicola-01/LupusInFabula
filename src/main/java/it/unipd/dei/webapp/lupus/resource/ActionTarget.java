@@ -122,9 +122,11 @@ public class ActionTarget extends AbstractResource {
         jg.writeFieldName("actionTarget");
         jg.writeStartObject();
 
-        if(player != null)
+        // if the player is set the action is for a single player
+        if (player != null)
             jg.writeStringField("player", player);
-        else{
+        // else the action is for a role, i.e. multiple players
+        else {
             jg.writeStringField("role", role);
             listToJSON(jg, players, "players");
         }
@@ -164,13 +166,13 @@ public class ActionTarget extends AbstractResource {
                 jg.flush();
                 firstElement = false;
             } else {
-                jg.writeRaw(',');
+//                jg.writeRaw(',');
                 jg.flush();
 
                 jg.writeStartObject();
                 jg.writeStringField("player", player);
                 jg.writeEndObject();
-                jg.flush();
+//                jg.flush();
 
                 jg.flush();
             }

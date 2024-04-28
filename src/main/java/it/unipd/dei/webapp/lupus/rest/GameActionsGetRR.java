@@ -158,48 +158,36 @@ public class GameActionsGetRR extends AbstractRR {
 
         // for each action that can be done in the night
         for (Map.Entry<String, String> night : nightAction.entrySet()) {
+
+            // if the role is not in the game
+            if (!playerRole.containsValue(night.getKey()))
+                continue;
+
             String role = night.getKey();
             List<String> targets = new ArrayList<>();
 
-            boolean isPuppyAWolf = new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam();
-            boolean explorerAlreadyExplore = new IsExplorerAWolfDAO(ds.getConnection(), gameID).access().getOutputParam();
-            boolean isDorkyAWolf = new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam();
-
-            if ((!role.equals(GameRoleAction.PUPPY.getName()) && !role.equals(GameRoleAction.EXPLORER.getName()) && !role.equals(GameRoleAction.DORKY.getName()))
-                    || (role.equals(GameRoleAction.PUPPY.getName()) && isPuppyAWolf)
-                    || (role.equals(GameRoleAction.EXPLORER.getName()) && explorerAlreadyExplore)
-                    || (role.equals(GameRoleAction.DORKY.getName()) && isDorkyAWolf)) {
+            // if the role is not a puppy or is a puppy but is the last wolf alive
+            if (!role.equals(GameRoleAction.PUPPY.getName()) || new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
 
                 for (String targetPlayer : playerRole.keySet()) {
                     if (isValidTarget(targetPlayer, role))
                         targets.add(targetPlayer);
-
-                }
-                Collections.sort(targets);
-                actionTargets.add(new ActionTarget(role, playerWithRole(role),
-                        getNightAction(role, isPuppyAWolf, explorerAlreadyExplore, isPuppyAWolf), targets));
-            }
-
-            // get the possible target of that action
-            for (String targetPlayer : playerRole.keySet()) {
-                if ((!role.equals(playerRole.get(targetPlayer))
-                        || role.equals(GameRoleAction.KNIGHT.getName())
-                        || role.equals(GameRoleAction.PLAGUE_SPREADER.getName())
-                        && !areDead.get(targetPlayer))
-                )
+                    // TODO -> fix comments
                     // If the role is different from the role of the target player,
                     // excluding the knight and plague spreader roles, which can target themselves,
                     // add the target player to the list of targets.
                     // The dead players can not be voted
-                    targets.add(targetPlayer);
 
+                }
+                Collections.sort(targets);
+                actionTargets.add(new ActionTarget(role, playerWithRole(role),
+                        getNightAction(role), targets));
             }
-            Collections.sort(targets);
-            actionTargets.add(new ActionTarget(role, playerWithRole(role), nightAction.get(role), targets));
         }
         LOGGER.info("Returning the actions of night phase.");
         new ResourceList<>(actionTargets).toJSON(res.getOutputStream());
     }
+
 
     /**
      * Retrieves a list of players with the specified role.
@@ -216,34 +204,49 @@ public class GameActionsGetRR extends AbstractRR {
         return players;
     }
 
+    /**
+     * Checks if the specified target player is a valid target for the given role.
+     *
+     * @param targetPlayer The player to be checked as a target.
+     * @param role         The role of the player performing the action.
+     * @return {@code true} if the target player is valid for the given role, {@code false} otherwise.
+     * @throws SQLException if an SQL exception occurs.
+     */
     private boolean isValidTarget(String targetPlayer, String role) throws SQLException {
-        // Knights and Plague Spreaders can target themselves
+        // the target player must be alive
         if (areDead.get(targetPlayer))
             return false;
 
-        // Knight and Plague spreader could target even they self
+        // Plague Spreader can target themselves
         if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName()))
             return true;
 
-        String lastPlayerProtectedByKnight = new LastPlayerProtectedByKnightDAO(ds.getConnection(), gameID).access().getOutputParam();
-        if (role.equals(GameRoleAction.KNIGHT.getName()) && !targetPlayer.equals(lastPlayerProtectedByKnight))
-            return true;
+        // Knight can target themselves, but it needs to be different from the previous target
+        if (role.equals(GameRoleAction.KNIGHT.getName()))
+            return !targetPlayer.equals(new LastPlayerProtectedByKnightDAO(ds.getConnection(), gameID).access().getOutputParam());
 
         return true;
-
-
-        // If the role is different from the role of the target player,
-        // excluding the knight and plague spreader roles, which can target themselves,
-        // add the target player to the list of targets.
-        // The dead players can not be voted
     }
 
-    private String getNightAction(String role, boolean isPuppyAWolf, boolean explorerAlreadyExplore, boolean isDorkyAWolf) throws SQLException {
-        if ((role.equals(GameRoleAction.PUPPY.getName()) && isPuppyAWolf)
-                || (role.equals(GameRoleAction.EXPLORER.getName()) && explorerAlreadyExplore)
-                || (role.equals(GameRoleAction.DORKY.getName()) && isDorkyAWolf))
+    /**
+     * Gets the night action for the specified role.
+     *
+     * @param role The role for which to retrieve the night action.
+     * @return The night action associated with the specified role.
+     * @throws SQLException if an SQL exception occurs.
+     */
+    private String getNightAction(String role) throws SQLException {
+        // if the role is not Puppy, Explorer, or Dorky, return the corresponding night action
+        if (!role.equals(GameRoleAction.PUPPY.getName()) && !role.equals(GameRoleAction.EXPLORER.getName()) && !role.equals(GameRoleAction.DORKY.getName()))
+            return nightAction.get(role);
+
+        // if the role is Puppy and is a wolf, or Explorer and is a wolf, or Dorky and is a wolf, return the wolf action
+        if ((role.equals(GameRoleAction.PUPPY.getName()) && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                || (role.equals(GameRoleAction.EXPLORER.getName()) && new IsExplorerAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                || (role.equals(GameRoleAction.DORKY.getName()) && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()))
             return GameRoleAction.WOLF.getAction();
         else
+            // if the role is not a wolf, return the corresponding night action
             return nightAction.get(role);
     }
 }
