@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
+import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -87,27 +88,35 @@ public class GameActionsPostRR extends AbstractRR {
             } else if (!handleDayPhase(gameActions))
                 return;
 
+            Message m = isAVictory();
+            if (m != null) {
+                m.toJSON(res.getOutputStream());
+                currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
-
-            if (currentPhase == GamePhase.DAY.getId()) {
-                currentRound++;
-                currentPhase = GamePhase.NIGHT.getId();
-            } else {
-                currentPhase = GamePhase.DAY.getId();
+                LOGGER.info("The game finished, winner(s): " + m.getMessage());
+                new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
             }
+            else {
 
-            // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
+                if (currentPhase == GamePhase.DAY.getId()) {
+                    currentRound++;
+                    currentPhase = GamePhase.NIGHT.getId();
+                } else {
+                    currentPhase = GamePhase.DAY.getId();
+                }
 
-            LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
-            new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-            LOGGER.info("updating game");
+                // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
+
+                LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
+                new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
+                LOGGER.info("updating game");
+            }
 
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
         }
 
     }
-
 
     private boolean handleDayPhase(List<GameAction> gameActions) throws SQLException, IOException {
         //The first thing to do is handling the vote
@@ -853,6 +862,55 @@ public class GameActionsPostRR extends AbstractRR {
     private void updatePlayerDeath(String player) throws SQLException {
         PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
         new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+    }
+
+    /**
+     * Determines if the game has reached a victory condition.
+     *
+     * @return a {@code Message} indicating the result of the victory condition:
+     * <ul>
+     *     <li>"The Evil roles win the game" if Evil wins.</li>
+     *     <li>"The Hamster wins the game" if Hamster wins.</li>
+     *     <li>"The Good and Neutral roles win the game" if Good and Neutral win.</li>
+     *     <li>"The Jester wins the game" if Jester wins.</li>
+     *     <li>{@code null} if no victory condition is met.</li>
+     * </ul>
+     * @throws SQLException if there is an error accessing the database.
+     */
+    private Message isAVictory() throws SQLException {
+        Map<Integer, Integer> roleTypeCardinality = new HashMap<>();
+        List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
+        String hamster = "";
+        String jester = "";
+
+        for (Map.Entry<String, String> playerRole : playersRole.entrySet()) {
+            for (Role role : roles)
+                if (role.getName().equals(playerRole.getValue()) && !deadPlayers.get(playerRole.getKey()))
+                    roleTypeCardinality.put(role.getWith_who_wins(), roleTypeCardinality.getOrDefault(role.getWith_who_wins(), 0) + 1);
+
+            if (playerRole.getValue().equals(GameRoleAction.HAMSTER.getName()) && !deadPlayers.get(playerRole.getKey()))
+                hamster = playerRole.getKey();
+            if (playerRole.getValue().equals(GameRoleAction.JESTER.getName()) && deadPlayers.get(playerRole.getKey()))
+                jester = playerRole.getKey();
+        }
+
+        int totalRoles = 0;
+        for (int number : roleTypeCardinality.values())
+            totalRoles += number;
+
+        if (roleTypeCardinality.get(RoleType.EVIL.getType()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
+            return new Message("The Evil roles win the game");
+
+        if (roleTypeCardinality.get(RoleType.EVIL.getType()) == 0 && !hamster.isEmpty())
+            return new Message("The Hamster wins the game");
+
+        if (roleTypeCardinality.get(RoleType.EVIL.getType()) == 0)
+            return new Message("The Good and Neutral roles win the game");
+
+        if (!jester.isEmpty() && new IsJesterVotedOut(ds.getConnection(), ds, gameID).access().getOutputParam())
+            return new Message("The Jester wins the game");
+
+        return null;
     }
 
 }

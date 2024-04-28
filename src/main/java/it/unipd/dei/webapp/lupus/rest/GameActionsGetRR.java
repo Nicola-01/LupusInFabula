@@ -33,6 +33,7 @@ public class GameActionsGetRR extends AbstractRR {
      * Map containing the actions available during the night phase of the game.
      * The key is the role name, and the value is the corresponding action.
      */
+    // TODO -> remove SAM and CARPENTER
     private static final Map<String, String> nightAction = new HashMap<>();
 
     /**

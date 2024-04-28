@@ -85,7 +85,7 @@ CREATE TABLE Game
 (
     ID            SERIAL PRIMARY KEY,
     public_ID     CHARACTER VARYING UNIQUE NOT NULL,
-    start         TIMESTAMP                NOT NULL,
+    start         TIMESTAMP(0)             NOT NULL,
     game_duration TIME,
     who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
     rounds        SMALLINT CHECK ( rounds >= 0)                   DEFAULT 0,

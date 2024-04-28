@@ -30,7 +30,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
     private static final String STATEMENT_SEARCH_GAME = "SELECT * FROM game WHERE public_ID = ?";
 
     /**
-     * List of all roles used to create the new public gameID, i.e., a combination of three roles.
+     * To connect to the database
      */
     private final DataSource ds;
 

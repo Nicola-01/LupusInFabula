@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.Time;
 
 /**
@@ -15,14 +16,12 @@ import java.sql.Time;
 public class UpdateGameDAO extends AbstractDAO {
 
     /**
-     * The SQL statement to update game information.
+     * The SQL statement to update game information if it's not finished.
      */
-    private static final String STATEMENT = "UPDATE game SET game_duration = ?, who_wins = ?, rounds = ?, phase = ? WHERE id = ?";
+    private static final String STATEMENT_NOT_FINISHED = "UPDATE game SET rounds = ?, phase = ? WHERE id = ?";
 
-    /**
-     * The game duration to be updated.
-     */
-    private Time game_duration;
+    private static final String STATEMENT_FINISHED = "UPDATE game SET rounds = ?, phase = ?, who_wins = ?, game_duration = now() - start WHERE id = ?";
+
 
     /**
      * The player who wins the game.
@@ -48,33 +47,31 @@ public class UpdateGameDAO extends AbstractDAO {
      * Constructs a new UpdateGameDAO with the specified database connection, game ID, phase, rounds, who wins,
      * and game duration.
      *
-     * @param con            the database connection
-     * @param gameId         the ID of the game to be updated
-     * @param phase          the current phase of the game
-     * @param rounds         the number of rounds in the game
-     * @param who_wins       the player who wins the game
-     * @param game_duration  the duration of the game
+     * @param con      the database connection
+     * @param gameId   the ID of the game to be updated
+     * @param phase    the current phase of the game
+     * @param rounds   the number of rounds in the game
+     * @param who_wins the player who wins the game
      */
-    public UpdateGameDAO(final Connection con, final int gameId, int phase, int rounds, int who_wins, Time game_duration) {
+    public UpdateGameDAO(final Connection con, final int gameId, int phase, int rounds, int who_wins) {
         super(con);
         this.gameId = gameId;
         this.phase = phase;
         this.rounds = rounds;
         this.who_wins = who_wins;
-        this.game_duration = game_duration;
     }
 
     /**
      * Constructs a new UpdateGameDAO with the specified database connection, game ID, phase, and rounds.
      * This constructor is used when updating only the phase and number of rounds of a game that is still running.
      *
-     * @param con     the database connection
-     * @param gameId  the ID of the game to be updated
-     * @param phase   the current phase of the game
-     * @param rounds  the number of rounds in the game
+     * @param con    the database connection
+     * @param gameId the ID of the game to be updated
+     * @param phase  the current phase of the game
+     * @param rounds the number of rounds in the game
      */
     public UpdateGameDAO(final Connection con, final int gameId, int phase, int rounds) {
-        this(con, gameId, phase, rounds, -1, null);
+        this(con, gameId, phase, rounds, -1);
     }
 
 
@@ -87,19 +84,24 @@ public class UpdateGameDAO extends AbstractDAO {
     protected void doAccess() throws Exception {
 
         PreparedStatement pstmt = null;
-        int rs;
 
         try {
+            if (who_wins != -1) {
+                pstmt = con.prepareStatement(STATEMENT_NOT_FINISHED);
 
-            pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setTime(1, game_duration);
-            pstmt.setInt(2, who_wins);
-            pstmt.setInt(3, rounds);
-            pstmt.setInt(4, phase);
-            pstmt.setInt(5, gameId);
-            //LOGGER.info("Update of game");
-            rs = pstmt.executeUpdate();
-            //LOGGER.info("Update of game ok");
+                pstmt.setInt(1, rounds);
+                pstmt.setInt(2, phase);
+                pstmt.setInt(3, gameId);
+            } else {
+                pstmt = con.prepareStatement(STATEMENT_FINISHED);
+
+                pstmt.setInt(1, rounds);
+                pstmt.setInt(2, phase);
+                pstmt.setInt(3, who_wins);
+                pstmt.setInt(4, gameId);
+            }
+
+            pstmt.executeUpdate();
         } finally {
             if (pstmt != null) {
                 pstmt.close();
