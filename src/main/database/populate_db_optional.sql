@@ -63,15 +63,18 @@ VALUES ('dorky-farmer-explorer', '2024-04-21 14:01:49.305661'),
 
 INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
 VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for game 1
-       ('user1', 1, 'puppy', null, null, null),
-       ('user2', 1, 'dorky', 1, 1, null),
+       ('user2', 1, 'dorky', null, null, null),
        ('user3', 1, 'kamikaze', null, null, null),
        ('user4', 1, 'hobbit', null, null, null),
        ('user5', 1, 'explorer', null, null, null),
        ('user6', 1, 'hamster', null, null, null),
        ('user7', 1, 'knight', null, null, null),
        ('user8', 1, 'sheriff', null, null, null),
+<<<<<<< Updated upstream
        ('user9', 1, 'wolf', 3, 0, null),
+=======
+       ('user9', 1, 'wolf', null, null, null);
+>>>>>>> Stashed changes
 -- Game 2
 --        ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
 --        ('player1', 2, 'knight', null, null, null),
@@ -112,8 +115,8 @@ VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for 
 
 
 
-INSERT INTO public.Action
-VALUES (1, 'user7', 1, 0, 0, 'protect', 'user7');
+-- INSERT INTO public.Action
+-- VALUES (1, 'user7', 1, 0, 0, 'protect', 'user7');
 --        (1, 'user2', 1, 0, 0, 'point', 'user1'),
 --        (1, 'user5', 2, 0, 0, 'explorer', 'user4'),
 --        (1, 'user8', 2, 0, 0, 'shot', 'user9'),

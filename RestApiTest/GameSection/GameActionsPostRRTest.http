@@ -61,7 +61,7 @@ Content-Type: application/json
   "gameAction": [
     {
       "player":"user1",
-      "role":"puppy",
+      "role":"dorky",
       "target":"user8"
     },
     {
@@ -73,6 +73,11 @@ Content-Type: application/json
       "player":"user7",
       "role":"knight",
       "target":"user6"
+    },
+    {
+      "player":"user9",
+      "role":"wolf",
+      "target":"user3"
     }
   ]
 }
