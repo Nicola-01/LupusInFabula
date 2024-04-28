@@ -90,7 +90,7 @@ Content-Type: application/x-www-form-urlencoded
 user = player0 &
 password = ciao
 
-### Test day phase
+### Test day phase no ballot
 POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
 Content-Type: application/json
 
@@ -103,7 +103,61 @@ Content-Type: application/json
     },
     {
       "player":"player2",
-      "role":"hamster",
+      "role":"carpenter",
+      "target":"player4"
+    },
+    {
+      "player":"player3",
+      "role":"jester",
+      "target":"player4"
+    },
+    {
+      "player":"player4",
+      "role":"sheriff",
+      "target":"player9"
+    },
+    {
+      "player":"player5",
+      "role":"seer",
+      "target":"player4"
+    },
+    {
+      "player":"player6",
+      "role":"plague spreader",
+      "target":"player9"
+    },
+    {
+      "player":"player7",
+      "role":"wolf",
+      "target":"player9"
+    },
+    {
+      "player":"player8",
+      "role":"wolf",
+      "target":"player5"
+    },
+    {
+      "player":"player9",
+      "role":"sam",
+      "target":"player4"
+    }
+  ]
+}
+
+### Test day phase sam
+POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"player1",
+      "role":"knight",
+      "target":"player4"
+    },
+    {
+      "player":"player2",
+      "role":"carpenter",
       "target":"player4"
     },
     {
@@ -134,7 +188,165 @@ Content-Type: application/json
     {
       "player":"player8",
       "role":"wolf",
-      "target":"player5"
+      "target":"player9"
+    },
+    {
+      "player":"player9",
+      "role":"sam",
+      "target":"player4"
+    },
+    {
+      "player":"player9",
+      "role":"sam",
+      "target":"player4"
+    }
+  ]
+}
+
+### Test day phase carpenter
+POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"player1",
+      "role":"knight",
+      "target":"player2"
+    },
+    {
+      "player":"player2",
+      "role":"carpenter",
+      "target":"player4"
+    },
+    {
+      "player":"player3",
+      "role":"jester",
+      "target":"player2"
+    },
+    {
+      "player":"player4",
+      "role":"sheriff",
+      "target":"player2"
+    },
+    {
+      "player":"player5",
+      "role":"seer",
+      "target":"player2"
+    },
+    {
+      "player":"player6",
+      "role":"plague spreader",
+      "target":"player2"
+    },
+    {
+      "player":"player7",
+      "role":"wolf",
+      "target":"player2"
+    },
+    {
+      "player":"player8",
+      "role":"wolf",
+      "target":"player2"
+    },
+    {
+      "player":"player9",
+      "role":"sam",
+      "target":"player4"
+    }
+  ]
+}
+
+### Test day phase ballot
+POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"player1",
+      "role":"knight",
+      "target":"player2"
+    },
+    {
+      "player":"player2",
+      "role":"carpenter",
+      "target":"player4"
+    },
+    {
+      "player":"player3",
+      "role":"jester",
+      "target":"player2"
+    },
+    {
+      "player":"player4",
+      "role":"sheriff",
+      "target":"player2"
+    },
+    {
+      "player":"player5",
+      "role":"seer",
+      "target":"player4"
+    },
+    {
+      "player":"player6",
+      "role":"plague spreader",
+      "target":"player4"
+    },
+    {
+      "player":"player7",
+      "role":"wolf",
+      "target":"player2"
+    },
+    {
+      "player":"player8",
+      "role":"wolf",
+      "target":"player9"
+    },
+    {
+      "player":"player9",
+      "role":"sam",
+      "target":"player4"
+    },
+    {
+      "player":"player1",
+      "role":"knight",
+      "target":"player2"
+    },
+    {
+      "player":"player2",
+      "role":"carpenter",
+      "target":"player4"
+    },
+    {
+      "player":"player3",
+      "role":"jester",
+      "target":"player2"
+    },
+    {
+      "player":"player4",
+      "role":"sheriff",
+      "target":"player2"
+    },
+    {
+      "player":"player5",
+      "role":"seer",
+      "target":"player4"
+    },
+    {
+      "player":"player6",
+      "role":"plague spreader",
+      "target":"player4"
+    },
+    {
+      "player":"player7",
+      "role":"wolf",
+      "target":"player2"
+    },
+    {
+      "player":"player8",
+      "role":"wolf",
+      "target":"player2"
     },
     {
       "player":"player9",

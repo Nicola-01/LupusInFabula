@@ -56,10 +56,10 @@ VALUES (1, 'mangia'),
        (2, 'attacca'),
        (3, 'test');
 */
-INSERT INTO public.game (public_ID, start)
-VALUES ('dorky-farmer-explorer', '2024-04-21 14:01:49.305661'),
-       ('farmer-wolf-sam', '2024-04-21 14:02:33.348046'),
-       ('sheriff-carpenter-sam', '2024-04-21 14:02:33.348046');
+INSERT INTO public.game (public_ID, start, phase)
+VALUES ('dorky-farmer-explorer', '2024-04-21 14:01:49.305661', 0),
+       ('farmer-wolf-sam', '2024-04-21 14:02:33.348046', 1),
+       ('sheriff-carpenter-sam', '2024-04-21 14:02:33.348046', 0);
 
 INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
 VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for game 1
@@ -70,48 +70,46 @@ VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for 
        ('user6', 1, 'hamster', null, null, null),
        ('user7', 1, 'knight', null, null, null),
        ('user8', 1, 'sheriff', null, null, null),
-<<<<<<< Updated upstream
-       ('user9', 1, 'wolf', 3, 0, null),
-=======
        ('user9', 1, 'wolf', null, null, null);
->>>>>>> Stashed changes
+
 -- Game 2
---        ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
---        ('player1', 2, 'knight', null, null, null),
---        ('player2', 2, 'hamster', null, null, null),
---        ('player3', 2, 'jester', null, null, null),
---        ('player4', 2, 'sheriff', null, null, null),
---        ('player5', 2, 'seer', null, null, null),
---        ('player6', 2, 'plague spreader', null, null, null),
---        ('player7', 2, 'wolf', null, null, null),
---        ('player8', 2, 'wolf', null, null, null),
---        ('player9', 2, 'sam', null, null, null);
+INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
+VALUES    ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
+          ('player1', 2, 'knight', null, null, null),
+          ('player2', 2, 'carpenter', null, null, null),
+          ('player3', 2, 'jester', null, null, null),
+          ('player4', 2, 'sheriff', null, null, null),
+          ('player5', 2, 'seer', null, null, null),
+          ('player6', 2, 'plague spreader', null, null, null),
+          ('player7', 2, 'wolf', null, null, null),
+          ('player8', 2, 'wolf', null, null, null),
+          ('player9', 2, 'sam', null, null, null);
 -- Game with all roles
-       ('allRoleMaster', 3, 'master', null, null, null),
-       ('allRole1', 3, 'puppy', null, null, null),
-       ('allRole2', 3, 'illusionist', null, null, null),
-       ('allRole3', 3, 'hobbit', null, null, null),
-       ('allRole4', 3, 'kamikaze', null, null, null),
-       ('allRole5', 3, 'giuda', null, null, null),
-       ('allRole6', 3, 'explorer', null, null, null),
-       ('allRole7', 3, 'jester', null, null, null),
-       ('allRole8', 3, 'knight', null, null, null),
-       ('allRole9', 3, 'plague spreader', null, null, null),
-       ('allRole10', 3, 'berserker', null, null, null),
-       ('allRole11', 3, 'medium', null, null, null),
-       ('allRole12', 3, 'wolf', null, null, null),
-       ('allRole13', 3, 'dorky', null, null, null),
-       ('allRole14', 3, 'sam', null, null, null),
-       ('allRole15', 3, 'seer', null, null, null),
-       ('allRole16', 3, 'carpenter', null, null, null),
-       ('allRole17', 3, 'hamster', null, null, null),
-       ('allRole18', 3, 'sheriff', null, null, null),
-       ('allRole19', 3, 'farmer', null, null, null),
-       ('allRole20', 3, 'farmer', null, null, null),
-       ('allRole21', 3, 'farmer', null, null, null),
-       ('allRole22', 3, 'farmer', null, null, null),
-       ('allRole23', 3, 'farmer', null, null, null),
-       ('allRole24', 3, 'farmer', null, null, null);
+--       ('allRoleMaster', 3, 'master', null, null, null),
+--       ('allRole1', 3, 'puppy', null, null, null),
+--       ('allRole2', 3, 'illusionist', null, null, null),
+--       ('allRole3', 3, 'hobbit', null, null, null),
+--      ('allRole4', 3, 'kamikaze', null, null, null),
+--       ('allRole5', 3, 'giuda', null, null, null),
+--       ('allRole6', 3, 'explorer', null, null, null),
+--       ('allRole7', 3, 'jester', null, null, null),
+--       ('allRole8', 3, 'knight', null, null, null),
+--       ('allRole9', 3, 'plague spreader', null, null, null),
+--       ('allRole10', 3, 'berserker', null, null, null),
+--       ('allRole11', 3, 'medium', null, null, null),
+--       ('allRole12', 3, 'wolf', null, null, null),
+--      ('allRole13', 3, 'dorky', null, null, null),
+--       ('allRole14', 3, 'sam', null, null, null),
+--       ('allRole15', 3, 'seer', null, null, null),
+--       ('allRole16', 3, 'carpenter', null, null, null),
+--       ('allRole17', 3, 'hamster', null, null, null),
+--       ('allRole18', 3, 'sheriff', null, null, null),
+--       ('allRole19', 3, 'farmer', null, null, null),
+--       ('allRole20', 3, 'farmer', null, null, null),
+--       ('allRole21', 3, 'farmer', null, null, null),
+--       ('allRole22', 3, 'farmer', null, null, null),
+--       ('allRole23', 3, 'farmer', null, null, null),
+--       ('allRole24', 3, 'farmer', null, null, null);
 
 
 

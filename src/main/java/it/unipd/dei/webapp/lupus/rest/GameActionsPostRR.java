@@ -38,7 +38,7 @@ public class GameActionsPostRR extends AbstractRR {
      */
     private final int gameID;
 
-    int currentRound, currentPhase;
+    int currentRound, currentPhase, currentSubPhase;
 
     /**
      * Constructs a new GameActionsPostRR object with the specified game ID, request, response, and data source.
@@ -70,8 +70,9 @@ public class GameActionsPostRR extends AbstractRR {
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream()); // todo to handle throws IOException
 
             // check of the correctness of the actions
-            if (!correctnessOfActions(gameActions))
-                return;
+            // todo uncomment
+            //if (!correctnessOfActions(gameActions))
+            //    return;
 
             LOGGER.info("correctness of actions done");
             // contain all player in the game (gameID) with their role
@@ -80,6 +81,7 @@ public class GameActionsPostRR extends AbstractRR {
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
             currentRound = game.getRounds();
             currentPhase = game.getPhase();
+            currentSubPhase = game.getSubphase();
 
             if (currentPhase == GamePhase.NIGHT.getId()) {
                 if (handleNightPhase(gameActions))
@@ -129,34 +131,119 @@ public class GameActionsPostRR extends AbstractRR {
         //The first thing to do is handling the vote
         //Then update the database based on the action and the death player
         Map<String, Integer> votesMap = getVotesMap(gameActions);
+        Map<String, Integer> ballotVotesMap = getVotesMap(gameActions);
+        int voteNumber = playersRole.size();
+        int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
+
+        int numberAction = 0;
 
         for (GameAction gameAction : gameActions) {
+
+            numberAction++;
+            LOGGER.info(numberAction);
+            LOGGER.info(currentSubPhase);
             String player = gameAction.getPlayer();
             String role = gameAction.getRole();
             String target = gameAction.getTarget();
-            LOGGER.info("%s with role %s has voted %s", player, role, target);
+            LOGGER.info(ballotVoteNumber);
+            if (numberAction <= voteNumber) {
+                LOGGER.info("%s with role %s has voted %s", player, role, target);
 
-            // DAO for add the action to the database
+                Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+                // DAO for add the action to the database
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+                votesMap.put(target, votesMap.get(target) + 1);
 
-            votesMap.put(target, votesMap.get(target) + 1);
+                //First vote
+                if (numberAction == voteNumber) {
+                    List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
+                    Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+                    for (Map.Entry<String, Integer> entry : votesList) {
+                        LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
+                    }
+
+                    String votedPlayer = votesList.get(0).getKey();
+
+                    if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
+                        LOGGER.info("Ballot");
+                        currentSubPhase++;
+                    } else {
+                        LOGGER.info("Players %s is voted", votedPlayer);
+
+                        if (!carpenterCheck(votedPlayer)) {
+                            updatePlayerDeath(votedPlayer);
+                        }
+                    }
+
+                }
+            }else if((numberAction <= (voteNumber+ballotVoteNumber)) && (currentSubPhase > 0)) {
+                LOGGER.info("%s with role %s has voted %s", player, role, target);
+
+                Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+                // DAO for add the action to the database
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+                ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
+                LOGGER.info(voteNumber+ballotVoteNumber);
+                if (numberAction == (voteNumber+ballotVoteNumber)) {
+                    List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
+                    Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+                    for (Map.Entry<String, Integer> entry : ballotVotesList) {
+                        LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
+                    }
+
+                    String votedPlayer = ballotVotesList.get(0).getKey();
+                    LOGGER.info("Players %s is voted", votedPlayer);
+
+                    if (!carpenterCheck((votedPlayer))) {
+                        updatePlayerDeath(votedPlayer);
+                    }
+                }
+            }else{
+                currentSubPhase++;
+                if(role.equals("sam")) {
+                    //He can decide to kill someone else before his dead
+                    LOGGER.info("Sam killed %s", target);
+                    Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
+                    new InsertIntoActionDAO(ds.getConnection(), samAction).access();
+                    updatePlayerDeath(target);
+                    updatePlayerDeath(player);
+                    break;
+                }else{
+                    //error
+                    LOGGER.info("Error");
+                }
+            }
+
         }
-
-        List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
-        Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
-
-        for (Map.Entry<String, Integer> entry : votesList) {
-            LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
-        }
-
-        if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
-            LOGGER.info("Ballottaggio");
-        }
-
-        LOGGER.info("Players %s is voted", votesList.get(0).getKey());
-
-        //DAO for update the database with the dead of the player
 
         return true;
+    }
+
+    private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
+        int numDeadPlayers = 0;
+
+        for (Boolean isDead : deadPlayers.values()) {
+            if (isDead) {
+                numDeadPlayers++;
+            }
+        }
+        return numDeadPlayers;
+    }
+
+    private boolean carpenterCheck(String player) throws SQLException{
+        if ((new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam()).equals("carpenter")) {
+            LOGGER.info("Carpenter ability check");
+            if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                LOGGER.info("Carpenter is safe this round");
+                currentSubPhase++;
+                Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
+                new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
+                return true;
+            }
+        }
+        return false;
     }
 
 
@@ -404,6 +491,48 @@ public class GameActionsPostRR extends AbstractRR {
 
         return true;
 
+    }
+
+    private boolean correctnessOfDayActions(List<GameAction> gameActions)throws SQLException, IOException {
+        Message m;
+
+        for (GameAction gameAction : gameActions) {
+
+            int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
+            //check if the player is in the game
+            if (game_id != gameID) {
+                m = new Message("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
+                LOGGER.warn("ERROR, the player " + gameAction.getPlayer() + " is not in the game");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+
+            game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
+            //check if target is in the game
+            if (game_id != gameID) {
+                m = new Message("ERROR, the target " + gameAction.getTarget() + " is not in the game");
+                LOGGER.warn("ERROR, the target " + gameAction.getTarget() + " is not in the game");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+
+            if (deadPlayers.get(gameAction.getTarget())){
+                m = new Message("ERROR, the target " + gameAction.getTarget() + " is already dead in this game");
+                LOGGER.warn("ERROR, the target " + gameAction.getTarget() + " is already dead in this game");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+
+            String playerRole = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
+            //check if the player has the correct role in the game
+            if (!playerRole.equals(gameAction.getRole())) {
+                m = new Message("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
+                LOGGER.warn("ERROR, the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + playerRole + ") in the game");
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+        }
+        return true;
     }
 
 

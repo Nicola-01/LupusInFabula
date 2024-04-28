@@ -6,13 +6,13 @@ package it.unipd.dei.webapp.lupus.utils;
 public enum GameRoleAction {
 
     MASTER(RoleType.MASTER, "master", null),
-    CARPENTER(RoleType.GOOD,"carpenter", null), // TODO --> think to the day action
+    CARPENTER(RoleType.GOOD,"carpenter", "last chance"), // TODO --> think to the day action
     FARMER(RoleType.GOOD, "farmer", null),
     HOBBIT(RoleType.GOOD,"hobbit", null),
     KAMIKAZE(RoleType.GOOD,"kamikaze", "blowup"),
     KNIGHT(RoleType.GOOD,"knight", "protect"),
     MEDIUM(RoleType.GOOD,"medium", "look"),
-    SAM(RoleType.GOOD,"sam", null), // TODO --> think to the day action
+    SAM(RoleType.GOOD,"sam", "revenge"), // TODO --> think to the day action
     SEER(RoleType.GOOD,"seer", "investigate"),
     SHERIFF(RoleType.GOOD,"sheriff", "shot"),
     BERSERKER(RoleType.EVIL,"berserker", "rage"),
