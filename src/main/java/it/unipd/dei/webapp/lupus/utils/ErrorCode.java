@@ -19,6 +19,7 @@ public enum ErrorCode {
     // DSP -> DISPATCHER
     // DTB -> DATABASE
     // INT -> INTERNAL
+    // ACT -> ACTION
 
     // TODO: check error code
 
@@ -38,13 +39,13 @@ public enum ErrorCode {
     USER_NOT_FOUND("EUSR9", HttpServletResponse.SC_NOT_FOUND, "User not found"),
 
     // game
-    PLAYER_NOT_EXIST("EGME1", HttpServletResponse.SC_BAD_REQUEST, "One or more players does not exist."),
-    PLAYER_ALREADY_IN_GAME("EGME2", HttpServletResponse.SC_BAD_REQUEST, "One or more players are already in a game."),
-    MASTER_ALREADY_IN_GAME("EGME3", HttpServletResponse.SC_BAD_REQUEST, "The gamemaster is already in a game."),
-    ROLE_NOT_EXIST("EGME4", HttpServletResponse.SC_BAD_REQUEST, "One or more roles does not exist."),
+    PLAYER_NOT_EXIST("EGME1", HttpServletResponse.SC_NOT_FOUND, "One or more players does not exist."),
+    PLAYER_ALREADY_IN_GAME("EGME2", HttpServletResponse.SC_CONFLICT, "One or more players are already in a game."),
+    MASTER_ALREADY_IN_GAME("EGME3", HttpServletResponse.SC_CONFLICT, "The gamemaster is already in a game."),
+    ROLE_NOT_EXIST("EGME4", HttpServletResponse.SC_NOT_FOUND, "One or more roles does not exist."),
     NUMBER_PLAYERS_ROLES_NOT_MATCH("EGME5", HttpServletResponse.SC_BAD_REQUEST, "Number of players entered does not correspond to the number of roles."),
     NOT_ENOUGH_PLAYERS("EGME6", HttpServletResponse.SC_BAD_REQUEST, "Not enough players."),
-    INVALID_GAMESETTINGS("EGME7", HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist."),
+    INVALID_GAME_SETTINGS("EGME7", HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist."),
     INVALID_ROLES_CARDINALITY("EGME8", HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality."),
 
     GAME_NOT_FOUND("EGME9", HttpServletResponse.SC_NOT_FOUND, "Game not found."),
@@ -69,6 +70,16 @@ public enum ErrorCode {
     // dispatcher
     UNKNOWN_RESOURCE("EDSP1", HttpServletResponse.SC_NOT_FOUND, "Unknown resource requested."),
     METHOD_NOT_ALLOWED("EDSP2", HttpServletResponse.SC_METHOD_NOT_ALLOWED, "The method is not allowed"),
+
+    // actions
+    NULL_ACTION("EACT1", HttpServletResponse.SC_BAD_REQUEST, "Null action requested."),
+    NOT_VALID_TARGET("EACT2", HttpServletResponse.SC_BAD_REQUEST, "Invalid target requested."),
+    PLAYER_NOT_IN_GAME("EACT3", HttpServletResponse.SC_BAD_REQUEST, "Player is not in a game."),
+    ROLE_NOT_CORRESPOND("EACT4", HttpServletResponse.SC_BAD_REQUEST, "Role is not corresponding to that player."),
+    DEAD_PLAYER("EACT5", HttpServletResponse.SC_CONFLICT, "The player is dead."),
+    TOO_MANY_WOLVES_ACTIONS("EACT6", HttpServletResponse.SC_CONFLICT, "Too many wolves actions."),
+    NOT_VALID_ACTION("EACT7", HttpServletResponse.SC_BAD_REQUEST, "Invalid action requested."),
+    NUMBER_ACTIONS_DOESNT_MATCH("EACT8", HttpServletResponse.SC_CONFLICT, "Number of actions does not match."),
 
     // errors
     DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),

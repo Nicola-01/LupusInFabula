@@ -11,14 +11,42 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Returns if the role of Dorky has become a Wolf pointing at an evil role.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
 
+    /**
+     * The SQL statement for selecting targets of "point" action in a game.
+     */
     private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = 'point'";
+
+    /**
+     * The ID of the game to check.
+     */
     private final int gameId;
+
+    /**
+     * The data source used for obtaining connections.
+     */
     private final DataSource ds;
 
+    /**
+     * A map containing player names as keys and their corresponding roles as values.
+     */
     private Map<String, String> wolfMap;
 
+    /**
+     * Constructs a new IsDorkyAWolfDAO with the specified database connection, data source, and game ID.
+     *
+     * @param con    the database connection
+     * @param ds     the data source for obtaining connections
+     * @param gameId the ID of the game to check
+     */
     public IsDorkyAWolfDAO(final Connection con, DataSource ds, int gameId) {
         super(con);
         this.gameId = gameId;
@@ -27,6 +55,11 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
         this.wolfMap = new HashMap<>();
     }
 
+    /**
+     * Executes the query to determine whether the player named "Dorky" is a wolf in the specified game.
+     *
+     * @throws Exception
+     */
     @Override
     protected void doAccess() throws Exception {
 
