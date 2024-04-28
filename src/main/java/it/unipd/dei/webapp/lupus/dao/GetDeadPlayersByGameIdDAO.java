@@ -37,7 +37,7 @@ public class GetDeadPlayersByGameIdDAO extends AbstractDAO<Map<String, Boolean>>
      */
     public GetDeadPlayersByGameIdDAO(final Connection con, final int gameId) {
         super(con);
-        this.gameId = gameId    ;
+        this.gameId = gameId;
     }
 
     /**

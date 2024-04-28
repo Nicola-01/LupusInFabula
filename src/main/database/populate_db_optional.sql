@@ -36,11 +36,11 @@ VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for 
        ('user2', 1, 'dorky', 1, 1, null),
        ('user3', 1, 'kamikaze', null, null, null),
        ('user4', 1, 'hobbit', null, null, null),
-       ('user5', 1, 'explorer', 2, 1, null),
+       ('user5', 1, 'explorer', null, null, null),
        ('user6', 1, 'hamster', null, null, null),
        ('user7', 1, 'knight', null, null, null),
        ('user8', 1, 'sheriff', null, null, null),
-       ('user9', 1, 'wolf', 2, 0, null);
+       ('user9', 1, 'wolf', 3, 0, null);
 -- Game 2
 --        ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
 --        ('player1', 2, 'knight', null, null, null),
@@ -53,8 +53,8 @@ VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for 
 --        ('player8', 2, 'wolf', null, null, null),
 --        ('player9', 2, 'sam', null, null, null);
 
--- INSERT INTO public.Action
--- VALUES (1, 'user9', 1, 0, 0, 'maul', 'user7'),
+INSERT INTO public.Action
+VALUES (1, 'user7', 1, 0, 0, 'protect', 'user7');
 --        (1, 'user2', 1, 0, 0, 'point', 'user1'),
 --        (1, 'user5', 2, 0, 0, 'explorer', 'user4'),
 --        (1, 'user8', 2, 0, 0, 'shot', 'user9'),

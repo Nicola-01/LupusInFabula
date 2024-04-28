@@ -19,7 +19,7 @@ public enum GameRoleAction {
     DORKY(RoleType.EVIL,"dorky", "point"),
     EXPLORER(RoleType.EVIL,"explorer", "explore"),
     GIUDA(RoleType.EVIL,"giuda", null),
-    PUPPY(RoleType.EVIL,"puppy", "wait"),
+    PUPPY(RoleType.EVIL,"puppy", "maul"),
     WOLF(RoleType.EVIL,"wolf", "maul"),
     HAMSTER(RoleType.VICTORY_STEALER,"hamster", null),
     JESTER(RoleType.VICTORY_STEALER,"jester", null),
