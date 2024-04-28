@@ -15,13 +15,40 @@ import java.util.*;
 public class GameActionsPostRR extends AbstractRR {
 
     // Contain the role name and his action during the night
+    /**
+     * Map containing the actions available during the night phase of the game.
+     * The key is the role name, and the value is the corresponding action.
+     */
     private static final Map<String, String> nightAction = new HashMap<>();
+
+    /**
+     * Map indicating whether players are dead or alive in the game.
+     * The key is the player's name, and the value is a boolean indicating if the player is dead.
+     */
     private final Map<String, Boolean> deadPlayers;
+
+    /**
+     * Map containing the players and their roles in the game.
+     * The key is the player's name, and the value is the player's role.
+     */
     private final Map<String, String> playersRole;
+
+    /**
+     * The ID of the game.
+     */
     private final int gameID;
 
     int currentRound, currentPhase;
 
+    /**
+     * Constructs a new GameActionsPostRR object with the specified game ID, request, response, and data source.
+     *
+     * @param gameID The ID of the game.
+     * @param req    The HTTP servlet request.
+     * @param res    The HTTP servlet response.
+     * @param ds     The data source.
+     * @throws SQLException If an SQL error occurs.
+     */
     public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.ADD_ACTIONS, req, res, ds);
         this.gameID = gameID;
@@ -102,7 +129,7 @@ public class GameActionsPostRR extends AbstractRR {
         //Then update the database based on the action and the death player
         Map<String, Integer> votesMap = getVotesMap(gameActions);
 
-        for(GameAction gameAction: gameActions){
+        for (GameAction gameAction : gameActions) {
             String player = gameAction.getPlayer();
             String role = gameAction.getRole();
             String target = gameAction.getTarget();
@@ -120,7 +147,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
         }
 
-        if(votesList.get(0).getValue() == votesList.get(1).getValue()){
+        if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
             LOGGER.info("Ballottaggio");
         }
 
@@ -137,7 +164,7 @@ public class GameActionsPostRR extends AbstractRR {
         int number_of_wolves = 0;
         //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         for (Map.Entry<String, String> playerRole : playersRole.entrySet())
-            if((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
+            if ((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
                     || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
                     || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName())
                     || playerRole.getValue().equals(GameRoleAction.DORKY.getName()))
@@ -407,7 +434,7 @@ public class GameActionsPostRR extends AbstractRR {
         } else if (berserkerCount == 1) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
                 m = new Message("ERROR, someone has not done his action this turn");
-                LOGGER.warn("ERROR, someone has not done his action this turn "  + rolesWithEffect.size() + " " + gameActions.size() + " " + wolfCount());
+                LOGGER.warn("ERROR, someone has not done his action this turn " + rolesWithEffect.size() + " " + gameActions.size() + " " + wolfCount());
                 m.toJSON(res.getOutputStream());
                 return false;
             }
@@ -474,11 +501,11 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-    private Map<String, Integer> getVotesMap(List<GameAction> gameActions) throws IOException{
+    private Map<String, Integer> getVotesMap(List<GameAction> gameActions) throws IOException {
         Map<String, Integer> votesMap = new HashMap<>();
 
-        for(GameAction gameAction : gameActions){
-            votesMap.put(gameAction.getPlayer() , 0);
+        for (GameAction gameAction : gameActions) {
+            votesMap.put(gameAction.getPlayer(), 0);
         }
 
         return votesMap;
@@ -529,6 +556,12 @@ public class GameActionsPostRR extends AbstractRR {
         return true;
     }
 
+    /**
+     * Updates the information about a player's death in the game.
+     *
+     * @param player The username of the player who died.
+     * @throws SQLException if a database access error occurs.
+     */
     private void updatePlayerDeath(String player) throws SQLException {
         PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
         new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();

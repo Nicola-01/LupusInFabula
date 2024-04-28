@@ -5,7 +5,14 @@ package it.unipd.dei.webapp.lupus.utils;
  */
 public enum GamePhase {
 
+    /**
+     * Represents the night phase in the game
+     */
     NIGHT(0, "night"),
+
+    /**
+     * Represents the day phase in the game
+     */
     DAY(1, "day");
 
     /**

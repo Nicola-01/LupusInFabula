@@ -31,14 +31,41 @@ import java.util.regex.Pattern;
 public class LoginSignupServlet extends AbstractDatabaseServlet {
 
     // Define the regex pattern to check if the string is valid
-    String emailRegex = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$"; // the email need to be at least a@b.c
-    String usernameRegex = "^(?=.{3,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9_-]+([^._-])$"; // username must be made from 3 to 20 alphanumeric characters
-    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$"; // password with at least 8 alphanumeric characters,
-    // must contain at least one uppercase, number, and special character
+    /**
+     * Represents the regular expression pattern to validate email addresses.
+     * The email address must have the format local_part@domain.
+     * It must contain at least one character before the "@" symbol,
+     * followed by the "@" symbol, and then the domain name with at least one dot.
+     */
+    String emailRegex = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$";
 
-    // Compile the regex pattern
+    /**
+     * Represents the regular expression pattern to validate usernames.
+     * Usernames must be between 3 and 20 characters long and consist of alphanumeric characters.
+     * They cannot start or end with a special character (_,-, or .) and cannot have consecutive special characters.
+     */
+    String usernameRegex = "^(?=.{3,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9_-]+([^._-])$";
+
+    /**
+     * Represents the regular expression pattern to validate passwords.
+     * Passwords must be between 8 and 16 characters long and contain at least one uppercase letter,
+     * one lowercase letter, one number, and one special character.
+     */
+    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
+
+    /**
+     * The compiled pattern for validating email addresses.
+     */
     Pattern emailRegexPattern = Pattern.compile(emailRegex);
+
+    /**
+     * The compiled pattern for validating usernames.
+     */
     Pattern usernameRegexPattern = Pattern.compile(usernameRegex);
+
+    /**
+     * The compiled pattern for validating passwords.
+     */
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
 

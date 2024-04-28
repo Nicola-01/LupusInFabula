@@ -23,7 +23,6 @@ import java.io.OutputStream;
  * (Request Resources - RR) based on the requested URI and HTTP method. If the requested URI or method is not supported,
  * it returns an appropriate error response.
  * </p>
- * <p>
  * Supported URIs:
  * <ul>
  *     <li>/user/me: Operations related to the current user's profile</li>
@@ -32,7 +31,6 @@ import java.io.OutputStream;
  *     <li>/user/{username}/statistic: Operations related to accessing statistics for a specific user</li>
  *     <li>/user/{username}: Operations related to accessing profile information of a specific user</li>
  * </ul>
- * </p>
  *
  * @author LupusInFabula Group
  * @version 1.0

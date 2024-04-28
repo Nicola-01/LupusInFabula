@@ -3,6 +3,18 @@ package it.unipd.dei.webapp.lupus.resource;
 import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.*;
 
+/**
+ * Represents a message to be sent as a response.<br>
+ * This message can be an error message or a generic message.
+ * <ul>
+ * <li>In case of an error message, it contains additional details such as error code and error details.</li>
+ * <li>In case of a generic message, it contains only the message itself.</li>
+ *</ul>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class Message extends AbstractResource {
     /**
      * The message

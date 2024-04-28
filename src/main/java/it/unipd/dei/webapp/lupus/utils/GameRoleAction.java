@@ -81,9 +81,10 @@ public enum GameRoleAction {
     }
 
     /**
+     * Retrieves the GameRoleAction enum constant associated with the specified name.
      *
-     * @param name
-     * @return
+     * @param name The name of the GameRoleAction enum constant.
+     * @return The GameRoleAction enum constant associated with the specified name, or {@code null} if no such constant is found.
      */
     public static GameRoleAction valueOfName(String name) {
 

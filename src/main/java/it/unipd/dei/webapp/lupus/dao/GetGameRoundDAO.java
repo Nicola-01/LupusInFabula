@@ -20,11 +20,11 @@ public class GetGameRoundDAO extends AbstractDAO<Integer>
 {
     /**
      * Query to fill with the id of game
-     * */
+     */
     private static final String STATEMENT = "SELECT rounds FROM Game WHERE ID = ?";
     /**
      * Numeric identifier for the game
-     * */
+     */
     private final String idPart;
 
     /**

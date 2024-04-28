@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import jakarta.servlet.http.HttpServlet;
 
 import java.io.OutputStream;
@@ -18,40 +19,50 @@ import java.sql.SQLException;
 public class Action extends AbstractResource
 {
     /**
-     * name for the json file
-     * */
+     * Represents a JSON file name.
+     */
     public static final String JSON_NAME = "Action";
-    /***/
+
+    /**
+     * Represents a vote action.
+     */
     public final static String VOTE = "vote";
 
     /**
-     * numeric identifier for the game
-     * */
+     * Numeric identifier for the game.
+     */
     private final int gameId;
+
     /**
-     * player that make the action
-     * */
+     * Player who performed the action.
+     */
     private final String player;
+
     /**
-     * round where it was the action
-     * */
+     * Round in which the action occurred.
+     */
     private final int round;
+
     /**
-     * phase where it was the action
-     * */
+     * Phase in which the action occurred.
+     */
     private final int phase;
+
     /**
-     * subphase where it was the action
-     * */
+     * Subphase in which the action occurred.
+     */
     private final int subphase;
+
     /**
-     * rapresent the name of the type of action
-     * */
+     * Represents the type of action.
+     */
     private final String typeAction;
+
     /**
-     * player that suffers the action
-     * */
+     * Player who is the target of the action.
+     */
     private final String target;
+
 
     /**
      * Constructor for the class
@@ -91,33 +102,54 @@ public class Action extends AbstractResource
     }
 
     /**
-     * functions to get the gameId
-     * */
-    public int    getGameId()      {return gameId;}
+     * Functions to get the gameId.
+     *
+     * @return The gameId.
+     */
+    public int getGameId() { return gameId; }
+
     /**
-     * functions to get the player
-     **/
-    public String getPlayer()      {return player;}
+     * Functions to get the player.
+     *
+     * @return The player.
+     */
+    public String getPlayer() { return player; }
+
     /**
-     * functions to get the round
-     **/
-    public int    getRound()       {return round;}
+     * Functions to get the round.
+     *
+     * @return The round.
+     */
+    public int getRound() { return round; }
+
     /**
-     * functions to get the phase
-     **/
-    public int    getPhase()       {return phase;}
+     * Functions to get the phase.
+     *
+     * @return The phase.
+     */
+    public int getPhase() { return phase; }
+
     /**
-     * functions to get the subphase
-     **/
-    public int    getSubphase()    {return subphase;}
+     * Functions to get the subphase.
+     *
+     * @return The subphase.
+     */
+    public int getSubphase() { return subphase; }
+
     /**
-     * functions to get the typeAction
-     **/
-    public String getTypeAction() {return typeAction;}
+     * Functions to get the typeAction.
+     *
+     * @return The typeAction.
+     */
+    public String getTypeAction() { return typeAction; }
+
     /**
-     * functions to get the target
-     **/
-    public String getTarget() {return target;}
+     * Functions to get the target.
+     *
+     * @return The target.
+     */
+    public String getTarget() { return target; }
+
 
 
     /**
@@ -135,7 +167,10 @@ public class Action extends AbstractResource
 
         for(Field i : this.getClass().getDeclaredFields())
             if(!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
-                jg.writeObjectField(i.getName(), i.get(this));
+                if(i.getName().equals("phase"))
+                    jg.writeObjectField(i.getName(), GamePhase.getById(i.getInt(this)).getName());
+                else
+                    jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
         jg.flush();

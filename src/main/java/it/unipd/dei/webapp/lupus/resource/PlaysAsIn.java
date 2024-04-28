@@ -113,26 +113,56 @@ public class PlaysAsIn extends AbstractResource {
         jg.flush();
     }
 
+    /**
+     * Gets the username of the player.
+     *
+     * @return The username of the player.
+     */
     public String getPlayerUsername() {
         return playerUsername;
     }
 
+    /**
+     * Gets the ID of the game.
+     *
+     * @return The ID of the game.
+     */
     public int getGameId() {
         return gameId;
     }
 
+    /**
+     * Gets the role of the player in this game.
+     *
+     * @return The role of the player in this game.
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Gets the round during which the player died.
+     *
+     * @return The round during which the player died.
+     */
     public int getRoundOfDeath() {
         return roundOfDeath;
     }
 
+    /**
+     * Gets the phase during which the player died.
+     *
+     * @return The phase during which the player died.
+     */
     public int getPhaseOfDeath() {
         return phaseOfDeath;
     }
 
+    /**
+     * Gets the total amount of time the player has lived.
+     *
+     * @return The total amount of time the player has lived.
+     */
     public Time getDurationOfLife() {
         return durationOfLife;
     }

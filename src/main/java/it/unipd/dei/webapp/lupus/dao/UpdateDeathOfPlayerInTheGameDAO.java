@@ -20,9 +20,17 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
     private final static String STATEMENT = "UPDATE plays_as_in SET round_of_death = ?, phase_of_death = ?, duration_of_life = (SELECT game.start FROM game where game.id = ?) - NOW() " +
             "where game_id = ? AND player_username = ?";
 
+    /**
+     * The PlaysAsIn object containing information about the player's role and death in the game
+     */
     private final PlaysAsIn playsAsIn;
 
-
+    /**
+     * Constructs a new UpdateDeathOfPlayerInTheGameDAO with PlaysAsIn object
+     *
+     * @param con        The database connection
+     * @param playsAsIn  The PlaysAsIn object containing information about the player's role and death in the game
+     */
     public UpdateDeathOfPlayerInTheGameDAO(final Connection con, final PlaysAsIn playsAsIn) {
         super(con);
         this.playsAsIn = playsAsIn;

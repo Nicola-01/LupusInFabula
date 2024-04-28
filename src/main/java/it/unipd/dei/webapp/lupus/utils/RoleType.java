@@ -5,10 +5,29 @@ package it.unipd.dei.webapp.lupus.utils;
  */
 public enum RoleType {
 
+    /**
+     * Represents the master role
+     */
     MASTER(-1, "master"),
+
+    /**
+     * Represents a good role.
+     */
     GOOD(0, "good"),
+
+    /**
+     * Represents a evil role.
+     */
     EVIL(1, "evil"),
+
+    /**
+     * Represents a victory stealer role.
+     */
     VICTORY_STEALER(2, "victory_stealer"),
+
+    /**
+     * Represents a neutral role.
+     */
     NEUTRAL(3, "neutral");
 
     /**

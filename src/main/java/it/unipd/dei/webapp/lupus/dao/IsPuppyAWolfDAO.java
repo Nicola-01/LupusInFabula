@@ -6,21 +6,36 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/**
+ * Returns if the role of Puppy has become a Wolf
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class IsPuppyAWolfDAO extends AbstractDAO<Boolean>{
 
-
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT round_of_death FROM plays_as_in WHERE game_id = ? AND role = ? and round_of_death IS NULL";
 
-    private final int gameId;
-
-    public IsPuppyAWolfDAO(Connection con, int gameId) {
-        super(con);
-        this.gameId = gameId;
-    }
+    /**
+     * The ID of the game to retrieve
+     */
+    private final int gameID;
 
     /**
-     * @throws Exception
+     * Constructs a new IsPuppyAWolfDAO for search if the Puppy is become a wolf
+     *
+     * @param con    the connection to the database.
+     * @param gameID the ID of the game.
      */
+    public IsPuppyAWolfDAO(Connection con, int gameID) {
+        super(con);
+        this.gameID = gameID;
+    }
+
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
@@ -28,10 +43,9 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean>{
         this.outputParam = false;
 
         try {
-
             pstmt = con.prepareStatement(STATEMENT);
 
-            pstmt.setInt(1, gameId);
+            pstmt.setInt(1, gameID);
             pstmt.setString(2, GameRoleAction.WOLF.getName());
 
             rs = pstmt.executeQuery();
