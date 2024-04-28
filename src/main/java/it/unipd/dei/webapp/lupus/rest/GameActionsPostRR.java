@@ -409,16 +409,23 @@ public class GameActionsPostRR extends AbstractRR {
                     || gameAction.getRole().equals(GameRoleAction.BERSERKER.getName())) {
 
                 if (!gameAction.getRole().equals(GameRoleAction.BERSERKER.getName())) {
+
                     if (!wolfActionDone) {
+
                         wolfActionDone = true;
+
                     } else {
+
                         m = new Message("ERROR, the wolves has already done their action this night");
                         LOGGER.warn("ERROR, the wolves has already done their action this night");
                         m.toJSON(res.getOutputStream());
                         return false;
+
                     }
                 } else {
+
                     if (!wolfActionDone) {
+
                         switch (berserkerCount) {
                             case 0:
                                 berserkerCount++;
@@ -427,14 +434,28 @@ public class GameActionsPostRR extends AbstractRR {
                                 berserkerCount++;
                                 wolfActionDone = true;
                                 break;
+
                         }
+
                     } else {
+
                         m = new Message("ERROR, there's too many action for the wolf pack");
                         LOGGER.warn("ERROR, there's too many action for the wolf pack");
                         m.toJSON(res.getOutputStream());
                         return false;
+
                     }
+
                 }
+
+            } else if (gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
+                    && !new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+
+                m = new Message("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive");
+                LOGGER.warn("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive");
+                m.toJSON(res.getOutputStream());
+                return false;
+
             }
         }
 
@@ -442,41 +463,51 @@ public class GameActionsPostRR extends AbstractRR {
         //if in the game there's the berserker he can do two action
         Map<String, String> rolesWithEffect = new HashMap<>();
         for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
+
             GameRoleAction gameRoleAction = GameRoleAction.valueOfName(playerRoleEntry.getValue());
             assert gameRoleAction != null;
             if (gameRoleAction.getAction() != null
                     && !gameRoleAction.getName().equals(GameRoleAction.KAMIKAZE.getName())
                     && !gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
                     && !deadPlayers.get(playerRoleEntry.getKey())) {
+
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
-                //LOGGER.info("prova " + playerRoleEntry.getKey() + " " + playerRoleEntry.getValue());
+
             } else if (gameRoleAction.getAction() != null
                     && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
                     && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+
         }
 
         //check if each role with an effect has done the action
         if (berserkerCount == 0) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
                 m = new Message("ERROR, someone has not done his action, or has done too many actions this turn");
                 LOGGER.warn("ERROR, someone has not done his action, or has done too many actions this turn");
                 m.toJSON(res.getOutputStream());
                 return false;
+
             }
         } else if (berserkerCount == 1) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
                 m = new Message("ERROR, someone has not done his action this turn");
                 LOGGER.warn("ERROR, someone has not done his action this turn " + rolesWithEffect.size() + " " + gameActions.size() + " " + wolfCount());
                 m.toJSON(res.getOutputStream());
                 return false;
+
             }
         } else if (berserkerCount == 2) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
+
                 m = new Message("ERROR, someone has not done his action, or has done too many actions this turn (berserker case)");
                 LOGGER.warn("ERROR, someone has not done his action, or has done too many actions this turn (berserker case)");
                 m.toJSON(res.getOutputStream());
                 return false;
+
             }
         }
 
@@ -564,22 +595,37 @@ public class GameActionsPostRR extends AbstractRR {
             if (nightAction.get(gameAction.getRole()) != null) {
 
                 if (!deadPlayers.get(gameAction.getPlayer())) {
-                    Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
-                    tmp.put(nightAction.get(gameAction.getRole()), true);
-                    actions.put(gameAction.getTarget(), tmp);
+                    // if the player of the action is puppy and if he's the last wolf alive, then i can start to maul
+                    if (!gameAction.getRole().equals(GameRoleAction.PUPPY.getName())) {
+
+                        Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
+                        tmp.put(nightAction.get(gameAction.getRole()), true);
+                        actions.put(gameAction.getTarget(), tmp);
+
+                    } else if (new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+
+                        Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
+                        tmp.put(nightAction.get(gameAction.getRole()), true);
+                        actions.put(gameAction.getTarget(), tmp);
+
+                    }
+
                 }
 
             } else {
+
                 LOGGER.warn("ERROR, the action is null");
                 // todo --> to change
                 // ErrorCode ec = ErrorCode.
                 Message m = new Message("ERROR, the action is null");
                 m.toJSON(res.getOutputStream());
                 return null;
+
             }
 
             // special cases: dorky, puppy, explorer
             if (!deadPlayers.get(gameAction.getPlayer())) {
+
                 if (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
                         && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
@@ -606,6 +652,7 @@ public class GameActionsPostRR extends AbstractRR {
                     actions.put(gameAction.getTarget(), tmp);
 
                 }
+
             }
 
         }
