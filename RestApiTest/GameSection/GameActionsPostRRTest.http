@@ -60,7 +60,7 @@ Content-Type: application/json
 {
   "gameAction": [
     {
-      "player":"user1",
+      "player":"user2",
       "role":"dorky",
       "target":"user8"
     },

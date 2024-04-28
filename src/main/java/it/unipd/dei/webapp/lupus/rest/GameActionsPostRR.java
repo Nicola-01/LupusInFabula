@@ -72,51 +72,32 @@ public class GameActionsPostRR extends AbstractRR {
             // check of the correctness of the actions
             if (!correctnessOfActions(gameActions))
                 return;
-
             LOGGER.info("correctness of actions done");
-            // contain all player in the game (gameID) with their role
-            // first String: playerUsername , second String: role of the player
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            currentRound = game.getRounds();
+            currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
             currentPhase = game.getPhase();
 
             if (currentPhase == GamePhase.NIGHT.getId()) {
-                if (handleNightPhase(gameActions))
+                if (!handleNightPhase(gameActions))
                     return;
-            } else if (handleDayPhase(gameActions))
+            } else if (!handleDayPhase(gameActions))
                 return;
 
-            if (currentRound != 0) {
-                if (currentPhase == GamePhase.DAY.getId()) {
-                    currentRound++;
-                    currentPhase = GamePhase.NIGHT.getId();
-                } else {
-                    currentPhase = GamePhase.DAY.getId();
-                }
-            } else {
-                currentRound = 1;
+
+
+            if (currentPhase == GamePhase.DAY.getId()) {
+                currentRound++;
                 currentPhase = GamePhase.NIGHT.getId();
+            } else {
+                currentPhase = GamePhase.DAY.getId();
             }
-
-            LOGGER.info("Checked all actions");
-
-            // updatePlayerDeath(username); // TODO --> update player death
-
 
             // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
 
-//            for (GameAction gameAction : gameActions) {
-//                if (nightAction.get(gameAction.getRole()) != null) {
-//                    new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, gameAction.getPlayer(), currentRound, currentPhase, 0,
-//                            currentPhase == GamePhase.NIGHT.getId() ? nightAction.get(gameAction.getRole()) : Action.VOTE, gameAction.getTarget())
-//                    ).access();
-//                }
-//            }
-
-//            LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
-//            new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-//            LOGGER.info("updating game");
+            LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
+            new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
+            LOGGER.info("updating game");
 
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
@@ -160,31 +141,11 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
 
-    private int wolfCount() throws SQLException {
-
-        // count of wolves still alive for some effects
-        int number_of_wolves = 0;
-        //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-        for (Map.Entry<String, String> playerRole : playersRole.entrySet())
-            if ((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
-                    || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
-                    || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName())
-                    || playerRole.getValue().equals(GameRoleAction.DORKY.getName()))
-                    && !deadPlayers.get(playerRole.getKey()))
-                number_of_wolves++;
-            else if (playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
-                    && !deadPlayers.get(playerRole.getKey()))
-                number_of_wolves++;
-
-        return number_of_wolves;
-    }
-
-
     private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
 
         Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
         int number_of_wolves = wolfCount();
+        int berserker_count = 0;
 
         // check of the actions
         if (!actionCheck(actionsMap, playersRole))
@@ -210,6 +171,7 @@ public class GameActionsPostRR extends AbstractRR {
                             }
                         }
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
+                        updatePlayerDeath(target);
                     }
                 }
 
@@ -243,14 +205,16 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.warn("ACTION NOT POSSIBLE: you have already protected " + target + " the previous turn");
                     m.toJSON(res.getOutputStream());
                     return false;
-                } else {
+                } else if (actionPlayerMap.get(GameRoleAction.KNIGHT.getAction())) {
                     LOGGER.info("The knight has protect " + target);
                     String knight = "";
                     for (GameAction gameAction : gameActions) {
+                        //LOGGER.info(gameAction.getTarget() + " " + gameAction.getPlayer());
                         if (gameAction.getTarget().equals(target)) {
                             knight = gameAction.getPlayer();
                         }
                     }
+                    //LOGGER.info(knight);
                     new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
                 }
 
@@ -272,11 +236,14 @@ public class GameActionsPostRR extends AbstractRR {
                         //updatePlayerDeath(target);
                         LOGGER.info("The target " + target + " has been killed by the wolves during the night");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                        updatePlayerDeath(target);
 
                     } else if (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) && (number_of_wolves <= 1)) {
-                        //updatePlayerDeath(target);
+
                         LOGGER.info("The target " + target + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                        updatePlayerDeath(target);
+
                     }
 
                 }
@@ -324,11 +291,16 @@ public class GameActionsPostRR extends AbstractRR {
                     GameRoleAction player_role = GameRoleAction.valueOfName(playersRole.get(target));
                     assert player_role != null;
                     if (player_role.getRoleType().getType() == 1 || player_role.getRoleType().getType() == 2) {
+
                         LOGGER.info("The target " + target + " has been killed by the sheriff during the night");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
+                        updatePlayerDeath(target);
+
                     } else {
+
                         LOGGER.info("The sheriff " + sheriff + " has killed himself during the night");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
+                        updatePlayerDeath(sheriff);
                     }
 
                 }
@@ -344,6 +316,7 @@ public class GameActionsPostRR extends AbstractRR {
 
                     LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
                     new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
+                    updatePlayerDeath(wolf);
                 }
 
                 // check for the "plague" action --> PLAGUE SPREADER
@@ -375,8 +348,13 @@ public class GameActionsPostRR extends AbstractRR {
                         }
 
                         LOGGER.info("The target " + target + " has been killed by the berserker");
-                        LOGGER.info("The berserker has killed also himself during the night");
+                        berserker_count++;
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
+
+                        if (berserker_count == 2) {
+                            LOGGER.info("The berserker has killed also himself during the night");
+                            updatePlayerDeath(berserker);
+                        }
 
                     }
 
@@ -404,6 +382,30 @@ public class GameActionsPostRR extends AbstractRR {
 
         return true;
 
+    }
+
+
+    private int wolfCount() throws SQLException {
+
+        // count of wolves still alive for some effects
+        int number_of_wolves = 0;
+        //Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        for (Map.Entry<String, String> playerRole : playersRole.entrySet())
+            if ((playerRole.getValue().equals(GameRoleAction.WOLF.getName())
+                    || playerRole.getValue().equals(GameRoleAction.BERSERKER.getName())
+                    || playerRole.getValue().equals(GameRoleAction.EXPLORER.getName()))
+                    && !deadPlayers.get(playerRole.getKey()))
+                number_of_wolves++;
+            else if (playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
+                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
+                    && !deadPlayers.get(playerRole.getKey()))
+                number_of_wolves++;
+            else if (playerRole.getValue().equals(GameRoleAction.DORKY.getName())
+                    && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()
+                    && !deadPlayers.get(playerRole.getKey()))
+                number_of_wolves++;
+
+        return number_of_wolves;
     }
 
 
@@ -537,7 +539,7 @@ public class GameActionsPostRR extends AbstractRR {
         //check if each role with an effect has done the action
         if (berserkerCount == 0) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
-
+                LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                 m = new Message("ERROR, someone has not done his action, or has done too many actions this turn");
                 LOGGER.warn("ERROR, someone has not done his action, or has done too many actions this turn");
                 m.toJSON(res.getOutputStream());
@@ -548,7 +550,7 @@ public class GameActionsPostRR extends AbstractRR {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
 
                 m = new Message("ERROR, someone has not done his action this turn");
-                LOGGER.warn("ERROR, someone has not done his action this turn " + rolesWithEffect.size() + " " + gameActions.size() + " " + wolfCount());
+                LOGGER.warn("ERROR, someone has not done his action this turn");
                 m.toJSON(res.getOutputStream());
                 return false;
 

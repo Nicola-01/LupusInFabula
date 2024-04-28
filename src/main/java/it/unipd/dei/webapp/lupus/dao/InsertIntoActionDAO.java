@@ -17,7 +17,7 @@ public class InsertIntoActionDAO extends AbstractDAO{
     /**
      * The SQL statement to insert an Action into the database.
      */
-    private static final String STATEMENT = "INSERT INTO ACTION VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO action VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     /**
      * The Action object to be inserted into the database.
