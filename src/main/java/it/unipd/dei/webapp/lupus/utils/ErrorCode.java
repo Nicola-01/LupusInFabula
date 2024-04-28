@@ -19,6 +19,7 @@ public enum ErrorCode {
     // DSP -> DISPATCHER
     // DTB -> DATABASE
     // INT -> INTERNAL
+    // ACT -> ACTION
 
     // TODO: check error code
 
@@ -69,6 +70,16 @@ public enum ErrorCode {
     // dispatcher
     UNKNOWN_RESOURCE("EDSP1", HttpServletResponse.SC_NOT_FOUND, "Unknown resource requested."),
     METHOD_NOT_ALLOWED("EDSP2", HttpServletResponse.SC_METHOD_NOT_ALLOWED, "The method is not allowed"),
+
+    // actions
+    NULL_ACTION("EACT1", HttpServletResponse.SC_BAD_REQUEST, "Null action requested."),
+    NOT_VALID_TARGET("EACT2", HttpServletResponse.SC_BAD_REQUEST, "Invalid target requested."),
+    PLAYER_NOT_IN_GAME("EACT3", HttpServletResponse.SC_BAD_REQUEST, "Player is not in a game."),
+    ROLE_NOT_CORRESPOND("EACT4", HttpServletResponse.SC_BAD_REQUEST, "Role is not corresponding to that player."),
+    DEAD_PLAYER("EACT5", HttpServletResponse.SC_CONFLICT, "The player is dead."),
+    TOO_MANY_WOLVES_ACTIONS("EACT6", HttpServletResponse.SC_CONFLICT, "Too many wolves actions."),
+    NOT_VALID_ACTION("EACT7", HttpServletResponse.SC_BAD_REQUEST, "Invalid action requested."),
+    NUMBER_ACTIONS_DOESNT_MATCH("EACT8", HttpServletResponse.SC_CONFLICT, "Number of actions does not match."),
 
     // errors
     DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),
