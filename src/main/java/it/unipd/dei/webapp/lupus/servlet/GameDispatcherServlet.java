@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
@@ -26,6 +27,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setAction(Actions.GAME_DISPATCHER_ACTION);
+        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
 
         final OutputStream out = res.getOutputStream();
 
@@ -63,6 +65,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
             LogContext.removeIPAddress();
             LogContext.removeAction();
+            LogContext.removeUser();
         }
     }
 

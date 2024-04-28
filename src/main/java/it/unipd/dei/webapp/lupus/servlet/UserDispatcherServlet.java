@@ -53,6 +53,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setAction(Actions.USER_DISPATCHER_ACTION);
+        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
 
         final OutputStream out = resp.getOutputStream();
 
@@ -68,9 +69,10 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             ErrorCode ec = ErrorCode.UNKNOWN_RESOURCE;
             final Message m = new Message("Unknown resource requested.", ec.getErrorCode(),
                     String.format("Requested resource is %s.", req.getRequestURI()));
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            resp.setStatus(ec.getHTTPCode());
+
             resp.setContentType(JSON_UTF_8_MEDIA_TYPE);
-            m.toJSON(resp.getOutputStream());
+            m.toJSON(out);
 
         } catch (Throwable t) {
 
@@ -91,6 +93,7 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
             LogContext.removeAction();
             LogContext.removeIPAddress();
+            LogContext.removeUser();
         }
     }
 
@@ -142,8 +145,10 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         break;
                     default:
                         LOGGER.warn("Unknown method: %s.", method);
-                        m = new Message("Unsuported operation for URI /user/me.", "E4A5",  String.format("Requested operation %s, but required PUT or DELETE.", method));
-                        resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
+                        ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                        m = new Message("Unsuported operation for URI /user/me.", ec.getErrorCode(),  String.format("Requested operation %s, but required PUT or DELETE.", method));
+                        resp.setStatus(ec.getHTTPCode());
                         m.toJSON(resp.getOutputStream());
                         break;
                 }
@@ -167,8 +172,10 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                         break;
                     default:
                         LOGGER.warn("Unknown method: %s.", method);
-                        m = new Message("Unsuported operation for URI /user/me/friend.", "E4A5",  String.format("Requested operation %s, but required GET, POST or DELETE.", method));
-                        resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
+                        ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                        m = new Message("Unsuported operation for URI /user/me/friend.", ec.getErrorCode(),  String.format("Requested operation %s, but required GET, POST or DELETE.", method));
+                        resp.setStatus(ec.getHTTPCode());
                         m.toJSON(resp.getOutputStream());
                         break;
                 }
@@ -199,10 +206,11 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                 LOGGER.info("Getting user's statistic");
 
             } else {
-
                 LOGGER.warn("Unknown method: %s.", method);
-                m = new Message("Unsuported operation for URI /user/*/logs or /user/*/statistic.", "E4A5", String.format("Requested operation %s, but required GET.", method));
-                resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsuported operation for URI /user/*/logs or /user/*/statistic.", ec.getErrorCode(), String.format("Requested operation %s, but required GET.", method));
+                resp.setStatus(ec.getHTTPCode());
                 m.toJSON(resp.getOutputStream());
 
             }
@@ -218,22 +226,17 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                 LOGGER.info("GET without /me ");
 
             } else {
-
                 LOGGER.warn("Unknown method: %s.", method);
-                m = new Message("Unsupported operation for URI /user/{username}.", "E4A5", String.format("Requested operation %s, but required GET.", method));
-                resp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsupported operation for URI /user/{username}.", ec.getErrorCode(), String.format("Requested operation %s, but required GET.", method));
+                resp.setStatus(ec.getHTTPCode());
                 m.toJSON(resp.getOutputStream());
 
             }
 
-        } else {
-
-            LOGGER.warn("Unknown URI: %s.", uri);
-            m = new Message("Unknown URI", "E4A5", String.format("This is URI (%s) isn't supported", uri));
-            resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            m.toJSON(resp.getOutputStream());
-
-        }
+        } else
+            return false;
 
         return true;
 
