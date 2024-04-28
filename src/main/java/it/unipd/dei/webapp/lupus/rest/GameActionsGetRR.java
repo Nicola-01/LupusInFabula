@@ -96,8 +96,7 @@ public class GameActionsGetRR extends AbstractRR {
             Message m = new Message("Cannot search for roles: unexpected error while accessing the database.", ec.getErrorCode(), e.getMessage());
             LOGGER.error("Cannot search for roles: unexpected error while accessing the database.", e);
             m.toJSON(res.getOutputStream());
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             res.setStatus(ec.getHTTPCode());
             Message m = new Message("Cannot return the possible actions: unexpected error", ec.getErrorCode(), e.getMessage());
@@ -105,7 +104,7 @@ public class GameActionsGetRR extends AbstractRR {
             // An error occurred while processing the request. Unable to generate role search
             // results due to an unexpected database access error.
             m.toJSON(res.getOutputStream());
-        }finally {
+        } finally {
             LogContext.removeAction();
             LogContext.removeGame();
             LogContext.removeUser();
@@ -152,7 +151,7 @@ public class GameActionsGetRR extends AbstractRR {
      *
      * @throws IOException If an I/O error occurs.
      */
-    private void handleNightPhase() throws IOException {
+    private void handleNightPhase() throws IOException, SQLException {
         LOGGER.info("Handling night phase.");
 
         List<ActionTarget> actionTargets = new ArrayList<>();
@@ -161,6 +160,25 @@ public class GameActionsGetRR extends AbstractRR {
         for (Map.Entry<String, String> night : nightAction.entrySet()) {
             String role = night.getKey();
             List<String> targets = new ArrayList<>();
+
+            boolean isPuppyAWolf = new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam();
+            boolean explorerAlreadyExplore = new ExplorerAlreadyExploreDAO(ds.getConnection(), gameID).access().getOutputParam();
+            boolean isDorkyAWolf = new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam();
+
+            if ((!role.equals(GameRoleAction.PUPPY.getName()) && !role.equals(GameRoleAction.EXPLORER.getName()) && !role.equals(GameRoleAction.DORKY.getName()))
+                    || (role.equals(GameRoleAction.PUPPY.getName()) && isPuppyAWolf)
+                    || (role.equals(GameRoleAction.EXPLORER.getName()) && explorerAlreadyExplore)
+                    || (role.equals(GameRoleAction.DORKY.getName()) && isDorkyAWolf)) {
+
+                for (String targetPlayer : playerRole.keySet()) {
+                    if (isValidTarget(targetPlayer, role))
+                        targets.add(targetPlayer);
+
+                }
+                Collections.sort(targets);
+                actionTargets.add(new ActionTarget(role, playerWithRole(role),
+                        getNightAction(role, isPuppyAWolf, explorerAlreadyExplore, isPuppyAWolf), targets));
+            }
 
             // get the possible target of that action
             for (String targetPlayer : playerRole.keySet()) {
@@ -174,6 +192,7 @@ public class GameActionsGetRR extends AbstractRR {
                     // add the target player to the list of targets.
                     // The dead players can not be voted
                     targets.add(targetPlayer);
+
             }
             Collections.sort(targets);
             actionTargets.add(new ActionTarget(role, playerWithRole(role), nightAction.get(role), targets));
@@ -197,4 +216,34 @@ public class GameActionsGetRR extends AbstractRR {
         return players;
     }
 
+    private boolean isValidTarget(String targetPlayer, String role) throws SQLException {
+        // Knights and Plague Spreaders can target themselves
+        if (areDead.get(targetPlayer))
+            return false;
+
+        // Knight and Plague spreader could target even they self
+        if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName()))
+            return true;
+
+        String lastPlayerProtectedByKnight = new LastPlayerProtectedByKnightDAO(ds.getConnection(), gameID).access().getOutputParam();
+        if (role.equals(GameRoleAction.KNIGHT.getName()) && !targetPlayer.equals(lastPlayerProtectedByKnight))
+            return true;
+
+        return true;
+
+
+        // If the role is different from the role of the target player,
+        // excluding the knight and plague spreader roles, which can target themselves,
+        // add the target player to the list of targets.
+        // The dead players can not be voted
+    }
+
+    private String getNightAction(String role, boolean isPuppyAWolf, boolean explorerAlreadyExplore, boolean isDorkyAWolf) throws SQLException {
+        if ((role.equals(GameRoleAction.PUPPY.getName()) && isPuppyAWolf)
+                || (role.equals(GameRoleAction.EXPLORER.getName()) && explorerAlreadyExplore)
+                || (role.equals(GameRoleAction.DORKY.getName()) && isDorkyAWolf))
+            return GameRoleAction.WOLF.getAction();
+        else
+            return nightAction.get(role);
+    }
 }

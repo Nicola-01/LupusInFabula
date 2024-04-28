@@ -1,3 +1,6 @@
+// To utilize these tests, avoid using the populate_db_optional.sql file.
+
+
 ### do the Login
 POST http://localhost:8080/lupus/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -576,3 +579,170 @@ Content-Type: application/json
   ]
 }
 
+### GAME WITH ALL ROLES
+
+### LOGIN AS MASTER
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = allRoleMaster &
+password = allRole
+
+### CREATE THE GAME
+POST http://localhost:8080/lupus/game/settings HTTP/1.1
+Content-Type: application/json
+
+{
+  "player": [
+    {
+      "username": "allRole1"
+    },
+    {
+      "username": "allRole2"
+    },
+    {
+      "username": "allRole3"
+    },
+    {
+      "username": "allRole4"
+    },
+    {
+      "username": "allRole5"
+    },
+    {
+      "username": "allRole6"
+    },
+    {
+      "username": "allRole7"
+    },
+    {
+      "username": "allRole8"
+    },
+    {
+      "username": "allRole9"
+    },
+    {
+      "username": "allRole10"
+    },
+    {
+      "username": "allRole11"
+    },
+    {
+      "username": "allRole12"
+    },
+    {
+      "username": "allRole13"
+    },
+    {
+      "username": "allRole14"
+    },
+    {
+      "username": "allRole15"
+    },
+    {
+      "username": "allRole16"
+    },
+    {
+      "username": "allRole17"
+    },
+    {
+      "username": "allRole18"
+    },
+    {
+      "username": "allRole19"
+    },
+    {
+      "username": "allRole20"
+    },
+    {
+      "username": "allRole21"
+    },
+    {
+      "username": "allRole22"
+    },
+    {
+      "username": "allRole23"
+    },
+    {
+      "username": "allRole24"
+    }
+  ],
+  "roleCardinality": [
+    {
+      "role": "carpenter",
+      "cardinality" : 1
+    },
+    {
+      "role": "farmer",
+      "cardinality" : 6
+    },
+    {
+      "role": "hobbit",
+      "cardinality" : 1
+    },
+    {
+      "role": "kamikaze",
+      "cardinality" : 1
+    },
+    {
+      "role": "knight",
+      "cardinality" : 1
+    },
+    {
+      "role": "medium",
+      "cardinality" : 1
+    },
+    {
+      "role": "sam",
+      "cardinality" : 1
+    },
+    {
+      "role": "seer",
+      "cardinality" : 1
+    },
+    {
+      "role": "sheriff",
+      "cardinality" : 1
+    },
+    {
+      "role": "berserker",
+      "cardinality" : 1
+    },
+    {
+      "role": "dorky",
+      "cardinality" : 1
+    },
+    {
+      "role": "explorer",
+      "cardinality" : 1
+    },
+    {
+      "role": "giuda",
+      "cardinality" : 1
+    },
+    {
+      "role": "puppy",
+      "cardinality" : 1
+    },
+    {
+      "role": "wolf",
+      "cardinality" : 1
+    },
+    {
+      "role": "hamster",
+      "cardinality" : 1
+    },
+    {
+      "role": "jester",
+      "cardinality" : 1
+    },
+    {
+      "role": "illusionist",
+      "cardinality" : 1
+    },
+    {
+      "role": "plague spreader",
+      "cardinality" : 1
+    }
+  ]
+}

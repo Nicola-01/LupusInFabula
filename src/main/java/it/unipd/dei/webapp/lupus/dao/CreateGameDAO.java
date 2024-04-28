@@ -57,6 +57,8 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             roles.removeIf(role -> Objects.equals(role.getName(), GameRoleAction.MASTER.getName()));
             publicID = generatePublicID(roles);
 
+            LOGGER.info("Public game id selected: " + publicID);
+
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);
             pstmt.setString(1, publicID);
             pstmt.execute();

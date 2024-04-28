@@ -20,6 +20,36 @@ VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), CURRENT_DAT
        ('player7', LOWER('player7@test.com'), md5('ciao'), CURRENT_DATE),
        ('player8', LOWER('player8@test.com'), md5('ciao'), CURRENT_DATE),
        ('player9', LOWER('player9@test.com'), md5('ciao'), CURRENT_DATE);
+
+-- Users for a game with all the roles
+INSERT INTO Player (username, email, password, registration_date)
+VALUES ('allRoleMaster', LOWER('allRoleMaster@example.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole1', LOWER('allRole1@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole2', LOWER('allRole2@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole3', LOWER('allRole3@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole4', LOWER('allRole4@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole5', LOWER('allRole5@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole6', LOWER('allRole6@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole7', LOWER('allRole7@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole8', LOWER('allRole8@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole9', LOWER('allRole9@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole10', LOWER('allRole10@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole11', LOWER('allRole11@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole12', LOWER('allRole12@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole13', LOWER('allRole13@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole14', LOWER('allRole14@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole15', LOWER('allRole15@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole16', LOWER('allRole16@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole17', LOWER('allRole17@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole18', LOWER('allRole18@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole19', LOWER('allRole19@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole20', LOWER('allRole20@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole21', LOWER('allRole21@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole22', LOWER('allRole22@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole23', LOWER('allRole23@test.com'), md5('allRole'), CURRENT_DATE),
+       ('allRole24', LOWER('allRole24@test.com'), md5('allRole'), CURRENT_DATE);
+
+
 /*
 INSERT INTO public.TYPE_ACTION
 VALUES (1, 'mangia'),

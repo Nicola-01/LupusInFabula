@@ -215,7 +215,7 @@ public class GameSettingsPostRR extends AbstractRR {
                 }
             } else { // there was an error during player or role validation
                 // return the message(s)
-                if(messages.size() == 1)
+                if (messages.size() == 1)
                     messages.get(0).toJSON(res.getOutputStream());
                 else
                     new ResourceList<>(messages).toJSON(res.getOutputStream());
@@ -276,9 +276,12 @@ public class GameSettingsPostRR extends AbstractRR {
             if (!selectedRoles.containsKey(role.getName())) continue;
 
             int cardinality = selectedRoles.get(role.getName());
-            if (cardinality < 0 || cardinality > role.getMax_number()) // invalid role cardinality
+            if (cardinality < 0 || cardinality > role.getMax_number()) {
+                LOGGER.warn("Invalid role cardinality: " + cardinality + " for role " + role.getName());
                 return false;
-            type.put(role.getType(), cardinality);
+            }
+
+            type.put(role.getType(), type.getOrDefault(role.getType(), 0) + cardinality);
             totalRolesNumber += cardinality;
         }
         boolean maxGood = type.get(RoleType.GOOD.getType()) <= ((totalRolesNumber) * 3 / 4);
