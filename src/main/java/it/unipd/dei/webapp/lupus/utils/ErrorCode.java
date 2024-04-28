@@ -44,7 +44,7 @@ public enum ErrorCode {
     ROLE_NOT_EXIST("EGME4", HttpServletResponse.SC_NOT_FOUND, "One or more roles does not exist."),
     NUMBER_PLAYERS_ROLES_NOT_MATCH("EGME5", HttpServletResponse.SC_BAD_REQUEST, "Number of players entered does not correspond to the number of roles."),
     NOT_ENOUGH_PLAYERS("EGME6", HttpServletResponse.SC_BAD_REQUEST, "Not enough players."),
-    INVALID_GAMESETTINGS("EGME7", HttpServletResponse.SC_NOT_FOUND, "The parameter does not exist."),
+    INVALID_GAME_SETTINGS("EGME7", HttpServletResponse.SC_BAD_REQUEST, "The parameter does not exist."),
     INVALID_ROLES_CARDINALITY("EGME8", HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality."),
 
     GAME_NOT_FOUND("EGME9", HttpServletResponse.SC_NOT_FOUND, "Game not found."),

@@ -159,10 +159,10 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.INVALID_ROLES_CARDINALITY;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("One or more roles have exceeded the maximum cardinality", ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
-                    LOGGER.warn("One or more roles have exceeded the maximum cardinality", totalPlayers, totalRoles);
+                    LOGGER.warn("Invalid roles cardinality", totalPlayers, totalRoles);
 //                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if number of players it's equal to number of roles
