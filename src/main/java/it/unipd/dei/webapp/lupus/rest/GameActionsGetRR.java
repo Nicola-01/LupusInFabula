@@ -162,7 +162,7 @@ public class GameActionsGetRR extends AbstractRR {
             List<String> targets = new ArrayList<>();
 
             boolean isPuppyAWolf = new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam();
-            boolean explorerAlreadyExplore = new ExplorerAlreadyExploreDAO(ds.getConnection(), gameID).access().getOutputParam();
+            boolean explorerAlreadyExplore = new IsExplorerAWolfDAO(ds.getConnection(), gameID).access().getOutputParam();
             boolean isDorkyAWolf = new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam();
 
             if ((!role.equals(GameRoleAction.PUPPY.getName()) && !role.equals(GameRoleAction.EXPLORER.getName()) && !role.equals(GameRoleAction.DORKY.getName()))
