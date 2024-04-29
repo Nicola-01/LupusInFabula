@@ -30,23 +30,30 @@ public class DayActionResults extends AbstractResource {
     private String samTarget;
 
     /**
+     * The player killed by the plague during the day.
+     */
+    private String plaguePlayer;
+
+    /**
      * Constructs a DayActionResults object with the specified parameters.
      *
      * @param votedPlayer      the player who was voted during the day.
      * @param carpenterAbility indicates whether the Carpenter's ability was used during the day.
      * @param samTarget        the player targeted by the Seer Apprentice's scan during the day.
+     * @param plaguePlayer     the player killed by the plague during the day.
      */
-    public DayActionResults(String votedPlayer, boolean carpenterAbility, String samTarget) {
+    public DayActionResults(String votedPlayer, boolean carpenterAbility, String samTarget, String plaguePlayer) {
         this.votedPlayer = votedPlayer;
         this.carpenterAbility = carpenterAbility;
         this.samTarget = samTarget;
+        this.plaguePlayer = plaguePlayer;
     }
 
     /**
      * Constructs a new DayActionResults object with default values.
      */
     public DayActionResults() {
-        this("", false, "");
+        this("", false, "", "");
     }
 
     /**
@@ -95,6 +102,24 @@ public class DayActionResults extends AbstractResource {
     }
 
     /**
+     * Gets the player killed by the plague during the day.
+     *
+     * @return the player killed by the plague.
+     */
+    public String getPlaguePlayer() {
+        return plaguePlayer;
+    }
+
+    /**
+     * Sets the player killed by the plague during the day.
+     *
+     * @param plaguePlayer the player killed by the plague.
+     */
+    public void setPlaguePlayer(String plaguePlayer) {
+        this.plaguePlayer = plaguePlayer;
+    }
+
+    /**
      * Writes the DayActionResults object to a JSON stream.
      *
      * @param out the output stream to write to.
@@ -111,6 +136,7 @@ public class DayActionResults extends AbstractResource {
         jg.writeStringField("votedPlayer", votedPlayer);
         jg.writeBooleanField("carpenterAbility", carpenterAbility);
         jg.writeStringField("samTarget", samTarget);
+        jg.writeStringField("plaguePlayer", plaguePlayer);
 
         jg.writeEndObject();
         jg.writeEndObject();
@@ -129,6 +155,7 @@ public class DayActionResults extends AbstractResource {
                 "; votedPlayer='" + votedPlayer +
                 "; carpenterAbility=" + carpenterAbility +
                 "; samTarget=" + samTarget +
+                ", plaguePlayer='" + plaguePlayer +
                 '}';
     }
 }
