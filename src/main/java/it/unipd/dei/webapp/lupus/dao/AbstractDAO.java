@@ -7,6 +7,14 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Abstract DAO object class.
+ *
+ * @param <T> the type of the output parameter
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractDAO<T> implements DataAccessObject<T> {
 
     /**
@@ -103,7 +111,7 @@ public abstract class AbstractDAO<T> implements DataAccessObject<T> {
 
             }
 
-            if(t instanceof SQLException) {
+            if (t instanceof SQLException) {
                 throw (SQLException) t;
             } else {
                 throw new SQLException("Unable to perform the requested database access operation.", t);
@@ -129,7 +137,7 @@ public abstract class AbstractDAO<T> implements DataAccessObject<T> {
 
     /**
      * Performs the actual logic needed for accessing the database.
-     *
+     * <p>
      * Subclasses have to implement this method in order to define the
      * actual strategy for accessing the database.
      *

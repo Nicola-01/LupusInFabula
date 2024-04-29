@@ -4,16 +4,42 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * Deletion of a player record from the database based on the player's username
+ * by updating the mail to an invalid one (i.e. the username of the player that has to be deleted)
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class DeletePlayerDAO extends AbstractDAO<Integer> {
 
-    private static final String STATEMENT = "DELETE FROM player WHERE LOWER(username) = LOWER(?)";
+    /**
+     * The SQL statement for deleting a player record from the database by setting the email to an invalid one (i.e. the username of the player that has to be deleted).
+     */
+    private static final String STATEMENT = "UPDATE player SET email = ? WHERE username = ?";
+
+    /**
+     * The username of the player to be deleted.
+     */
     private final String player_username;
 
+    /**
+     * Constructs a new DeletePlayerDAO with the specified database connection and player username.
+     *
+     * @param con             the database connection
+     * @param player_username the username of the player to be deleted
+     */
     public DeletePlayerDAO(final Connection con, final String player_username) {
         super(con);
         this.player_username = player_username;
     }
 
+    /**
+     * Executes the deletion operation to delete the player record from the database.
+     *
+     * @throws SQLException if there is an error executing the SQL statement
+     */
     @Override
     public final void doAccess() throws SQLException {
 
@@ -24,6 +50,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, player_username);
+            pstmt.setString(2, player_username);
             result = pstmt.executeUpdate();
 
             if (result == 1) {

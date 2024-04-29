@@ -19,23 +19,144 @@ package it.unipd.dei.webapp.lupus.resource;
 /**
  * Contains constants for the actions performed by the application.
  *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
  */
 public final class Actions {
 
-	/**
-	 * The creation of a player
-	 */
-	public static final String INSERT_PLAYER = "INSERT_PLAYER";
+    /**
+     * The creation of a player
+     */
+    public static final String INSERT_PLAYER = "INSERT_PLAYER";
 
-	/**
-	 * The search of player by their username/email and password
-	 */
-	public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
+    /**
+     * The search of player by their username/email and password
+     */
+    public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
 
-	/**
-	 * This class can be neither instantiated nor sub-classed.
-	 */
-	private Actions() {
-		throw new AssertionError(String.format("No instances of %s allowed.", Actions.class.getName()));
-	}
+    /**
+     * The addition of actions
+     */
+    public static final String ADD_ACTIONS = "ADD_ACTIONS";
+
+    /**
+     * The addition of a friend
+     */
+    public static final String ADD_FRIEND = "ADD_FRIEND";
+
+    /**
+     * The deletion of a friend
+     */
+    public static final String DELETE_FRIEND = "DELETE_FRIEND";
+
+    /**
+     * The list of all the friends
+     */
+    public static final String LIST_FRIENDS = "LIST_FRIENDS";
+
+    /**
+     * The deletion of the user logged in
+     */
+    public static final String DELETE_USER = "DELETE_USER";
+
+    /**
+     * The update of the user logged in
+     */
+    public static final String UPDATE_USER = "UPDATE_USER";
+
+    /**
+     * The get of a user knowing his username
+     */
+    public static final String GET_USERNAME = "GET_USERNAME";
+
+    /**
+     * The get for logs knowing the game id
+     */
+    public static final String GET_LOGS = "GET_LOGS";
+
+    /**
+     * The authentication of a user.
+     */
+    public static final String AUTHENTICATE_USER = "AUTHENTICATE_USER";
+
+    /**
+     * The authentication of a master.
+     */
+    public static final String AUTHENTICATE_MASTER = "AUTHENTICATE_MASTER";
+
+
+    /**
+     * If arrive GET request to the page login, signup and logout, it will be redirected.
+     */
+    public static final String LOGIN_REDIRECT_ACTION = "LOGIN_REDIRECT_ACTION";
+
+    /**
+     * The login action of a user.
+     */
+    public static final String LOGIN_ACTION = "LOGIN_ACTION";
+
+    /**
+     * The sign-up action of a user.
+     */
+    public static final String SIGNUP_ACTION = "SIGNUP_ACTION";
+
+    /**
+     * GET request of game settings.
+     */
+    public static final String GET_SETTINGS_ACTION = "GET_SETTINGS_ACTION";
+
+    /**
+     * POST request of game settings.
+     */
+    public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
+
+    /**
+     * GET request of game status.
+     */
+    public static final String GET_GAME_STATUS_ACTION = "GET_GAME_STATUS_ACTION";
+
+    /**
+     * GET request of game players .
+     */
+    public static final String GET_GAME_PLAYERS_ACTION = "GET_GAME_STATUS_ACTION";
+
+    /**
+     * GET request of logs for user.
+     */
+    public static final String GET_LOGS_USER = "GET_LOGS_USER";
+
+    /**
+     * GET request of stats for user.
+     */
+    public static final String GET_STATS_USER = "GET_STATS_USER";
+
+    /**
+     * GET request for all the roles in the game.
+     */
+    public static final String GET_ALL_ROLES = "GET_ALL_ROLES";
+
+    // Dispatcher
+
+    /**
+     * Dispatcher in the game section
+     */
+    public static final String GAME_DISPATCHER_ACTION = "GAME_DISPATCHER_ACTION";
+
+    /**
+     * GET request of game actions.
+     */
+    public static final String GET_GAME_ACTIONS_ACTION = "GET_GAME_ACTIONS_ACTION";
+
+    /**
+     * Dispatcher for user operations
+     */
+    public static final String USER_DISPATCHER_ACTION = "USER_DISPATCHER_ACTION";
+
+    /**
+     * This class can be neither instantiated nor sub-classed.
+     */
+    private Actions() {
+        throw new AssertionError(String.format("No instances of %s allowed.", Actions.class.getName()));
+    }
 }

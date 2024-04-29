@@ -2,6 +2,13 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import java.io.IOException;
 
+/**
+ * Represents a REST resource that can serve a REST request.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public interface RestResource {
 
     /**

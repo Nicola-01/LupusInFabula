@@ -1,8 +1,18 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+
 import java.io.*;
 
+/**
+ * Represents a list of resources that can be serialized to JSON.
+ *
+ * @param <T> The type of resource contained in the list.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public final class ResourceList<T extends Resource> extends AbstractResource {
 
     /**
@@ -17,7 +27,7 @@ public final class ResourceList<T extends Resource> extends AbstractResource {
      */
     public ResourceList(final Iterable<T> list) {
 
-        if(list == null) {
+        if (list == null) {
             LOGGER.error("Resource list cannot be null.");
             throw new NullPointerException("Resource list cannot be null.");
         }
@@ -46,7 +56,6 @@ public final class ResourceList<T extends Resource> extends AbstractResource {
             if (firstElement) {
                 r.toJSON(out);
                 jg.flush();
-
                 firstElement = false;
             } else {
                 jg.writeRaw(',');

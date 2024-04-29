@@ -7,17 +7,43 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class LoginPlayerDAO extends AbstractDAO<Player>{
+/**
+ * Search if a user exists by username/email and password
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class LoginPlayerDAO extends AbstractDAO<Player> {
+
+    /**
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT * FROM player WHERE (LOWER(username) = LOWER(?) OR LOWER(email) = LOWER(?)) AND password = md5(?)";
 
+    /**
+     * The username/email and password to search in the database
+     */
     private final String user, password;
 
+    /**
+     * Creates a new object for search the player into the database by username or email and password.
+     *
+     * @param con      the connection to the database.
+     * @param user     the username or email of the player that want to log in.
+     * @param password the password for that account.
+     */
     public LoginPlayerDAO(final Connection con, final String user, final String password) {
         super(con);
         this.user = user;
         this.password = password;
     }
 
+    /**
+     * Executes the DAO operation to search for a player by username/email and password.
+     *
+     * @throws SQLException if there is an error executing the SQL query
+     */
     @Override
     public final void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

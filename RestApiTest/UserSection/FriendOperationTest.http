@@ -1,0 +1,32 @@
+### login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123
+
+### list of friends
+GET http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+### add friend
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user1",
+    "friendship_date": "2024-04-19"
+  }
+}
+
+### delete friend
+DELETE http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user1",
+    "friendship_date": "2024-04-19"
+  }
+}

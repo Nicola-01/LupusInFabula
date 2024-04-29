@@ -1,25 +1,55 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Game;
-import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.Role;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Create a new game into the database
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class CreateGameDAO extends AbstractDAO<Game> {
+
+    /**
+     * SQL statement for creating a new game record in the database.
+     */
     private static final String STATEMENT_CREATE_GAME = "INSERT INTO game (public_ID, start) VALUES (?, NOW())";
+
+    /**
+     * SQL statement for searching for a game record in the database by its public ID.
+     */
     private static final String STATEMENT_SEARCH_GAME = "SELECT * FROM game WHERE public_ID = ?";
-    private static final String STATEMENT_CHECK_PUBLICID = "SELECT * FROM game WHERE public_id = ?";
 
-    private final List<Role> roles;
+    /**
+     * To connect to the database
+     */
+    private final DataSource ds;
 
-    public CreateGameDAO(final Connection con, List<Role> roles) {
+    /**
+     * Constructs a new CreateGameDAO for create a new game.
+     *
+     * @param con the connection to the database.
+     * @param ds  the connection pool to the database.
+     */
+    public CreateGameDAO(final Connection con, DataSource ds) {
         super(con);
-        this.roles = roles;
+        this.ds = ds;
     }
 
+    /**
+     * Executes the DAO operation to create a new game and retrieve its details from the database.
+     *
+     * @throws Exception if there is an error executing the SQL statements
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
@@ -28,8 +58,11 @@ public class CreateGameDAO extends AbstractDAO<Game> {
         String publicID = null;
 
         try {
+            List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
+            roles.removeIf(role -> Objects.equals(role.getName(), GameRoleAction.MASTER.getName()));
             publicID = generatePublicID(roles);
-            LOGGER.info("Generated public id " + publicID);
+
+            LOGGER.info("Public game id selected: " + publicID);
 
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);
             pstmt.setString(1, publicID);
@@ -40,7 +73,8 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getTime("start"));
+                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getDate("start"), rs.getTime("game_duration"),
+                        rs.getInt("who_wins"), rs.getInt("rounds"), rs.getInt("phase"), rs.getInt("subphase"));
             }
         } finally {
             if (pstmt != null) {
@@ -52,34 +86,43 @@ public class CreateGameDAO extends AbstractDAO<Game> {
         }
     }
 
+    /**
+     * Generates a unique public gameID using a combination of three randomly selected roles.
+     *
+     * @param roles A list of roles to use for generating the public game ID.
+     * @return The generated unique public game ID.
+     * @throws SQLException If a SQL exception occurs.
+     */
     private String generatePublicID(List<Role> roles) throws SQLException {
+        // Initialize random number generator
         Random rand = new Random();
         rand.setSeed(System.currentTimeMillis());
+
         String randomID = null;
 
-        PreparedStatement pstmt = null;
-        ResultSet rs = null;
+        boolean repeat = true;
 
+        // Loop until a unique public game ID is generated
         do {
+            // Generate random indices for three roles
             int role1 = rand.nextInt(roles.size());
             int role2 = rand.nextInt(roles.size());
             int role3 = rand.nextInt(roles.size());
 
-            // no repetition of same word
-            if(role1 == role2 || role1 == role3 || role2 == role3)
-                continue;
+            // Ensure no repetition of the same role
+            if (role1 == role2 || role1 == role3 || role2 == role3) continue;
 
+            // Concatenate role names to form the public game ID
             randomID = roles.get(role1).getName() + "-" +
                     roles.get(role2).getName() + "-" +
                     roles.get(role3).getName();
 
-            LOGGER.info(STATEMENT_CHECK_PUBLICID + ": " + randomID);
+            // Remove spaces from the role names, if any
+            randomID = randomID.replaceAll(" ", "");
 
-            pstmt = con.prepareStatement(STATEMENT_CHECK_PUBLICID);
-            pstmt.setString(1, randomID);
+            repeat = (new GetGameIdFormPublicGameIdDAO(ds.getConnection(), randomID).access().getOutputParam() != -1);
 
-            rs = pstmt.executeQuery();
-        } while (rs.next());
+        } while (repeat);
 
         return randomID;
     }

@@ -22,18 +22,41 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>it.unipd.dei.webapp</groupId>
-
     <artifactId>lupus</artifactId>
-
     <version>1.00</version>
-
     <packaging>war</packaging>
 
-    <!-- Project description elements -->
-    <name>Lupus in Fabula webgame</name>
-
-    <description>Lupus in Fabula webgame.</description>
+    <name>LupusInFabula</name>
+    <description>Web app to assist the game master of the Lupus in Fabula game</description>
+    <url>https://bitbucket.org/upd-dei-stud-prj/wa2324-lif</url>
     <inceptionYear>2024</inceptionYear>
+
+    <developers>
+        <developer>
+            <id>2119291</id>
+            <name>Nicola Busato</name>
+        </developer>
+        <developer>
+            <id>2125757</id>
+            <name>Jacopo Cini</name>
+        </developer>
+        <developer>
+            <id>2122861</id>
+            <name>Michele Gusella</name>
+        </developer>
+        <developer>
+            <id>2116946</id>
+            <name>Riccardo Miele</name>
+        </developer>
+        <developer>
+            <id>2123874</id>
+            <name>Jacopo Momesso</name>
+        </developer>
+        <developer>
+            <id>2125382</id>
+            <name>Nicola Pozzo</name>
+        </developer>
+    </developers>
 
     <licenses>
         <license>
@@ -74,7 +97,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.11.0</version>
                 <configuration>
-                    <release>${java.version}</release>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
                 </configuration>
             </plugin>
 
@@ -154,6 +178,11 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
             <version>2.17.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20200518</version>
         </dependency>
 
         <dependency>

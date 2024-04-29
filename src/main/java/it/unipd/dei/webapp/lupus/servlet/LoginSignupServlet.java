@@ -2,8 +2,10 @@ package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByEmailDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.dao.SingupPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.SignupPlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
+import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
@@ -15,27 +17,70 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Date;
 import java.sql.SQLException;
 
 import java.util.regex.Pattern;
 
+/**
+ * Abstract DAO object class.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class LoginSignupServlet extends AbstractDatabaseServlet {
 
     // Define the regex pattern to check if the string is valid
+    /**
+     * Represents the regular expression pattern to validate email addresses.
+     * The email address must have the format local_part@domain.
+     * It must contain at least one character before the "@" symbol,
+     * followed by the "@" symbol, and then the domain name with at least one dot.
+     */
     String emailRegex = "^((?!\\.)[\\w\\-_.]*[^.])(@\\w+)(\\.\\w+(\\.\\w+)?[^.\\W])$";
+
+    /**
+     * Represents the regular expression pattern to validate usernames.
+     * Usernames must be between 3 and 20 characters long and consist of alphanumeric characters.
+     * They cannot start or end with a special character (_,-, or .) and cannot have consecutive special characters.
+     */
     String usernameRegex = "^(?=.{3,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9_-]+([^._-])$";
+
+    /**
+     * Represents the regular expression pattern to validate passwords.
+     * Passwords must be between 8 and 16 characters long and contain at least one uppercase letter,
+     * one lowercase letter, one number, and one special character.
+     */
     String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
-    // Compile the regex pattern
+
+    /**
+     * The compiled pattern for validating email addresses.
+     */
     Pattern emailRegexPattern = Pattern.compile(emailRegex);
+
+    /**
+     * The compiled pattern for validating usernames.
+     */
     Pattern usernameRegexPattern = Pattern.compile(usernameRegex);
+
+    /**
+     * The compiled pattern for validating passwords.
+     */
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
 
+    /**
+     * Method to handles GET request, the method will invalidate the session and return the login jsp page
+     *
+     * @param request  HTTP request from the client.
+     * @param response HTTP response from the server.
+     * @throws ServletException if any error occurs while executing the servlet.
+     * @throws IOException      if any error occurs in the client/server communication.
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         LogContext.setIPAddress(request.getRemoteAddr());
+        LogContext.setAction(Actions.LOGIN_REDIRECT_ACTION);
 
         String op = request.getRequestURI();
         op = op.split("/")[2];
@@ -44,196 +89,257 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
         if (op.startsWith("logout")) {
             HttpSession session = request.getSession();
-            Player p = (Player) session.getAttribute("user");
+            Player p = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
 
+            LogContext.setUser(p.getUsername());
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
+            LogContext.removeUser();
         }
         // session invalidate for all cases
         request.getSession().invalidate();
 
         LogContext.removeIPAddress();
+        LogContext.removeAction();
+
         request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
     }
 
+    /**
+     * Handles POST request for sign up and login.
+     *
+     * @param request  HTTP request from the client.
+     * @param response HTTP response from the server.
+     * @throws IOException if any error occurs in the client/server communication.
+     */
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         LogContext.setIPAddress(request.getRemoteAddr());
 
         String op = request.getRequestURI();
-        op = op.split("[/;]")[2]; // to handle also jssasionid:
+        op = op.split("[/;]")[2]; // to handle also jsessionid:
         // /lupus/player/signup;jsessionid=C5771A95DD33E55251182A81F34A74CB
 
         LOGGER.info("Access using POST, operation: %s", op);
 
+        request.getSession().invalidate();
+
         switch (op) {
             case "signup":
-                singup(request, response);
+                signup(request, response);
                 break;
             case "login":
                 login(request, response);
                 break;
+            // case "logout": -> the session is already invalidated
         }
 
+        LogContext.removeAction();
         LogContext.removeIPAddress();
     }
 
-    public void singup(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String username = request.getParameter("username");
-        String email = request.getParameter("email");
-        String password = request.getParameter("password");
-        String password_rp = request.getParameter("password_rp");
 
-        LOGGER.info("username (%s, %s) is trying to singup", username, email);
-
+    /**
+     * Retrieves all the parameters sent by the client, verifies their correctness and, if correct, adds the user to the database.
+     *
+     * @param request  HTTP request from the client.
+     * @param response HTTP response from the server.
+     * @throws IOException if any error occurs in the client/server communication.
+     */
+    public void signup(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
-            //check that all registrations parameters have been set and are not null
+            LogContext.setAction(Actions.SIGNUP_ACTION);
+
+            // recover all necessary parameters
+            String username = request.getParameter("username");
+            String email = request.getParameter("email");
+            String password = request.getParameter("password");
+            String password_rp = request.getParameter("password_rp");
+
+            LogContext.setUser(username);
+            LOGGER.info("username (%s, %s) is trying to singup", username, email);
+
+            Message m = null;
+
+            // checks that all parameters have been set and are not null
             if (username == null || username.isEmpty() ||
                     email == null || email.isEmpty() ||
                     password == null || password.isEmpty() ||
                     password_rp == null || password_rp.isEmpty()) {
 
-                // TODO: To check
                 ErrorCode ec = ErrorCode.EMPTY_INPUT_FIELDS;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
+                LOGGER.info("Some fields are empty");
+                m = new Message("Some fields are empty", ec.getErrorCode(), ec.getErrorMessage());
                 request.setAttribute("message", m);
 
-                // LOGGER.debug("User have invalid fields"); // .debug not work
-                LOGGER.info("Some fields are empty");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                LogContext.removeIPAddress();
+                LogContext.removeAction();
 
-//                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
-            } else if (!usernameRegexPattern.matcher(username).matches()) {
-                // TODO: To check
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+            }
+            // checks if the username respect the regex
+            else if (!usernameRegexPattern.matcher(username).matches()) {
                 ErrorCode ec = ErrorCode.INVALID_USERNAME_FORMAT;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Username not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
-                request.setAttribute("message", m);
-
                 LOGGER.info("Username not valid");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
-            } else if (!emailRegexPattern.matcher(email).matches()) {
-                // TODO: To check
+                m = new Message("Username not valid", ec.getErrorCode(), ec.getErrorMessage());
+            }
+            // checks if the email respect the regex
+            else if (!emailRegexPattern.matcher(email).matches()) {
                 ErrorCode ec = ErrorCode.INVALID_EMAIL_FORMAT;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Email not valid", "" + ec.getErrorCode(), ec.getErrorMessage());
-                request.setAttribute("message", m);
-
                 LOGGER.info("Email not valid");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
-            } else if (!passwordRegexPattern.matcher(password).matches()) {
-                // TODO: To check
+                m = new Message("Email not valid", ec.getErrorCode(), ec.getErrorMessage());
+            }
+            // checks if the password respect the regex
+            else if (!passwordRegexPattern.matcher(password).matches()) {
                 ErrorCode ec = ErrorCode.INVALID_PASSWORD_FORMAT;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Passwords not complex enough", "" + ec.getErrorCode(), ec.getErrorMessage());
-                request.setAttribute("message", m);
-
                 LOGGER.info("Passwords not complex enough");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
-            } else if (!password.equals(password_rp)) {
-                // TODO: To check
+                m = new Message("Passwords not complex enough", ec.getErrorCode(), ec.getErrorMessage());
+            }
+            // checks if the password and the repeat password ar the same
+            else if (!password.equals(password_rp)) {
                 ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Passwords do not match", "" + ec.getErrorCode(), ec.getErrorMessage());
-                request.setAttribute("message", m);
-
                 LOGGER.info("Passwords do not match");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                m = new Message("Passwords do not match", ec.getErrorCode(), ec.getErrorMessage());
             } else {
-
+                // searches if already exist users with that username or email
                 Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
                 Player player_email = new SearchPlayerByEmailDAO(getConnection(), email).access().getOutputParam();
 
+                // username already used
                 if (player_user != null) {
-                    // TODO: To check
                     ErrorCode ec = ErrorCode.USERNAME_ALREADY_USED;
                     response.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Username already used", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    request.setAttribute("message", m);
-
-                    // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Username already used");
-                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
-                } else if (player_email != null) {
-                    // TODO: To check
+                    m = new Message("Username already used", ec.getErrorCode(), ec.getErrorMessage());
+                }
+                // email already used
+                else if (player_email != null) {
                     ErrorCode ec = ErrorCode.EMAIL_ALREADY_USED;
                     response.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Email already used", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    request.setAttribute("message", m);
-
-                    // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("Email already used");
-                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                    m = new Message("Email already used", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
+                    // creates the user
                     Player signupPlayer = new Player(username, email, password);
-                    new SingupPlayerDAO(getConnection(), signupPlayer).access();
+                    new SignupPlayerDAO(getConnection(), signupPlayer).access();
 
+                    // adds the user to the session
                     HttpSession session = request.getSession();
                     session.setAttribute("user", signupPlayer);
                     LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
 
-                    // login credentials were correct: we redirect the user to the homepage
-//                    request.getRequestDispatcher("/jsp/home.jsp").forward(request, response);
+                    LogContext.removeIPAddress();
+                    LogContext.removeAction();
+                    LogContext.removeUser();
+
+                    // after sign up, redirects all to the homepage
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
 
                 }
             }
+
+            if (m != null) {
+                // if there were any error, return the error message
+                request.setAttribute("message", m);
+
+                LogContext.removeIPAddress();
+                LogContext.removeAction();
+                LogContext.removeUser();
+
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+            }
         } catch (SQLException | ServletException e) {
-//            writeError(response, ErrorCode.INTERNAL_ERROR);
+            ErrorCode er = ErrorCode.INTERNAL_ERROR;
+            response.setStatus(er.getHTTPCode());
             LOGGER.error("stacktrace:", e);
+        } finally {
+            LogContext.removeIPAddress();
+            LogContext.removeAction();
+            LogContext.removeUser();
         }
     }
 
+    /**
+     * Retrieves all the parameters sent by the client, checks if they are correct, and allows login.
+     *
+     * @param request  HTTP request from the client.
+     * @param response HTTP response from the server.
+     * @throws IOException if any error occurs in the client/server communication.
+     */
     public void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
+            LogContext.setAction(Actions.LOGIN_ACTION);
+
+            // recover all necessary parameters
             String user = request.getParameter("user");
             String password = request.getParameter("password");
 
+            LogContext.setUser(user);
             LOGGER.info("User %s is trying to login", user);
 
+            Message m = null;
+
+            //checks that all parameters have been set and are not null
             if (user == null || user.isEmpty() ||
                     password == null || password.isEmpty()) {
 
-                // TODO: To check
                 ErrorCode ec = ErrorCode.EMPTY_INPUT_FIELDS;
                 response.setStatus(ec.getHTTPCode());
 
-                Message m = new Message("Some fields are empty", "" + ec.getErrorCode(), ec.getErrorMessage());
-                request.setAttribute("message", m);
-
-                // LOGGER.debug("User have invalid fields"); // .debug not work
                 LOGGER.info("Some fields are empty");
-                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                m = new Message("Some fields are empty", ec.getErrorCode(), ec.getErrorMessage());
+
             } else {
+                // queries the database to find the user
                 Player p = new LoginPlayerDAO(getConnection(), user, password).access().getOutputParam();
+
+                // The user does not exist
                 if (p == null) {
-                    // TODO: To check
                     ErrorCode ec = ErrorCode.WRONG_CREDENTIALS;
                     response.setStatus(ec.getHTTPCode());
-                    Message m = new Message("Credentials are wrong", "" + ec.getErrorCode(), ec.getErrorMessage());
-                    request.setAttribute("message", m);
+
                     LOGGER.info("Credentials are wrong");
-                    request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+                    m = new Message("Credentials are wrong", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
                     session.setAttribute("user", p);
-                    LOGGER.info("the user (%s, %s) logged in", p.getUsername(), p.getEmail());
+                    LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
                 }
             }
+            if (m != null) {
+                // if there were any error, return the error message
+                request.setAttribute("message", m);
+
+                LogContext.removeIPAddress();
+                LogContext.removeAction();
+                LogContext.removeUser();
+
+                request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+            }
         } catch (SQLException | ServletException e) {
-//            writeError(response, ErrorCode.INTERNAL_ERROR);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            response.setStatus(ec.getHTTPCode());
+            LOGGER.error("Unexpected error", e);
+            final Message m = new Message("Unexpected error.", ec.getErrorCode(), e.getMessage());
             LOGGER.error("stacktrace:", e);
+        } finally {
+            LogContext.removeIPAddress();
+            LogContext.removeAction();
+            LogContext.removeUser();
         }
     }
-
 }

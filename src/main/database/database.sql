@@ -1,15 +1,15 @@
+SET TIME ZONE 'Europe/Rome';
+
 DROP TABLE IF EXISTS Action;
 DROP TABLE IF EXISTS TYPE_ACTION;
 DROP TABLE IF EXISTS HAS_ROLES;
 DROP TABLE IF EXISTS PLAYS_AS_IN;
-DROP TYPE IF EXISTS cycle_phase;
 DROP TABLE IF EXISTS Game;
-DROP TYPE IF EXISTS winning_faction;
 DROP TABLE IF EXISTS Role;
-DROP TYPE IF EXISTS alignment;
-DROP TYPE IF EXISTS faction;
 DROP TABLE IF EXISTS IS_FRIEND_WITH;
 DROP TABLE IF EXISTS Player;
+
+
 
 -- #################################################################################################
 -- ## Creation of the table Player                                                                ##
@@ -32,7 +32,6 @@ COMMENT ON COLUMN Player.password IS 'The password of the player.';
 COMMENT ON COLUMN Player.registration_date IS 'The date when the player registered.';
 
 
-
 -- #################################################################################################
 -- ## Creation of the table is_friend_with                                                        ##
 -- #################################################################################################
@@ -53,43 +52,6 @@ COMMENT ON COLUMN IS_FRIEND_WITH.friend_username IS 'The username of the player 
 COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was established.';
 
 
-
--- #################################################################################################
--- ## Creation of enumeration for faction                                                         ##
--- #################################################################################################
---
--- This enumeration represents the factions that are present in the game.
---  -1 stands for Master,
---   0 for wolves,
---   1 for farmers,
---   2 for itself.
-
--- CREATE TYPE faction AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible factions in the game.';
-
--- #################################################################################################
--- ## Creation of enumeration for alignment                                                       ##
--- #################################################################################################
---
--- This enumeration represents the alignments that a role can be.
---  -1 stands for Master,
---   0 for evil,
---   1 for good,
---   2 for neutral.
-
--- CREATE TYPE alignment AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible alignments that a role can be in the game.';
-
 -- #################################################################################################
 -- ## Creation of the table Role                                                                  ##
 -- #################################################################################################
@@ -98,40 +60,20 @@ COMMENT ON COLUMN IS_FRIEND_WITH.date IS 'The date when the friendship was estab
 
 CREATE TABLE Role
 (
-    ID            SERIAL PRIMARY KEY,
-    name          CHARACTER VARYING NOT NULL UNIQUE,
-    type          SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
-    with_who_wins SMALLINT          NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
-    max_number    SMALLINT          NOT NULL,
+    name          VARCHAR(20) PRIMARY KEY,
+    type          SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    with_who_wins SMALLINT NOT NULL CHECK ( type IN (-1, 0, 1, 2, 3) ),
+    max_number    SMALLINT NOT NULL,
     description   CHARACTER VARYING
 );
 
 COMMENT ON TABLE Role IS 'Represents different roles in the game.';
-COMMENT ON COLUMN Role.ID IS 'The unique identifier for each role.';
 COMMENT ON COLUMN Role.name IS 'The name of the role.';
 COMMENT ON COLUMN Role.type IS 'The type of the role (master(-1), good (0), evil(1), victory_stealer(2) or neutral(3)).';
-COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3)).';
+COMMENT ON COLUMN Role.with_who_wins IS 'The faction with which the role can win the game (farmers(0), wolves(1), hamster(2) or jester(3). Special case master(-1)).';
+COMMENT ON COLUMN Role.max_number IS 'The max number of that role in a game.';
 COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
-
-
--- #################################################################################################
--- ## Creation of enumeration for winning faction                                                 ##
--- #################################################################################################
---
--- This enumeration represents the possible factions that can win a game.
---  -1 stands for none,
---   0 for wolves,
---   1 for farmers,
---   2 for other.
-
--- CREATE TYPE winning_faction AS ENUM (
---     '-1',
---     '0',
---     '1',
---     '2'
---     );
--- COMMENT ON TYPE faction IS 'The categories of the possible winning factions in the game.';
 
 -- #################################################################################################
 -- ## Creation of the table Game                                                                  ##
@@ -141,39 +83,27 @@ COMMENT ON COLUMN Role.description IS 'A description of the role.';
 
 CREATE TABLE Game
 (
-    ID               SERIAL PRIMARY KEY,
-    public_ID        CHARACTER VARYING UNIQUE NOT NULL,
-    start            TIMESTAMP NOT NULL,
-    game_duration    TIME,
-    who_wins         SMALLINT CHECK ( who_wins IN (0, 1, 2, 3) ),
-    number_of_rounds INTEGER
+    ID            SERIAL PRIMARY KEY,
+    public_ID     CHARACTER VARYING UNIQUE NOT NULL,
+    start         TIMESTAMP(0)             NOT NULL,
+    game_duration TIME,
+    who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
+    rounds        SMALLINT CHECK ( rounds >= 0)                   DEFAULT 0,
+    phase         SMALLINT CHECK ( phase IN (0, 1) )              DEFAULT 0,
+    subphase      SMALLINT CHECK ( subphase IN (0, 1, 2, 3) )     DEFAULT 0,
+    CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
 COMMENT ON TABLE Game IS 'Represents a game played.';
 COMMENT ON COLUMN Game.ID IS 'The unique identifier for each game.';
+COMMENT ON COLUMN Game.public_ID IS 'The public identifier, it is composition of three role taken at random from the ones in the game.';
 COMMENT ON COLUMN Game.start IS 'The date and the hour in which the game has started.';
 COMMENT ON COLUMN Game.game_duration IS 'The duration of the game.';
-COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game.';
-COMMENT ON COLUMN Game.number_of_rounds IS 'The total number of rounds played in the game.';
+COMMENT ON COLUMN Game.who_wins IS 'The faction that won the game (farmers(0), wolves(1), hamster(2) or jester(3). If the game is not finished yet (-1)).';
+COMMENT ON COLUMN Game.rounds IS 'The total number of rounds played in the game.';
+COMMENT ON COLUMN Game.phase IS 'The current phase if the game is not finished or the last phase of the game (0 or 1 (Night or Day))';
+COMMENT ON COLUMN Game.subphase IS 'The current subphase if the game is not finished or the last subphase of the game';
 
-
-
--- #################################################################################################
--- ## Creation of enumeration for phase                                                           ##
--- #################################################################################################
---
--- This enumeration represents the phases that are present in the game.
---   M stands for Master,
---   N for night,
---   D for day,
-
-CREATE TYPE cycle_phase AS ENUM (
-    'M',
-    'N',
-    'D'
-    );
-
--- COMMENT ON TYPE faction IS 'The categories of the possible phases in a game.';
 
 -- #################################################################################################
 -- ## Creation of the table plays_as_in                                                           ##
@@ -185,58 +115,20 @@ CREATE TABLE PLAYS_AS_IN
 (
     player_username  VARCHAR(20) REFERENCES Player (username),
     game_id          SERIAL REFERENCES Game (ID),
-    role_id          SERIAL REFERENCES Role (ID),
+    role             VARCHAR(20) REFERENCES Role (name),
     round_of_death   INTEGER,
-    phase_of_death   cycle_phase,
-    duration_of_life FLOAT,
-    PRIMARY KEY (player_username, game_id, role_id)
+    phase_of_death   SMALLINT,
+    duration_of_life TIME,
+    PRIMARY KEY (player_username, game_id, role)
 );
 
 COMMENT ON TABLE PLAYS_AS_IN IS 'Represents the role played by a player in a game.';
 COMMENT ON COLUMN PLAYS_AS_IN.player_username IS 'The username of the player who played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.game_id IS 'The ID of the game in which the player played the role.';
-COMMENT ON COLUMN PLAYS_AS_IN.role_id IS 'The ID of the role played by the player.';
-COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (optional).';
-COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (N, D or M (Night, Day or Master)).';
-COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The percentage of time in which the player has stayed alive during the game.';
-
-
--- #################################################################################################
--- ## Creation of the table has_roles                                                             ##
--- #################################################################################################
---
--- This table represents the number of instances for each role in a game
-
-CREATE TABLE HAS_ROLES
-(
-    game_id         SERIAL REFERENCES Game (ID),
-    role_id         SERIAL REFERENCES Role (ID),
-    number_of_roles SMALLINT NOT NULL,
-    PRIMARY KEY (game_id, role_id)
-);
-
-COMMENT ON TABLE HAS_ROLES IS 'Associates roles with games.';
-COMMENT ON COLUMN HAS_ROLES.game_id IS 'The ID of the game in which roles are associated.';
-COMMENT ON COLUMN HAS_ROLES.role_id IS 'The ID of the role associated with the game.';
-COMMENT ON COLUMN HAS_ROLES.number_of_roles IS 'The number of instances of the role associated with the game.';
-
-
--- #################################################################################################
--- ## Creation of the table type_action                                                           ##
--- #################################################################################################
---
--- This table represents the type of actions possible in a game
-
-CREATE TABLE TYPE_ACTION
-(
-    ID   SERIAL PRIMARY KEY,
-    name CHARACTER VARYING NOT NULL
-);
-
-COMMENT ON TABLE TYPE_ACTION IS 'Represents different types of actions.';
-COMMENT ON COLUMN TYPE_ACTION.ID IS 'The unique identifier for each type of action.';
-COMMENT ON COLUMN TYPE_ACTION.name IS 'The name of the type of action.';
-
+COMMENT ON COLUMN PLAYS_AS_IN.role IS 'The ID of the role played by the player.';
+COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (0 if the player is alive and the game is not finished or the player has not died in that game).';
+COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (0 or 1 (Night or Day)).';
+COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The duration of of life of the player in the game.';
 
 
 -- #################################################################################################
@@ -252,10 +144,10 @@ CREATE TABLE Action
     round           INTEGER                                  NOT NULL,
     phase           INTEGER                                  NOT NULL,
     subphase        INTEGER                                  NOT NULL,
-    description     CHARACTER VARYING,
-    type_of_action  SERIAL REFERENCES type_action (ID)       NOT NULL,
+    type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
-    PRIMARY KEY (game_id, player_username, round, phase, subphase)
+    PRIMARY KEY (game_id, player_username, round, phase, subphase, target),
+    CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
 COMMENT ON TABLE Action IS 'Represents actions performed by players during the game.';
@@ -264,6 +156,5 @@ COMMENT ON COLUMN Action.player_username IS 'The username of the player who perf
 COMMENT ON COLUMN Action.round IS 'The round number in which the action occurred.';
 COMMENT ON COLUMN Action.phase IS 'The phase of the round in which the action occurred.';
 COMMENT ON COLUMN Action.subphase IS 'The subphase of the phase in which the action occurred.';
-COMMENT ON COLUMN Action.description IS 'A description of the action.';
 COMMENT ON COLUMN Action.type_of_action IS 'The type of action performed by the player.';
 COMMENT ON COLUMN Action.target IS 'The username of the target player of the action.';

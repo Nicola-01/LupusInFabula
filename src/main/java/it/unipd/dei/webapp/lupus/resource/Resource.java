@@ -3,6 +3,13 @@ package it.unipd.dei.webapp.lupus.resource;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Represents a resource that can be serialized to JSON.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public interface Resource {
 
     /**

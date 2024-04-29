@@ -1,0 +1,23 @@
+### Login as player
+POST http://localhost:8080/lupus/login HTTP/1.1
+#user for the game with id 1 and public id dorky-farmer-explorer
+Content-Type: application/x-www-form-urlencoded
+
+user = user1 &
+password = ciao
+
+### Get logs as player
+GET http://localhost:8080/lupus/game/logs/dorky-farmer-explorer HTTP/1.1
+
+### Get logs as gamemaster, but is not a gameamster
+GET http://localhost:8080/lupus/game/logs/dorky-farmer-explorer/master HTTP/1.1
+
+### login as game master
+POST http://localhost:8080/lupus/login HTTP/1.1
+#user master for the game with id 1 and public id dorky-farmer-explorer
+Content-Type: application/x-www-form-urlencoded
+
+user = esempio &
+password = password123
+### Get logs as gamemaster
+GET http://localhost:8080/lupus/game/logs/dorky-farmer-explorer/master HTTP/1.1

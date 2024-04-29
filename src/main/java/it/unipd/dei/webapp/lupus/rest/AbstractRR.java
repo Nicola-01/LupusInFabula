@@ -9,10 +9,21 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 
+/**
+ * Abstract base class for REST resources.
+ * <p>
+ * Provides common functionality for handling REST requests.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractRR implements RestResource {
 
     /**
@@ -47,9 +58,9 @@ public abstract class AbstractRR implements RestResource {
     protected final HttpServletResponse res;
 
     /**
-     * The connection to the database
+     * To connect to the database
      */
-    protected final Connection con;
+    protected final DataSource ds;
 
     /**
      * The {@link Actions} performed by this REST resource.
@@ -62,9 +73,9 @@ public abstract class AbstractRR implements RestResource {
      * @param action the action performed by this REST resource.
      * @param req    the HTTP request.
      * @param res    the HTTP response.
-     * @param con    the connection to the database.
+     * @param ds     to connect to the database.
      */
-    protected AbstractRR(final String action, final HttpServletRequest req, final HttpServletResponse res, final Connection con) {
+    protected AbstractRR(final String action, final HttpServletRequest req, final HttpServletResponse res, final DataSource ds) {
 
         if (action == null || action.isBlank()) {
             LOGGER.warn("Action is null or empty.");
@@ -84,11 +95,13 @@ public abstract class AbstractRR implements RestResource {
         }
         this.res = res;
 
-        if (con == null) {
+        if (ds == null) {
             LOGGER.error("The connection cannot be null.");
             throw new NullPointerException("The connection cannot be null.");
         }
-        this.con = con;
+        this.ds = ds;
+
+        res.setContentType(JSON_UTF_8_MEDIA_TYPE);
     }
 
     @Override
