@@ -53,7 +53,7 @@ public class UpdatePasswordByUsernameDAO extends AbstractDAO<Integer> {
     /**
      * Updates the password of the specified player in the database.
      *
-     * @throws SQLException
+     * @throws SQLException if there is an error executing the SQL statement
      */
     @Override
     public final void doAccess() throws SQLException {

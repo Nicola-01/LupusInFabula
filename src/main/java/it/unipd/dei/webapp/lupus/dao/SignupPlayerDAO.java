@@ -33,14 +33,14 @@ public class SignupPlayerDAO extends AbstractDAO {
      */
     public SignupPlayerDAO(final Connection con, final Player player) {
         super(con);
-
-        if (player == null) {
-            LOGGER.error("The player cannot be null.");
-            throw new NullPointerException("The player cannot be null.");
-        }
         this.player = player;
     }
 
+    /**
+     * Executes the DAO operation to insert a new player into the database.
+     *
+     * @throws SQLException if there is an error executing the SQL query
+     */
     @Override
     protected void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

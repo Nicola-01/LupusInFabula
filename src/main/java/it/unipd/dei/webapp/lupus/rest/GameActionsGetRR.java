@@ -33,7 +33,6 @@ public class GameActionsGetRR extends AbstractRR {
      * Map containing the actions available during the night phase of the game.
      * The key is the role name, and the value is the corresponding action.
      */
-    // TODO -> remove SAM and CARPENTER
     private static final Map<String, String> nightAction = new HashMap<>();
 
     /**
@@ -66,7 +65,11 @@ public class GameActionsGetRR extends AbstractRR {
         areDead = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
         for (GameRoleAction role : GameRoleAction.values())
-            if (role.getAction() != null && playerRole.containsValue(role.getName()))
+            if (role.getAction() != null
+                    && playerRole.containsValue(role.getName())
+                    && !role.getAction().equals(GameRoleAction.SAM.getAction())
+                    && !role.getAction().equals(GameRoleAction.CARPENTER.getAction())
+            )
                 // insert only the role that exist in the game
                 nightAction.put(role.getName(), role.getAction());
 

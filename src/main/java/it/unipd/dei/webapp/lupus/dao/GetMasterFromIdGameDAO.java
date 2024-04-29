@@ -37,7 +37,9 @@ public class GetMasterFromIdGameDAO extends AbstractDAO<String> {
     }
 
     /**
-     * @throws Exception
+     * Executes the DAO operation to retrieve the master player's username from the specified game ID.
+     *
+     * @throws Exception if there is an error executing the SQL statement
      */
     @Override
     protected void doAccess() throws Exception {

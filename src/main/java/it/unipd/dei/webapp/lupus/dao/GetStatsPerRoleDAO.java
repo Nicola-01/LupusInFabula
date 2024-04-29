@@ -49,6 +49,11 @@ public class GetStatsPerRoleDAO extends AbstractDAO<List<StatsRole>> {
         this.username = username;
     }
 
+    /**
+     * Executes the DAO operation to retrieve statistics per role of the specified player.
+     *
+     * @throws SQLException if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

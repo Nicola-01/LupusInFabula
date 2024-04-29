@@ -16,6 +16,17 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Abstract base class for servlets that require database access.
+ * <p>
+ * Subclasses can use the {@code getConnection} and {@code getDataSource} methods to obtain database connections
+ * and the data source, respectively. They can also use the {@code writeError} method to write error responses.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractDatabaseServlet extends HttpServlet {
 
     /**

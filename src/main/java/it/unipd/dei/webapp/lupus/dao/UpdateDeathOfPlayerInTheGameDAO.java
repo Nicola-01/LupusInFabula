@@ -36,6 +36,11 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
         this.playsAsIn = playsAsIn;
     }
 
+    /**
+     * Executes the DAO operation to update the death information of a player in the game.
+     *
+     * @throws Exception if there is an error executing the SQL query
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

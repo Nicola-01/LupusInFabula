@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * class to manage the row of table action in database
+ * Class to manage the row of table action in database
  *
  * @author LupusInFabula Group
  * @version 1.0
@@ -85,10 +85,12 @@ public class Action extends AbstractResource
         this.typeAction = typeAction;
         this.target = target;
     }
+
     /**
-     * Constructor for the class that use a result of a query
+     * Constructs an Action object using the result set of a database query.
      *
-     * @param  r  represent the result of a query exe in the db
+     * @param r the result set representing the action data retrieved from the database
+     * @throws SQLException if a database access error occurs
      */
     public Action(ResultSet r) throws SQLException
     {

@@ -16,10 +16,13 @@ import java.sql.Time;
 public class UpdateGameDAO extends AbstractDAO {
 
     /**
-     * The SQL statement to update game information if it's not finished.
+     * The SQL statement to update game information if the game is not finished.
      */
     private static final String STATEMENT_NOT_FINISHED = "UPDATE game SET rounds = ?, phase = ? WHERE id = ?";
 
+    /**
+     * The SQL statement to update game information if the game is finished.
+     */
     private static final String STATEMENT_FINISHED = "UPDATE game SET rounds = ?, phase = ?, who_wins = ?, game_duration = now() - start WHERE id = ?";
 
 
@@ -76,9 +79,9 @@ public class UpdateGameDAO extends AbstractDAO {
 
 
     /**
-     * Updates the game information in the database.
+     * Updates the game information in the database depending on whether the game is finished or not.
      *
-     * @throws Exception
+     * @throws Exception if an error occurs while accessing the database.
      */
     @Override
     protected void doAccess() throws Exception {

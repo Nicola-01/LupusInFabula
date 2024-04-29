@@ -5,25 +5,104 @@ package it.unipd.dei.webapp.lupus.utils;
  */
 public enum GameRoleAction {
 
+    /**
+     * The MASTER role.
+     */
     MASTER(RoleType.MASTER, "master", null),
-    CARPENTER(RoleType.GOOD,"carpenter", "last chance"), // TODO --> think to the day action
+
+    /**
+     * The CARPENTER role.
+     */
+    CARPENTER(RoleType.GOOD,"carpenter", "last chance"),
+
+    /**
+     * The FARMER role.
+     */
     FARMER(RoleType.GOOD, "farmer", null),
+
+    /**
+     * The HOBBIT role.
+     */
     HOBBIT(RoleType.GOOD,"hobbit", null),
+
+    /**
+     * The KAMIKAZE role.
+     */
     KAMIKAZE(RoleType.GOOD,"kamikaze", "blowup"),
+
+    /**
+     * The KNIGHT role.
+     */
     KNIGHT(RoleType.GOOD,"knight", "protect"),
+
+    /**
+     * The MEDIUM role.
+     */
     MEDIUM(RoleType.GOOD,"medium", "look"),
-    SAM(RoleType.GOOD,"sam", "revenge"), // TODO --> think to the day action
+
+    /**
+     * The SAM role.
+     */
+    SAM(RoleType.GOOD,"sam", "revenge"),
+
+    /**
+     * The SEER role.
+     */
     SEER(RoleType.GOOD,"seer", "investigate"),
+
+    /**
+     * The SHERIFF role.
+     */
     SHERIFF(RoleType.GOOD,"sheriff", "shot"),
+
+    /**
+     * The BERSERKER role.
+     */
     BERSERKER(RoleType.EVIL,"berserker", "rage"),
+
+    /**
+     * The DORKY role.
+     */
     DORKY(RoleType.EVIL,"dorky", "point"),
+
+    /**
+     * The EXPLORER role.
+     */
     EXPLORER(RoleType.EVIL,"explorer", "explore"),
+
+    /**
+     * The GIUDA role.
+     */
     GIUDA(RoleType.EVIL,"giuda", null),
+
+    /**
+     * The PUPPY role.
+     */
     PUPPY(RoleType.EVIL,"puppy", "maul"),
+
+    /**
+     * The WOLF role.
+     */
     WOLF(RoleType.EVIL,"wolf", "maul"),
+
+    /**
+     * The HAMSTER role.
+     */
     HAMSTER(RoleType.VICTORY_STEALER,"hamster", null),
+
+    /**
+     * The JESTER role.
+     */
     JESTER(RoleType.VICTORY_STEALER,"jester", null),
+
+    /**
+     * The ILLUSIONIST role.
+     */
     ILLUSIONIST(RoleType.NEUTRAL,"illusionist", "block"),
+
+    /**
+     * The PLAGUE_SPREADER role.
+     */
     PLAGUE_SPREADER(RoleType.NEUTRAL,"plague spreader", "plague");
 
     /**

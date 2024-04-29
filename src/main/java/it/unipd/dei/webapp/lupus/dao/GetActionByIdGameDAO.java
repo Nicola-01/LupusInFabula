@@ -1,9 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Action;
-import it.unipd.dei.webapp.lupus.resource.Actions;
-import it.unipd.dei.webapp.lupus.resource.GameAction;
-import it.unipd.dei.webapp.lupus.resource.LogContext;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -22,31 +19,33 @@ import java.util.ArrayList;
 public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
 {
     /**
-     * query to fill with the id of game
-     * */
+     * The SQL statement to be executed
+     */
     private static final String STATEMENT = "SELECT * "                                                     +
                                             "FROM  action a "+
                                             "WHERE a.game_id = ? "                                          +
                                             "ORDER BY a.round, a.phase, a.subphase";
     /**
-     * numeric identifier for the game
-     * */
-    private final int idPart;
+     * The ID of the game to retrieve
+     */
+    private final int gameID;
 
     /**
      * Constructor for the class
      *
-     * @param  con  connection with the database
-     * @param  idPart numeric identifier for the game
+     * @param con    the connection to the database.
+     * @param gameID the ID of the game to retrieve.
      */
-    public GetActionByIdGameDAO(final Connection con, final int idPart)
+    public GetActionByIdGameDAO(final Connection con, final int gameID)
     {
         super(con);
-        this.idPart = idPart;
+        this.gameID = gameID;
     }
 
     /**
-     * function to exec the query on db
+     * Executes the DAO operation to retrieve actions associated with the specified game ID.
+     *
+     * @throws SQLException if there is an error executing the SQL statement
      */
     @Override
     public final void doAccess() throws SQLException
@@ -58,7 +57,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
         try
         {
             query = con.prepareStatement(STATEMENT);
-            query.setInt(1, idPart);
+            query.setInt(1, gameID);
 
             rs = query.executeQuery();
 
@@ -69,7 +68,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
             if (query != null) query.close();
             if (rs != null)    rs.close();
         }
-        LOGGER.info(String.format("Found for game with id %d, %d logs.", idPart, r.size()));
+        LOGGER.info(String.format("Found for game with id %d, %d logs.", gameID, r.size()));
         this.outputParam = r;
     }
 }

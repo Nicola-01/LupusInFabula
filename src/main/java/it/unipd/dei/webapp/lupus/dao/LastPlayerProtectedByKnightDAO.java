@@ -36,6 +36,11 @@ public class LastPlayerProtectedByKnightDAO extends AbstractDAO<String> {
         this.gameID = gameID;
     }
 
+    /**
+     * Executes the DAO operation to retrieve the last player protected by the Knight in the game.
+     *
+     * @throws Exception if there is an error executing the SQL query
+     */
     @Override
     protected void doAccess() throws Exception {
 

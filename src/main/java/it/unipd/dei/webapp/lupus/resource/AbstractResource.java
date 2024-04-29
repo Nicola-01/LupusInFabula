@@ -11,6 +11,16 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import java.io.IOException;
 import java.io.OutputStream;
 
+/**
+ * Abstract base class for resources providing JSON serialization functionality.
+ * <p>
+ * Subclasses should implement the {@code writeJSON} method to define the JSON representation of the resource.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractResource implements Resource {
 
     /**

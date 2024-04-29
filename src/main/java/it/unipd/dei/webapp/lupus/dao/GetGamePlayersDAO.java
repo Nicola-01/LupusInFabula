@@ -42,13 +42,13 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
     /**
      * Creates a new object to list all the players in a game using the private gameID.
      *
-     * @param con           The connection to the database.
-     * @param gameID        The private gameID used to find the game.
-     * @param isMaster      Whether the URI contained a /master at the end.
-     * @param playerUsername    The username of the player who made the request
-     * @param role          The role of the player who made the request
+     * @param con            The connection to the database.
+     * @param gameID         The private gameID used to find the game.
+     * @param isMaster       Whether the URI contained a /master at the end.
+     * @param playerUsername The username of the player who made the request
+     * @param role           The role of the player who made the request
      */
-    public GetGamePlayersDAO(final Connection con, final int gameID, boolean isMaster, String playerUsername, String role){
+    public GetGamePlayersDAO(final Connection con, final int gameID, boolean isMaster, String playerUsername, String role) {
         super(con);
         this.gameID = gameID;
         this.URIisMaster = isMaster;
@@ -59,6 +59,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
 
     /**
      * Handles the query to list all the players and their roles playing in game = gameID
+     *
      * @throws SQLException in case of errors during the query
      */
     @Override
@@ -74,10 +75,8 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
 
             // if the request uri is /game/players/{gameID}/master
             // I can send all the info about the game (username and roles)
-            if(URIisMaster)
-            {
-                while (rs.next())
-                {
+            if (URIisMaster) {
+                while (rs.next()) {
                     join.add(new PlaysAsIn(
                             rs.getString("player_username"),
                             rs.getInt("game_id"),
@@ -91,13 +90,11 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
             // otherwise I send the list of players without role, but only the role of the player
             // who made the request
             // Only exception: If the user's role is "wolf", he can see all the other players role if they are "wolf" as well
-            else
-            {
-                while (rs.next())
-                {
+            else {
+                while (rs.next()) {
                     String playerRole = rs.getString("role");
                     String sentUsername = rs.getString("player_username");
-                    if(! (this.playerUsername.equals(sentUsername) || (this.role.equals("wolf") && playerRole.equals("wolf"))))
+                    if (!(this.playerUsername.equals(sentUsername) || (this.role.equals("wolf") && playerRole.equals("wolf"))))
                         playerRole = "";
 
                     join.add(new PlaysAsIn(
@@ -110,7 +107,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                     ));
                 }
             }
-            String infos = "Game "+gameID+" contains " + join.size() + " players";
+            String infos = "Game " + gameID + " contains " + join.size() + " players";
             LOGGER.info(infos);
         } finally {
             if (rs != null) {

@@ -37,6 +37,11 @@ public class SearchPlayerByUsernameDAO extends AbstractDAO<Player> {
         this.username = username;
     }
 
+    /**
+     * Executes the DAO operation to search for a player by username.
+     *
+     * @throws SQLException if there is an error executing the SQL query
+     */
     @Override
     public final void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

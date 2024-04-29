@@ -58,7 +58,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
     /**
      * Executes the query to determine whether the player named "Dorky" is a wolf in the specified game.
      *
-     * @throws Exception
+     * @throws Exception if there is an error executing the SQL statement
      */
     @Override
     protected void doAccess() throws Exception {

@@ -2,10 +2,7 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.resource.*;
-import it.unipd.dei.webapp.lupus.utils.ErrorCode;
-import it.unipd.dei.webapp.lupus.utils.GamePhase;
-import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
-import it.unipd.dei.webapp.lupus.utils.RoleType;
+import it.unipd.dei.webapp.lupus.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -97,15 +94,14 @@ public class GameActionsPostRR extends AbstractRR {
             } else if (!handleDayPhase(gameActions))
                 return;
 
-            Message m = isAVictory();
-            if (m != null) {
-                m.toJSON(res.getOutputStream());
+            VictoryMessage vm = isAVictory();
+            if (vm != null) {
+                vm.toJSON(res.getOutputStream());
                 currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
-                LOGGER.info("The game finished, winner(s): " + m.getMessage());
+                LOGGER.info("The game finished, winner(s): " + vm.getMessage());
                 new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-            }
-            else {
+            } else {
 
                 if (currentPhase == GamePhase.DAY.getId()) {
                     currentRound++;
@@ -178,15 +174,15 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                 }
-            }else if((numberAction <= (voteNumber+ballotVoteNumber)) && (currentSubPhase > 0)) {
+            } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0)) {
                 LOGGER.info("%s with role %s has voted %s", player, role, target);
 
                 Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
                 // DAO for add the action to the database
                 new InsertIntoActionDAO(ds.getConnection(), action).access();
                 ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
-                LOGGER.info(voteNumber+ballotVoteNumber);
-                if (numberAction == (voteNumber+ballotVoteNumber)) {
+                LOGGER.info(voteNumber + ballotVoteNumber);
+                if (numberAction == (voteNumber + ballotVoteNumber)) {
                     List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
                     Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
@@ -201,7 +197,7 @@ public class GameActionsPostRR extends AbstractRR {
                         updatePlayerDeath(votedPlayer);
                     }
                 }
-            }else{
+            } else {
                 currentSubPhase++;
                 if(role.equals(GameRoleAction.SAM.getName())) {
                     //He can decide to kill someone else before his dead
@@ -211,7 +207,7 @@ public class GameActionsPostRR extends AbstractRR {
                     updatePlayerDeath(target);
                     updatePlayerDeath(player);
                     break;
-                }else{
+                } else {
                     //error
                     LOGGER.info("Error");
                 }
@@ -539,7 +535,7 @@ public class GameActionsPostRR extends AbstractRR {
      * Counts the number of wolves (including special wolf roles) still alive in the game.
      *
      * @return the number of wolves still alive in the game
-     * @throws SQLException
+     * @throws SQLException if there is an error executing the SQL statement
      */
     private int wolfCount() throws SQLException {
 
@@ -638,7 +634,7 @@ public class GameActionsPostRR extends AbstractRR {
 
                 LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
                 ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                m =  new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
+                m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(HttpServletResponse.SC_CONFLICT);
                 m.toJSON(res.getOutputStream());
                 return false;
@@ -962,7 +958,7 @@ public class GameActionsPostRR extends AbstractRR {
     /**
      * Determines if the game has reached a victory condition.
      *
-     * @return a {@code Message} indicating the result of the victory condition:
+     * @return a {@code VictoryMessage} indicating the result of the victory condition and the winning players:
      * <ul>
      *     <li>"The Evil roles win the game" if Evil wins.</li>
      *     <li>"The Hamster wins the game" if Hamster wins.</li>
@@ -972,40 +968,59 @@ public class GameActionsPostRR extends AbstractRR {
      * </ul>
      * @throws SQLException if there is an error accessing the database.
      */
-    private Message isAVictory() throws SQLException {
+    private VictoryMessage isAVictory() throws SQLException {
+        // Map to store the count of roles associated with each winning faction
         Map<Integer, Integer> roleTypeCardinality = new HashMap<>();
+
+        // Map to store the players associated with each winning faction
+        Map<Integer, List<String>> winnerPlayers = new HashMap<>();
+        for (WinFaction wf: WinFaction.values())
+            winnerPlayers.put(wf.getId(), new ArrayList<>());
+
+        // Retrieve the list of roles from the database
         List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
         String hamster = "";
         String jester = "";
 
+        // Iterate through each player's role and update roleTypeCardinality and winnerPlayers accordingly
         for (Map.Entry<String, String> playerRole : playersRole.entrySet()) {
             for (Role role : roles)
-                if (role.getName().equals(playerRole.getValue()) && !deadPlayers.get(playerRole.getKey()))
-                    roleTypeCardinality.put(role.getWith_who_wins(), roleTypeCardinality.getOrDefault(role.getWith_who_wins(), 0) + 1);
-
+                if (role.getName().equals(playerRole.getValue())) {
+                    // Increment the count of the role's associated faction
+                    if (!deadPlayers.get(playerRole.getKey()))
+                        roleTypeCardinality.put(role.getWith_who_wins(), roleTypeCardinality.getOrDefault(role.getWith_who_wins(), 0) + 1);
+                    // Add the player to the list of players associated with the role's faction
+                    winnerPlayers.get(role.getWith_who_wins()).add(playerRole.getKey());
+                }
+            // Check if the player is the Hamster or Jester and update their respective variables
             if (playerRole.getValue().equals(GameRoleAction.HAMSTER.getName()) && !deadPlayers.get(playerRole.getKey()))
                 hamster = playerRole.getKey();
             if (playerRole.getValue().equals(GameRoleAction.JESTER.getName()) && deadPlayers.get(playerRole.getKey()))
                 jester = playerRole.getKey();
         }
 
+        // Calculate the total number of roles in the game
         int totalRoles = 0;
         for (int number : roleTypeCardinality.values())
             totalRoles += number;
 
-        if (roleTypeCardinality.get(RoleType.EVIL.getType()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
-            return new Message("The Evil roles win the game");
+        // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.get(RoleType.EVIL.getType()) == 0 && !hamster.isEmpty())
-            return new Message("The Hamster wins the game");
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
+            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
 
-        if (roleTypeCardinality.get(RoleType.EVIL.getType()) == 0)
-            return new Message("The Good and Neutral roles win the game");
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) == 0 && !hamster.isEmpty())
+            return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getName());
+
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) == 0)
+            return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getName());
 
         if (!jester.isEmpty() && new IsJesterVotedOut(ds.getConnection(), ds, gameID).access().getOutputParam())
-            return new Message("The Jester wins the game");
+            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getName());
 
+        // No victory condition met
         return null;
     }
+
 
 }

@@ -9,15 +9,22 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Objects;
 
+/**
+ * Determines whether the Jester role was voted out but not killed by Sam.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class IsJesterVotedOut extends AbstractDAO<Boolean> {
 
     /**
-     * The SQL statement to be executed
+     * SQL statement to check if the Jester role was voted out and died.
      */
     private static final String STATEMENT_JESTER_DEAD = "SELECT * FROM plays_as_in WHERE game_id = ? and role = ? and phase_of_death = ?";
 
     /**
-     * The SQL statement to be executed
+     * SQL statement to check if a role was killed by Sam.
      */
     private static final String STATEMENT_ROLE_KILLED_BY_SAM = "SELECT role FROM plays_as_in JOIN public.action a on " +
             "(plays_as_in.game_id = a.game_id AND plays_as_in.player_username = a.target) " +
@@ -34,9 +41,10 @@ public class IsJesterVotedOut extends AbstractDAO<Boolean> {
     private final int gameID;
 
     /**
-     * Constructs a new GetGameByGameIdDAO for search if the Jester was voted out by the votes.
+     * Constructs a new IsJesterVotedOut to determine if the Jester was voted out during the day.
      *
      * @param con    the connection to the database.
+     * @param ds     the data source for obtaining connections
      * @param gameID the ID of the game to retrieve.
      */
     public IsJesterVotedOut(final Connection con, final DataSource ds, int gameID) {
@@ -45,6 +53,11 @@ public class IsJesterVotedOut extends AbstractDAO<Boolean> {
         this.gameID = gameID;
     }
 
+    /**
+     * Executes the DAO operation to determine if the Jester was voted out but not killed by Sam.
+     *
+     * @throws Exception if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

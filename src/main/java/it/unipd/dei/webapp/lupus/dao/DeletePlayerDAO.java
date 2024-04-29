@@ -37,7 +37,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
     /**
      * Executes the deletion operation to delete the player record from the database.
      *
-     * @throws SQLException
+     * @throws SQLException if there is an error executing the SQL statement
      */
     @Override
     public final void doAccess() throws SQLException {

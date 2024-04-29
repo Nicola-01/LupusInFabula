@@ -46,6 +46,11 @@ public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
         this.username = username;
     }
 
+    /**
+     * Executes the DAO operation to retrieve logs of games played by the specified player.
+     *
+     * @throws SQLException if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

@@ -31,7 +31,7 @@ public class GameLogGetRR extends AbstractRR
     /**
      * numeric identifier for the game
      */
-    private final int idPart;
+    private final int gameID;
 
     /**
      * boolean that represent if a user logged is a master or not
@@ -50,13 +50,13 @@ public class GameLogGetRR extends AbstractRR
      * @param request  request arrive from the server
      * @param response response to return
      * @param isMaster boolean that represent if a user logged is a master or not
-     * @param idPart   numeric identifier for the game
+     * @param gameID   numeric identifier for the game
      * @param ds       the connection pool to the database.
      */
-    public GameLogGetRR(int idPart, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
+    public GameLogGetRR(int gameID, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
     {
         super(Actions.GET_LOGS, request, response, ds);
-        this.idPart = idPart;
+        this.gameID = gameID;
         this.isMaster = isMaster;
         this.nmPlayer =((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
     }
@@ -76,7 +76,7 @@ public class GameLogGetRR extends AbstractRR
                 ArrayList<Action> r = this.getLog();
                 if (r != null)
                 {
-                    LOGGER.info(String.format("Action successfully listed for game %d.", idPart));
+                    LOGGER.info(String.format("Action successfully listed for game %d.", gameID));
                     res.setStatus(HttpServletResponse.SC_OK);
                     new ResourceList<Action>(r).toJSON(res.getOutputStream());
                 }
@@ -98,28 +98,32 @@ public class GameLogGetRR extends AbstractRR
     }
 
     /**
-     * function to get all log from db
+     * Method to get all logs from the database.
+     *
+     * @return ArrayList of Action objects representing the logs.
+     * @throws SQLException if an SQL error occurs.
      */
     private ArrayList<Action> getLog() throws SQLException
     {
-        ArrayList<Action> r = new GetActionByIdGameDAO(ds.getConnection(), idPart).access().getOutputParam();
+        ArrayList<Action> r = new GetActionByIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-        if(!this.isMaster && r.size()>0)
+        if(!this.isMaster && !r.isEmpty())
             r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
 
         return r;
     }
 
     /**
-     * function to get all log from db
-     * @param  request  request arrive from the server
-     * @param  response response to return
-     * @param  function function to exec between LogContext
+     * Method to execute logging context for a given function.
+     *
+     * @param function The function to execute.
+     * @param request  Request arriving from the server.
+     * @param response Response to return.
      */
     private void log(HttpServletFunct function, HttpServletRequest request, HttpServletResponse response)
     {
         LogContext.setIPAddress(request.getRemoteAddr());
-        LogContext.setGame(idPart);
+        LogContext.setGame(gameID);
         LogContext.setUser(nmPlayer);
 
         function.exe(request, response);

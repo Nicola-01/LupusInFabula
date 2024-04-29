@@ -39,6 +39,11 @@ public class LoginPlayerDAO extends AbstractDAO<Player> {
         this.password = password;
     }
 
+    /**
+     * Executes the DAO operation to search for a player by username/email and password.
+     *
+     * @throws SQLException if there is an error executing the SQL query
+     */
     @Override
     public final void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

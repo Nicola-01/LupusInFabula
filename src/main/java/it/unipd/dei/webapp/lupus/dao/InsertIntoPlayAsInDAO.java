@@ -35,6 +35,11 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
         this.playsAsIn = playsAsIn;
     }
 
+    /**
+     * Executes the DAO operation to insert a new record into the PLAYS_AS_IN table.
+     *
+     * @throws Exception if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
