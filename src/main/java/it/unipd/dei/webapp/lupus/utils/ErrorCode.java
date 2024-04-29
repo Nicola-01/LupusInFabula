@@ -34,6 +34,7 @@ public enum ErrorCode {
 
     //user
     USER_NOT_FOUND("EUSR9", HttpServletResponse.SC_NOT_FOUND, "User not found"),
+    UPDATE_NOT_SUCCESSFUL("EUSR10", HttpServletResponse.SC_CONFLICT, "Update failed"),
 
     // game
     PLAYER_NOT_EXIST("EGME1", HttpServletResponse.SC_NOT_FOUND, "One or more players does not exist."),
