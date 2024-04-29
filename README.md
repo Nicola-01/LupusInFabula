@@ -67,6 +67,13 @@ o reset the database, you have two options:
   the `/docker-entrypoint-initdb.d/` directory, and execute the SQL files. Note that `database.sql` and `populate_db.sql` must
   always be executed after resetting the database.
 
+### Test
+
+To execute the tests for the RestAPI it's needed to execute the two .sql file:
+- populate_db.sql
+- populate_db_optional.sql
+
+The first file inserts into the database all the possible roles; the second, instead, insert one complete game with all actions and also insert some games to test the logs and the statistics of an user.
 ## Group members
 
 | *Last Name* | *First Name* | *Number* |

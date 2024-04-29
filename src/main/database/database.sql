@@ -116,7 +116,7 @@ CREATE TABLE PLAYS_AS_IN
     player_username  VARCHAR(20) REFERENCES Player (username),
     game_id          SERIAL REFERENCES Game (ID),
     role             VARCHAR(20) REFERENCES Role (name),
-    round_of_death   INTEGER,
+    round_of_death   SMALLINT,
     phase_of_death   SMALLINT,
     duration_of_life TIME,
     PRIMARY KEY (player_username, game_id, role)
@@ -141,9 +141,9 @@ CREATE TABLE Action
 (
     game_id         SERIAL REFERENCES Game (ID),
     player_username VARCHAR(20) REFERENCES Player (username),
-    round           INTEGER                                  NOT NULL,
-    phase           INTEGER                                  NOT NULL,
-    subphase        INTEGER                                  NOT NULL,
+    round           SMALLINT                                  NOT NULL,
+    phase           SMALLINT                                  NOT NULL,
+    subphase        SMALLINT                                  NOT NULL,
     type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
     PRIMARY KEY (game_id, player_username, round, phase, subphase, target),
