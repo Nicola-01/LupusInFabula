@@ -229,8 +229,9 @@ public class GameActionsPostRR extends AbstractRR {
 
                     }
                 } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0)) { //ballot votes
+                    LOGGER.info(player +  " with role " + role + " has voted " + target);
 
-                    if (!(target.equals(votedPlayer1) && !(target.equals(votedPlayer2)))) {
+                    if (!(target.equals(votedPlayer1) || target.equals(votedPlayer2))) {
                         LOGGER.error("ERROR: target of the vote in the ballot phase not correct");
                         ErrorCode ec = ErrorCode.BALLOT_VOTE_NOT_VALID;
                         m = new Message("ERROR: target of the vote in the ballot phase not correct", ec.getErrorCode(), ec.getErrorMessage());
@@ -239,13 +240,13 @@ public class GameActionsPostRR extends AbstractRR {
                         return false;
                     }
 
-                    LOGGER.info(player +  " with role " + role + " has voted " + target);
+
 
                     Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
                     // DAO for add the action to the database
                     new InsertIntoActionDAO(ds.getConnection(), action).access();
                     ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
-                    LOGGER.info(voteNumber + ballotVoteNumber);
+
                     if (numberAction == (voteNumber + ballotVoteNumber)) {
                         List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
                         Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));

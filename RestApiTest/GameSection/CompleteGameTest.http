@@ -135,12 +135,12 @@ Content-Type: application/json
     {
       "player":"allRole14",
       "role":"sam",
-      "target":"allRole12"
+      "target":"allRole1"
     },
     {
       "player":"allRole15",
       "role":"seer",
-      "target":"allRole12"
+      "target":"allRole9"
     },
     {
       "player":"allRole16",
