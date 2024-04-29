@@ -31,7 +31,7 @@ player eliminations), and daytime voting for eliminations.
 ### Rules
 
 Detailed rules and guidelines for playing "Lupus in Fabula" are available in section 1.1 of
-the [report](HW_1/report.pdf).
+the [report](REPORT_HW1/WebApplication_HW1_LIFGroup.pdf).
 
 ## Getting started
 
@@ -51,14 +51,14 @@ Follow these steps to build and run the application:
 - Stop the application with `docker-compose down`
 - To view the web application logs, access the terminal of the web
   container: `docker exec -it webapp-lupus-web-1 /bin/bash`. Navigate to the directory
-  /webapps/my-logs, and use `cat lupus.log` to view the logs.
+  `/webapps/my-logs`, and use `cat lupus.log` to view the logs.
 
 ### Database
 
 The database initialization depends on the existence of the `/data/db` directory:
 
-- If the directory /data/db does not exist, the database will initialize during application startup.
-- If the directory /data/db exists, the database initialization is skipped.
+- If the directory `/data/db` does not exist, the database will initialize during application startup.
+- If the directory `/data/db` exists, the database initialization is skipped.
 
 o reset the database, you have two options:
 
