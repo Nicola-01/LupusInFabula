@@ -1252,7 +1252,6 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
     private Map<String, Integer> getVotesMap(List<GameAction> gameActions) {
         Map<String, Integer> votesMap = new HashMap<>();
 
@@ -1336,8 +1335,6 @@ public class GameActionsPostRR extends AbstractRR {
             totalRoles += number;
 
         // Check victory conditions and return the appropriate VictoryMessage
-
-        LOGGER.info(roleTypeCardinality.get(WinFaction.WOLVES.getId()) + "; " + notCountedEvilRoles);
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
