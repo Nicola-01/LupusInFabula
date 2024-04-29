@@ -90,7 +90,7 @@ public class GameActionsGetRR extends AbstractRR {
 
             LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is " + currentPhase);
             if (GamePhase.NIGHT.getId() != currentPhase)
-                handleDayPhase(currentSubphase > 0);
+                handleDayPhase();
             else
                 handleNightPhase();
 
@@ -119,21 +119,20 @@ public class GameActionsGetRR extends AbstractRR {
      * Handles the day phase of the game.
      * Generates action targets for voting.
      *
-     * @param secondBallot Indicates if it is the second ballot of the day.
      * @throws IOException If an I/O error occurs.
      */
-    private void handleDayPhase(boolean secondBallot) throws IOException {
+    private void handleDayPhase() throws IOException {
         List<ActionTarget> actionTargets = new ArrayList<>();
 
-        LOGGER.info("Handling day phase. Second ballot: " + secondBallot);
+//        LOGGER.info("Handling day phase. Second ballot: " + secondBallot);
 
         // for each player in the game
         for (String player : playerRole.keySet()) {
             List<String> targets = new ArrayList<>();
 
-            // Skip voting for dead players in the second ballot
-            if (secondBallot && areDead.get(player))
-                continue;
+//            // Skip voting for dead players in the second ballot
+//            if (secondBallot && areDead.get(player))
+//                continue;
 
             // generate targets for voting
             for (String targetPlayer : playerRole.keySet()) {

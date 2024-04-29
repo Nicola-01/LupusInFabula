@@ -167,11 +167,9 @@ public enum GameRoleAction {
      * @return The GameRoleAction enum constant associated with the specified name, or {@code null} if no such constant is found.
      */
     public static GameRoleAction valueOfName(String name) {
-
         for (GameRoleAction roleAction : GameRoleAction.values())
             if (roleAction.getName().equals(name))
                 return roleAction;
-
         return null;
     }
 }

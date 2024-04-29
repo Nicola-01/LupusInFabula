@@ -32,14 +32,29 @@ public class GameActionsPostRR extends AbstractRR {
     private final Map<String, String> playersRole;
 
     /**
+     * The results of the night actions.
+     */
+    private final NightActionResults nightActionResults;
+
+    /**
      * The ID of the game.
      */
     private final int gameID;
 
     /**
-     * The current round, phase, and subphase of the game.
+     * The current round of the game.
      */
-    int currentRound, currentPhase, currentSubPhase;
+    int currentRound;
+
+    /**
+     * The current phase of the game.
+     */
+    int currentPhase;
+
+    /**
+     * The current subphase of the game.
+     */
+    int currentSubPhase;
 
     /**
      * Constructs a new GameActionsPostRR object with the specified game ID, request, response, and data source.
@@ -62,6 +77,8 @@ public class GameActionsPostRR extends AbstractRR {
 
         deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+
+        nightActionResults = new NightActionResults();
     }
 
     /**
@@ -116,9 +133,9 @@ public class GameActionsPostRR extends AbstractRR {
 
                 // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
 
-                LOGGER.info("updating round " + currentRound + " phase " + currentPhase);
                 new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                LOGGER.info("updating game");
+                nightActionResults.toJSON(res.getOutputStream());
+                LOGGER.info(nightActionResults.toString());
             }
 
         } catch (SQLException | IOException e) {
@@ -623,7 +640,7 @@ public class GameActionsPostRR extends AbstractRR {
 
                         LOGGER.info("The target " + target + " is anointed");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
-
+                        nightActionResults.setPlaguedPlayer(target);
                     }
 
                     // check for the "rage" action --> BERSERKER
@@ -671,7 +688,8 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
             }
-
+            nightActionResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+            nightActionResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
         } catch (SQLException | IOException e) {
 
             LOGGER.error("ERROR: something went wrong", e);
@@ -1111,6 +1129,7 @@ public class GameActionsPostRR extends AbstractRR {
     private void updatePlayerDeath(String player) throws SQLException {
         PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
         new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+        nightActionResults.addDeadPlayer(player);
     }
 
     /**

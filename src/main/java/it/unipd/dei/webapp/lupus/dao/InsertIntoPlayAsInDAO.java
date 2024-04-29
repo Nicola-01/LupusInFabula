@@ -17,7 +17,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
     /**
      * The SQL statement to be executed.
      */
-    private final static String STATEMENT = "INSERT INTO PLAYS_AS_IN VALUES(?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO PLAYS_AS_IN VALUES(?, ?, ?)";
 
     /**
      * The PlaysAsIn object representing the player's role in a game.

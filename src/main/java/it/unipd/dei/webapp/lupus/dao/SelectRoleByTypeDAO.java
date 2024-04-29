@@ -22,7 +22,7 @@ public class SelectRoleByTypeDAO extends AbstractDAO<List<Role>> {
     /**
      * The SQL statement to select roles by type.
      */
-    private final static String STATEMENT = "SELECT * FROM role WHERE type = ?";
+    private static final String STATEMENT = "SELECT * FROM role WHERE type = ?";
 
     /**
      * The type of roles to be retrieved.

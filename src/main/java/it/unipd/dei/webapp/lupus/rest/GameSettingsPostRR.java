@@ -305,9 +305,7 @@ public class GameSettingsPostRR extends AbstractRR {
         String role;
 
         // Select a random role, ensuring it has a non-zero count
-//        do {
         role = availableRoles[rand.nextInt(availableRoles.length)];
-//        } while (roles.get(role) == 0);
 
         // Decrement the count of the selected role, and remove if count becomes zero
         roles.put(role, roles.get(role) - 1);
