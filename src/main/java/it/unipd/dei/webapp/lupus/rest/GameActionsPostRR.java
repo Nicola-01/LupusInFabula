@@ -561,8 +561,8 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
-     * Checks the correctness of the actions performed during the game round. <br>
-     * This method verifies the correctness of the actions performed by players during the game round.
+     * Checks the correctness of the actions performed during the night round. <br>
+     * This method verifies the correctness of the actions performed by players during the night round.
      * It checks whether the player and target are in the game, if the player has the correct role,
      * if both the player and target are alive, and if the actions correspond to the roles' abilities.
      * Additionally, it ensures that the correct number of actions is performed by each role with an effect.
@@ -766,7 +766,7 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
-     * Checks the validity of actions performed by players ensuring that the
+     * Checks the validity of night actions performed by players ensuring that the
      * target of each action is valid for the corresponding player role.
      *
      * @param actionsMap a map containing player names as keys and maps of actions as values
