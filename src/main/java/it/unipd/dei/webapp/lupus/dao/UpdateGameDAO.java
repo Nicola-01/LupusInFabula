@@ -23,7 +23,7 @@ public class UpdateGameDAO extends AbstractDAO {
     /**
      * The SQL statement to update game information if the game is finished.
      */
-    private static final String STATEMENT_FINISHED = "UPDATE game SET rounds = ?, phase = ?, who_wins = ?, game_duration = now() - start WHERE id = ?";
+    private static final String STATEMENT_FINISHED = "UPDATE game SET rounds = ?, phase = ?, who_wins = ?, game_duration = now() at time zone 'Europe/Rome' - start WHERE id = ?";
 
 
     /**
