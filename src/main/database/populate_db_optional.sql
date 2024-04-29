@@ -56,10 +56,10 @@ VALUES (1, 'mangia'),
        (2, 'attacca'),
        (3, 'test');
 */
-INSERT INTO public.game (public_ID, start)
-VALUES ('dorky-farmer-explorer', NOW()),
-       ('farmer-wolf-sam', NOW()),
-       ('sheriff-carpenter-sam', NOW());
+INSERT INTO public.game (public_ID, start, phase)
+VALUES ('dorky-farmer-explorer', NOW(), 0),
+       ('farmer-wolf-sam', NOW(), 1),
+       ('sheriff-carpenter-sam', NOW(), 0);
 
 INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
 VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for game 1
