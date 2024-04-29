@@ -344,6 +344,7 @@ Content-Type: application/json
   ]
 }
 
+
 ### Day 2
 POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
 Content-Type: application/json
@@ -490,17 +491,17 @@ Content-Type: application/json
     {
       "player":"allRole2",
       "role":"illusionist",
-      "target":"allRole1"
+      "target":"allRole8"
     },
     {
       "player":"allRole6",
       "role":"explorer",
-      "target":"allRole7"
+      "target":"allRole15"
     },
     {
       "player":"allRole8",
       "role":"knight",
-      "target":"allRole7"
+      "target":"allRole15"
     },
     {
       "player":"allRole9",
@@ -510,12 +511,772 @@ Content-Type: application/json
     {
       "player":"allRole13",
       "role":"dorky",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole15",
+      "role":"seer",
+      "target":"allRole17"
+    }
+  ]
+}
+
+
+### Day 3
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole1",
+      "role":"puppy",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole3",
+      "role":"hobbit",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole4",
+      "role":"kamikaze",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole5",
+      "role":"giuda",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole8"
+    },
+    {
+      "player":"allRole7",
+      "role":"jester",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole10",
+      "role":"berserker",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole11",
+      "role":"medium",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole12",
+      "role":"wolf",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole14",
+      "role":"sam",
       "target":"allRole3"
     },
     {
       "player":"allRole15",
       "role":"seer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole16",
+      "role":"carpenter",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole17",
+      "role":"hamster",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole18",
+      "role":"sheriff",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole19",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole20",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole21",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole22",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole23",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole24",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole6"
+    }
+  ]
+}
+
+
+###Night 4
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole8"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole5"
+    }
+  ]
+}
+
+
+### Day 4
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole1",
+      "role":"puppy",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole3",
+      "role":"hobbit",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole4",
+      "role":"kamikaze",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole5",
+      "role":"giuda",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole2"
+    },
+    {
+      "player":"allRole7",
+      "role":"jester",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole10",
+      "role":"berserker",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole11",
+      "role":"medium",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole12",
+      "role":"wolf",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole14",
+      "role":"sam",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole15",
+      "role":"seer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole16",
+      "role":"carpenter",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole17",
+      "role":"hamster",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole18",
+      "role":"sheriff",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole19",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole20",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole21",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole22",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole23",
+      "role":"farmer",
+      "target":"allRole16"
+    },
+    {
+      "player":"allRole24",
+      "role":"farmer",
+      "target":"allRole6"
+    }
+  ]
+}
+
+
+###Night 5
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole24"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole5"
+    }
+  ]
+}
+
+
+### Day 5
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole1",
+      "role":"puppy",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole3",
+      "role":"hobbit",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole4",
+      "role":"kamikaze",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole5",
+      "role":"giuda",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole2"
+    },
+    {
+      "player":"allRole7",
+      "role":"jester",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole10",
+      "role":"berserker",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole11",
+      "role":"medium",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole12",
+      "role":"wolf",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole14",
+      "role":"sam",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole15",
+      "role":"seer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole16",
+      "role":"carpenter",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole17",
+      "role":"hamster",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole18",
+      "role":"sheriff",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole19",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole20",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole21",
+      "role":"farmer",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole22",
+      "role":"farmer",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole23",
+      "role":"farmer",
+      "target":"allRole5"
+    },
+    {
+      "player":"allRole24",
+      "role":"farmer",
+      "target":"allRole6"
+    }
+  ]
+}
+
+
+###Night 6
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole21"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole19"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole13"
+    }
+  ]
+}
+
+
+### Day 6
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole1",
+      "role":"puppy",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole3",
+      "role":"hobbit",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole4",
+      "role":"kamikaze",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole5",
+      "role":"giuda",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole2"
+    },
+    {
+      "player":"allRole7",
+      "role":"jester",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole10",
+      "role":"berserker",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole11",
+      "role":"medium",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole12",
+      "role":"wolf",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole14",
+      "role":"sam",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole15",
+      "role":"seer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole16",
+      "role":"carpenter",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole17",
+      "role":"hamster",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole18",
+      "role":"sheriff",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole19",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole20",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole21",
+      "role":"farmer",
       "target":"allRole23"
+    },
+    {
+      "player":"allRole22",
+      "role":"farmer",
+      "target":"allRole23"
+    },
+    {
+      "player":"allRole23",
+      "role":"farmer",
+      "target":"allRole6"
+    },
+    {
+      "player":"allRole24",
+      "role":"farmer",
+      "target":"allRole6"
+    }
+  ]
+}
+
+
+###Night 7
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole23"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole3"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole13"
+    }
+  ]
+}
+
+
+### Day 7
+POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
+Content-Type: application/json
+
+{
+  "gameAction": [
+    {
+      "player":"allRole1",
+      "role":"puppy",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole2",
+      "role":"illusionist",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole3",
+      "role":"hobbit",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole4",
+      "role":"kamikaze",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole5",
+      "role":"giuda",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole6",
+      "role":"explorer",
+      "target":"allRole2"
+    },
+    {
+      "player":"allRole7",
+      "role":"jester",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole8",
+      "role":"knight",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole9",
+      "role":"plague spreader",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole10",
+      "role":"berserker",
+      "target":"allRole9"
+    },
+    {
+      "player":"allRole11",
+      "role":"medium",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole12",
+      "role":"wolf",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole13",
+      "role":"dorky",
+      "target":"allRole20"
+    },
+    {
+      "player":"allRole14",
+      "role":"sam",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole15",
+      "role":"seer",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole16",
+      "role":"carpenter",
+      "target":"allRole21"
+    },
+    {
+      "player":"allRole17",
+      "role":"hamster",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole18",
+      "role":"sheriff",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole19",
+      "role":"farmer",
+      "target":"allRole20"
+    },
+    {
+      "player":"allRole20",
+      "role":"farmer",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole21",
+      "role":"farmer",
+      "target":"allRole23"
+    },
+    {
+      "player":"allRole22",
+      "role":"farmer",
+      "target":"allRole23"
+    },
+    {
+      "player":"allRole23",
+      "role":"farmer",
+      "target":"allRole13"
+    },
+    {
+      "player":"allRole24",
+      "role":"farmer",
+      "target":"allRole13"
     }
   ]
 }
