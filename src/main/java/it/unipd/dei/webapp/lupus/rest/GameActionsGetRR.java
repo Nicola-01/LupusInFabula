@@ -177,6 +177,7 @@ public class GameActionsGetRR extends AbstractRR {
      * Handles the night phase of the game, generating action targets based on the roles' actions.
      *
      * @throws IOException If an I/O error occurs.
+     * @throws SQLException If a SQL exception occurs while accessing the database.
      */
     private void handleNightPhase() throws IOException, SQLException {
         LOGGER.info("Handling night phase.");
