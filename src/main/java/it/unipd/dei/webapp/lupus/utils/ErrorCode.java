@@ -77,6 +77,8 @@ public enum ErrorCode {
     TOO_MANY_WOLVES_ACTIONS("EACT6", HttpServletResponse.SC_CONFLICT, "Too many wolves actions."),
     NOT_VALID_ACTION("EACT7", HttpServletResponse.SC_BAD_REQUEST, "Invalid action requested."),
     NUMBER_ACTIONS_DOESNT_MATCH("EACT8", HttpServletResponse.SC_CONFLICT, "Number of actions does not match."),
+    VOTE_LIST_NOT_VALID("EACT9", HttpServletResponse.SC_BAD_REQUEST, "List of vote not valid."),
+    BALLOT_VOTE_NOT_VALID("EACT10", HttpServletResponse.SC_BAD_REQUEST, "Target of ballot vote not valid."),
 
     // errors
     DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),

@@ -153,122 +153,162 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
+    /**
+     * Handles the day phase of the game, including voting and actions taken during the day.
+     *
+     * This method processes the actions performed by players during the day phase of the game,
+     * including voting and special actions based on player roles such as the carpenter's ability,
+     * sam's ability, and plague spreader's ability. It also handles errors related to invalid actions.
+     *
+     * @param gameActions A list of GameAction objects representing the actions performed during the day phase.
+     * @return {@code true} if the day phase actions are processed successfully, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
     private boolean handleDayPhase(List<GameAction> gameActions) throws SQLException, IOException {
-        //The first thing to do is handling the vote
-        //Then update the database based on the action and the death player
-        Map<String, Integer> votesMap = getVotesMap(gameActions);
-        Map<String, Integer> ballotVotesMap = getVotesMap(gameActions);
-        String votedPlayer = "";
-        int voteNumber = playersRole.size();
-        int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
 
-        int numberAction = 0;
+        try {
+            //create a map for the votes
+            Map<String, Integer> votesMap = getVotesMap(gameActions);
+            //create a map for the ballot votes
+            Map<String, Integer> ballotVotesMap = getVotesMap(gameActions);
+            String votedPlayer1 = "";
+            String votedPlayer2 = "";
+            int voteNumber = playersRole.size();
+            int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
+            Message m = null;
+            int numberAction = 0;
 
-        for (GameAction gameAction : gameActions) {
+            for (GameAction gameAction : gameActions) {
 
-            numberAction++;
-            LOGGER.info(numberAction);
-            LOGGER.info(currentSubPhase);
-            String player = gameAction.getPlayer();
-            String role = gameAction.getRole();
-            String target = gameAction.getTarget();
-            LOGGER.info(ballotVoteNumber);
-            if (numberAction <= voteNumber) {
-                LOGGER.info("%s with role %s has voted %s", player, role, target);
+                numberAction++;
+                String player = gameAction.getPlayer();
+                String role = gameAction.getRole();
+                String target = gameAction.getTarget();
 
-                Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
-                // DAO for add the action to the database
-                new InsertIntoActionDAO(ds.getConnection(), action).access();
-                votesMap.put(target, votesMap.get(target) + 1);
+                if (numberAction <= voteNumber) { //first votation
+                    LOGGER.info(player +  " with role " + role + " has voted " + target);
 
-                //First vote
-                if (numberAction == voteNumber) {
-                    List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
-                    Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+                    Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+                    // DAO for add the action to the database
+                    new InsertIntoActionDAO(ds.getConnection(), action).access();
+                    votesMap.put(target, votesMap.get(target) + 1);
 
-                    for (Map.Entry<String, Integer> entry : votesList) {
-                        LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
-                    }
+                    //First vote
+                    if (numberAction == voteNumber) {
+                        List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
+                        Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
-                    votedPlayer = votesList.get(0).getKey();
+                        votedPlayer1 = votesList.get(0).getKey();
+                        votedPlayer2 = votesList.get(1).getKey();
+                        if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
+                            LOGGER.info("Ballot between " + votedPlayer1 + " and " + votedPlayer2);
+                            currentSubPhase++;
+                        } else {
+                            LOGGER.info("Player " + votedPlayer1 + " is voted");
 
-                    if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
-                        LOGGER.info("Ballot between %s and %s", votedPlayer, votesList.get(1).getValue());
-                        currentSubPhase++;
-                    } else {
-                        LOGGER.info("Players %s is voted", votedPlayer);
-
-                        if (carpenterCheck(votedPlayer)) {
-                            LOGGER.info("The carpenter use his ability");
-                        }else{
-                            LOGGER.info("%s is voted out", votedPlayer);
-                            updatePlayerDeath(votedPlayer);
+                            if (carpenterCheck(votedPlayer1)) {
+                                LOGGER.info("The carpenter use his ability");
+                                dayActionResults.setCarpenterAbility(true);
+                            } else {
+                                LOGGER.info(votedPlayer1 + " is voted out");
+                                dayActionResults.setVotedPlayer(votedPlayer1);
+                                updatePlayerDeath(votedPlayer1);
+                            }
                         }
+
                     }
+                } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0)) { //ballot votes
 
-                }
-            } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0)) {
-                LOGGER.info("%s with role %s has voted %s", player, role, target);
-
-                Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
-                // DAO for add the action to the database
-                new InsertIntoActionDAO(ds.getConnection(), action).access();
-                ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
-                LOGGER.info(voteNumber + ballotVoteNumber);
-                if (numberAction == (voteNumber + ballotVoteNumber)) {
-                    List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
-                    Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
-
-                    for (Map.Entry<String, Integer> entry : ballotVotesList) {
-                        LOGGER.info("Player: " + entry.getKey() + ", Votes received: " + entry.getValue());
-                    }
-
-                    votedPlayer = ballotVotesList.get(0).getKey();
-                    if (ballotVotesList.get(0).getValue() == ballotVotesList.get(1).getValue()) {
-                        LOGGER.info("Error, tie between the two player in the ballot");
+                    if (!(target.equals(votedPlayer1) && !(target.equals(votedPlayer2)))) {
+                        LOGGER.error("ERROR: target of the vote in the ballot phase not correct");
+                        ErrorCode ec = ErrorCode.BALLOT_VOTE_NOT_VALID;
+                        m = new Message("ERROR: target of the vote in the ballot phase not correct", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.toJSON(res.getOutputStream());
                         return false;
-                    } else {
-                        LOGGER.info("Players %s is voted", votedPlayer);
+                    }
 
-                        if (carpenterCheck(votedPlayer)) {
+                    LOGGER.info(player +  " with role " + role + " has voted " + target);
+
+                    Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+                    // DAO for add the action to the database
+                    new InsertIntoActionDAO(ds.getConnection(), action).access();
+                    ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
+                    LOGGER.info(voteNumber + ballotVoteNumber);
+                    if (numberAction == (voteNumber + ballotVoteNumber)) {
+                        List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
+                        Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+                        votedPlayer1 = ballotVotesList.get(0).getKey();
+                        LOGGER.info("Players " + votedPlayer1 + " is voted");
+                        if (carpenterCheck(votedPlayer1)) {
                             LOGGER.info("The carpenter use his ability");
-                        }else{
-                            LOGGER.info("%s is voted out", votedPlayer);
-                            updatePlayerDeath(votedPlayer);
+                            dayActionResults.setCarpenterAbility(true);
+                        } else {
+                            LOGGER.info("%s is voted out", votedPlayer1);
+                            dayActionResults.setVotedPlayer(votedPlayer1);
+                            updatePlayerDeath(votedPlayer1);
                         }
+
+                    }
+                } else {
+                    currentSubPhase++;
+                    if (role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
+                        //He can decide to kill someone else before his dead
+                        Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
+                        new InsertIntoActionDAO(ds.getConnection(), samAction).access();
+                        LOGGER.info("Sam killed %s", target);
+                        dayActionResults.setSamTarget(target);
+                        updatePlayerDeath(target);
+                    } else if (role.equals("plague spreader")) {
+                        Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
+                        new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
+                        LOGGER.info("Plague spreader killed %s", target);
+                        updatePlayerDeath(target);
+                    } else {
+                        //error
+                        LOGGER.error("ERROR: not valid action");
+                        ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                        m = new Message("ERROR: not valid action", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.toJSON(res.getOutputStream());
+                        return false;
                     }
                 }
-            } else {
-                currentSubPhase++;
-                if(role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer).access().getOutputParam().equals("sam"))) {
-                    //He can decide to kill someone else before his dead
-                    Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
-                    new InsertIntoActionDAO(ds.getConnection(), samAction).access();
-                    LOGGER.info("Sam killed %s", target);
-                    updatePlayerDeath(target);
-                } else if(role.equals("plague spreader")) {
-                    Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
-                    new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
-                    LOGGER.info("Plague spreader killed %s", target);
-                    updatePlayerDeath(target);
-                }else{
-                    //error
-                    LOGGER.info("Error action not permitted");
-                    return false;
-                }
+
             }
 
+            return true;
+        }catch(SQLException e){
+            LOGGER.error("ERROR: something went wrong in access the database", e);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            return false;
+        }catch(IOException e){
+            LOGGER.error("ERROR: something went wrong", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            return false;
         }
-
-        return true;
     }
 
-
+    /**
+     * Counts the number of dead players in the game.
+     *
+     * This method calculates the number of players who are marked as dead in the provided
+     * map of player names and their corresponding status of being dead or alive.
+     *
+     * @param deadPlayers A map where the keys are player names and the values indicate whether the player is dead (true) or alive (false).
+     * @return The number of dead players in the game.
+     */
     private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
         int numDeadPlayers = 0;
-
-
+        
         for (Boolean isDead : deadPlayers.values()) {
             if (isDead) {
                 numDeadPlayers++;
@@ -277,156 +317,201 @@ public class GameActionsPostRR extends AbstractRR {
         return numDeadPlayers;
     }
 
-    private boolean carpenterCheck(String player) throws SQLException {
-        if ((new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam()).equals("carpenter")) {
-            LOGGER.info("Carpenter ability check");
-            if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
-                LOGGER.info("Carpenter is safe this round");
-                currentSubPhase++;
-                Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
-                new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
-                return true;
+    /**
+     * Checks the ability of a player with the role "carpenter" during a game round.
+     *
+     * This method verifies if the player with the specified username has the role "carpenter"
+     * in the current game and if the carpenter's ability is active for the current round.
+     * If the conditions are met, the method increments the current sub-phase, records the carpenter's action,
+     * and returns true indicating the carpenter's safety for the round.
+     *
+     * @param player The username of the player to check for the role "carpenter".
+     * @return {@code true} if the player is a carpenter and is safe this round, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     */
+    private boolean carpenterCheck(String player) throws SQLException, IOException {
+        try {
+            if ((new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam()).equals("carpenter")) {
+                LOGGER.info("Carpenter ability check");
+                if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                    LOGGER.info("Carpenter is safe this round");
+                    currentSubPhase++;
+                    Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
+                    new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
+                    return true;
+                }
             }
+            return false;
+        }catch(SQLException e){
+            LOGGER.error("ERROR: something went wrong in access the database", e);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            return false;
         }
-        return false;
     }
 
+
+    /**
+     * Checks the correctness of the actions performed during a game day.
+     *
+     * This method verifies the correctness of the actions performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param gameActions A list of GameAction objects representing the actions performed during the game day.
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
     private boolean correctnessOfDayActions(List<GameAction> gameActions) throws SQLException, IOException {
-        int voteNumber = playersRole.size();
-        int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
-        int numberAction = 0;
-        int deadListCount = 0;
-        Message m = null;
 
-        int stop = deadPlayers.size();
-        List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, stop));
-        Collections.sort(firstGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()) );
+        try {
+            int voteNumber = playersRole.size();
+            int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
+            int numberAction = 0;
+            int deadListCount = 0;
+            Message m = null;
 
-        List<GameAction> secondGameAction = null;
-        if(gameActions.size() > voteNumber+2) {
-            stop = voteNumber+ballotVoteNumber;
-            secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size(), stop));
-            Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()) );
-        }
+            int stop = deadPlayers.size();
+            List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, stop));
+            Collections.sort(firstGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
 
-        List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(stop, gameActions.size()));
-
-        List<GameAction> orderedGameActions = firstGameAction;
-        if(!(gameActions.size() <= deadPlayers.size())) {
-            if (secondGameAction != null) {
-                orderedGameActions.addAll(secondGameAction);
-                orderedGameActions.addAll(thirdGameAction);
-            } else {
-                orderedGameActions.addAll(thirdGameAction);
-            }
-        }
-        List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
-        Collections.sort(deadPlayersList, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()) );
-
-
-        for (GameAction entry : orderedGameActions) {
-            LOGGER.info("Player: " + entry.getPlayer());
-        }
-        for (Map.Entry<String, Boolean> entry : deadPlayersList) {
-            LOGGER.info("Player: " + entry.getKey() + ", dead: " + entry.getValue());
-        }
-
-        for (GameAction gameAction : orderedGameActions) {
-            numberAction++;
-            int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
-            //check if the player is in the game
-            if (game_id != gameID) {
-
-                LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
-                ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
-                m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                m.toJSON(res.getOutputStream());
-                return false;
-
+            List<GameAction> secondGameAction = null;
+            if (gameActions.size() > voteNumber + 2) {
+                stop = voteNumber + ballotVoteNumber;
+                secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size(), stop));
+                Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
             }
 
-            game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
-            //check if target is in the game
-            if (game_id != gameID) {
+            List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(stop, gameActions.size()));
 
-                LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
-                ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
-                m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                m.toJSON(res.getOutputStream());
-                return false;
-
+            List<GameAction> orderedGameActions = firstGameAction;
+            if (!(gameActions.size() <= deadPlayers.size())) {
+                if (secondGameAction != null) {
+                    orderedGameActions.addAll(secondGameAction);
+                    orderedGameActions.addAll(thirdGameAction);
+                } else {
+                    orderedGameActions.addAll(thirdGameAction);
+                }
             }
+            List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
+            Collections.sort(deadPlayersList, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()));
 
-            String player_role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
-            //check if the player has the correct role in the game
-            if (!player_role.equals(gameAction.getRole())) {
 
-                LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
-                ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
-                m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                m.toJSON(res.getOutputStream());
-                return false;
+            for (GameAction gameAction : orderedGameActions) {
+                numberAction++;
+                int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
+                //check if the player is in the game
+                if (game_id != gameID) {
 
-            }
-
-            //check if the target is dead
-            if (deadPlayers.get(gameAction.getTarget())) {
-                LOGGER.error("ERROR: the target " + gameAction.getPlayer() + " is dead");
-                ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                m = new Message("ERROR: the target " + gameAction.getPlayer() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
-                m.toJSON(res.getOutputStream());
-                return false;
-            }
-
-            //check the list of vote correctness
-            if (numberAction <= voteNumber){
-                if (!(gameAction.getPlayer().equals(deadPlayersList.get(numberAction-1).getKey()))){
-                    LOGGER.error("ERROR: the list of vote isn't correct");
-                    ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
-                    m = new Message("ERROR: the list of vote isn't correct" , ec.getErrorCode(), ec.getErrorMessage());
+                    LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
+                    ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
+                    m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                     m.toJSON(res.getOutputStream());
                     return false;
+
                 }
-            }else if ((gameActions.size() > voteNumber+2) && (numberAction <= (voteNumber+ballotVoteNumber))){
-                if (deadPlayers.get(gameAction.getPlayer())) {
-                    LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
+
+                game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
+                //check if target is in the game
+                if (game_id != gameID) {
+
+                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
+                    ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
+                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+
+                String player_role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
+                //check if the player has the correct role in the game
+                if (!player_role.equals(gameAction.getRole())) {
+
+                    LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
+                    ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
+                    m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+
+                //check if the target is dead
+                if (deadPlayers.get(gameAction.getTarget())) {
+                    LOGGER.error("ERROR: the target " + gameAction.getPlayer() + " is dead");
                     ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                    m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot", ec.getErrorCode(), ec.getErrorMessage());
+                    m = new Message("ERROR: the target " + gameAction.getPlayer() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(HttpServletResponse.SC_CONFLICT);
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
-                while (deadPlayersList.get(deadListCount).getValue()){
+
+                //check the list of vote correctness
+                if (numberAction <= voteNumber) {
+                    if (!(gameAction.getPlayer().equals(deadPlayersList.get(numberAction - 1).getKey()))) {
+                        LOGGER.error("ERROR: the list of vote isn't correct");
+                        ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
+                        m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
+                } else if ((gameActions.size() > voteNumber + 2) && (numberAction <= (voteNumber + ballotVoteNumber))) {
+                    if (deadPlayers.get(gameAction.getPlayer())) {
+                        LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
+                        ErrorCode ec = ErrorCode.DEAD_PLAYER;
+                        m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_CONFLICT);
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
+                    while (deadPlayersList.get(deadListCount).getValue()) {
+                        deadListCount++;
+                    }
+                    LOGGER.info("Player: %s  Player: %s", gameAction.getPlayer(), deadPlayersList.get(deadListCount).getKey());
+                    if (!(gameAction.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
+                        LOGGER.error("ERROR: the list of vote isn't correct");
+                        ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
+                        m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
                     deadListCount++;
-                }
-                LOGGER.info("Player: %s  Player: %s", gameAction.getPlayer(), deadPlayersList.get(deadListCount).getKey());
-                if (!(gameAction.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))){
-                    LOGGER.error("ERROR: the list of vote isn't correct");
-                    ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
-                    m = new Message("ERROR: the list of vote isn't correct" , ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                    m.toJSON(res.getOutputStream());
-                    return false;
-                }
-                deadListCount++;
-            }else{
-                if(!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))){
-                    LOGGER.error("ERROR: action not permitted");
-                    ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                    m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_CONFLICT);
-                    m.toJSON(res.getOutputStream());
-                    return false;
+                } else {
+                    if (!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))) {
+                        LOGGER.error("ERROR: action not permitted");
+                        ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                        m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        m.toJSON(res.getOutputStream());
+                        return false;
+                    }
                 }
             }
-        }
 
-        return true;
+            return true;
+
+        }catch(SQLException e){
+            LOGGER.error("ERROR: something went wrong in access the database", e);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            return false;
+        }catch(IOException e){
+            LOGGER.error("ERROR: something went wrong", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
     }
 
     /**
