@@ -111,8 +111,7 @@ public class GameActionsPostRR extends AbstractRR {
                 Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
-            }
-            else {
+            } else {
                 if (currentPhase == GamePhase.NIGHT.getId()) {
                     // check of the correctness of the actions
                     if (!correctnessOfNightActions(gameActions))
@@ -169,7 +168,7 @@ public class GameActionsPostRR extends AbstractRR {
 
     /**
      * Handles the day phase of the game, including voting and actions taken during the day.
-     *
+     * <p>
      * This method processes the actions performed by players during the day phase of the game,
      * including voting and special actions based on player roles such as the carpenter's ability,
      * sam's ability, and plague spreader's ability. It also handles errors related to invalid actions.
@@ -201,7 +200,7 @@ public class GameActionsPostRR extends AbstractRR {
                 String target = gameAction.getTarget();
 
                 if (numberAction <= voteNumber) { //first votation
-                    LOGGER.info(player +  " with role " + role + " has voted " + target);
+                    LOGGER.info(player + " with role " + role + " has voted " + target);
 
                     Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
                     // DAO for add the action to the database
@@ -243,7 +242,6 @@ public class GameActionsPostRR extends AbstractRR {
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
-
 
 
                     Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
@@ -296,14 +294,14 @@ public class GameActionsPostRR extends AbstractRR {
             }
 
             return true;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
-        }catch(IOException e){
+        } catch (IOException e) {
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
@@ -315,7 +313,7 @@ public class GameActionsPostRR extends AbstractRR {
 
     /**
      * Counts the number of dead players in the game.
-     *
+     * <p>
      * This method calculates the number of players who are marked as dead in the provided
      * map of player names and their corresponding status of being dead or alive.
      *
@@ -324,7 +322,7 @@ public class GameActionsPostRR extends AbstractRR {
      */
     private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
         int numDeadPlayers = 0;
-        
+
         for (Boolean isDead : deadPlayers.values()) {
             if (isDead) {
                 numDeadPlayers++;
@@ -335,7 +333,7 @@ public class GameActionsPostRR extends AbstractRR {
 
     /**
      * Checks the ability of a player with the role "carpenter" during a game round.
-     *
+     * <p>
      * This method verifies if the player with the specified username has the role "carpenter"
      * in the current game and if the carpenter's ability is active for the current round.
      * If the conditions are met, the method increments the current sub-phase, records the carpenter's action,
@@ -358,7 +356,7 @@ public class GameActionsPostRR extends AbstractRR {
                 }
             }
             return false;
-        }catch(SQLException e){
+        } catch (SQLException e) {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
@@ -371,7 +369,7 @@ public class GameActionsPostRR extends AbstractRR {
 
     /**
      * Checks the correctness of the actions performed during a game day.
-     *
+     * <p>
      * This method verifies the correctness of the actions performed by players during a game day.
      * It checks various conditions such as whether players and targets are in the game,
      * if players have the correct role, if targets are dead, and the validity of voting actions.
@@ -513,14 +511,14 @@ public class GameActionsPostRR extends AbstractRR {
 
             return true;
 
-        }catch(SQLException e){
+        } catch (SQLException e) {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
-        }catch(IOException e){
+        } catch (IOException e) {
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
@@ -748,8 +746,8 @@ public class GameActionsPostRR extends AbstractRR {
                     // (if the target is the kamikaze and the action is true, the kamikaze kill himself and the wolf)
                     if (playersRole.get(target).equals(GameRoleAction.KAMIKAZE.getName())
                             && (actionPlayerMap.get(GameRoleAction.WOLF.getAction())
-                                    || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
-                                    || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction()))) {
+                            || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
+                            || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction()))) {
                         String wolf = "";
                         for (GameAction gameAction : gameActions)
                             if (gameAction.getTarget().equals(target))
@@ -1065,7 +1063,7 @@ public class GameActionsPostRR extends AbstractRR {
             }
         } else if (berserkerCount == 2) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
-                LOGGER.info(gameActions.size()+" "+rolesWithEffect.size()+" "+wolfCount());
+                LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                 LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
@@ -1168,8 +1166,7 @@ public class GameActionsPostRR extends AbstractRR {
                     if (new IsExplorerAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
                         tmp.put(GameRoleAction.EXPLORER.getAction(), false);
                         tmp.put(GameRoleAction.WOLF.getAction(), false);
-                    }
-                    else
+                    } else
                         tmp.put(entry1.getValue(), false);
                 } else
                     tmp.put(entry1.getValue(), false);
@@ -1297,7 +1294,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Map to store the players associated with each winning faction
         Map<Integer, List<String>> winnerPlayers = new HashMap<>();
-        for (WinFaction wf: WinFaction.values())
+        for (WinFaction wf : WinFaction.values())
             winnerPlayers.put(wf.getId(), new ArrayList<>());
 
         // Retrieve the list of roles from the database
@@ -1305,11 +1302,14 @@ public class GameActionsPostRR extends AbstractRR {
         String hamster = "";
         String jester = "";
 
+        // If only Giuda and the Illusionist remain alive, the good win
+        int notCountedEvilRoles = 0;
+
         Map<String, Boolean> updatedDeadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
         // Iterate through each player's role and update roleTypeCardinality and winnerPlayers accordingly
         for (Map.Entry<String, String> playerRole : playersRole.entrySet()) {
-            for (Role role : roles)
+            for (Role role : roles) {
                 if (role.getName().equals(playerRole.getValue())) {
                     // Increment the count of the role's associated faction
                     if (!updatedDeadPlayers.get(playerRole.getKey()))
@@ -1317,11 +1317,17 @@ public class GameActionsPostRR extends AbstractRR {
                     // Add the player to the list of players associated with the role's faction
                     winnerPlayers.get(role.getWith_who_wins()).add(playerRole.getKey());
                 }
+            }
             // Check if the player is the Hamster or Jester and update their respective variables
             if (playerRole.getValue().equals(GameRoleAction.HAMSTER.getName()) && !updatedDeadPlayers.get(playerRole.getKey()))
                 hamster = playerRole.getKey();
             if (playerRole.getValue().equals(GameRoleAction.JESTER.getName()))
                 jester = playerRole.getKey();
+
+            if (playerRole.getValue().equals(GameRoleAction.GIUDA.getName()) && !updatedDeadPlayers.get(playerRole.getKey()))
+                notCountedEvilRoles++;
+            if (playerRole.getValue().equals(GameRoleAction.ILLUSIONIST.getName()) && !updatedDeadPlayers.get(playerRole.getKey()))
+                notCountedEvilRoles++;
         }
 
         // Calculate the total number of roles in the game
@@ -1331,17 +1337,16 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
+        LOGGER.info(roleTypeCardinality.get(WinFaction.WOLVES.getId()) + "; " + notCountedEvilRoles);
+
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) == 0 && !hamster.isEmpty())
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0 && !hamster.isEmpty())
             return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getName());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) == 0)
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0)
             return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getName());
-
-        //LOGGER.info(jester);
-        //LOGGER.info(new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
 
         if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
             return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getName());
