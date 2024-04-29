@@ -5,14 +5,14 @@ We report three different resource types handled by the application.
 %List here a few resources retrievable via REST API
 
 \subsubsection*{Game Logs}
-In this endpoint allows to master and user to see all logs associated to a specific game.
+This endpoint allows master and regular user to see all logs associated to a specific game.
 
 \subsubsection*{User}
 \begin{itemize}
     \item URL: \texttt{lupus/game/logs/\{gameId}\}
     \item Method: \texttt{GET}
     \item URL Parameters:\\
-        \textbf{gameId:} String, id of game
+        \textbf{gameId:} String, public ID of game
     \item Data Parameters: None
     \item Success Response: \\
         \textbf{Code:} 200\\
@@ -25,7 +25,7 @@ In this endpoint allows to master and user to see all logs associated to a speci
         \tab \{\\
         \tab \tab "message": "Invalid game, the game 'dorky-ds-explorer' doesn't exists.",\\
         \tab \tab "error-code": "EGME9",\\
-        \tab \tab "error-details": "Requested operation GET, but required GET or POST."\\
+        \tab \tab "error-details": "Invalid game."\\
          \tab \}\\
         \}\\
         \textbf{Code:} 403\\
@@ -44,7 +44,7 @@ In this endpoint allows to master and user to see all logs associated to a speci
     \item URL: \texttt{lupus/game/logs/\{gameId\}/master}
     \item Method: \texttt{GET}
     \item URL Parameters:\\
-        \textbf{gameId:} String, id of game
+        \textbf{gameId:} String, public ID of game
     \item Data Parameters: None
     \item Success Response: \\
         \textbf{Code:} 200\\
@@ -58,7 +58,7 @@ In this endpoint allows to master and user to see all logs associated to a speci
          \tab \{\\
          \tab \tab "message": "Invalid game, the game \{publicGameId\} doesn't exists.",\\
          \tab \tab "error-code": "EGME9",\\
-         \tab \tab "error-details": "Requested operation GET, but required GET or POST."\\
+         \tab \tab "error-details": "Game doesn't exists."\\
          \tab \}\\
         \}
         \textbf{Code:} 403\\
@@ -83,6 +83,186 @@ In this endpoint allows to master and user to see all logs associated to a speci
          \tab \}\\
         \}\\
 \end{itemize}
+
+\subsubsection*{Game Settings}
+This endpoint allows to set up a game by sending the list of players that will play and a list of roles that players will embody.
+
+\begin{itemize}
+    \item URL: \texttt{lupus/game/settings}
+    \item Method: \texttt{POST}
+    \item URL Parameters: None
+    \item Data Parameters:\\
+        \{\\
+        \tab "player": [\{"username": value1\}, \{"username":value2\}, ...], \\
+        \tab "roleCardinality": [\{"role": "wolf", cardinality: 2\}, \{"role": "jester", cardinality: 1\}, ...] \\
+        \}\\
+        Player is an array that contains a set of players that will participate to the game. roleCardinality is an array that contains a set of roles and cardinalities for such roles.
+    \item Success Response: \\
+        \textbf{Code:} 201\\
+        \textbf{Content:} \\
+        \{\\
+        \tab  "game": \{ \\
+        \tab \tab "id": 4, \\
+        \tab \tab "public-ID": "explorer-puppy-kamikaze", \\
+        \tab \tab "start": "2024-04-29", \\
+        \tab \tab "game-duration": "", \\
+        \tab \tab "who-win": -1, \\ 
+        \tab \tab "rounds": 0, \\
+        \tab \tab "phase": 0, \\
+        \tab \tab "subphase": 0 \\
+        \tab\}\\
+        \} \\
+        The server returns a JSON representation of the newly created game.
+    \item Error Response:\\
+        \textbf{Code:} 404\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "PLAYER userX does not exist",\\
+        \tab \tab "error-code": "EGME1",\\
+        \tab \tab "error-details": "One or more players does not exist."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If a specified player doesn't exist in the database. \\
+        
+        \textbf{Code:} 403\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"Authentication required, not logged in",\\
+         \tab \tab "error-code":"ESES1",\\
+         \tab \tab "error-details":"Account not logged in."\\
+         \tab \}\\
+        \}\\
+        
+        \textbf{Code:} 400\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "Invalid JSON format",\\
+        \tab \tab "error-code": "EJSN1",\\
+        \tab \tab "error-details": "Unable to parse JSON: no roleCardinality object found."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If the JSON data parameters are wrongly formatted. \\
+        
+        \textbf{Code:} 404\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "ROLE cat does not exist",\\
+        \tab \tab "error-code": "EGME4",\\
+        \tab \tab "error-details": "One or more roles does not exist."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If one or more roles specified in the request do not exist. \\
+        
+        \textbf{Code:} 400\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "Player number 8 does not match the number of roles 7",\\
+        \tab \tab "error-code": "EGME5",\\
+        \tab \tab "error-details": "Number of players entered does not correspond to the number of roles."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If the number of players isn't equal to the number of roles.\\
+
+        
+        \textbf{Code:} 400\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "Invalid roles cardinality",\\
+        \tab \tab "error-code": "EGME8",\\
+        \tab \tab "error-details": "Invalid role max cardinality."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If the cardinality of a role exceeds the maximum cardinality specified into the "Role" table.\\
+
+        
+        \textbf{Code:} 409\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "PLAYER allRole1 is already in a game",\\
+        \tab \tab "error-code": "EGME2",\\
+        \tab \tab "error-details": "One or more players are already in a game."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If a specified player is already playing another game.\\
+\end{itemize}
+
+
+\subsubsection*{Update user's password}
+This endpoint allows a user to change his/her password.
+
+\begin{itemize}
+    \item URL: \texttt{lupus/user/me}
+    \item Method: \texttt{PUT}
+    \item URL Parameters: None
+    \item Data Parameters:\\
+        \{\\
+        \tab "userUpdate": \{ \\
+        \tab \tab "oldPassword": value1, \\
+        \tab \tab "newPassword": value2, \\
+        \tab \tab "repeatNewPassword": value2 \\
+        \tab \}\\
+        \}\\
+    \item Success Response: \\
+        \textbf{Code:} 200\\
+        \textbf{Content:} \\
+        \{\\
+        \tab  "message": \{ \\
+        \tab \tab "message": "User has successfully updated the password" \\
+        \tab\}\\
+        \} \\
+    \item Error Response:\\
+        \textbf{Code:} 403\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"Authentication required, not logged in",\\
+         \tab \tab "error-code":"ESES1",\\
+         \tab \tab "error-details":"Account not logged in."\\
+         \tab \}\\
+        \}\\
+
+        
+        \textbf{Code:} 409\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"User esempio failed to update the password",\\
+         \tab \tab "error-code":"EUSR10",\\
+         \tab \tab "error-details":"Update failed."\\
+         \tab \}\\
+        \}\\
+        \textbf{When}: If the UPDATE query returns an error. For instance, if the old password is not equal to the real old password of the user.\\
+
+        
+        \textbf{Code:} 400\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"New password and repeatNewPassword do not match",\\
+         \tab \tab "error-code":"EUSR5",\\
+         \tab \tab "error-details":"Passwords do not match."\\
+         \tab \}\\
+        \}\\
+
+\end{itemize}    
+
 
 \begin{comment}
 %esempio
