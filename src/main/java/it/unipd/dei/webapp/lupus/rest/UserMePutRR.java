@@ -91,10 +91,10 @@ public class UserMePutRR extends AbstractRR {
 
                     } else {
 
-                        LOGGER.error("User " + user + " was not found");
+                        LOGGER.error("Update password failed");
 
-                        ErrorCode ec = ErrorCode.USER_NOT_FOUND;
-                        m = new Message("User " + user + " was not found", ec.getErrorCode(), ec.getErrorMessage());
+                        ErrorCode ec = ErrorCode.UPDATE_NOT_SUCCESSFUL;
+                        m = new Message("User " + user + " failed to update the password", ec.getErrorCode(), ec.getErrorMessage());
                         res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         // TODO --> add the page linked to this servlet (for not successfully updated password)
