@@ -239,7 +239,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: target of the vote in the ballot phase not correct");
                         ErrorCode ec = ErrorCode.BALLOT_VOTE_NOT_VALID;
                         m = new Message("ERROR: target of the vote in the ballot phase not correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -286,7 +286,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: not valid action");
                         ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
                         m = new Message("ERROR: not valid action", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -299,14 +299,14 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
         }catch(IOException e){
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
         }
@@ -361,7 +361,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
         }
@@ -424,7 +424,7 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
                     ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
                     m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     return false;
 
@@ -437,7 +437,7 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
                     ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
                     m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     return false;
 
@@ -450,7 +450,7 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
                     ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
                     m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     return false;
 
@@ -461,7 +461,7 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
                     ErrorCode ec = ErrorCode.DEAD_PLAYER;
                     m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_CONFLICT);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
@@ -472,7 +472,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: the list of vote isn't correct");
                         ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
                         m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -481,7 +481,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
                         ErrorCode ec = ErrorCode.DEAD_PLAYER;
                         m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_CONFLICT);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -493,7 +493,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: the list of vote isn't correct");
                         ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
                         m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -503,7 +503,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: action not permitted");
                         ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
                         m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
@@ -516,14 +516,14 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
         }catch(IOException e){
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
         }
@@ -612,7 +612,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ACTION NOT POSSIBLE: you have already protected " + target + " the previous turn");
                         ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
                         Message m = new Message("ACTION NOT POSSIBLE: you have already protected " + target + " the previous turn", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
 
@@ -823,7 +823,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
-            res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
             //throw new RuntimeException(e);
@@ -892,7 +892,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
                 ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
                 m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -905,7 +905,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
                 ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
                 m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -918,7 +918,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
                 ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
                 m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -930,7 +930,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead");
                 ErrorCode ec = ErrorCode.DEAD_PLAYER;
                 m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -939,7 +939,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
                 ErrorCode ec = ErrorCode.DEAD_PLAYER;
                 m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -961,7 +961,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: the wolves has already done their action this night");
                         ErrorCode ec = ErrorCode.TOO_MANY_WOLVES_ACTIONS;
                         m = new Message("ERROR: the wolves has already done their action this night", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_CONFLICT);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
 
@@ -986,7 +986,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: there's too many action for the wolf pack");
                         ErrorCode ec = ErrorCode.TOO_MANY_WOLVES_ACTIONS;
                         m = new Message("ERROR: there's too many action for the wolf pack", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_CONFLICT);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
 
@@ -1000,7 +1000,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive");
                 ErrorCode ec = ErrorCode.NOT_VALID_TARGET;
                 m = new Message("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -1038,7 +1038,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -1049,7 +1049,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: someone has not done his action this turn");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -1060,7 +1060,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
 
@@ -1107,7 +1107,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.error("ERROR: the target of " + action + " is not a valid target");
                         ErrorCode ec = ErrorCode.NOT_VALID_TARGET;
                         Message m = new Message("ERROR: the target of " + action + " is not a valid target", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         return false;
 
@@ -1195,7 +1195,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR, the action is null");
                 ErrorCode ec = ErrorCode.NULL_ACTION;
                 Message m = new Message("ERROR, the action is null", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return null;
 

@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.DeletePlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
@@ -54,7 +55,7 @@ public class UserMeDeleteRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        String username = ((Player) req.getSession().getAttribute("user")).getUsername();
+        String username = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
 
@@ -88,7 +89,7 @@ public class UserMeDeleteRR extends AbstractRR {
 
                     ErrorCode ec = ErrorCode.USER_NOT_FOUND;
                     m = new Message("User " + username + "not found", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
@@ -100,7 +101,7 @@ public class UserMeDeleteRR extends AbstractRR {
 
                 ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
                 Message m = new Message("Password incorrect", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
 

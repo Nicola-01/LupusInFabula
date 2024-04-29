@@ -82,7 +82,7 @@ public class UserUsernameGetRR extends AbstractRR {
 
                 ErrorCode ec = ErrorCode.USER_NOT_FOUND;
                 m = new Message("Username " + username + " not found", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 // TODO --> insert the jsp file linked to this servlet (the jsp for the error)
                 //req.getRequestDispatcher("/jsp/...").forward(req, res);
