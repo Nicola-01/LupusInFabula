@@ -257,7 +257,7 @@ public class GameActionsPostRR extends AbstractRR {
                             LOGGER.info("The carpenter use his ability");
                             dayActionResults.setCarpenterAbility(true);
                         } else {
-                            LOGGER.info("%s is voted out", votedPlayer1);
+                            LOGGER.info(votedPlayer1 + " is voted out");
                             dayActionResults.setVotedPlayer(votedPlayer1);
                             updatePlayerDeath(votedPlayer1);
                         }
@@ -269,13 +269,13 @@ public class GameActionsPostRR extends AbstractRR {
                         //He can decide to kill someone else before his dead
                         Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
                         new InsertIntoActionDAO(ds.getConnection(), samAction).access();
-                        LOGGER.info("Sam killed %s", target);
+                        LOGGER.info("Sam killed " + target);
                         dayActionResults.setSamTarget(target);
                         updatePlayerDeath(target);
                     } else if (role.equals("plague spreader")) {
                         Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
                         new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
-                        LOGGER.info("Plague spreader killed %s", target);
+                        LOGGER.info("Plague spreader killed " + target);
                         updatePlayerDeath(target);
                     } else {
                         //error
@@ -454,9 +454,9 @@ public class GameActionsPostRR extends AbstractRR {
 
                 //check if the target is dead
                 if (deadPlayers.get(gameAction.getTarget())) {
-                    LOGGER.error("ERROR: the target " + gameAction.getPlayer() + " is dead");
+                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
                     ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                    m = new Message("ERROR: the target " + gameAction.getPlayer() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
+                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(HttpServletResponse.SC_CONFLICT);
                     m.toJSON(res.getOutputStream());
                     return false;
@@ -484,7 +484,7 @@ public class GameActionsPostRR extends AbstractRR {
                     while (deadPlayersList.get(deadListCount).getValue()) {
                         deadListCount++;
                     }
-                    LOGGER.info("Player: %s  Player: %s", gameAction.getPlayer(), deadPlayersList.get(deadListCount).getKey());
+
                     if (!(gameAction.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
                         LOGGER.error("ERROR: the list of vote isn't correct");
                         ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
