@@ -16,7 +16,7 @@ public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
     /**
      * The SQL statement to retrieve the maximum game ID for a player username.
      */
-    private static final String STATEMENT = "SELECT MAX(game_id) as game_id FROM plays_as_in WHERE player_username = LOWER(?)";
+    private static final String STATEMENT = "SELECT MAX(game_id) as game_id FROM plays_as_in WHERE LOWER(player_username) = LOWER(?)";
 
     /**
      * The player username for which the game ID is to be retrieved.

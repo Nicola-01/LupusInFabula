@@ -18,7 +18,7 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
      * The SQL statement to be executed.
      */
     private final static String STATEMENT = "UPDATE plays_as_in SET round_of_death = ?, phase_of_death = ?, duration_of_life = (SELECT game.start FROM game where game.id = ?) - NOW() " +
-            "where game_id = ? AND player_username = ?";
+            "where game_id = ? AND LOWER(player_username) = LOWER(?)";
 
     /**
      * The PlaysAsIn object containing information about the player's role and death in the game

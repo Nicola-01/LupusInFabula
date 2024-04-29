@@ -16,7 +16,7 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
     /**
      * The SQL statement to retrieve the role of a player by game ID and player username.
      */
-    private static final String STATEMENT = "SELECT role FROM plays_as_in WHERE game_id = ? AND player_username = LOWER(?)";
+    private static final String STATEMENT = "SELECT role FROM plays_as_in WHERE game_id = ? AND LOWER(player_username) = LOWER(?)";
 
     /**
      * The game ID for which the player's role is to be retrieved.

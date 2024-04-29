@@ -475,7 +475,7 @@ public class GameActionsPostRR extends AbstractRR {
                         String illusionist = "";
                         String player_role = "";
                         for (GameAction gameAction : gameActions) {
-                            if (gameAction.getPlayer().equals(target)) {
+                            if (gameAction.getTarget().equals(target)) {
                                 illusionist = gameAction.getPlayer();
                                 player_role = gameAction.getRole();
                             }
@@ -486,7 +486,7 @@ public class GameActionsPostRR extends AbstractRR {
                         tmp.put(player_action, false);
                         actionsMap.put(target, tmp);
 
-                        LOGGER.info("The target " + target + " has been blocked during the night");
+                        LOGGER.info("The target " + target + " has been blocked during the night by the illusionist");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target)).access();
                     }
 
@@ -617,13 +617,15 @@ public class GameActionsPostRR extends AbstractRR {
                     // check for the "blowup" action --> KAMIKAZE
                     // (if the target is the kamikaze and the action is true, the kamikaze kill himself and the wolf)
                     if (playersRole.get(target).equals(GameRoleAction.KAMIKAZE.getName())
-                            && actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
+                            && (actionPlayerMap.get(GameRoleAction.WOLF.getAction())
+                                    || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
+                                    || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction()))) {
                         String wolf = "";
                         for (GameAction gameAction : gameActions)
                             if (gameAction.getTarget().equals(target))
                                 wolf = gameAction.getPlayer();
 
-                        LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
+                        LOGGER.info("The target " + target + " is blown up with the wolf");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
                         updatePlayerDeath(wolf);
                     }
@@ -662,7 +664,10 @@ public class GameActionsPostRR extends AbstractRR {
 
                             if (berserker_count == 2) {
                                 LOGGER.info("The berserker has killed also himself during the night");
+                                updatePlayerDeath(target);
                                 updatePlayerDeath(berserker);
+                            } else if (berserker_count == 1) {
+                                updatePlayerDeath(target);
                             }
 
                         }
@@ -889,6 +894,8 @@ public class GameActionsPostRR extends AbstractRR {
             if (gameRoleAction.getAction() != null
                     && !gameRoleAction.getName().equals(GameRoleAction.KAMIKAZE.getName())
                     && !gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
+                    && !gameRoleAction.getName().equals(GameRoleAction.SAM.getName())
+                    && !gameRoleAction.getName().equals(GameRoleAction.CARPENTER.getName())
                     && !deadPlayers.get(playerRoleEntry.getKey())) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
@@ -926,7 +933,7 @@ public class GameActionsPostRR extends AbstractRR {
             }
         } else if (berserkerCount == 2) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
-
+                LOGGER.info(gameActions.size()+" "+rolesWithEffect.size()+" "+wolfCount());
                 LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());

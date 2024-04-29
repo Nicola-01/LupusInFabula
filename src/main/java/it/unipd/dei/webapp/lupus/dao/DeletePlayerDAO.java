@@ -17,7 +17,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
     /**
      * The SQL statement for deleting a player record from the database by setting the email to an invalid one (i.e. the username of the player that has to be deleted).
      */
-    private static final String STATEMENT = "UPDATE player SET email = ? WHERE username = ?";
+    private static final String STATEMENT = "UPDATE player SET email = ? WHERE LOWER(username) = LOWER(?)";
 
     /**
      * The username of the player to be deleted.
