@@ -487,6 +487,11 @@ Content-Type: application/json
       "player":"player9",
       "role":"sam",
       "target":"player4"
+    },
+    {
+      "player":"player6",
+      "role":"plague spreader",
+      "target":"player4"
     }
   ]
 }

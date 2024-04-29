@@ -173,7 +173,10 @@ public class GameActionsPostRR extends AbstractRR {
                     } else {
                         LOGGER.info("Players %s is voted", votedPlayer);
 
-                        if (!carpenterCheck(votedPlayer)) {
+                        if (carpenterCheck(votedPlayer)) {
+                            LOGGER.info("The carpenter use his ability");
+                        }else{
+                            LOGGER.info("%s is voted out", votedPlayer);
                             updatePlayerDeath(votedPlayer);
                         }
                     }
@@ -202,7 +205,10 @@ public class GameActionsPostRR extends AbstractRR {
                     } else {
                         LOGGER.info("Players %s is voted", votedPlayer);
 
-                        if (!carpenterCheck(votedPlayer)) {
+                        if (carpenterCheck(votedPlayer)) {
+                            LOGGER.info("The carpenter use his ability");
+                        }else{
+                            LOGGER.info("%s is voted out", votedPlayer);
                             updatePlayerDeath(votedPlayer);
                         }
                     }
@@ -215,10 +221,12 @@ public class GameActionsPostRR extends AbstractRR {
                     new InsertIntoActionDAO(ds.getConnection(), samAction).access();
                     LOGGER.info("Sam killed %s", target);
                     updatePlayerDeath(target);
-                    LOGGER.info("%s is voted out", player);
-                    updatePlayerDeath(player);
-                    break;
-                } else {
+                } else if(role.equals("plague spreader")) {
+                    Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
+                    new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
+                    LOGGER.info("Plague spreader killed %s", target);
+                    updatePlayerDeath(target);
+                }else{
                     //error
                     LOGGER.info("Error action not permitted");
                     return false;
@@ -264,23 +272,27 @@ public class GameActionsPostRR extends AbstractRR {
         int deadListCount = 0;
         Message m = null;
 
-        List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, deadPlayers.size()-1));
+        int stop = deadPlayers.size();
+        List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, stop));
         Collections.sort(firstGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()) );
 
         List<GameAction> secondGameAction = null;
-        if(gameActions.size() > voteNumber+1) {
-            secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size()-1, gameActions.size()-1));
+        if(gameActions.size() > voteNumber+2) {
+            stop = voteNumber+ballotVoteNumber;
+            secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size(), stop));
             Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()) );
         }
 
-        List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(gameActions.size()-1, gameActions.size()));
+        List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(stop, gameActions.size()));
 
         List<GameAction> orderedGameActions = firstGameAction;
-        if (secondGameAction != null){
-            orderedGameActions.addAll(secondGameAction);
-            orderedGameActions.addAll(thirdGameAction);
-        }else{
-            orderedGameActions.addAll(thirdGameAction);
+        if(!(gameActions.size() <= deadPlayers.size())) {
+            if (secondGameAction != null) {
+                orderedGameActions.addAll(secondGameAction);
+                orderedGameActions.addAll(thirdGameAction);
+            } else {
+                orderedGameActions.addAll(thirdGameAction);
+            }
         }
         List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
         Collections.sort(deadPlayersList, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()) );
@@ -354,7 +366,7 @@ public class GameActionsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
-            }else if ((gameActions.size() > voteNumber+1) && (numberAction <= (voteNumber+ballotVoteNumber))){
+            }else if ((gameActions.size() > voteNumber+2) && (numberAction <= (voteNumber+ballotVoteNumber))){
                 if (deadPlayers.get(gameAction.getPlayer())) {
                     LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
                     ErrorCode ec = ErrorCode.DEAD_PLAYER;
@@ -363,7 +375,6 @@ public class GameActionsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
-                deadListCount++;
                 while (deadPlayersList.get(deadListCount).getValue()){
                     deadListCount++;
                 }
@@ -376,8 +387,9 @@ public class GameActionsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
+                deadListCount++;
             }else{
-                if(!gameAction.getRole().equals("sam")){
+                if(!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))){
                     LOGGER.error("ERROR: action not permitted");
                     ErrorCode ec = ErrorCode.DEAD_PLAYER;
                     m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
