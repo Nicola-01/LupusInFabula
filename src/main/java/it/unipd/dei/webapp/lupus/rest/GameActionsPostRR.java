@@ -107,6 +107,14 @@ public class GameActionsPostRR extends AbstractRR {
             currentPhase = game.getPhase();
             currentSubPhase = game.getSubphase();
 
+            if (game.getWho_win() != -1) {
+                LOGGER.error("ERROR: the game is over");
+                ErrorCode ec = ErrorCode.GAME_IS_OVER;
+                Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
+                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                m.toJSON(res.getOutputStream());
+            }
+
             if (currentPhase == GamePhase.NIGHT.getId()) {
                 // check of the correctness of the actions
                 if (!correctnessOfNightActions(gameActions))

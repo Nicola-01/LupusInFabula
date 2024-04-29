@@ -46,6 +46,7 @@ public enum ErrorCode {
     INVALID_ROLES_CARDINALITY("EGME8", HttpServletResponse.SC_BAD_REQUEST, "Invalid role max cardinality."),
 
     GAME_NOT_FOUND("EGME9", HttpServletResponse.SC_NOT_FOUND, "Game not found."),
+    GAME_IS_OVER("EGME10", HttpServletResponse.SC_CONFLICT, "Game is over."),
 
     // friend
     FRIEND_ALREADY_EXIST("EFRN1", HttpServletResponse.SC_CONFLICT, "The friend is already in the list"),
