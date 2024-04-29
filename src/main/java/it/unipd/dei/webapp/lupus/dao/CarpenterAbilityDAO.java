@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 /**
  * DAO (Data Access Object) class for retrieving the carpenter's ability status from the database.
- * This class extends AbstractDAO<Boolean>, where Boolean represents the result of the carpenter's ability check.
+ * This class extends AbstractDAO, where Boolean represents the result of the carpenter's ability check.
  *
  * @author LupusInFabula Group
  * @version 1.0
