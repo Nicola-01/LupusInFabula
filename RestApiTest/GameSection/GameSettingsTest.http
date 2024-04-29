@@ -1,221 +1,9 @@
-// To utilize these tests, avoid using the populate_db_optional.sql file.
-
-
 ### do the Login
 POST http://localhost:8080/lupus/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
-user = esempio &
-password = password123
-
-### VALID GAME
-
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
-Content-Type: application/json
-
-{
-  "player": [
-    {
-      "username": "user1"
-    },
-    {
-      "username": "user2"
-    },
-    {
-      "username": "user3"
-    },
-    {
-      "username": "user4"
-    },
-    {
-      "username": "user5"
-    },
-    {
-      "username": "user6"
-    },
-    {
-      "username": "user7"
-    },
-    {
-      "username": "user8"
-    }
-  ],
-  "roleCardinality": [
-    {
-      "role": "wolf",
-      "cardinality" : 2
-    },
-    {
-      "role": "farmer",
-      "cardinality" : 2
-    },
-    {
-      "role": "seer",
-      "cardinality" : 1
-    },
-    {
-      "role": "knight",
-      "cardinality" : 1
-    },
-    {
-      "role": "jester",
-      "cardinality" : 1
-    },
-    {
-      "role": "hamster",
-      "cardinality" : 1
-    }
-  ]
-}
-
-### MASTER ALREADY IN A GAME
-
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
-Content-Type: application/json
-
-{
-  "player": [
-    {
-      "username": "player1"
-    },
-    {
-      "username": "player2"
-    },
-    {
-      "username": "player3"
-    },
-    {
-      "username": "player4"
-    },
-    {
-      "username": "player5"
-    },
-    {
-      "username": "player6"
-    },
-    {
-      "username": "player7"
-    },
-    {
-      "username": "player8"
-    },
-    {
-      "username": "player9"
-    }
-  ],
-  "roleCardinality": [
-    {
-      "role": "wolf",
-      "cardinality" : 2
-    },
-    {
-      "role": "seer",
-      "cardinality" : 1
-    },
-    {
-      "role": "knight",
-      "cardinality" : 1
-    },
-    {
-      "role": "jester",
-      "cardinality" : 1
-    },
-    {
-      "role": "hamster",
-      "cardinality" : 1
-    },
-    {
-      "role": "sheriff",
-      "cardinality" : 1
-    },
-    {
-      "role": "plague spreader",
-      "cardinality" : 1
-    },
-    {
-      "role": "sam",
-      "cardinality" : 1
-    }
-  ]
-}
-
-### new login
-POST http://localhost:8080/lupus/login HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-user = player0 &
-password = ciao
-
-### VALID GAME 2
-
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
-Content-Type: application/json
-
-{
-  "player": [
-    {
-      "username": "player1"
-    },
-    {
-      "username": "player2"
-    },
-    {
-      "username": "player3"
-    },
-    {
-      "username": "player4"
-    },
-    {
-      "username": "player5"
-    },
-    {
-      "username": "player6"
-    },
-    {
-      "username": "player7"
-    },
-    {
-      "username": "player8"
-    },
-    {
-      "username": "player9"
-    }
-  ],
-  "roleCardinality": [
-    {
-      "role": "wolf",
-      "cardinality" : 2
-    },
-    {
-      "role": "seer",
-      "cardinality" : 1
-    },
-    {
-      "role": "knight",
-      "cardinality" : 1
-    },
-    {
-      "role": "jester",
-      "cardinality" : 1
-    },
-    {
-      "role": "hamster",
-      "cardinality" : 1
-    },
-    {
-      "role": "sheriff",
-      "cardinality" : 1
-    },
-    {
-      "role": "plague spreader",
-      "cardinality" : 1
-    },
-    {
-      "role": "sam",
-      "cardinality" : 1
-    }
-  ]
-}
+user = newGameM &
+password = newGame
 
 ### PLAYER NOT EXIST
 
@@ -225,25 +13,25 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "newGame1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
       "username": "userX"
@@ -285,28 +73,28 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "newGame1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
-      "username": "user8"
+      "username": "newGame8"
     }
   ],
   "roleCardinality_NOT_EXISTS": [
@@ -345,28 +133,28 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "newGame1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
-      "username": "user8"
+      "username": "newGame8"
     }
   ],
   "roleCardinality": [
@@ -397,8 +185,7 @@ Content-Type: application/json
   ]
 }
 
-
-### NUMBERS NOT MATCH
+### NUMBERS OF PLAYERS AND ROLES NOT CORRESPONDS
 
 POST http://localhost:8080/lupus/game/settings HTTP/1.1
 Content-Type: application/json
@@ -406,28 +193,28 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "newGame1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
-      "username": "user8"
+      "username": "newGame8"
     }
   ],
   "roleCardinality": [
@@ -466,28 +253,28 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "newGame1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
-      "username": "user8"
+      "username": "newGame8"
     }
   ],
   "roleCardinality": [
@@ -517,7 +304,6 @@ Content-Type: application/json
     }
   ]
 }
-
 
 ### PLAYER ALREADY IN GAME
 
@@ -527,28 +313,28 @@ Content-Type: application/json
 {
   "player": [
     {
-      "username": "user1"
+      "username": "allRole1"
     },
     {
-      "username": "user2"
+      "username": "newGame2"
     },
     {
-      "username": "user3"
+      "username": "newGame3"
     },
     {
-      "username": "user4"
+      "username": "newGame4"
     },
     {
-      "username": "user5"
+      "username": "newGame5"
     },
     {
-      "username": "user6"
+      "username": "newGame6"
     },
     {
-      "username": "user7"
+      "username": "newGame7"
     },
     {
-      "username": "user8"
+      "username": "newGame8"
     }
   ],
   "roleCardinality": [
@@ -579,109 +365,49 @@ Content-Type: application/json
   ]
 }
 
-### GAME WITH ALL ROLES
+### CORRECT GAME
 
-### LOGIN AS MASTER
-POST http://localhost:8080/lupus/login HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-
-user = allRoleMaster &
-password = allRole
-
-### CREATE THE GAME
 POST http://localhost:8080/lupus/game/settings HTTP/1.1
 Content-Type: application/json
 
 {
   "player": [
     {
-      "username": "allRole1"
+      "username": "newGame1"
     },
     {
-      "username": "allRole2"
+      "username": "newGame2"
     },
     {
-      "username": "allRole3"
+      "username": "newGame3"
     },
     {
-      "username": "allRole4"
+      "username": "newGame4"
     },
     {
-      "username": "allRole5"
+      "username": "newGame5"
     },
     {
-      "username": "allRole6"
+      "username": "newGame6"
     },
     {
-      "username": "allRole7"
+      "username": "newGame7"
     },
     {
-      "username": "allRole8"
-    },
-    {
-      "username": "allRole9"
-    },
-    {
-      "username": "allRole10"
-    },
-    {
-      "username": "allRole11"
-    },
-    {
-      "username": "allRole12"
-    },
-    {
-      "username": "allRole13"
-    },
-    {
-      "username": "allRole14"
-    },
-    {
-      "username": "allRole15"
-    },
-    {
-      "username": "allRole16"
-    },
-    {
-      "username": "allRole17"
-    },
-    {
-      "username": "allRole18"
-    },
-    {
-      "username": "allRole19"
-    },
-    {
-      "username": "allRole20"
-    },
-    {
-      "username": "allRole21"
-    },
-    {
-      "username": "allRole22"
-    },
-    {
-      "username": "allRole23"
-    },
-    {
-      "username": "allRole24"
+      "username": "newGame8"
     }
   ],
   "roleCardinality": [
     {
-      "role": "carpenter",
-      "cardinality" : 1
+      "role": "wolf",
+      "cardinality" : 2
     },
     {
       "role": "farmer",
-      "cardinality" : 6
+      "cardinality" : 2
     },
     {
-      "role": "hobbit",
-      "cardinality" : 1
-    },
-    {
-      "role": "kamikaze",
+      "role": "seer",
       "cardinality" : 1
     },
     {
@@ -689,59 +415,11 @@ Content-Type: application/json
       "cardinality" : 1
     },
     {
-      "role": "medium",
-      "cardinality" : 1
-    },
-    {
-      "role": "sam",
-      "cardinality" : 1
-    },
-    {
-      "role": "seer",
-      "cardinality" : 1
-    },
-    {
-      "role": "sheriff",
-      "cardinality" : 1
-    },
-    {
-      "role": "berserker",
-      "cardinality" : 1
-    },
-    {
-      "role": "dorky",
-      "cardinality" : 1
-    },
-    {
-      "role": "explorer",
-      "cardinality" : 1
-    },
-    {
-      "role": "giuda",
-      "cardinality" : 1
-    },
-    {
-      "role": "puppy",
-      "cardinality" : 1
-    },
-    {
-      "role": "wolf",
-      "cardinality" : 1
-    },
-    {
-      "role": "hamster",
-      "cardinality" : 1
-    },
-    {
       "role": "jester",
       "cardinality" : 1
     },
     {
-      "role": "illusionist",
-      "cardinality" : 1
-    },
-    {
-      "role": "plague spreader",
+      "role": "hamster",
       "cardinality" : 1
     }
   ]

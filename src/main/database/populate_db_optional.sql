@@ -1,3 +1,5 @@
+-- Note: The direct SQL insert does not include password complexity check.
+
 INSERT INTO Player (username, email, password, registration_date)
 VALUES ('esempio', LOWER('esempio@example.com'), md5('password123'), CURRENT_DATE),
        ('user1', LOWER('user1@test.com'), md5('ciao'), CURRENT_DATE),
@@ -49,6 +51,17 @@ VALUES ('allRoleMaster', LOWER('allRoleMaster@example.com'), md5('allRole'), CUR
        ('allRole23', LOWER('allRole23@test.com'), md5('allRole'), CURRENT_DATE),
        ('allRole24', LOWER('allRole24@test.com'), md5('allRole'), CURRENT_DATE);
 
+-- Users for test a creation of new game
+INSERT INTO Player (username, email, password, registration_date)
+VALUES ('newGameM', LOWER('newGameM@example.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame1', LOWER('newGame1@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame2', LOWER('newGame2@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame3', LOWER('newGame3@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame4', LOWER('newGame4@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame5', LOWER('newGame5@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame6', LOWER('newGame6@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame7', LOWER('newGame7@test.com'), md5('newGame'), CURRENT_DATE),
+       ('newGame8', LOWER('newGame8@test.com'), md5('newGame'), CURRENT_DATE);
 
 /*
 INSERT INTO public.TYPE_ACTION
