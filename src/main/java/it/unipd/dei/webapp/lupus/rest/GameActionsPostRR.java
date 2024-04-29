@@ -72,7 +72,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @throws SQLException If an SQL error occurs.
      */
     public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
-        super(Actions.ADD_ACTIONS, req, res, ds);
+        super(Actions.POST_GAME_ACTIONS_ACTION, req, res, ds);
         this.gameID = gameID;
 
         for (GameRoleAction role : GameRoleAction.values())
@@ -97,9 +97,7 @@ public class GameActionsPostRR extends AbstractRR {
      */
     @Override
     protected void doServe() throws IOException {
-
         try {
-
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream());
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
@@ -114,49 +112,53 @@ public class GameActionsPostRR extends AbstractRR {
                 res.setStatus(HttpServletResponse.SC_CONFLICT);
                 m.toJSON(res.getOutputStream());
             }
-
-            if (currentPhase == GamePhase.NIGHT.getId()) {
-                // check of the correctness of the actions
-                if (!correctnessOfNightActions(gameActions))
-                    return;
-                LOGGER.info("correctness of night actions done");
-                if (!handleNightPhase(gameActions))
-                    return;
-            } else {
-                if (!correctnessOfDayActions(gameActions))
-                    return;
-                LOGGER.info("correctness of day actions done");
-                if (!handleDayPhase(gameActions))
-                    return;
-            }
-
-            VictoryMessage vm = isAVictory();
-            if (vm != null) {
-                vm.toJSON(res.getOutputStream());
-                currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
-
-                LOGGER.info("The game finished, winner(s): " + vm.getMessage());
-                new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-            } else {
-
-                // return the action result before updating the round and the phase
-                if (currentPhase == GamePhase.DAY.getId()) {
-                    dayActionResults.toJSON(res.getOutputStream());
-                    currentRound++;
-                    currentPhase = GamePhase.NIGHT.getId();
+            else {
+                if (currentPhase == GamePhase.NIGHT.getId()) {
+                    // check of the correctness of the actions
+                    if (!correctnessOfNightActions(gameActions))
+                        return;
+                    LOGGER.info("correctness of night actions done");
+                    if (!handleNightPhase(gameActions))
+                        return;
                 } else {
-                    nightActionResults.toJSON(res.getOutputStream());
-                    currentPhase = GamePhase.DAY.getId();
+                    if (!correctnessOfDayActions(gameActions))
+                        return;
+                    LOGGER.info("correctness of day actions done");
+                    if (!handleDayPhase(gameActions))
+                        return;
                 }
 
-                // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
+                VictoryMessage vm = isAVictory();
+                if (vm != null) {
+                    vm.toJSON(res.getOutputStream());
+                    currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
-                new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                LOGGER.info(nightActionResults.toString());
+                    LOGGER.info("The game finished, winner(s): " + vm.getMessage());
+                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
+                } else {
+
+                    // return the action result before updating the round and the phase
+                    if (currentPhase == GamePhase.DAY.getId()) {
+                        dayActionResults.toJSON(res.getOutputStream());
+                        currentRound++;
+                        currentPhase = GamePhase.NIGHT.getId();
+                    } else {
+                        nightActionResults.toJSON(res.getOutputStream());
+                        currentPhase = GamePhase.DAY.getId();
+                    }
+
+                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
+                    LOGGER.info(nightActionResults.toString());
+                }
             }
 
         } catch (SQLException | IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            LogContext.removeIPAddress();
+            LogContext.removeUser();
+            LogContext.removeAction();
+            LogContext.removeGame();
         }
 
     }

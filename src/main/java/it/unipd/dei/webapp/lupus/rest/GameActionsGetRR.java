@@ -149,8 +149,7 @@ public class GameActionsGetRR extends AbstractRR {
     }
 
     /**
-     * Handles the night phase of the game.
-     * Generates action targets based on the roles' actions.
+     * Handles the night phase of the game, generating action targets based on the roles' actions.
      *
      * @throws IOException If an I/O error occurs.
      */
@@ -171,16 +170,9 @@ public class GameActionsGetRR extends AbstractRR {
 
             // if the role is not a puppy or is a puppy but is the last wolf alive
             if (!role.equals(GameRoleAction.PUPPY.getName()) || new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
-
                 for (String targetPlayer : playerRole.keySet()) {
                     if (isValidTarget(targetPlayer, role))
                         targets.add(targetPlayer);
-                    // TODO -> fix comments
-                    // If the role is different from the role of the target player,
-                    // excluding the knight and plague spreader roles, which can target themselves,
-                    // add the target player to the list of targets.
-                    // The dead players can not be voted
-
                 }
                 Collections.sort(targets);
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),

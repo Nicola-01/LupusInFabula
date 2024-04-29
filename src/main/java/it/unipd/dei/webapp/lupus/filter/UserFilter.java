@@ -85,6 +85,7 @@ public class UserFilter implements Filter {
             IOException, ServletException {
 
         LogContext.setIPAddress(servletRequest.getRemoteAddr());
+        LogContext.setAction(Actions.AUTHENTICATE_USER);
 
         try {
             if (!(servletRequest instanceof HttpServletRequest req) || !(servletResponse instanceof HttpServletResponse res)) {

@@ -89,7 +89,7 @@ public class UpdateGameDAO extends AbstractDAO {
         PreparedStatement pstmt = null;
 
         try {
-            if (who_wins != -1) {
+            if (who_wins == -1) {
                 pstmt = con.prepareStatement(STATEMENT_NOT_FINISHED);
 
                 pstmt.setInt(1, rounds);

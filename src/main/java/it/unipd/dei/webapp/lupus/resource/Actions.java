@@ -36,11 +36,6 @@ public final class Actions {
     public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
 
     /**
-     * The addition of actions
-     */
-    public static final String ADD_ACTIONS = "ADD_ACTIONS";
-
-    /**
      * The addition of a friend
      */
     public static final String ADD_FRIEND = "ADD_FRIEND";
@@ -84,7 +79,6 @@ public final class Actions {
      * The authentication of a master.
      */
     public static final String AUTHENTICATE_MASTER = "AUTHENTICATE_MASTER";
-
 
     /**
      * If arrive GET request to the page login, signup and logout, it will be redirected.
@@ -147,6 +141,11 @@ public final class Actions {
      * GET request of game actions.
      */
     public static final String GET_GAME_ACTIONS_ACTION = "GET_GAME_ACTIONS_ACTION";
+
+    /**
+     * POST request of game actions.
+     */
+    public static final String POST_GAME_ACTIONS_ACTION = "POST_GAME_ACTIONS_ACTION";
 
     /**
      * Dispatcher for user operations
