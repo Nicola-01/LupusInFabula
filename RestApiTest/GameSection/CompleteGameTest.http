@@ -506,7 +506,7 @@ Content-Type: application/json
     {
       "player":"allRole9",
       "role":"plague spreader",
-      "target":"allRole5"
+      "target":"allRole23"
     },
     {
       "player":"allRole13",
@@ -651,7 +651,7 @@ Content-Type: application/json
     {
       "player":"allRole9",
       "role":"plague spreader",
-      "target":"allRole6"
+      "target":"allRole23"
     }
   ]
 }
@@ -1106,12 +1106,12 @@ Content-Type: application/json
     {
       "player":"allRole21",
       "role":"farmer",
-      "target":"allRole23"
+      "target":"allRole22"
     },
     {
       "player":"allRole22",
       "role":"farmer",
-      "target":"allRole23"
+      "target":"allRole22"
     },
     {
       "player":"allRole23",
@@ -1136,7 +1136,7 @@ Content-Type: application/json
     {
       "player":"allRole2",
       "role":"illusionist",
-      "target":"allRole23"
+      "target":"allRole22"
     },
     {
       "player":"allRole13",
@@ -1261,12 +1261,12 @@ Content-Type: application/json
     {
       "player":"allRole21",
       "role":"farmer",
-      "target":"allRole23"
+      "target":"allRole22"
     },
     {
       "player":"allRole22",
       "role":"farmer",
-      "target":"allRole23"
+      "target":"allRole22"
     },
     {
       "player":"allRole23",
