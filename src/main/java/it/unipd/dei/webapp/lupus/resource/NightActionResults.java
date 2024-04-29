@@ -54,10 +54,7 @@ public class NightActionResults extends AbstractResource {
      * Constructs a new NightActionResults object with default values.
      */
     public NightActionResults() {
-        deadPlayers = new ArrayList<>();
-        plaguedPlayer = "";
-        puppyIsWolf = false;
-        dorkyIsWolf = false;
+        this(new ArrayList<>(), "", false, false);
     }
 
     /**
@@ -106,12 +103,13 @@ public class NightActionResults extends AbstractResource {
     }
 
     /**
-     * Adds a dead player to the list.
+     * Adds a dead player to the list if the player is not already present.
      *
      * @param player the dead player to add.
      */
     public void addDeadPlayer(String player) {
-        this.deadPlayers.add(player);
+        if(!deadPlayers.contains(player))
+            this.deadPlayers.add(player);
     }
 
     /**

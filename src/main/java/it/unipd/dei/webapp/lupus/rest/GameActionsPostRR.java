@@ -37,6 +37,12 @@ public class GameActionsPostRR extends AbstractRR {
     private final NightActionResults nightActionResults;
 
     /**
+     * The results of the day actions.
+     */
+    private final DayActionResults dayActionResults;
+
+
+    /**
      * The ID of the game.
      */
     private final int gameID;
@@ -79,6 +85,7 @@ public class GameActionsPostRR extends AbstractRR {
         playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
         nightActionResults = new NightActionResults();
+        dayActionResults = new DayActionResults();
     }
 
     /**
@@ -124,17 +131,19 @@ public class GameActionsPostRR extends AbstractRR {
                 new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
             } else {
 
+                // return the action result before updating the round and the phase
                 if (currentPhase == GamePhase.DAY.getId()) {
+                    dayActionResults.toJSON(res.getOutputStream());
                     currentRound++;
                     currentPhase = GamePhase.NIGHT.getId();
                 } else {
+                    nightActionResults.toJSON(res.getOutputStream());
                     currentPhase = GamePhase.DAY.getId();
                 }
 
                 // TODO --> update game table (last thing to do, before doing it i have to check if someone wins)
 
                 new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                nightActionResults.toJSON(res.getOutputStream());
                 LOGGER.info(nightActionResults.toString());
             }
 
