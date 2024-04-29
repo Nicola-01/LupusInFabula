@@ -35,6 +35,11 @@ public class PlayerInGameDAO extends AbstractDAO<Integer> {
         this.username = username;
     }
 
+    /**
+     * Executes the DAO operation to search if a player is already in a game.
+     *
+     * @throws Exception if there is an error executing the SQL query
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

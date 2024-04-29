@@ -16,6 +16,9 @@ import java.sql.SQLException;
  */
 public class DeleteFriendDAO extends AbstractDAO<Friend> {
 
+    /**
+     * The SQL statement to be executed
+     */
     private static final String DELETE_STATEMENT = "DELETE FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?) AND LOWER(friend_username) = LOWER(?) RETURNING *";
 
     /**

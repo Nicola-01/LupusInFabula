@@ -45,6 +45,11 @@ public class CreateGameDAO extends AbstractDAO<Game> {
         this.ds = ds;
     }
 
+    /**
+     * Executes the DAO operation to create a new game and retrieve its details from the database.
+     *
+     * @throws Exception if there is an error executing the SQL statements
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

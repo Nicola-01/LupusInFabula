@@ -18,6 +18,9 @@ import java.util.List;
  */
 public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
 
+    /**
+     * The SQL statement to be executed.
+     */
     private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?)";
 
     /**

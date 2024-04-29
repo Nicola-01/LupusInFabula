@@ -35,6 +35,11 @@ public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<Integer> {
         this.publicGameId = publicGameId;
     }
 
+    /**
+     * Executes the DAO operation to search for the private game ID using the public game ID.
+     *
+     * @throws Exception if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

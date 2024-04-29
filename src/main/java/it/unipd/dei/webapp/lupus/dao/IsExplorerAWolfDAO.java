@@ -36,6 +36,11 @@ public class IsExplorerAWolfDAO extends AbstractDAO<Boolean> {
         this.gameID = gameID;
     }
 
+    /**
+     * Executes the DAO operation to determine whether the Explorer role has already used the "explore" action in the game.
+     *
+     * @throws Exception if there is an error executing the SQL query
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;

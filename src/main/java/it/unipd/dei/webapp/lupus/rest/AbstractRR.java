@@ -14,6 +14,16 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
 
+/**
+ * Abstract base class for REST resources.
+ * <p>
+ * Provides common functionality for handling REST requests.
+ * </p>
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public abstract class AbstractRR implements RestResource {
 
     /**
@@ -91,7 +101,6 @@ public abstract class AbstractRR implements RestResource {
         }
         this.ds = ds;
 
-        // TODO -> maybe to remove, but useful for test
         res.setContentType(JSON_UTF_8_MEDIA_TYPE);
     }
 

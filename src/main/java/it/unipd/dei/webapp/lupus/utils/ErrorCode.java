@@ -14,6 +14,7 @@ public enum ErrorCode {
     // errorCode -> E + <acronym> + <progressive number>
     // USR -> USER
     // GME -> GAME
+    // FRN -> FRIEND
     // JSN -> JSON
     // SES -> SESSION
     // DSP -> DISPATCHER
@@ -21,10 +22,6 @@ public enum ErrorCode {
     // INT -> INTERNAL
     // ACT -> ACTION
 
-    // TODO: check error code
-
-    //    WRONG_FORMAT(-100, HttpServletResponse.SC_BAD_REQUEST,"Wrong format."),
-    //    NO_HOMEWORKS_TO_PUBLISH(-101, HttpServletResponse.SC_NOT_FOUND, "No homeworks to publish."),
     // Login or edit credentials
     EMPTY_INPUT_FIELDS("EUSR1", HttpServletResponse.SC_BAD_REQUEST, "One or more input fields are empty."),
     INVALID_USERNAME_FORMAT("EUSR2", HttpServletResponse.SC_BAD_REQUEST, "Invalid username format."),
@@ -58,7 +55,7 @@ public enum ErrorCode {
     LOGS_NOT_EXIST("EGLN1", HttpServletResponse.SC_NOT_FOUND, "Logs not found."),
 
     // invalid data
-    INVALID_JSON_FORMAT("EJSON1", HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON."),
+    INVALID_JSON_FORMAT("EJSN1", HttpServletResponse.SC_BAD_REQUEST, "Invalid JSON."),
 
     // session
     //    INVALID_SESSION(-200, HttpServletResponse.SC_BAD_REQUEST, "Invalid session"),
@@ -85,28 +82,6 @@ public enum ErrorCode {
     DATABASE_ERROR("EDTB1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal database error."),
     INTERNAL_ERROR("EINT1", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal error."),
     NULL_OBJECT_ERROR("EINT2", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Null object internal error.");
-
-    //    EMAIL_MISSING(-103, HttpServletResponse.SC_BAD_REQUEST, "Email missing"),
-//    COURSEID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Courseid missing"),
-//    MASTERID_MISSING(-203, HttpServletResponse.SC_BAD_REQUEST, "Masterid missing"),
-//    PASSWORD_MISSING(-104, HttpServletResponse.SC_BAD_REQUEST, "Password missing"),
-//    GROUP_NAME_MISSING(-106, HttpServletResponse.SC_BAD_REQUEST, "Group name is missing"),
-//    WRONG_INTERVALS(-107, HttpServletResponse.SC_CONFLICT, "different passwords"),
-//    MAIL_ALREADY_USED(-108, HttpServletResponse.SC_CONFLICT, "mail already used"),
-//    WRONG_GROUP_INFO(-109, HttpServletResponse.SC_BAD_REQUEST, "The group information are not correct"),
-//    ERROR_SAVING_EVAL(-110, HttpServletResponse.SC_BAD_REQUEST, "The park name has already been used."),
-//    UPDATE_ERROR(-111, HttpServletResponse.SC_BAD_REQUEST, "Problems in updating student"),
-//    REGISTRATION_CLOSED(-112, HttpServletResponse.SC_BAD_REQUEST, "Registration is closed"),
-//    WRONG_REST_FORMAT(-113, HttpServletResponse.SC_BAD_REQUEST, "Wrong rest request format."),
-//    EMPTY_MASTER_DEGREES(-114, HttpServletResponse.SC_BAD_REQUEST, "Empty degrees or cfus"),
-//    COURSE_NOT_MATCH_MASTER(-115, HttpServletResponse.SC_CONFLICT, "Course is not included in the study plan of a master degree"),
-//    REGISTRATION_ALREADY_IN(-116, HttpServletResponse.SC_CONFLICT, "The registration for this course already took place"),
-//    BADLY_FORMATTED_JSON(-120,  HttpServletResponse.SC_BAD_REQUEST, "The input json is in the wrong format."),
-//    DEADLINE_EXPIRED(-121, HttpServletResponse.SC_BAD_REQUEST, "Deadline expired"),
-//    OPERATION_UNKNOWN(-200, HttpServletResponse.SC_BAD_REQUEST, "Operation unknown."),
-//    METHOD_NOT_ALLOWED(-500, HttpServletResponse.SC_METHOD_NOT_ALLOWED, "The method is not allowed"),
-//    TOKEN_TAMPERED(-750, HttpServletResponse.SC_UNAUTHORIZED, "The token has been tampered!!!!"),
-//    TOKEN_EXPIRED(-751, HttpServletResponse.SC_UNAUTHORIZED, "The token has expired."),
 
     /**
      * The error code associated with the error.

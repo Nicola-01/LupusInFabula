@@ -90,7 +90,7 @@ public class PlaysAsIn extends AbstractResource {
      * Method to represent this object through JSON
      *
      * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
-     * @throws IOException
+     * @throws IOException if there is an error executing the SQL statement
      */
     @Override
     protected void writeJSON(final OutputStream out) throws IOException {

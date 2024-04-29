@@ -38,6 +38,9 @@ import java.io.OutputStream;
  */
 public class UserDispatcherServlet extends AbstractDatabaseServlet {
 
+    /**
+     * Represents the JSON media type with UTF-8 encoding.
+     */
     private static final String JSON_UTF_8_MEDIA_TYPE = "application/json; charset=utf-8";
 
     /**

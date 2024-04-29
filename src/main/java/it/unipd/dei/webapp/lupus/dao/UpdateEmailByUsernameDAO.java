@@ -59,7 +59,7 @@ public class UpdateEmailByUsernameDAO extends AbstractDAO<Integer> {
     /**
      * Updates the email address of the specified player in the database.
      *
-     * @throws Exception
+     * @throws Exception if there is an error executing the SQL statement
      */
     @Override
     protected void doAccess() throws Exception {

@@ -148,7 +148,7 @@ public class ActionTarget extends AbstractResource {
      * @param fieldName The field name to use in the JSON.
      * @throws IOException If an I/O error occurs during JSON writing.
      */
-    private void listToJSON(JsonGenerator jg, List<String> list, String fieldName) throws IOException {
+    static void listToJSON(JsonGenerator jg, List<String> list, String fieldName) throws IOException {
         jg.writeFieldName(fieldName);
         jg.writeStartArray();
         jg.flush();

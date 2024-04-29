@@ -35,7 +35,7 @@ public class SelectRoleDAO extends AbstractDAO<List<Role>> {
     /**
      * Retrives all roles from the database
      *
-     * @throws Exception
+     * @throws Exception if there is an error executing the SQL statement
      */
     @Override
     public final void doAccess() throws Exception {

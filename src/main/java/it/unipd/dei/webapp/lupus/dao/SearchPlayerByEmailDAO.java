@@ -37,6 +37,11 @@ public class SearchPlayerByEmailDAO extends AbstractDAO<Player> {
         this.email = email;
     }
 
+    /**
+     * Executes the DAO operation to search for a player by email.
+     *
+     * @throws SQLException if there is an error executing the SQL query
+     */
     @Override
     public final void doAccess() throws SQLException {
         PreparedStatement pstmt = null;

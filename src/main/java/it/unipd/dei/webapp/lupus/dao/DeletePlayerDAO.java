@@ -5,7 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
- * Deletion of a player record from the database based on the player's username.
+ * Deletion of a player record from the database based on the player's username
+ * by updating the mail to an invalid one (i.e. the username of the player that has to be deleted)
  *
  * @author LupusInFabula Group
  * @version 1.0
@@ -14,9 +15,9 @@ import java.sql.SQLException;
 public class DeletePlayerDAO extends AbstractDAO<Integer> {
 
     /**
-     * The SQL statement for deleting a player record from the database.
+     * The SQL statement for deleting a player record from the database by setting the email to an invalid one (i.e. the username of the player that has to be deleted).
      */
-    private static final String STATEMENT = "DELETE FROM player WHERE LOWER(username) = LOWER(?)";
+    private static final String STATEMENT = "UPDATE player SET email = ? WHERE username = ?";
 
     /**
      * The username of the player to be deleted.
@@ -37,7 +38,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
     /**
      * Executes the deletion operation to delete the player record from the database.
      *
-     * @throws SQLException
+     * @throws SQLException if there is an error executing the SQL statement
      */
     @Override
     public final void doAccess() throws SQLException {
@@ -49,6 +50,7 @@ public class DeletePlayerDAO extends AbstractDAO<Integer> {
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, player_username);
+            pstmt.setString(2, player_username);
             result = pstmt.executeUpdate();
 
             if (result == 1) {

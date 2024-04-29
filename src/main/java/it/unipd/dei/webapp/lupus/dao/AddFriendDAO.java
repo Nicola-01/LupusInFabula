@@ -13,10 +13,24 @@ import java.sql.*;
  */
 public class AddFriendDAO extends AbstractDAO<Friend> {
 
+    /**
+     * The SQL statement to add a friend relationship in the database.
+     */
     private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH VALUES (?,?,?) RETURNING *";
 
+    /**
+     * The username of the player who initiates the friend request.
+     */
     private final String player_username;
+
+    /**
+     * The username of the friend to be added.
+     */
     private final String friend_username;
+
+    /**
+     * The date of the friendship.
+     */
     private final Date date;
 
     /**

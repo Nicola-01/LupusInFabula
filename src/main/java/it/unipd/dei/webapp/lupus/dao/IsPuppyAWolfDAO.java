@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 /**
  * Returns if the role of Puppy has become a Wolf
@@ -36,6 +37,11 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean>{
         this.gameID = gameID;
     }
 
+    /**
+     * Executes the DAO operation to determine if the Puppy has become a Wolf.
+     *
+     * @throws SQLException if there is an error executing the SQL statement
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
