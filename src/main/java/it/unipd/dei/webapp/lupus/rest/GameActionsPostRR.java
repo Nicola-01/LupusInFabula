@@ -215,6 +215,29 @@ public class GameActionsPostRR extends AbstractRR {
     private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
         int numDeadPlayers = 0;
 
+
+        for (Boolean isDead : deadPlayers.values()) {
+            if (isDead) {
+                numDeadPlayers++;
+            }
+        }
+        return numDeadPlayers;
+    }
+
+    private boolean carpenterCheck(String player) throws SQLException{
+        if ((new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, player).access().getOutputParam()).equals("carpenter")) {
+            LOGGER.info("Carpenter ability check");
+            if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                LOGGER.info("Carpenter is safe this round");
+                currentSubPhase++;
+                Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
+                new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
+                return true;
+            }
+        }
+        return false;
+    }
+
     private boolean handleNightPhase(List<GameAction> gameActions) throws SQLException, IOException {
 
         Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
@@ -473,9 +496,6 @@ public class GameActionsPostRR extends AbstractRR {
         return true;
 
     }
-
-    private boolean correctnessOfDayActions(List<GameAction> gameActions)throws SQLException, IOException {
-        Message m;
 
     private int wolfCount() throws SQLException {
 
