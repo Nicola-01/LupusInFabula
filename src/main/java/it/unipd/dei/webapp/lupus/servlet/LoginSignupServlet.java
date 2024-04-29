@@ -92,6 +92,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             Player p = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
 
             LogContext.setUser(p.getUsername());
+            response.setStatus(HttpServletResponse.SC_OK);
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
             LogContext.removeUser();
         }
@@ -314,6 +315,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
+                    response.setStatus(HttpServletResponse.SC_CREATED);
                     session.setAttribute("user", p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
 

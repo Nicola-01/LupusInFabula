@@ -44,6 +44,7 @@ public class GameSettingsGetRR extends AbstractRR {
             List<Role> roles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
             LOGGER.info("Searching roles");
 
+            res.setStatus(HttpServletResponse.SC_OK);
             new ResourceList<>(roles).toJSON(res.getOutputStream());
 
         } catch (SQLException e) {

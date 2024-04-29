@@ -109,7 +109,7 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.error("ERROR: the game is over");
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
                 Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(HttpServletResponse.SC_CONFLICT);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
             }
             else {
@@ -130,6 +130,7 @@ public class GameActionsPostRR extends AbstractRR {
 
                 VictoryMessage vm = isAVictory();
                 if (vm != null) {
+                    res.setStatus(HttpServletResponse.SC_OK);
                     vm.toJSON(res.getOutputStream());
                     currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
@@ -137,12 +138,15 @@ public class GameActionsPostRR extends AbstractRR {
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
                 } else {
 
+                    res.setStatus(HttpServletResponse.SC_OK);
                     // return the action result before updating the round and the phase
                     if (currentPhase == GamePhase.DAY.getId()) {
+                        res.setStatus(HttpServletResponse.SC_OK);
                         dayActionResults.toJSON(res.getOutputStream());
                         currentRound++;
                         currentPhase = GamePhase.NIGHT.getId();
                     } else {
+                        res.setStatus(HttpServletResponse.SC_OK);
                         nightActionResults.toJSON(res.getOutputStream());
                         currentPhase = GamePhase.DAY.getId();
                     }

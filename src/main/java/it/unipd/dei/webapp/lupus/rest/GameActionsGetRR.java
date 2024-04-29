@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * Handles the HTTP GET request to retrieve game actions based on the current game phase.
@@ -45,7 +46,12 @@ public class GameActionsGetRR extends AbstractRR {
      * Map indicating whether players are dead or alive in the game.
      * The key is the player's name, and the value is a boolean indicating if the player is dead.
      */
-    private static Map<String, Boolean> areDead = new HashMap<>();
+    private static Map<String, Boolean> deadPlayers = new HashMap<>();
+
+    /**
+     * List with all roles that are Wolf, Berserk, Explorer or Puppy
+     */
+    List<String> wolfPlayers = new ArrayList<>();
 
     /**
      * Constructs a new GameActionsGetRR object with the specified game ID, request, response, and data source.
@@ -62,7 +68,7 @@ public class GameActionsGetRR extends AbstractRR {
 
         playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-        areDead = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
         for (GameRoleAction role : GameRoleAction.values())
             if (role.getAction() != null
@@ -73,6 +79,15 @@ public class GameActionsGetRR extends AbstractRR {
                 // insert only the role that exist in the game
                 nightAction.put(role.getName(), role.getAction());
 
+
+        wolfPlayers = Stream.concat(wolfPlayers.stream(),
+                playerWithRole(GameRoleAction.WOLF.getName()).stream()).toList();
+        wolfPlayers = Stream.concat(wolfPlayers.stream(),
+                playerWithRole(GameRoleAction.BERSERKER.getName()).stream()).toList();
+        wolfPlayers = Stream.concat(wolfPlayers.stream(),
+                playerWithRole(GameRoleAction.EXPLORER.getName()).stream()).toList();
+        wolfPlayers = Stream.concat(wolfPlayers.stream(),
+                playerWithRole(GameRoleAction.PUPPY.getName()).stream()).toList();
     }
 
     @Override
@@ -136,7 +151,7 @@ public class GameActionsGetRR extends AbstractRR {
 
             // generate targets for voting
             for (String targetPlayer : playerRole.keySet()) {
-                if (!player.equals(targetPlayer) && !areDead.get(targetPlayer))
+                if (!player.equals(targetPlayer) && !deadPlayers.get(targetPlayer))
                     // if the player is different from the target
                     targets.add(targetPlayer);
             }
@@ -145,6 +160,7 @@ public class GameActionsGetRR extends AbstractRR {
             actionTargets.add(new ActionTarget(player, Action.VOTE, targets));
         }
         LOGGER.info("Returning the actions of day phase.");
+        res.setStatus(HttpServletResponse.SC_OK);
         new ResourceList<>(actionTargets).toJSON(res.getOutputStream());
     }
 
@@ -158,28 +174,34 @@ public class GameActionsGetRR extends AbstractRR {
 
         List<ActionTarget> actionTargets = new ArrayList<>();
 
-        // for each action that can be done in the night
-        for (Map.Entry<String, String> night : nightAction.entrySet()) {
+        // for each player in the game
+        for (Map.Entry<String, String> pr : playerRole.entrySet()) {
 
-            // if the role is not in the game
-            if (!playerRole.containsValue(night.getKey()))
+            String player = pr.getKey();
+            String role = pr.getValue();
+            LOGGER.info("Actions for player: " + player + "; with role: " + role);
+
+            // if the role don't have nightAction or if the player is death
+            if (!nightAction.containsKey(role) || deadPlayers.get(player))
                 continue;
 
-            String role = night.getKey();
             List<String> targets = new ArrayList<>();
 
             // if the role is not a puppy or is a puppy but is the last wolf alive
             if (!role.equals(GameRoleAction.PUPPY.getName()) || new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
                 for (String targetPlayer : playerRole.keySet()) {
-                    if (isValidTarget(targetPlayer, role))
+                    if (isValidTarget(player, targetPlayer, role))
                         targets.add(targetPlayer);
                 }
                 Collections.sort(targets);
+                LOGGER.info("targets: " + String.join(", ", targets));
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),
                         getNightAction(role), targets));
             }
         }
+
         LOGGER.info("Returning the actions of night phase.");
+        res.setStatus(HttpServletResponse.SC_OK);
         new ResourceList<>(actionTargets).toJSON(res.getOutputStream());
     }
 
@@ -202,14 +224,15 @@ public class GameActionsGetRR extends AbstractRR {
     /**
      * Checks if the specified target player is a valid target for the given role.
      *
+     * @param player       The player who is executing the action
      * @param targetPlayer The player to be checked as a target.
      * @param role         The role of the player performing the action.
      * @return {@code true} if the target player is valid for the given role, {@code false} otherwise.
      * @throws SQLException if an SQL exception occurs.
      */
-    private boolean isValidTarget(String targetPlayer, String role) throws SQLException {
+    private boolean isValidTarget(String player, String targetPlayer, String role) throws SQLException {
         // the target player must be alive
-        if (areDead.get(targetPlayer))
+        if (deadPlayers.get(targetPlayer))
             return false;
 
         // Plague Spreader can target themselves
@@ -219,6 +242,14 @@ public class GameActionsGetRR extends AbstractRR {
         // Knight can target themselves, but it needs to be different from the previous target
         if (role.equals(GameRoleAction.KNIGHT.getName()))
             return !targetPlayer.equals(new LastPlayerProtectedByKnightDAO(ds.getConnection(), gameID).access().getOutputParam());
+
+        // the target can not have the sema role
+        if (player.equals(targetPlayer))
+            return false;
+
+        // if the player is a wolf can't target another wolf
+        if (wolfPlayers.contains(player) && wolfPlayers.contains(targetPlayer))
+            return false;
 
         return true;
     }

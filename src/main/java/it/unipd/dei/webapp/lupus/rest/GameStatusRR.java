@@ -55,6 +55,7 @@ public class GameStatusRR extends AbstractRR {
         try {
             LOGGER.info("Get status of game " + gameID);
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+            res.setStatus(HttpServletResponse.SC_OK);
             game.toJSON(res.getOutputStream());
 
         } catch (SQLException ex) {

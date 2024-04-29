@@ -211,6 +211,7 @@ public class GameSettingsPostRR extends AbstractRR {
                         LOGGER.info("Player %s assigned role ID %d", selectedPlayers.get(i), selectedRole);
                     }
                     // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
+                    res.setStatus(HttpServletResponse.SC_CREATED);
                     createdGame.toJSON(res.getOutputStream());
                 }
             } else { // there was an error during player or role validation
