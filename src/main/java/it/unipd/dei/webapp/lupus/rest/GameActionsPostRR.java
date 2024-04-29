@@ -1255,7 +1255,12 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
+    /**
+     * Utility method to initialize a map representing player votes.
+     *
+     * @param gameActions a list of GameAction objects containing player information.
+     * @return a Map<String, Integer> where the keys represent player names and the values represent the initial vote count (0).
+     */
     private Map<String, Integer> getVotesMap(List<GameAction> gameActions) {
         Map<String, Integer> votesMap = new HashMap<>();
 
