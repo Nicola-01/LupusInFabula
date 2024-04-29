@@ -78,8 +78,6 @@ public class GameActionsPostRR extends AbstractRR {
 
             List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream());
 
-
-
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
             currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
             currentPhase = game.getPhase();
@@ -87,7 +85,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             if (currentPhase == GamePhase.NIGHT.getId()) {
                 // check of the correctness of the actions
-                if (!correctnessOfActions(gameActions))
+                if (!correctnessOfNightActions(gameActions))
                     return;
                 LOGGER.info("correctness of night actions done");
                 if (!handleNightPhase(gameActions))
@@ -292,7 +290,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.info("Player: " + entry.getPlayer());
         }
         for (Map.Entry<String, Boolean> entry : deadPlayersList) {
-            LOGGER.info("Player: " + entry.getKey() + ", dead: ", entry.getValue());
+            LOGGER.info("Player: " + entry.getKey() + ", dead: " + entry.getValue());
         }
 
         for (GameAction gameAction : orderedGameActions) {
@@ -348,7 +346,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             //check the list of vote correctness
             if (numberAction <= voteNumber){
-                if (!(gameAction.getPlayer().equals(deadPlayersList.get(numberAction).getKey()))){
+                if (!(gameAction.getPlayer().equals(deadPlayersList.get(numberAction-1).getKey()))){
                     LOGGER.error("ERROR: the list of vote isn't correct");
                     ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
                     m = new Message("ERROR: the list of vote isn't correct" , ec.getErrorCode(), ec.getErrorMessage());
@@ -719,16 +717,17 @@ public class GameActionsPostRR extends AbstractRR {
      * @throws SQLException if a SQL exception occurs while accessing the database
      * @throws IOException  if an I/O exception occurs
      */
-    private boolean correctnessOfActions(List<GameAction> gameActions) throws SQLException, IOException {
+    private boolean correctnessOfNightActions(List<GameAction> gameActions) throws SQLException, IOException {
 
         Message m;
         boolean wolfActionDone = false;
         int berserkerCount = 0;
+        int game_id;
 
 
         for (GameAction gameAction : gameActions) {
 
-            int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
+            game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
             //check if the player is in the game
             if (game_id != gameID) {
 

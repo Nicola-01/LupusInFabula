@@ -1,5 +1,7 @@
 package it.unipd.dei.webapp.lupus.dao;
 
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,7 +24,7 @@ public class GetDeadPlayersByGameIdDAO extends AbstractDAO<Map<String, Boolean>>
     /**
      * The SQL statement to retrieve dead players by game ID.
      */
-    private static final String STATEMENT = "SELECT round_of_death, player_username FROM plays_as_in WHERE game_id = ?";
+    private static final String STATEMENT = "SELECT round_of_death, player_username FROM plays_as_in WHERE game_id = ? AND role != ?";
 
     /**
      * The game ID for which dead players are to be retrieved.
@@ -56,6 +58,7 @@ public class GetDeadPlayersByGameIdDAO extends AbstractDAO<Map<String, Boolean>>
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, gameId);
+            pstmt.setString(2, GameRoleAction.MASTER.getName());
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 map.put(rs.getString("player_username"), rs.getInt("round_of_death") > 0);
