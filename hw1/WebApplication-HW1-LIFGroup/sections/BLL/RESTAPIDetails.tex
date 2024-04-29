@@ -1,0 +1,99 @@
+\newcommand\tab[1][1cm]{\hspace*{#1}}
+
+\subsection{REST API Details}
+We report three different resource types handled by the application.
+%List here a few resources retrievable via REST API
+
+\subsubsection*{Game Logs}
+In this endpoint allows to master and user to see all logs associated to a specific game.
+
+\subsubsection*{User}
+\begin{itemize}
+    \item URL: \texttt{lupus/game/logs/\{gameId}\}
+    \item Method: \texttt{GET}
+    \item URL Parameters:\\
+        \textbf{gameId:} String, id of game
+    \item Data Parameters: None
+    \item Success Response: \\
+        \textbf{Code:} 200\\
+        \textbf{Content:} Json of list of class Action
+    \item Error Response:\\
+        \textbf{Code:} 404\\
+        \textbf{Content:}\\
+        \{\\
+        \tab "message": \\
+        \tab \{\\
+        \tab \tab "message": "Invalid game, the game 'dorky-ds-explorer' doesn't exists.",\\
+        \tab \tab "error-code": "EGME9",\\
+        \tab \tab "error-details": "Requested operation GET, but required GET or POST."\\
+         \tab \}\\
+        \}\\
+        \textbf{Code:} 403\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"Authentication required, not logged in",\\
+         \tab \tab "error-code":"ESES1",\\
+         \tab \tab "error-details":"Account not logged in."\\
+         \tab \}\\
+        \}\\
+\end{itemize}
+\subsubsection*{Master}
+\begin{itemize}
+    \item URL: \texttt{lupus/game/logs/\{gameId\}/master}
+    \item Method: \texttt{GET}
+    \item URL Parameters:\\
+        \textbf{gameId:} String, id of game
+    \item Data Parameters: None
+    \item Success Response: \\
+        \textbf{Code:} 200\\
+        \textbf{Content:} Json of list of class Action
+    \item Error Response:
+   
+        \textbf{Code:} 404\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message": \\
+         \tab \{\\
+         \tab \tab "message": "Invalid game, the game \{publicGameId\} doesn't exists.",\\
+         \tab \tab "error-code": "EGME9",\\
+         \tab \tab "error-details": "Requested operation GET, but required GET or POST."\\
+         \tab \}\\
+        \}
+        \textbf{Code:} 403\\
+        \textbf{Content:}\\
+        \{      \\ 
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab  "message":"Authentication required, not logged in",\\
+         \tab \tab  "error-code":"ESES1",\\
+         \tab \tab  "error-details":"Account not logged in."\\
+         \tab \}\\
+        \}\\
+        \textbf{Code:} 403\\
+        \textbf{Content:}\\
+        \{\\
+         \tab "message":\\
+         \tab \{\\
+         \tab \tab "message":"Trying to authenticate the currentPlayer \{username\} as a   gamemaster in the game \\
+         \tab \tab\{publicGameId\}",\\
+         \tab \tab "error-code":"ESES2",\\
+         \tab \tab "error-details":"The account is not a gamemaster."\\
+         \tab \}\\
+        \}\\
+\end{itemize}
+
+\begin{comment}
+%esempio
+    \begin{itemize}
+        \item URL: \texttt{the URL to retrieve it}
+        \item Method: \texttt{Method to retrieve it}
+        \item URL Parameters:
+        \item Data Parameters: 
+        \item Success Response:
+        \item Error Response:
+        
+    \end{itemize}
+\end{comment}
+

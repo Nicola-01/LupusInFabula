@@ -1208,7 +1208,12 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
+    /**
+     * Utility method to initialize a map representing player votes.
+     *
+     * @param gameActions a list of GameAction objects containing player information.
+     * @return a Map<String, Integer> where the keys represent player names and the values represent the initial vote count (0).
+     */
     private Map<String, Integer> getVotesMap(List<GameAction> gameActions) {
         Map<String, Integer> votesMap = new HashMap<>();
 
@@ -1292,8 +1297,6 @@ public class GameActionsPostRR extends AbstractRR {
             totalRoles += number;
 
         // Check victory conditions and return the appropriate VictoryMessage
-
-        LOGGER.info(roleTypeCardinality.get(WinFaction.WOLVES.getId()) + "; " + notCountedEvilRoles);
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
