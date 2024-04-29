@@ -293,8 +293,17 @@ Content-Type: application/json
 ### Get game status
 GET http://localhost:8080/lupus/game/status/sheriff-carpenter-sam HTTP/1.1
 
-### Get game players
+### Get game players as a spectator
+GET http://localhost:8080/lupus/game/players/sheriff-carpenter-sam HTTP/1.1
+
+### Get game players as a master
 GET http://localhost:8080/lupus/game/players/sheriff-carpenter-sam/master HTTP/1.1
+
+### Get game logs as a spectator
+GET http://localhost:8080/lupus/game/logs/sheriff-carpenter-sam HTTP/1.1
+
+### Get game logs as a master
+GET http://localhost:8080/lupus/game/logs/sheriff-carpenter-sam/master HTTP/1.1
 
 ### Night 2
 POST http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
@@ -469,7 +478,7 @@ Content-Type: application/json
   ]
 }
 
-###
+### Get possible action that can be done
 GET http://localhost:8080/lupus/game/actions/sheriff-carpenter-sam HTTP/1.1
 
 ### Night 3

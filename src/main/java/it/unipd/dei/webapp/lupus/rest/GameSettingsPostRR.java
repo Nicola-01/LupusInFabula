@@ -89,8 +89,9 @@ public class GameSettingsPostRR extends AbstractRR {
                 // search for the user in the database and return the user if found
                 Player validPlayer = new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam();
 
-                // Check if the username exists
-                if (validPlayer == null) {
+                // Check if the username exists or if it's deleted
+                // If the email is the same as the username, it indicates that the user was deleted.
+                if (validPlayer == null || validPlayer.getUsername().equals(validPlayer.getEmail())) {
                     ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                     res.setStatus(ec.getHTTPCode());
 
@@ -98,9 +99,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     messages.add(m);
                     // m.toJSON(res.getOutputStream());
 
-                    // LOGGER.debug("User have invalid fields"); // .debug not work
                     LOGGER.info("USER %s does not exist", username);
-                    break;
                 }
                 // if the user exists, retrieve the correct name (lowercase and lowercase)
                 username = validPlayer.getUsername();
