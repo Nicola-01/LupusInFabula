@@ -70,28 +70,29 @@ VALUES ('dorky-farmer-explorer', NOW(), 0),
        ('sheriff-carpenter-sam', NOW(), 0);
 
 INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
--- VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for game 1
---        ('user2', 1, 'dorky', null, null, null),
---        ('user3', 1, 'kamikaze', null, null, null),
---        ('user4', 1, 'hobbit', null, null, null),
---        ('user5', 1, 'explorer', null, null, null),
---        ('user6', 1, 'hamster', null, null, null),
---        ('user7', 1, 'knight', null, null, null),
---        ('user8', 1, 'sheriff', null, null, null),
---        ('user9', 1, 'wolf', null, null, null);
+VALUES ('esempio', 1, 'master', null, null, null), -- esempio is the master for game 1
+       ('user2', 1, 'dorky', null, null, null),
+       ('user3', 1, 'kamikaze', null, null, null),
+       ('user4', 1, 'hobbit', null, null, null),
+       ('user5', 1, 'explorer', null, null, null),
+       ('user6', 1, 'hamster', null, null, null),
+       ('user7', 1, 'knight', null, null, null),
+       ('user8', 1, 'sheriff', null, null, null),
+       ('user9', 1, 'wolf', null, null, null);
 --
 -- -- Game 2
--- INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
--- VALUES    ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
---           ('player1', 2, 'knight', null, null, null),
---           ('player2', 2, 'carpenter', null, null, null),
---           ('player3', 2, 'jester', null, null, null),
---           ('player4', 2, 'sheriff', null, null, null),
---           ('player5', 2, 'seer', null, null, null),
---           ('player6', 2, 'plague spreader', null, null, null),
---           ('player7', 2, 'wolf', null, null, null),
---           ('player8', 2, 'wolf', null, null, null),
---           ('player9', 2, 'sam', null, null, null),
+INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
+VALUES    ('player0', 2, 'master', null, null, null), -- player0 is the master for game 2
+          ('player1', 2, 'knight', null, null, null),
+          ('player2', 2, 'carpenter', null, null, null),
+          ('player3', 2, 'jester', null, null, null),
+          ('player4', 2, 'sheriff', null, null, null),
+          ('player5', 2, 'seer', null, null, null),
+          ('player6', 2, 'plague spreader', null, null, null),
+          ('player7', 2, 'wolf', null, null, null),
+          ('player8', 2, 'wolf', null, null, null),
+          ('player9', 2, 'sam', null, null, null);
+
 -- Game with all roles
     VALUES ('allRoleMaster', 3, 'master', null, null, null),
        ('allRole1', 3, 'puppy', null, null, null),
@@ -123,35 +124,35 @@ INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, 
 -- #################################################################################################
 -- ## Popolation for testing getlogs  and getStats for user                                       ##
 -- #################################################################################################
---
--- INSERT INTO Player
--- VALUES ('log_player', LOWER('log_player@test.com'), md5('ciao'), CURRENT_DATE),
---        ('log_player2', LOWER('log_player2@test.com'), md5('ciao'), CURRENT_DATE);
---
--- INSERT INTO public.game
--- VALUES
---     (100, 'log_game_1', now(), '00:10:07', 0),
---     (101, 'log_game_2', now(), '00:11:02', 1),
---     (102, 'log_game_3', now(), '00:01:36', 2),
---     (103, 'log_game_4', now(), '00:15:08', 0),
---     (104, 'log_game_5', now(), '00:09:00', 1),
---     (105, 'log_game_6', now(), '00:11:17', 0),
---     (106, 'log_game_7', now(), '00:10:45', 1),
---     (107, 'log_game_8', now(), '00:16:27', 0),
---     (108, 'log_game_9', now(), '00:21:17', 1),
---     (109, 'log_game_10', now(), '00:45:37', 0),
---     (110, 'log_game_11', now(), '00:31:20', 1),
---     (111, 'log_game_12', now(), '00:17:12', 0);
---
--- INSERT INTO plays_as_in
--- VALUES ('log_player', 101, 'wolf', 0, null, '00:12:00'),
---        ('log_player', 102, 'wolf', 5, null, '00:05:00'),
---        ('log_player', 103, 'farmer', 7, null, '00:07:00'),
---        ('log_player', 104, 'farmer', 9, null, '00:09:00'),
---        ('log_player', 105, 'knight', 1, null, '00:01:00'),
---        ('log_player', 106, 'knight', 1, null, '00:01:00'),
---        ('log_player', 107, 'wolf', 23, null, '00:23:00'),
---        ('log_player', 108, 'seer', 12, null, '00:12:00'),
---        ('log_player', 109, 'master', 1, null, '00:01:00'),
---        ('log_player', 110, 'wolf', 0, null, '00:00:00'),
---        ('log_player', 111, 'farmer', 1, null, '00:01:00');
+
+INSERT INTO Player
+VALUES ('log_player', LOWER('log_player@test.com'), md5('ciao'), CURRENT_DATE),
+       ('log_player2', LOWER('log_player2@test.com'), md5('ciao'), CURRENT_DATE);
+
+INSERT INTO public.game
+VALUES
+    (100, 'log_game_1', now(), '00:10:07', 0),
+    (101, 'log_game_2', now(), '00:11:02', 1),
+    (102, 'log_game_3', now(), '00:01:36', 2),
+    (103, 'log_game_4', now(), '00:15:08', 0),
+    (104, 'log_game_5', now(), '00:09:00', 1),
+    (105, 'log_game_6', now(), '00:11:17', 0),
+    (106, 'log_game_7', now(), '00:10:45', 1),
+    (107, 'log_game_8', now(), '00:16:27', 0),
+    (108, 'log_game_9', now(), '00:21:17', 1),
+    (109, 'log_game_10', now(), '00:45:37', 0),
+    (110, 'log_game_11', now(), '00:31:20', 1),
+    (111, 'log_game_12', now(), '00:17:12', 0);
+
+INSERT INTO plays_as_in
+VALUES ('log_player', 101, 'wolf', 0, null, '00:12:00'),
+       ('log_player', 102, 'wolf', 5, null, '00:05:00'),
+       ('log_player', 103, 'farmer', 7, null, '00:07:00'),
+       ('log_player', 104, 'farmer', 9, null, '00:09:00'),
+       ('log_player', 105, 'knight', 1, null, '00:01:00'),
+       ('log_player', 106, 'knight', 1, null, '00:01:00'),
+       ('log_player', 107, 'wolf', 23, null, '00:23:00'),
+       ('log_player', 108, 'seer', 12, null, '00:12:00'),
+       ('log_player', 109, 'master', 1, null, '00:01:00'),
+       ('log_player', 110, 'wolf', 0, null, '00:00:00'),
+       ('log_player', 111, 'farmer', 1, null, '00:01:00');
