@@ -94,6 +94,7 @@ VALUES    ('player0', 2, 'master', null, null, null), -- player0 is the master f
           ('player9', 2, 'sam', null, null, null);
 
 -- Game with all roles
+INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)
     VALUES ('allRoleMaster', 3, 'master', null, null, null),
        ('allRole1', 3, 'puppy', null, null, null),
        ('allRole2', 3, 'illusionist', null, null, null),
