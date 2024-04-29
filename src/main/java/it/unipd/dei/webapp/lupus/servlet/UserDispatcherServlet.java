@@ -184,10 +184,10 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
                 }
 
             } else {
-
+                ErrorCode ec = ErrorCode.UNKNOWN_RESOURCE;
                 LOGGER.warn("Unknown URI: %s.", uri);
-                m = new Message("Unknown URI", "E4A5", String.format("This is URI (%s) isn't supported", uri));
-                resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                m = new Message("Unknown URI", ec.getErrorCode(), String.format("This is URI (%s) isn't supported", uri));
+                resp.setStatus(ec.getHTTPCode());
                 m.toJSON(resp.getOutputStream());
 
             }

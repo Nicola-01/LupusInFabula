@@ -63,7 +63,7 @@ public class UserMePutRR extends AbstractRR {
 
             InputStream stream = req.getInputStream();
             UserUpdate user_update = UserUpdate.fromJSON(stream);
-            String user = ((Player) req.getSession().getAttribute("user")).getUsername();
+            String user = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             LOGGER.info("Username: " + user + " --> is trying to update the account");
 
             if (!user_update.getOldPassword().isEmpty() && !user_update.getNewPassword().isEmpty() && !user_update.getRepeatNewPassword().isEmpty() &&
@@ -95,7 +95,7 @@ public class UserMePutRR extends AbstractRR {
 
                         ErrorCode ec = ErrorCode.USER_NOT_FOUND;
                         m = new Message("User " + user + " was not found", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                        res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         // TODO --> add the page linked to this servlet (for not successfully updated password)
                         //req.getRequestDispatcher("/jsp/...").forward(req, resp);
@@ -108,7 +108,7 @@ public class UserMePutRR extends AbstractRR {
 
                     ErrorCode ec = ErrorCode.PASSWORD_NOT_MATCH;
                     Message m = new Message("New password and repeatNewPassword do not match", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     // TODO --> add the page linked to this servlet (for not successfully updated password)
                     //req.getRequestDispatcher("/jsp/...").forward(req, resp);
@@ -139,7 +139,7 @@ public class UserMePutRR extends AbstractRR {
 
                     ErrorCode ec = ErrorCode.EMAIL_ALREADY_USED;
                     m = new Message("Impossible to update the old email to the new one", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     // TODO --> add the page linked to this servlet (for not successfully updated email)
                     //req.getRequestDispatcher("/jsp/...").forward(req, res);

@@ -103,11 +103,20 @@ public class GameActionsGetRR extends AbstractRR {
             String publicGameID = game.getPublic_ID();
             LogContext.setGame(publicGameID);
 
-            LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is " + currentPhase);
-            if (GamePhase.NIGHT.getId() != currentPhase)
-                handleDayPhase();
-            else
-                handleNightPhase();
+            if(game.getWho_win() == -1) {
+                LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is " + currentPhase);
+                if (GamePhase.NIGHT.getId() != currentPhase)
+                    handleDayPhase();
+                else
+                    handleNightPhase();
+            }
+            else {
+                ErrorCode ec = ErrorCode.GAME_IS_OVER;
+                LOGGER.warn("The game is over");
+                res.setStatus(ec.getHTTPCode());
+                Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
+                m.toJSON(res.getOutputStream());
+            }
 
         } catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
@@ -231,6 +240,10 @@ public class GameActionsGetRR extends AbstractRR {
      * @throws SQLException if an SQL exception occurs.
      */
     private boolean isValidTarget(String player, String targetPlayer, String role) throws SQLException {
+        // the medium can only target dead players
+        if(role.equals(GameRoleAction.MEDIUM.getName()) && deadPlayers.get(targetPlayer))
+            return true;
+
         // the target player must be alive
         if (deadPlayers.get(targetPlayer))
             return false;

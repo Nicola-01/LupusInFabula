@@ -62,7 +62,7 @@ public class DeleteFriendRR extends AbstractRR {
                 res.setStatus(ec.getHTTPCode());
                 LOGGER.warn("Friend not found. Cannot delete it.");
                 m = new Message(String.format("Friend not found. Cannot delete it."), ec.getErrorCode(), null);
-                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
             }
 

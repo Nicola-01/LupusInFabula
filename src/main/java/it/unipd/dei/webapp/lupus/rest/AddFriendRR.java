@@ -65,9 +65,10 @@ public class AddFriendRR extends AbstractRR {
         } catch (EOFException ex) {
             LOGGER.warn("Cannot add the friend: no Friend JSON object found in the request.", ex);
 
-            m = new Message("Cannot add the friend: no Friend JSON object found in the request.", "E4A8",
+            ErrorCode ec = ErrorCode.INVALID_JSON_FORMAT;
+            m = new Message("Cannot add the friend: no Friend JSON object found in the request.", ec.getErrorCode(),
                     ex.getMessage());
-            res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
         } catch (SQLException ex) {
 

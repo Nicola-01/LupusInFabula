@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
@@ -44,7 +45,7 @@ public class GameSettingsPostRR extends AbstractRR {
         try {
             // Recover the game master, i.e., the user who is creating the game
             HttpSession session = req.getSession(false);
-            Player gameMaster = (Player) session.getAttribute("user");
+            Player gameMaster = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
 
             LogContext.setIPAddress(req.getRemoteAddr());
             LogContext.setUser(gameMaster.getUsername());

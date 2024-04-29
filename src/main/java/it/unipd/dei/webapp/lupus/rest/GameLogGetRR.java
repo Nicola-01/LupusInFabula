@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.rest;
 import it.unipd.dei.webapp.lupus.dao.GetActionByIdGameDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -84,8 +85,9 @@ public class GameLogGetRR extends AbstractRR
                 {
                     LOGGER.error("Fatal error while listing Action or logs not exist.");
 
-                    m = new Message("Cannot list Action: unexpected error or log not exist.", LOGS_NOT_EXIST.getErrorCode(),  null);
-                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                    ErrorCode ec = ErrorCode.LOGS_NOT_EXIST;
+                    m = new Message("Cannot list Action: unexpected error or log not exist.", ec.getErrorCode(),  ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                 }
             }
