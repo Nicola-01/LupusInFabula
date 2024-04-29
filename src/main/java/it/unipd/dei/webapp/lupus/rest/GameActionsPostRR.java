@@ -568,7 +568,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                                    explorer = gameAction.getPlayer();
 //                                }
 //                            }
-                            String explorer = getPlayerByRole(gameActions, GameRoleAction.EXPLORER.getName());
+                            String explorer = getPlayerByRole(gameActions, GameRoleAction.EXPLORER.getName()).getPlayer();
                             new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
                             updatePlayerDeath(target);
                         }
@@ -578,14 +578,18 @@ public class GameActionsPostRR extends AbstractRR {
                     // (if the target is blocked his action must be blocked (put them to false)
                     if (actionPlayerMap.get(GameRoleAction.ILLUSIONIST.getAction())) {
 
-                        String illusionist = "";
-                        String player_role = "";
-                        for (GameAction gameAction : gameActions) {
-                            if (gameAction.getTarget().equals(target)) {
-                                illusionist = gameAction.getPlayer();
-                                player_role = gameAction.getRole();
-                            }
-                        }
+//                        String illusionist = "";
+//                        String player_role = "";
+//                        for (GameAction gameAction : gameActions) {
+//                            if (gameAction.getTarget().equals(target)) {
+//                                illusionist = gameAction.getPlayer();
+//                                player_role = gameAction.getRole();
+//                            }
+//                        }
+
+                        GameAction illusionistAction = getPlayerByRole(gameActions, GameRoleAction.ILLUSIONIST.getName());
+                        String illusionist = illusionistAction.getPlayer();
+                        String player_role = illusionistAction.getRole();
 
                         Map<String, Boolean> tmp = actionsMap.get(target);
                         String player_action = nightAction.get(player_role);
@@ -619,7 +623,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                            }
 //                        }
 
-                        String knight = getPlayerByRole(gameActions, GameRoleAction.KNIGHT.getName());
+                        String knight = getPlayerByRole(gameActions, GameRoleAction.KNIGHT.getName()).getPlayer();
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
 
                         if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
@@ -633,12 +637,13 @@ public class GameActionsPostRR extends AbstractRR {
                     // (if the target is protected, or is the hamster, or is the hobbit and in the game are still alive more than 1 wolf, then the target will not die)
                     if (actionPlayerMap.get(GameRoleAction.WOLF.getAction())) {
 
-                        String wolf = "";
-                        for (GameAction gameAction : gameActions) {
-                            if (gameAction.getTarget().equals(target)) {
-                                wolf = gameAction.getPlayer();
-                            }
-                        }
+//                        String wolf = "";
+//                        for (GameAction gameAction : gameActions) {
+//                            if (gameAction.getTarget().equals(target)) {
+//                                wolf = gameAction.getPlayer();
+//                            }
+//                        }
+                        String wolf = getPlayerByRole(gameActions, GameRoleAction.WOLF.getName()).getPlayer();
 
                         if ((!actionPlayerMap.get(GameRoleAction.KNIGHT.getAction())
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
@@ -669,7 +674,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                                if (gameAction.getTarget().equals(target))
 //                                    dorky = gameAction.getPlayer();
 
-                            String dorky = getPlayerByRole(gameActions, GameRoleAction.DORKY.getName());
+                            String dorky = getPlayerByRole(gameActions, GameRoleAction.DORKY.getName()).getPlayer();
                             //add the action point to action table since the dorky is not a wolf
                             LOGGER.info("The target " + target + " has been pointed by the dorky");
                             new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
@@ -686,7 +691,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                            }
 //                        }
 
-                        String seer = getPlayerByRole(gameActions, GameRoleAction.SEER.getName());
+                        String seer = getPlayerByRole(gameActions, GameRoleAction.SEER.getName()).getPlayer();
                         // in case the seer sees the puppy he will see that is a good role
                         LOGGER.info("The target " + target + " has been seen during the night");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
@@ -707,7 +712,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                            if (gameAction.getTarget().equals(target))
 //                                sheriff = gameAction.getPlayer();
 
-                        String sheriff = getPlayerByRole(gameActions, GameRoleAction.SHERIFF.getName());
+                        String sheriff = getPlayerByRole(gameActions, GameRoleAction.SHERIFF.getName()).getPlayer();
 
                         GameRoleAction player_role = GameRoleAction.valueOfName(playersRole.get(target));
                         assert player_role != null;
@@ -752,7 +757,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                            }
 //                        }
 
-                        String plague_spreader = getPlayerByRole(gameActions, GameRoleAction.PLAGUE_SPREADER.getName());
+                        String plague_spreader = getPlayerByRole(gameActions, GameRoleAction.PLAGUE_SPREADER.getName()).getPlayer();
                         LOGGER.info("The target " + target + " is anointed");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
                         nightActionResults.setPlaguedPlayer(target);
@@ -771,7 +776,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                                }
 //                            }
 
-                            String berserker = getPlayerByRole(gameActions, GameRoleAction.BERSERKER.getName());
+                            String berserker = getPlayerByRole(gameActions, GameRoleAction.BERSERKER.getName()).getPlayer();
                             LOGGER.info("The target " + target + " has been killed by the berserker");
                             berserker_count++;
                             new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
@@ -798,7 +803,7 @@ public class GameActionsPostRR extends AbstractRR {
 //                                medium = gameAction.getPlayer();
 //                            }
 //                        }
-                        String medium = getPlayerByRole(gameActions, GameRoleAction.MEDIUM.getName());
+                        String medium = getPlayerByRole(gameActions, GameRoleAction.MEDIUM.getName()).getPlayer();
                         LOGGER.info("The target " + target + " have seen if the stake dead target is good, evil or neutral");
                         new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target)).access();
 
@@ -1324,17 +1329,17 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
-     * Retrieves the player associated with the specified role from the list of game actions.
+     * Retrieves the game action associated with the specified role from the list of game actions.
      *
      * @param gameActions The list of game actions to search.
      * @param name        The name of the role to search for.
-     * @return The player associated with the specified role, or an empty string if not found.
+     * @return The game action associated with the specified role, or null if not found.
      */
-    private String getPlayerByRole(List<GameAction> gameActions, String name) {
+    private GameAction getPlayerByRole(List<GameAction> gameActions, String name) {
         for (GameAction gameAction : gameActions) {
             if (gameAction.getRole().equals(name))
-                return gameAction.getPlayer();
+                return gameAction;
         }
-        return "";
+        return null;
     }
 }
