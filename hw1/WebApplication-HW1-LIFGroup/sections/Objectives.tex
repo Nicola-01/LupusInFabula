@@ -1,0 +1,130 @@
+
+
+\section{Objectives}
+%Brief description of the overall objectives of your system.
+%What your system will be used for? Why is it important? What problems does it solve?
+
+
+The aim of this project is to develop a web application that will help the game-master during the game Lupus in Fabula (the basic rules of which are explained below).
+This app will help the game-master to keep track of what happens during the game, e.g. what role each player has, what happened during the night (which player is dead) or which player is voted during the day to be eliminated.
+
+The traditional method of moderating the game involves manually recording actions on a phone or paper. This application aims to streamline the process, providing an organized platform for tracking player roles, nighttime actions, and daytime voting outcomes.\\
+
+\subsection{Rules of the game}
+In the remote village of Fabula, some people become werewolves at night. They attack an innocent person to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the discussion, they lynch one of them. Who will survive the massacre?
+\\
+\begin{itemize}
+    \item \textbf{Aim of the game}: \\There are two factions in the game: the Werewolves and the Villagers. The aim of the Werewolf faction is to eliminate all villagers. Conversely, the aim of the Villagers faction is to lynch all the Werewolves.
+    \item \textbf{Preparation}: \\Before the game starts, one player is chosen to be the master/moderator. He doesn't belong to any faction and he will only manage the game tracking everything that will happen. The other players will play the role given to them by their card and look at their own card secretly.
+    \item \textbf{Game}: \\The game is divided into two phases: night and day. At night each role with an effect that resolves during this phase will be called by the master to perform the respective action described in the role card. Once the master has called all roles with a night effect, night will end and the day phase will begin. During the day, people will discuss and vote to lynch someone, hopefully a wolf or a member of the wolf faction. 
+    \begin{itemize}
+        \item \textbf{Night}: \\The moderator declares the beginning of the night ("it is night, everyone close your eyes"). All players then close their eyes, trying not to make any kind of noise for all the duration of this phase.
+        The master then begins to call each role with effect:\\
+        Example of wolves calling:\\
+        - Master: "Wolves open their eyes and choose who to go and maul."\\
+        - Wolves silently agree and point to their prey\\
+        - Master: "Decide who to send among you to maul your chosen prey"\\
+        - Wolves indicate who among them will go\\
+        - Master: "The wolves close their eyes."\\
+        Example of good role calling (e.g: Seer):\\
+        - Master: "Seer open eyes and choose whom to investigate"\\
+        - Seer points to the player he wants to investigate\\
+        - Master nods to say whether the player has a bad or good role\\
+        - Master: "Seer closes eyes."\\
+        Note: This phase should be played even if the called role is already dead in order to not give clues to others. Once the master has called all roles with night effect, the night is over.
+        \item \textbf{Day}: \\The master now declares the start of the day ("it's day, everybody open your eyes"). The master then gives a recap of what happened during the past night, listing who died (if anyone died), who was anointed, etc. without giving explicit information about what happened (e.g. recap: Master: "A died, B died, C was anointed"). Once the master has finished the recap, the still-living players can then start discussing among themselves to decide who to lynch. You may lie freely but under no circumstances may you show your card to others.
+        \item \textbf{Voting}: \\After a maximum of three minutes of discussion, the master stops the discussion and asks each player, starting with the one to the left of the one who died first and proceeding clockwise, who he thinks should be lynched. All players, including ghosts (i.e., those who died), in their turn vote indicating who they want to lynch. At the end of the voting, the two players with the most votes will be clued (in case of a tie, the player closest to the first dead will be chosen). The two suspected players can now take a short speech defending themselves against the charges. After the two speeches are over, the remaining alive unindicted players will vote again for the new player to be lynched among the two suspects (in this case the voting will be counterclockwise starting with the alive unindicted player who was last to vote before). At this point the day is over and the master can start a new night and so on until one faction wins.\\
+        Note: all dead players (i.e. ghosts) for the rest of the entire game must not speak or show their role to other players.\\
+    \end{itemize}
+    \item \textbf{Victory Condition}: \\The master declares the game over with a villagers victory if the villagers lynch all the werewolves. Werewolves, on the other hand, are declared winners if at any point in time they are equal in number to the still-living villagers (e.g., 2 werewolves and 2 villagers, or 1 and 1): in that case the werewolves unceremoniously maul the remaining villagers! In case there are victory stealer roles in the game, they will win if their victory condition is fulfilled, and in that case the master will declare them winners any time in the game when they have completed their victory condition.
+\end{itemize}
+
+
+This game requires at least five participants, one of whom will be the game-master, and the other  will get roles assigned randomly, for instance by drawing a card. The main roles are wolves and farmers, but other roles are used - like medium, knight, werehamster etc - in order to make the game more entertaining, with specific rules applying to each character.\\
+N.B. The number of wolves must be 1/4 of the number of villagers plus victory stealers and neutral roles (e.g. if the game has 8 players, there should be a maximum of 2 wolves). \\
+
+The table of all the possible roles is shown in the next page [\ref{tab:roles_table}]. 
+\begin{center}
+    \begin{table}[]
+    \centering
+    \begin{tabular}{ | m{2.8cm} | m{2.5cm}| m{10cm} |}
+    %{|c|c|p{10cm}|}
+        
+        \hline
+        \centering \textbf{Name of the role} & \centering \textbf{Faction} & \textbf{Description} \\
+        \hline
+        \centering Berserker & \centering Wolf & One night can kill two players but then dies (can by pass the protection of the knight) \\
+        \hline
+        \centering Carpenter & \centering Villager & If it's voted out he can refuse to wood for the bonfire (once per game). \\
+        \hline
+        \centering Dorky & \centering Wolf & It's a wolf but does not know the others wolves. Every night can ask if a player is a wolf and if it is, it can join the group. \\
+        \hline
+        \centering Explorer & \centering Wolf & Once per game can kill a player ignoring other effects, after that it's a simple wolf. \\
+        \hline
+        \centering Farmer & \centering Villager & Villager with no special effect. \\
+        \hline
+        \centering Giuda & \centering Wolf & It's seen as a farmer by seer but wins with wolves. It knows only one wolf. \\
+        \hline
+        \centering Hamster & \centering Victory Stealer & Can die at night only if it's probed or protected. Wins if it survives with villagers. \\
+        \hline
+        \centering Hobbit & \centering Villager & Can't die from wolves if there are more than one.\\
+        \hline
+        \centering Illusionist & \centering Villager & During night can block the effect of a player. \\
+        \hline
+        \centering Jester & \centering Victory Stealer & Wins alone if it's burned. \\
+        \hline
+        \centering Kamikaze & \centering Villager & If it's attacked during night, kills the wolf that has attacked (wolf bombarder can defuse the bomb)\\
+        \hline
+        \centering Knight & \centering Villager & Can protect one player (not twice in a row).\\
+        \hline
+        \centering Medium & \centering Villager & Can ask if the player burned is a wolf or not. \\
+        \hline
+        \centering Plague spreader & \centering Villager & During night can point a player, during the following day the player cannot answer yes or no (if it does, it will die and the two players closer will suffer the same effect.   \\
+        \hline
+        \centering Puppy & \centering Wolf & It's seen as a villager and cannot kill during night. If it's the last remaining wolf, it becomes a wolf. \\
+        \hline
+        \centering Sam & \centering Villager & If it's voted out can kill another player. \\
+        \hline
+        \centering Seer & \centering Villager & At night can ask if a player is a wolf or not.\\
+        \hline
+        \centering Sheriff & \centering Villager & Can kill a person during night, if it's not a wolf it will die.\\
+        \hline
+        \centering Wolf & \centering Wolf & Wolf with no special effect.\\
+        \hline
+    \end{tabular}
+    \label{tab:roles_table}
+    \caption{Table of all possible roles}
+    
+    \end{table}
+    
+\end{center}
+
+
+
+
+
+
+
+\begin{comment}
+
+\textbf{Possible Roles}:\\
+\begin{center}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        Wolf** & Farmer** & Knight** & Medium*  & Hamster** \\
+        \hline
+        Seer** & Dorky** & Bomb Disposal Engineer & Undertaker (? se c'è tempo) & Carpenter** \\
+        \hline
+        Hobbit** & Kamikaze** & Spy & Wizard & Berserker** (?) \\
+        \hline
+        Sam** & Giuda** & Illusionist** & Infected & Werewolf \\
+        \hline
+        Idiot & Puppy** (?) & Plague Spreader** & Piper & \\
+        \hline
+    \end{tabular}
+\end{center}
+
+
+Medium -\> (non esiste ancora la carta, può chiedere se l'utimo giocatore ucciso di giorno è un lupo o no)
+
+\end{comment}
