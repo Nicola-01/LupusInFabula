@@ -94,7 +94,7 @@ public class UserMePutRR extends AbstractRR {
                         LOGGER.error("Update password failed");
 
                         ErrorCode ec = ErrorCode.UPDATE_NOT_SUCCESSFUL;
-                        m = new Message("User " + user + "failed to update the password", ec.getErrorCode(), ec.getErrorMessage());
+                        m = new Message("User " + user + " failed to update the password", ec.getErrorCode(), ec.getErrorMessage());
                         res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
                         // TODO --> add the page linked to this servlet (for not successfully updated password)
