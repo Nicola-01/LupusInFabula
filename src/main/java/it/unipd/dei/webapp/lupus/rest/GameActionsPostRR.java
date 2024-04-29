@@ -232,7 +232,7 @@ public class GameActionsPostRR extends AbstractRR {
                         }
 
                     }
-                } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0)) { //ballot votes
+                } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0) && (gameActions.size() > deadPlayers.size()+2)) { //ballot votes
                     LOGGER.info(player +  " with role " + role + " has voted " + target);
 
                     if (!(target.equals(votedPlayer1) || target.equals(votedPlayer2))) {
@@ -280,6 +280,7 @@ public class GameActionsPostRR extends AbstractRR {
                         Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
                         new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
                         LOGGER.info("Plague spreader killed " + target);
+                        dayActionResults.setPlaguePlayer(target);
                         updatePlayerDeath(target);
                     } else {
                         //error
