@@ -1,0 +1,47 @@
+\subsection{REST API Summary}
+
+%describe the REST API. If needed, add a few lines of text here, describing the content of the table.
+Filters: \\
+L (logged in) $->$ the user must be logged in\\
+M (master) $->$ the player must be Master in game=\{gameID\} \\
+When \{gameID\} is mentioned it refers to an automatically generated string (e.g. wolf-seer-farmer) which uniquely identifies a match within the web application.
+\{username\} refers to the username of a player.
+\begin{longtable}{|p{.375\columnwidth}|p{.1\columnwidth} |p{.35\columnwidth}|p{.1\columnwidth}|} 
+\hline
+\textbf{URI} & \textbf{Method} & \textbf{Description} & \textbf{Filter} \\\hline
+% What is the URI? & What HTTP method uses? &  Describe briefly the result of calling the URI & is it behind a filter?\\\hline
+/signup & POST & Allow to sign up a new user with his credentials & \\\hline
+/login & POST & Allows a user to login using his credentials & \\\hline
+/logout & POST & Allows a logged in user to logout & L \\\hline
+/user/\{username\} & GET & Returns a brief summary about a player. If he's logged in, it shows more information & L \\\hline
+/user/\{username\}/logs & GET & Logs of matches played by such player & L \\\hline
+/user/\{username\}/statistic & GET & Returns player statistics & \\\hline
+
+/user/me & GET & Returns information about logged in user & L \\\hline
+/user/me & PUT & Updates logged in user information (e.g. password) & L \\\hline
+/user/me & DELETE & Deletes logged in user's account & L \\\hline
+/user/me/friend & GET & Returns friends' list of logged in user & L \\\hline
+/user/me/friend & POST & Adds a user as a friend of logged in user & L \\\hline
+/user/me/friend & DELETE & Deletes a user inside friends' list of logged in user & L \\\hline
+
+/rules & GET & Returns rules of Lupus in Fabula &  \\\hline
+
+/game/settings & GET & Returns game settings (e.g. minimum number of wolves) & L \\\hline
+/game/settings & PUT & Receives game settings and then inserts them into the database. Random roles are assigned to players as well & L \\\hline
+/game/status/\{gameID\} & GET & Returns general information about a match & L \\\hline
+%/game/status/\{gameID\}/master & GET & Stato attuale della partita da master, errore se non esiste o boh da decidere & M \\\hline
+
+/game/players/\{gameID\}& GET & Returns list of players who are playing/who played a match identified by gameID. For each player, it returns his role if and only if the logged in player has the right to see it & L \\\hline
+/game/players/\{gameID\}/master & GET & Returns list of players who are playing/who played a match identified by gameID & M \\\hline
+
+/game/log/\{gameID\} & GET & Returns logs of a match. If the match is still in play, it shows only public information. When the match is finished, it shows all the information (e.g who killed who) & L \\\hline
+/game/log/\{gameID\}/master & GET & Returns logs of a match, showing all kinds of information even if the match isn't finished & M \\\hline
+
+% /game/\{gameID\}/log & GET & Se la partita è finita si può accedere anche così, o in alternativa non esiste /log/player ma basta solo /log, quindi tutti possono vederla anche se non è finita, ma non vedono le informazioni nascoste finchè non finisce &  \\\hline
+
+/game/actions/\{gameID\} & GET & Returns a list of actions that a player can execute & M \\\hline
+/game/actions/\{gameID\} & POST & After players execute actions during a phase (day or night), such actions are inserted into the database updating the logs & M \\\hline
+
+\caption{Describe in this table your REST API}
+\label{tab:termGlossary}
+\end{longtable}
