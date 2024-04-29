@@ -7,7 +7,6 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Objects;
 
 /**
  * Determines whether the Jester role was voted out but not killed by Sam.
@@ -16,7 +15,7 @@ import java.util.Objects;
  * @version 1.0
  * @since 1.0
  */
-public class IsJesterVotedOut extends AbstractDAO<Boolean> {
+public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
 
     /**
      * SQL statement to check if the Jester role was voted out and died.
@@ -47,7 +46,7 @@ public class IsJesterVotedOut extends AbstractDAO<Boolean> {
      * @param ds     the data source for obtaining connections
      * @param gameID the ID of the game to retrieve.
      */
-    public IsJesterVotedOut(final Connection con, final DataSource ds, int gameID) {
+    public IsJesterVotedOutDAO(final Connection con, final DataSource ds, int gameID) {
         super(con);
         this.ds = ds;
         this.gameID = gameID;
@@ -83,6 +82,8 @@ public class IsJesterVotedOut extends AbstractDAO<Boolean> {
 
                 if(rs.next())
                     this.outputParam = !rs.getString("role").equals(GameRoleAction.JESTER.getName());
+                else
+                    this.outputParam = true;
             }
         } finally {
             if (rs != null) {
