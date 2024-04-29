@@ -48,7 +48,7 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
             pstmt.setInt(4, playsAsIn.getGameId());
             pstmt.setString(5, playsAsIn.getPlayerUsername());
 
-            LOGGER.info("Executing updateDeathOfPlayerInTheGameDAO");
+            //LOGGER.info("Executing updateDeathOfPlayerInTheGameDAO");
 
             pstmt.execute();
         } finally {

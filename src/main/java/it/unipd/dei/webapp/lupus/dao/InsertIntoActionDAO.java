@@ -58,7 +58,7 @@ public class InsertIntoActionDAO extends AbstractDAO{
             pstmt.setString(7, action.getTarget());
             //LOGGER.info("Insert into action");
             pstmt.execute();
-            LOGGER.info("Insert into action ok");
+            //LOGGER.info("Insert into action ok");
 
         } finally {
             if (pstmt != null) {
