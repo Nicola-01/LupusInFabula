@@ -3,13 +3,16 @@
 % For each group member, describe in detail the contribution to the project.
 
 \begin{description}
-	\item[Busato Nicola] Writing and image creation of Chapter 4 and ideation of the REST API. Set up project and Docker configuration for a Tomcat and a PostgreSQL container. Developed /user/signup, /user/login and /user/logout (jsp, servlet, css, js and sql access) and GameSettingsServlet.
+	\item[Busato Nicola] Wrote Chapter 4 and designed the mockups. Designed REST API. Set up project and Docker configuration for a Tomcat and a PostgreSQL container. Implemented servlets for user login, signup, and logout features, complete with their corresponding DAOs and classes.
+    Established GameDispatcherServlet and GameMasterFilter.
+    Developed GameActionsGetRR to manage GET requests for /lupus/game/actions/{gameID}, including the necessary DAOs and classes.
+    Formulated GameSettingsGetRR and GameSettingsPostRR to handle GET and POST requests for /lupus/game/settings, integrating their associated DAOs and classes.
+    Assisted in the development of GameActionsPostRR.
     \item[Cini Jacopo]
     Helped to develop GameDispatcherServlet, which then uses two REST APIs: /lupus/game/logs/\{gameID\} and /lupus/game/logs/\{gameID\}/master. Developed GameLog rest resource, its respective DAO which is GetActionByIdGameDAO and its resource, the class Action. Contribuited to write section 5 of this document.
+    \item[Gusella Michele] Helped to develop GameDispatcherServlet, which then uses these REST APIs: /game/players/\{gameID\}, /game/players/\{gameID\}/master and /game/status/\{gameID\}. Developed GamePlayers rest resource and GameStatus rest resource, their respective DAO which are GetGamePlayersDAO and GetGameByGameIdDAO, and their resources, the classes PlaysAsIn and Game. Contribuited to write section 5 of this document.
     \item[Miele Riccardo] With Nicola Busato has brainstormed ideas for the project and sketched out an outline to start developing the project. Has set up the database by creating the ER scheme, the logic scheme and the implementation in SQL. Has written the chapter 3 explaining all the entities and the relations contained in the ER and logic schemes.
-    \item[Gusella Michele] Helped to develop GameDispatcherServlet, which then uses two REST APIs: /game/players/\{gameID\} and /game/players/\{gameID\}/master. Developed GamePlayers rest resource, its respective DAO which is GetGamePlayersDAO and its resource, the class PlaysAsIn. Contribuited to write section 5 of this document.
-    \item[Miele Riccardo] With Nicola Busato has brainstormed ideas for the project and sketched out an outline to start developing the project. Has set up the database by creating the ER scheme, the logic scheme and the implementation in SQL. Has written the chapter 3 explaining all the entities and the relations contained in the ER and logic schemes.
-    Has developed RR for statistic and logs (with DAOs and the necessary resources). Has revised and fixed the chapter 2.
-	\item[Momesso Jacopo] Developed the UserDispatcher and UserFilter, the RestResources related to /user/me and /user/\{username\}, the RulesServlet for handling the rules page and the roles of the game, the GameActionsPostRR, in particular the night phase controls for each action and for each role, and all the relatives DAO for querying the database. Wrote chapter 1 of this document with the goals of the project and the rules of the game Lupus in Fabula.
-    \item[Pozzo Nicola] Developed the /User/me/friend in
+    Has developed RR for statistics and logs (with DAOs and the necessary resources). Has revised and fixed the chapter 2.
+	\item[Momesso Jacopo] Developed the UserDispatcher and UserFilter, the RestResources related to /user/me and /user/\{username\}, the RulesServlet for handling the rules page and the roles of the game, the GameActionsPostRR, in particular the night phase controls for each action and for each role, and all the relatives DAO for querying the database. Wrote chapter 1 of this document with the goals of the project and the rules of the game Lupus in Fabula, and created the cards of each role that we decided to implement.
+    \item[Pozzo Nicola] Developed the /user/me/friend in UserDispatcher with the related RestResource and DAOs and the day phase in the GameActionPostRR with all the controls for the voting part. Contribuited to write the chapter 2 with the main functionalities of the webapp. 
 \end{description}

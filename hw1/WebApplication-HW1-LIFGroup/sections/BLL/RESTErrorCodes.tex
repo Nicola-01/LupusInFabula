@@ -2,105 +2,116 @@
 
 %If needed, add few lines of text, describing the error codes table
 
+
+
 \subsubsection{Login or edit credentials}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EUSR1 & 400 & Error throw when one or more input fields are empty.\\\hline
-    EUSR2 & 400 & Error throw when the username is in an invalid format.\\\hline
-    EUSR3 & 400 & Error throw when the email is in an invalid format.\\\hline
-    EUSR4 & 400 & Error throw when the password is in an invalid format.\\\hline
-    EUSR5 & 400 & Error throw when the passwords do not match.\\\hline
-    EUSR6 & 409 & Error throw when the username has already used\\\hline
-    EUSR7 & 409 & Error throw when the email has already used\\\hline
-    EUSR8 & 400 & Error throw when the submitted credentials are wrong\\\hline
-    EUSR9 & 404 & Error throw when the user isn't found.\\\hline
+    EUSR1 & 400 - BAD\_REQUEST & Error throw when one or more input fields are empty.\\\hline
+    EUSR2 & 400 - BAD\_REQUEST & Error throw when the username is in an invalid format.\\\hline
+    EUSR3 & 400 - BAD\_REQUEST & Error throw when the email is in an invalid format.\\\hline
+    EUSR4 & 400 - BAD\_REQUEST & Error throw when the password is in an invalid format.\\\hline
+    EUSR5 & 400 - BAD\_REQUEST & Error throw when the passwords do not match.\\\hline
+    EUSR6 & 409 - CONFLICT & Error throw when the username has already used\\\hline
+    EUSR7 & 409 - CONFLICT & Error throw when the email has already used\\\hline
+    EUSR8 & 400 - BAD\_REQUEST & Error throw when the submitted credentials are wrong\\\hline
+    EUSR9 & 404 - NOT\_FOUND & Error throw when the user isn't found.\\\hline
+    EUSR10 & 409 - CONFLICT & Error throw when update has failed.\\\hline
+
+    
     \caption{Login or edit credentials error code}
     \label{tab:Login_or_edit_credentials_error_code}
 \end{longtable}
 \subsubsection{Game}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EGME1 & 404 & Error throw when one or more players does not exist.\\\hline
-    EGME2 & 409 & Error throw when one or more players are already in a game.\\\hline
-    EGME3 & 409 & Error throw when the gamemaster is already in a game.\\\hline
-    EGME4 & 404 & Error throw when one or more roles does not exist.\\\hline
-    EGME5 & 400 & Error throw when the number of players entered does not correspond to the number of roles.\\\hline
-    EGME6 & 400 & Error throw when the number of players isn't enough to play.\\\hline
-    EGME7 & 404 & Error throw when the parameter does not exist.\\\hline
-    EGME8 & 400 & Error throw when there is an Invalid role with max cardinality.\\\hline
-    EGME9 & 404 & Error throw when the game isn't found\\\hline
-    \caption{game error code}
+    EGME1 & 404 - NOT\_FOUND & Error throw when one or more players does not exist.\\\hline
+    EGME2 & 409 - CONFLICT & Error throw when one or more players are already in a game.\\\hline
+    EGME3 & 409 - CONFLICT & Error throw when the gamemaster is already in a game.\\\hline
+    EGME4 & 404 - NOT\_FOUND & Error throw when one or more roles does not exist.\\\hline
+    EGME5 & 400 - BAD\_REQUEST & Error throw when the number of players entered does not correspond to the number of roles.\\\hline
+    EGME6 & 400 - BAD\_REQUEST & Error throw when the number of players isn't enough to play.\\\hline
+    EGME7 & 404 - NOT\_FOUND & Error throw when the parameter does not exist.\\\hline
+    EGME8 & 400 - BAD\_REQUEST & Error throw when there is an Invalid role with max cardinality.\\\hline
+    EGME9 & 404 - NOT\_FOUND & Error throw when the game isn't found\\\hline
+    EGME10 & 409 - CONFLICT & Error throw when the game is over and new actions are sent\\\hline
+    \caption{Game error code}
     \label{tab:game_error_code}
 \end{longtable}
 \subsubsection{Friend}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EFRN1 & 409 & Error throw when the friend is already in the list.\\\hline
-    EFRN2 & 400 & Error throw when the friend is not in the list.\\\hline
-    \caption{friend error code}
+    EFRN1 & 409 - CONFLICT & Error throw when the friend is already in the list.\\\hline
+    EFRN2 & 400 - BAD\_REQUEST & Error throw when the friend is not in the list.\\\hline
+    \caption{Friend error code}
     \label{tab:friend_error_code}
 \end{longtable}
 \subsubsection{Game logs}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EGLN1 & 404 & Error throw when the logs aren't found.\\\hline
-    \caption{game logs error code}
+    EGLN1 & 404 - NOT\_FOUND & Error throw when the logs aren't found.\\\hline
+    \caption{Game logs error code}
     \label{tab:game_logs_error_code}
 \end{longtable}
 \subsubsection{Invalid data}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EJSN1 & 400 & Error throw when the format for JSON is invalid.\\\hline
+    EJSN1 & 400 - BAD\_REQUEST & Error throw when the format for JSON is invalid.\\\hline
     \caption{invalid data error code}
     \label{tab:invalid_data_error_code}
 \end{longtable}
 \subsubsection{Session}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    ESES1 & 403 & Error throw when the account isn't logged in.\\\hline
-    ESES2 & 403 & Error throw when the account isn't a gamemaster.\\\hline
-    ESES3 & 404 & Error throw when the game doesn't exist.\\\hline
-    ESES4 & 409 & Error throw when the player isn't the gamemaster of this game.\\\hline
+    ESES1 & 403 - FORBIDDEN & Error throw when the account isn't logged in.\\\hline
+    ESES2 & 403 - FORBIDDEN & Error throw when the account isn't a gamemaster.\\\hline
+    ESES3 & 404 - NOT\_FOUND & Error throw when the game doesn't exist.\\\hline
+    ESES4 & 409 - CONFLICT & Error throw when the player isn't the gamemaster of this game.\\\hline
     \caption{session error code}
     \label{tab:session_error_code}
 \end{longtable}
 \subsubsection{Dispatcher}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EDSP1 & 404 & Error throw when there is an unknown resource requested.\\\hline
-    EDSP2 & 405 & Error throw when the method is not allowed.\\\hline
-    \caption{session error code}
+    EDSP1 & 404 - NOT\_FOUND & Error throw when there is an unknown resource requested.\\\hline
+    EDSP2 & 405 - METHOD\_NOT\_ALLOWED & Error throw when the method is not allowed.\\\hline
+    \caption{Session error code}
     \label{tab:session_error_code}
 \end{longtable}
 \subsubsection{Actions}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|}
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EACT1 & 400 & Error throw when a null action is requested.\\\hline
-    EACT2 & 400 & Error throw when an invalid target is requested.\\\hline
-    EACT3 & 400 & Error throw when a player is not in a game.\\\hline
-    EACT4 & 400 & Error throw when a role is not corresponding to that player.\\\hline
-    EACT5 & 409 & Error throw when the player is dead.\\\hline
-    EACT6 & 409 & Error throw when there are too many wolves actions.\\\hline
-    EACT7 & 400 & Error throw when an invalid action is requested.\\\hline
-    EACT8 & 409 & Error throw when the number of actions does not match.\\\hline
-    \caption{actions error code}
+    EACT1 & 400 - BAD\_REQUEST & Error throw when a null action is requested.\\\hline
+    EACT2 & 400 - BAD\_REQUEST & Error throw when an invalid target is requested.\\\hline
+    EACT3 & 400 - BAD\_REQUEST & Error throw when a player is not in a game.\\\hline
+    EACT4 & 400 - BAD\_REQUEST & Error throw when a role is not corresponding to that player.\\\hline
+    EACT5 & 409 - CONFLICT & Error throw when the player is dead.\\\hline
+    EACT6 & 409 - CONFLICT & Error throw when there are too many wolves actions.\\\hline
+    EACT7 & 400 - BAD\_REQUEST & Error throw when an invalid action is requested.\\\hline
+    EACT9 & 400 - BAD\_REQUEST & Error throw when the list of vote is not valid.\\\hline
+
+    EACT10 & 400 - BAD\_REQUEST & Error throw when the target of ballot vote is not valid.\\\hline
+
+    
+    
+    \caption{Actions error code}
     \label{tab:actions_error_code}
 \end{longtable}
 \subsubsection{Errors}
-\begin{longtable}{|p{.15\columnwidth}|p{.2\columnwidth} |p{.6\columnwidth}|} 
+\begin{longtable}{|p{.12\columnwidth}|p{.33\columnwidth} |p{.5\columnwidth}|} 
     \hline
     \textbf{Error Code} & \textbf{HTTP Status Code} & \textbf{Description} \\\hline
-    EDTB1 & 500 & Error throw when there is a internal database error.\\\hline
-    EINT1 & 500 & Error throw when there is a internal error.\\\hline
-    EINT2 & 500 & Error throw when there is a Null object internal error.\\\hline
-    \caption{errors error code}
+    EDTB1 & 500 - INTERNAL\_SERVER\_ERROR & Error throw when there is a internal database error.\\\hline
+    EINT1 & 500 - INTERNAL\_SERVER\_ERROR & Error throw when there is a internal error.\\\hline
+    EINT2 & 500 - INTERNAL\_SERVER\_ERROR & Error throw when there is a Null object internal error.\\\hline
+    \caption{Errors error code}
     \label{tab:errors_error_code}
 \end{longtable}
