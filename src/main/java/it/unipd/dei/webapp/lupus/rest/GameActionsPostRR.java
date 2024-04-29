@@ -11,6 +11,14 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * Handles the HTTP POST request to handle game actions.
+ * It contains methods to handle both day and night phases of the game.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameActionsPostRR extends AbstractRR {
 
     /**

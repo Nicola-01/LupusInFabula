@@ -63,12 +63,7 @@ VALUES ('newGameM', LOWER('newGameM@example.com'), md5('newGame'), CURRENT_DATE)
        ('newGame7', LOWER('newGame7@test.com'), md5('newGame'), CURRENT_DATE),
        ('newGame8', LOWER('newGame8@test.com'), md5('newGame'), CURRENT_DATE);
 
-/*
-INSERT INTO public.TYPE_ACTION
-VALUES (1, 'mangia'),
-       (2, 'attacca'),
-       (3, 'test');
-*/
+
 INSERT INTO public.game (public_ID, start, phase)
 VALUES ('dorky-farmer-explorer', NOW(), 0),
        ('farmer-wolf-sam', NOW(), 1),
