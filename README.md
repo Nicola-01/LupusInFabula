@@ -15,6 +15,7 @@
         <li><a href="#requirements">Requirements</a></li>
         <li><a href="#build-and-run">Build and Run</a></li>
         <li><a href="#database">Database</a></li>
+        <li><a href="#test">Test</a></li>
       </ul>
     </li>
     <li><a href="#contributing">Contributing</a></li>
