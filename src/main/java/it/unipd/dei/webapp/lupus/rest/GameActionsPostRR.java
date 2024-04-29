@@ -350,6 +350,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @param player The username of the player to check for the role "carpenter".
      * @return {@code true} if the player is a carpenter and is safe this round, {@code false} otherwise.
      * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException If an IO exception occurs.
      */
     private boolean carpenterCheck(String player) throws SQLException, IOException {
         try {
