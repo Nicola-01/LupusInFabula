@@ -32,7 +32,9 @@
             <a href="<c:url value="/rules"/>">
                 <button>Game Rules</button>
             </a>
-            <button>Create a Game</button>
+            <a href="<c:url value="/jsp/game/newGame.jsp"/>">
+                <button>Create a Game</button>
+            </a>
             <button>Join a Game</button>
         </div>
     </section>

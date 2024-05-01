@@ -37,6 +37,15 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserDispatcherServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>NewGameServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.NewGameServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>NewGameServlet</servlet-name>
+        <url-pattern>/newGame</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>

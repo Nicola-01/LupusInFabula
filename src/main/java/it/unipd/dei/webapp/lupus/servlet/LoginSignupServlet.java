@@ -319,6 +319,9 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     session.setAttribute("user", p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
+                    response.setHeader("Access-Control-Allow-Origin", "http://example.com");
+                    response.setHeader("Access-Control-Allow-Credentials", "true");
+
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
                 }
             }

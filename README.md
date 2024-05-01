@@ -32,7 +32,7 @@ player eliminations), and daytime voting for eliminations.
 ### Rules
 
 Detailed rules and guidelines for playing "Lupus in Fabula" are available in section 1.1 of
-the [report](REPORT_HW1/WebApplication_HW1_LIFGroup.pdf).
+the [report](hw1/WebApplication_HW1_LIFGroup.pdf).
 
 ## Getting started
 
