@@ -20,6 +20,27 @@
 </head>
 <body>
 <div class="columns">
+    <div id="players" class="column">
+        <table id="players_tb">
+            <tr>
+                <th>Username</th>
+                <th>Remove</th>
+            </tr>
+        </table>
+    </div>
+    <div id="friends" class="column">
+        <table id="friends_tb">
+            <tr>
+                <th>Username</th>
+                <th>Add</th>
+            </tr>
+        </table>
+    </div>
+
+</div>
+<br>
+<br>
+<div class="columns">
     <div id="goodRoles" class="column">
         <h2>GOOD</h2>
     </div>
@@ -34,7 +55,9 @@
     </div>
 </div>
 <br>
-<button id="sendSettings">Create new game!</button>
+<div class="button-container">
+    <button id="sendSettings">Create new game!</button>
+</div>
 
 
 </body>

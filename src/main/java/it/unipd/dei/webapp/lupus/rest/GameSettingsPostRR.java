@@ -162,7 +162,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), ec.getErrorMessage());
                     m.toJSON(res.getOutputStream());
 
-                    LOGGER.warn("Invalid roles cardinality", totalPlayers, totalRoles);
+                    LOGGER.warn("Invalid roles cardinality, totalPlayers: " + totalPlayers + "; totalRoles: " + totalRoles);
 //                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if number of players it's equal to number of roles
@@ -197,6 +197,9 @@ public class GameSettingsPostRR extends AbstractRR {
                     session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
 
                     // Assign a random role to each player
+
+                    selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
+                    
                     for (int i = 0; i < totalPlayers; i++) {
                         // Select a random role for the player
                         String selectedRole = randomRole(selectedRoles);
@@ -208,7 +211,7 @@ public class GameSettingsPostRR extends AbstractRR {
                         PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
                         new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn).access();
 
-                        LOGGER.info("Player %s assigned role ID %d", selectedPlayers.get(i), selectedRole);
+                        LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), selectedRole);
                     }
                     // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
                     res.setStatus(HttpServletResponse.SC_CREATED);

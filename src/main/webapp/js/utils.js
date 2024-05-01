@@ -76,6 +76,23 @@ function genericGETRequest(url, callback) {
     httpRequest.send();
 }
 
+function genericPOSTRequest(url, json, callback) {
+    var httpRequest = new XMLHttpRequest();
+
+    if (!httpRequest) {
+        alert('Cannot create an XMLHTTP instance');
+        return false;
+    }
+
+    httpRequest.onload = function () {
+        callback(httpRequest)
+    };
+
+    httpRequest.open('POST', url);
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
+    httpRequest.send(json);
+}
+
 /**
  * A generic GET XMLHTTPRequest.
  *

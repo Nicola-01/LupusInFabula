@@ -30,3 +30,58 @@ Content-Type: application/json
     "friendship_date": "2024-04-19"
   }
 }
+
+### login as user1
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = user1 &
+password = ciao
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user2",
+    "friendship_date": "2024-04-19"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user3",
+    "friendship_date": "2024-04-19"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user4",
+    "friendship_date": "2024-04-19"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user8",
+    "friendship_date": "2024-04-19"
+  }
+}
