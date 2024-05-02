@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    // your page initialization code here
-    // the DOM will be available here
     document.getElementById("sendSettings").addEventListener("click", sendSettings);
     document.getElementById("addPlayer").addEventListener("click", addPlayer);
     document.getElementById("playerUsername").addEventListener("keyup", function (event) {
