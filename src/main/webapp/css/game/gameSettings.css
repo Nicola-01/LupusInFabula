@@ -57,6 +57,139 @@ tr:nth-child(even) {
     background-color: #f2f2f2;
 }
 
+/*Search input*/
+.search {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+
+.search input[type="text"] {
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.searchUser {
+    background-color: #4e99e9;
+    border: none;
+    color: #fff;
+    height: 50px;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: .9s ease;
+}
+
+.searchUser:hover {
+    transform: scale(1.1);
+    color: rgb(255, 255, 255);
+    background-color: blue;
+}
+
+/*remove player*/
+
+
+.removePlayer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3em;
+    border: 0px solid transparent;
+    background-color: rgba(100,77,237,0.08);
+    border-radius: 0.7em;
+    transition: all 0.2s linear;
+
+    position: relative;
+    display: inline-block;
+}
+
+.removePlayer:hover{
+    box-shadow: 3.4px 2.5px 4.9px rgba(0, 0, 0, 0.025),
+    8.6px 6.3px 12.4px rgba(0, 0, 0, 0.035),
+    17.5px 12.8px 25.3px rgba(0, 0, 0, 0.045),
+    36.1px 26.3px 52.2px rgba(0, 0, 0, 0.055),
+    99px 72px 143px rgba(0, 0, 0, 0.08);
+}
+
+.removePlayer .removeText {
+    visibility: hidden;
+    width: 4em;
+    background-color: rgba(0, 0, 0, 0.253);
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: 25%;
+    left: 110%;
+}
+
+.removePlayer .removeText::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    margin-top: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent rgba(0, 0, 0, 0.253) transparent transparent;
+}
+
+.removePlayer:hover .removeText {
+    visibility: visible;
+}
+
+/*Add button*/
+.addButton{
+    cursor: pointer;
+    fill: none;
+    stroke: #60a5fa;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    height: 30px;
+}
+
+.visually-hidden {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+
+.checkbox-label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border-radius: 100%;
+    transition: 0.3s;
+    display: inline-flex;
+    align-items: center;
+    margin: 0;
+}
+
+.addCheckbox:checked + .checkbox-label {
+    background-color: #1e40af;
+    transform: rotate(45deg);
+}
+
+
+
+
 /*SWITCH*/
 
 .toggle-switch {

@@ -15,8 +15,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user1",
-    "friendship_date": "2024-04-19"
+    "username": "user1"
   }
 }
 
@@ -26,8 +25,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user1",
-    "friendship_date": "2024-04-19"
+    "username": "user1"
   }
 }
 
@@ -45,8 +43,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user2",
-    "friendship_date": "2024-04-19"
+    "username": "user2"
   }
 }
 
@@ -57,8 +54,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user3",
-    "friendship_date": "2024-04-19"
+    "username": "user3"
   }
 }
 
@@ -69,8 +65,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user4",
-    "friendship_date": "2024-04-19"
+    "username": "user4"
   }
 }
 
@@ -81,7 +76,6 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user8",
-    "friendship_date": "2024-04-19"
+    "username": "user8"
   }
 }

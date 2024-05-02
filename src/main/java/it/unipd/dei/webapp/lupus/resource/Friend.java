@@ -141,6 +141,6 @@ public class Friend extends AbstractResource {
             throw e;
         }
 
-        return new Friend(jUsername, Date.valueOf(jFriendship_date));
+        return new Friend(jUsername, jFriendship_date == null ? null: Date.valueOf(jFriendship_date));
     }
 }

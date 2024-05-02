@@ -118,7 +118,8 @@ public class GameSettingsPostRR extends AbstractRR {
                 }
 
                 // add the player to the list
-                selectedPlayers.add(username);
+                if (!selectedPlayers.contains(username))
+                    selectedPlayers.add(username);
             }
 
             // Check all the roles
@@ -199,7 +200,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     // Assign a random role to each player
 
                     selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
-                    
+
                     for (int i = 0; i < totalPlayers; i++) {
                         // Select a random role for the player
                         String selectedRole = randomRole(selectedRoles);

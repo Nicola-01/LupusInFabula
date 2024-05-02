@@ -29,11 +29,13 @@ password = password123
 PUT http://localhost:8080/lupus/user/me HTTP/1.1
 Content-Type: application/json
 
-{ "userUpdate": {
-  "oldPassword": "password123",
-  "newPassword": "password234",
-  "repeatNewPassword": "password234"
-}}
+{
+  "userUpdate": {
+    "oldPassword": "password123",
+    "newPassword": "password234",
+    "repeatNewPassword": "password234"
+  }
+}
 
 
 
