@@ -18,12 +18,27 @@
     </ul>
 </nav>
 <main>
+    <p>Welcome,
+        <c:if test="${not empty sessionScope.user}">
+            <b>${sessionScope.user.getUsername()} </b>
+        </c:if>
+        <c:if test="${empty sessionScope.user}">
+            please login to check the website in its entirety
+        </c:if>
+    </p>
     <section class="centered-box">
         <div class="box">
             <h2>Player</h2>
-            <a href="<c:url value="/login"/>">
-                <button>Login</button>
-            </a>
+            <!-- if logged in -->
+            <c:if test="${not empty sessionScope.user}">
+                <a href="<c:url value="/logout"/>"><button>Logout</button></a>
+            </c:if>
+            <!-- if NOT logged in -->
+            <c:if test="${empty sessionScope.user}">
+                <a href="<c:url value="/login"/>">
+                    <button>Login</button>
+                </a>
+            </c:if>
             <button>Personal Area</button>
             <button>Statistics</button>
         </div>
