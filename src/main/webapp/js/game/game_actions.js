@@ -52,7 +52,7 @@ function fillPlayersStatus(req) {
                 }
             }
         } else {
-            alert("Not logged in");
+            // alert("Not logged in");
         }
     }
     // createCircularButtons(8);
@@ -60,22 +60,36 @@ function fillPlayersStatus(req) {
 
 // Function to create buttons and position them in a circle around the square div
 function createCircularButtons(numButtons) {
-    var circleDiv = document.getElementById('circle');
-    var radius = circleDiv.offsetWidth / 2; // Radius of the circle
-    var centerX = circleDiv.offsetWidth / 2; // X coordinate of the center of the circle div
-    var centerY = circleDiv.offsetHeight / 2; // Y coordinate of the center of the circle div
+    var bts = document.getElementsByClassName("circular-button");
+    while (bts.length > 0) {
+        bts[0].parentNode.removeChild(bts[0]);
+    }
 
-    for (var i = 0; i < numButtons; i++) {
-        var angle = (Math.PI * 2 / numButtons) * i; // Calculate angle for each button
+
+    var circleDiv = document.getElementById('circle');
+    var bt_width = 100;
+    var bt_height = 60;
+
+    var div_size = circleDiv.offsetWidth
+    var center = div_size / 2;
+
+    var vertical_distance = (numButtons / 2) / div_size;
+
+    for (var i = 0; i < numButtons / 2; i++) {
+        console.log(center - vertical_distance * i)
+        var angle = Math.asin(center - vertical_distance * i);
+        console.log(angle)
         var button = document.createElement('button');
         button.innerHTML = "Button " + (i + 1);
         button.className = "circular-button";
         button.style.position = 'absolute';
-        button.style.left = (centerX + Math.cos(angle) * radius) + 'px'; // X position of the button
-        button.style.top = (centerY + Math.sin(angle) * radius) + 'px'; // Y position of the button
+        button.style.width = bt_width + 'px'
+        button.style.height = bt_height + 'px'
+        button.style.left = (center + Math.cos(angle) * div_size - bt_width / 2) + 'px'; // X position of the button
+        button.style.top = (center + Math.sin(angle) * div_size - bt_height / 2) + 'px'; // Y position of the button
         circleDiv.appendChild(button); // Append button to the circle div
     }
 }
 
 // Call the function with the desired number of buttons
- // You can change the number of buttons as needed
+// You can change the number of buttons as needed
