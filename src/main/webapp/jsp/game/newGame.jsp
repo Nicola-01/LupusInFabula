@@ -20,6 +20,7 @@
 
 </head>
 <body>
+<jsp:include page="/jsp/include/navbar.jsp" />
 <div class="container">
     <div class="columns">
         <div id="players" class="column">

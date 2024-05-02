@@ -18,7 +18,7 @@
 <h2>Hello, World!</h2>
 
 <body>
-
+<jsp:include page="include/navbar.jsp" />
 <h2>Table of stats</h2>
 <table border="1">
     <thead>

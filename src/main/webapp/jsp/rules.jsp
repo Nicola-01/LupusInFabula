@@ -15,9 +15,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
 </head>
 <body>
-    <header>
-        <h1>Lupus in Fabula</h1>
-    </header>
+<jsp:include page="include/navbar.jsp" />
     <div class="row upper">
         <div class="title-row">
             <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRules')">RULES</span>

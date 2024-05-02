@@ -10,6 +10,7 @@
 </head>
 
 <body>
+<jsp:include page="include/navbar.jsp" />
 <div class="container">
     <div class="main">
         <input type="checkbox" id="chk" aria-hidden="true">

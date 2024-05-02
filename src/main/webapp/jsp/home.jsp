@@ -9,14 +9,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
 </head>
 <body>
-<header>
-    <h1>Lupus in Fabula</h1>
-</header>
-<nav>
-    <ul>
-        <li></li>
-    </ul>
-</nav>
+<jsp:include page="include/navbar.jsp" />
 <main>
     <p>Welcome,
         <c:if test="${not empty sessionScope.user}">

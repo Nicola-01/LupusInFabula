@@ -14,6 +14,7 @@
     <title>Friends</title>
 </head>
 <body>
+<jsp:include page="include/navbar.jsp" />
 <h1>Friends List</h1>
 <c:if test="${not empty requestScope.m}">
     <div style="color: red;"><c:out value="${requestScope.m.getMessage()}" /></div>

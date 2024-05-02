@@ -19,7 +19,7 @@
 
 
 <body>
-
+<jsp:include page="include/navbar.jsp" />
 <h2>Table of logs</h2>
 <table border="1">
     <thead>
