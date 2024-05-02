@@ -7,8 +7,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
-<html>
 <html lang="en">
+
 <head>
     <title>Create new game</title>
     <c:import url="/jsp/include/head.jsp"/>
@@ -20,52 +20,51 @@
 
 </head>
 <body>
-<div class="columns">
-    <div id="players" class="column">
-        <table id="players_tb">
-            <tr>
-                <th>Username</th>
-                <th>Remove</th>
-            </tr>
-        </table>
-    </div>
-    <div id="friends" class="column">
-        <table id="friends_tb">
-            <tr>
-                <th>Username</th>
-                <th>Add</th>
-            </tr>
-        </table>
-        <br>
-        <div class="search">
-            <input id="playerUsername" placeholder="Add a player" type="text">
-            <button id="addPlayer" class="searchUser">Add player!</button>
+<div class="container">
+    <div class="columns">
+        <div id="players" class="column">
+            <table id="players_tb">
+                <tr>
+                    <th>Username</th>
+                    <th>Remove</th>
+                </tr>
+            </table>
+        </div>
+        <div id="friends" class="column">
+            <table id="friends_tb">
+                <tr>
+                    <th>Username</th>
+                    <th>Add</th>
+                </tr>
+            </table>
+            <br>
+            <div class="search">
+                <input id="playerUsername" placeholder="Add a player" type="text">
+                <button id="addPlayer" class="searchUser">Add player!</button>
+            </div>
+
         </div>
 
     </div>
-
+    <br>
+    <div class="columns">
+        <div id="goodRoles" class="column">
+            <h2>GOOD</h2>
+        </div>
+        <div id="evilRoles" class="column">
+            <h2>EVIL</h2>
+        </div>
+        <div id="neutralRoles" class="column">
+            <h2>NEUTRAL</h2>
+        </div>
+        <div id="victoryStealerRoles" class="column">
+            <h2>VICTORY STEALER</h2>
+        </div>
+    </div>
+    <br>
+    <div class="button-container">
+        <button id="sendSettings">Create new game!</button>
+    </div>
 </div>
-<br>
-<br>
-<div class="columns">
-    <div id="goodRoles" class="column">
-        <h2>GOOD</h2>
-    </div>
-    <div id="evilRoles" class="column">
-        <h2>EVIL</h2>
-    </div>
-    <div id="neutralRoles" class="column">
-        <h2>NEUTRAL</h2>
-    </div>
-    <div id="victoryStealerRoles" class="column">
-        <h2>VICTORY STEALER</h2>
-    </div>
-</div>
-<br>
-<div class="button-container">
-    <button id="sendSettings">Create new game!</button>
-</div>
-
-
 </body>
 </html>

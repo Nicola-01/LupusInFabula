@@ -19,32 +19,43 @@
 
 <body>
 
-<div class="rows">
-    <div class="actionTitle">NIGHT</div>
-    <div class="actions">Wolves, who do you want to kill tonight?
-        <select id="">
-            <optgroup label="WOLF PACK">
-                <option value="">Wolf</option>
-                <option value="">Berserker</option>
-            </optgroup>
-            <optgroup label="VILLAGERS">
-                <option value="">Farmer</option>
-                <option value="">Sam</option>
-            </optgroup>
-        </select>
+<div class="container">
+    <div class="rows">
+        <div class="actionTitle">NIGHT</div>
+        <div class="actions">Wolves, who do you want to kill tonight?
+            <select id="">
+                <optgroup label="WOLF PACK">
+                    <option value="">Wolf</option>
+                    <option value="">Berserker</option>
+                </optgroup>
+                <optgroup label="VILLAGERS">
+                    <option value="">Farmer</option>
+                    <option value="">Sam</option>
+                </optgroup>
+            </select>
+        </div>
+        <div class="actions">Wolves, who will among you kill your target?
+            <select>
+                <option value="">wolf1</option>
+                <option value="">wolf2</option>
+            </select>
+        </div>
     </div>
-    <div class="actions">Wolves, who will among you kill your target?
-        <select>
-            <option value="">wolf1</option>
-            <option value="">wolf2</option>
-        </select>
-    </div>
-</div>
 
-<div class="rows">
-    <div class="colums"></div>
-    <div class="colums"></div>
-    <div class="colums"></div>
+    <div class="rows">
+        <div class="colums"></div>
+        <div class="colums"></div>
+        <div class="colums"></div>
+    </div>
+
+    <div class="columns">
+        <div id="playersStatus" class="column">
+            <div id="circle"></div>
+        </div>
+        <div id="gameLog" class="column">
+
+        </div>
+    </div>
 </div>
 
 </body>

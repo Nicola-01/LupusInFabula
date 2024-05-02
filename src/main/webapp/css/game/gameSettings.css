@@ -10,8 +10,12 @@ body {
     font-size: 1em;
 }
 
+.container {
+    width: 100%;
+    margin: 3em auto;
+}
+
 .columns {
-    width: 80%;
     display: flex;
     justify-content: center;
     margin: auto;

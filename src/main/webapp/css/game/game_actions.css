@@ -1,0 +1,45 @@
+body {
+    margin: 0;
+    padding: 0;
+    /*display: flex;*/
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Jost', sans-serif;
+    /*background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);*/
+    font-size: 1em;
+}
+
+.container {
+    width: 100%;
+    margin: 3em auto;
+}
+
+.columns {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    /*justify-content: space-between;*/
+    flex-wrap: wrap;
+    gap: 0.3em;
+}
+
+.column {
+    flex: 1 0 8rem;
+    padding: 10px;
+    border: 1px solid #ccc; /* Optional: Add borders for clarity */
+    flex-direction: column;
+    align-items: start;
+}
+
+#playersStatus {
+    position: relative;
+}
+
+#circle {
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin: 10%;
+    padding-top: 80%;
+    position: relative;
+}
