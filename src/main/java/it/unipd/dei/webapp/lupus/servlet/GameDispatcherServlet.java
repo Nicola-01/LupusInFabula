@@ -128,6 +128,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             }
             return true;
         }
+
         // GET /game/actions/
         // GET  /game/status/{gameID}
         // GET  /game/status/{gameID}/master
@@ -156,8 +157,8 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         // splitPath[0] is empty
         String requestURI = splitPath[1];
         String publicGameID = splitPath[2];
-        int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
 
+        int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
         if (gameID == -1) {
             LOGGER.warn("Invalid gameID, the game %s doesn't exists.", publicGameID);
 

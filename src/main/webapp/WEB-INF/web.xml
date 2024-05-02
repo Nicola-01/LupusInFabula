@@ -45,6 +45,11 @@
     </servlet>
 
     <servlet>
+        <servlet-name>CurrentGameServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.CurrentGameServlet</servlet-class>
+    </servlet>
+
+    <servlet>
         <servlet-name>GameActionsServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.GameActionsServlet</servlet-class>
     </servlet>
@@ -52,6 +57,11 @@
     <servlet-mapping>
         <servlet-name>NewGameServlet</servlet-name>
         <url-pattern>/newGame</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurrentGameServlet</servlet-name>
+        <url-pattern>/currentGame/*</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
