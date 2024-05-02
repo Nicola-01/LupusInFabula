@@ -20,6 +20,8 @@ function fillGameActions(req) {
 
 }
 
+var playerRole = []
+
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -28,28 +30,13 @@ function fillPlayersStatus(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
-                // var table = document.getElementById("friends_tb");
-
-                // Clear existing rows
-                // table.innerHTML = "<tr><th>Username</th><th>Add</th></tr>";
-
-                // Loop through the list of friends
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
                     console.log(playsAsIn)
-
-                    // // Create a new row
-                    // var row = table.insertRow();
-                    //
-                    // // Insert username into the first cell
-                    // var cell0 = row.insertCell(0);
-                    // cell0.innerHTML = friend.username;
-                    //
-                    // // Insert checkbox into the second cell
-                    // var cell1 = row.insertCell(1);
-                    //
-                    // cell1.innerHTML = HTML_add_button(friend.username);
+                    if(playsAsIn.role !== ROLE_MASTER)
+                        playerRole.push(playsAsIn)
                 }
+                createCircularButtons()
             }
         } else {
             // alert("Not logged in");
@@ -58,35 +45,52 @@ function fillPlayersStatus(req) {
     // createCircularButtons(8);
 }
 
+window.onresize = createCircularButtons;
+
 // Function to create buttons and position them in a circle around the square div
-function createCircularButtons(numButtons) {
+function createCircularButtons() {
+    var epsilon = 0;
+    var numButtons = playerRole.length;
     var bts = document.getElementsByClassName("circular-button");
     while (bts.length > 0) {
         bts[0].parentNode.removeChild(bts[0]);
     }
 
-
     var circleDiv = document.getElementById('circle');
-    var bt_width = 100;
-    var bt_height = 60;
+    var bt_width = 85;
+    var bt_height = 50;
 
-    var div_size = circleDiv.offsetWidth
+    var div_size = circleDiv.offsetWidth;
     var center = div_size / 2;
 
-    var vertical_distance = (numButtons / 2) / div_size;
+    console.log(numButtons)
 
-    for (var i = 0; i < numButtons / 2; i++) {
-        console.log(center - vertical_distance * i)
-        var angle = Math.asin(center - vertical_distance * i);
-        console.log(angle)
+    for (var i = 0; i < numButtons; i++) {
+        var angle = (Math.PI * 2 / numButtons) * i;
         var button = document.createElement('button');
-        button.innerHTML = "Button " + (i + 1);
+
+        // console.log("angle: " + angle);
+
+        console.log(playerRole[i].username)
+
+        button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
+        if(playerRole[i].isDead){
+            button.innerHTML += " (dead)";
+            button.style.filter = `saturate(25%)`;
+        }
         button.className = "circular-button";
+        button.style.backgroundColor = rolesColors.get(playerRole[i].role);
         button.style.position = 'absolute';
         button.style.width = bt_width + 'px'
         button.style.height = bt_height + 'px'
-        button.style.left = (center + Math.cos(angle) * div_size - bt_width / 2) + 'px'; // X position of the button
-        button.style.top = (center + Math.sin(angle) * div_size - bt_height / 2) + 'px'; // Y position of the button
+
+        var epsilon_angle = (Math.PI / 2 + angle) * epsilon;
+
+        console.log("epsilon_angle: " + epsilon_angle)
+        console.log("setted angle: " + (angle - epsilon_angle))
+
+        button.style.left = (center + Math.sin(angle - epsilon_angle) * center - bt_width / 2) + 'px'; // X position of the button
+        button.style.top = (center + -Math.cos(angle - epsilon_angle) * center - bt_height / 2) + 'px'; // Y position of the button
         circleDiv.appendChild(button); // Append button to the circle div
     }
 }

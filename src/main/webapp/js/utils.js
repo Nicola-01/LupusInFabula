@@ -46,13 +46,43 @@ const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 /**
  * The context path of the server.
  */
-var contextPath = "http://localhost:8080/lupus/"
+var contextPath = "http://localhost:8080/lupus/";
 
 
 /**
  * The key for JSON resource lists.
  */
-const JSON_resource_list = "resource-list"
+const JSON_resource_list = "resource-list";
+
+const ROLE_MASTER = "master";
+
+/**
+ * Map representing the colors associated with each role.
+ */
+const rolesColors = new Map();
+
+rolesColors.set('farmer', '#005C00');
+rolesColors.set('carpenter', '#3F9741');
+rolesColors.set('hobbit', '#28AE59');
+rolesColors.set('kamikaze', '#7DD181');
+rolesColors.set('knight', '#96E8BC');
+rolesColors.set('medium', '#7FCCBF');
+rolesColors.set('sam', '#489FB5');
+rolesColors.set('seer', '#16697A');
+rolesColors.set('sheriff', '#173753');
+
+rolesColors.set('berserker', '#37123C');
+rolesColors.set('dorky', '#431035');
+rolesColors.set('explorer', '#4F0E2D');
+rolesColors.set('giuda', '#67091E');
+rolesColors.set('puppy', '#7F050F');
+rolesColors.set('wolf', '#970000');
+
+rolesColors.set('hamster', '#FF9914');
+rolesColors.set('jester', '#CA6700');
+
+rolesColors.set('illusionist', '#595959');
+rolesColors.set('plague spreader', '#3b3b3b');
 
 /**
  * A generic GET XMLHTTPRequest.
