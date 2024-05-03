@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"it.unipd.dei.webapp.lupus.dao"},{"l":"it.unipd.dei.webapp.lupus.filter"},{"l":"it.unipd.dei.webapp.lupus.resource"},{"l":"it.unipd.dei.webapp.lupus.rest"},{"l":"it.unipd.dei.webapp.lupus.servlet"},{"l":"it.unipd.dei.webapp.lupus.utils"}];updateSearchResults();

@@ -6,17 +6,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
             addPlayer();
         }
     });
-    loadGameSettings();
-});
-
-
-/**
- * Get the game settings.
- */
-function loadGameSettings() {
     genericGETRequest(contextPath + "game/settings", fillGameSettings)
     genericGETRequest(contextPath + "user/me/friend", fillFriends)
-}
+});
 
 function HTML_switch(name) {
     return "<label class='toggle-switch'>" +
@@ -135,9 +127,9 @@ function fillGameSettings(req) {
 
                     // Populate the div element with role data
                     if (role.max_number === 1)
-                        targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name) + "</div><br>";
+                        targetDiv.innerHTML += "<div class='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name) + "</div>";
                     else
-                        targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_number_input(role.name, role.max_number) + "</div><br>";
+                        targetDiv.innerHTML += "<div class='role'>" + capitalizeFirstLetter(role.name) + HTML_number_input(role.name, role.max_number) + "</div>";
                 }
                 let numberContainers = document.querySelectorAll('.number_container');
                 // Loop through each container
@@ -213,7 +205,6 @@ function gameCreation(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_CREATED) {
             let game = JSON.parse(req.responseText)['game'];
-            alert(game.public_ID)
         } else {
             let message = getMessage(req)
 

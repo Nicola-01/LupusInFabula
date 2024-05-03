@@ -60,7 +60,7 @@ function populatePlayerList(players, contains) {
     players.forEach(player => {
         const li = document.createElement("li");
         li.innerHTML = highlightContains(player, contains);
-        li.addEventListener("click", function () {
+        li.addEventListener("mousedown", function () {
             document.getElementById("playerUsername").value = player; // Insert the player name into the search bar
             hidePlayerListPopup(); // Hide the popup after selecting a player
         });

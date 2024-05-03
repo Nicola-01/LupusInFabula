@@ -21,31 +21,22 @@
 
 <div class="container">
     <div class="row">
-        <div class="actionTitle">NIGHT</div>
-        <div class="actions">Wolves, who do you want to kill tonight?
-            <select id="">
-                <optgroup label="WOLF PACK">
-                    <option value="">Wolf</option>
-                    <option value="">Berserker</option>
-                </optgroup>
-                <optgroup label="VILLAGERS">
-                    <option value="">Farmer</option>
-                    <option value="">Sam</option>
-                </optgroup>
-            </select>
-        </div>
-        <div class="actions">Wolves, who will among you kill your target?
-            <select>
-                <option value="">wolf1</option>
-                <option value="">wolf2</option>
-            </select>
-        </div>
+        <div class="col-sm-1 d-none d-sm-block col-md-1 col-lg-2 p-2"></div>
+        <div class="col-sm-12 col-md-10 col-lg-8 p-2" id="gameActions"></div>
+        <div class="col-sm-1 d-none d-sm-block col-md-1 col-lg-2 p-2"></div>
+    </div>
+
+    <div class="button-container">
+        <button id="sendActions">
+            <span class="text">New DAY!</span>
+        </button>
     </div>
 
     <div class="row">
         <jsp:include page="../utils/playersStatus.jsp"/>
         <jsp:include page="../utils/gameLog.jsp"/>
     </div>
+
 </div>
 
 <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>

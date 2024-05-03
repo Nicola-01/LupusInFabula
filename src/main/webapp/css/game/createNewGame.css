@@ -147,7 +147,7 @@ h2:not(#players h2):not(#friends h2) {
     background-color: transparent;
     border-radius: 100%;
     transition: 0.3s;
-    display: inline-flex;
+    /*display: inline-flex;*/
     align-items: center;
     margin: 0;
 }
@@ -230,9 +230,10 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 /*role div*/
-#role {
+.role {
     display: flex;
     align-items: center;
+    margin-bottom: .7em;
 }
 
 .toggle-switch {
