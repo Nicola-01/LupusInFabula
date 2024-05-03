@@ -40,7 +40,7 @@
             <a href="<c:url value="/rules"/>">
                 <button>Game Rules</button>
             </a>
-            <a href="<c:url value="/jsp/game/newGame.jsp"/>">
+            <a href="<c:url value="/jsp/game/createNewGame.jsp"/>">
                 <button>Create a Game</button>
             </a>
             <button>Join a Game</button>

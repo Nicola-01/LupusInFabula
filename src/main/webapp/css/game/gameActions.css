@@ -1,0 +1,30 @@
+
+#playersStatus {
+    position: relative;
+}
+
+#circle {
+    border-radius: 50%;
+    border: 2px solid #000;
+    margin: 10%;
+    padding-top: 80%;
+    position: relative;
+}
+
+.circular-button {
+    background-color: orange;
+    border: none;
+    border-radius: 15px;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
+    transition: z-index 0.3s; /* Add transition for smooth effect */
+}
+
+.circular-button:hover {
+    z-index: 1; /* Bring button to the forefront on hover */
+}

@@ -12,15 +12,20 @@
 <head>
     <title>Game</title>
     <c:import url="/jsp/include/head.jsp"/>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/game_actions.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
     <script src="${pageContext.request.contextPath}/js/utils.js"></script>
-    <script src="${pageContext.request.contextPath}/js/game/game_actions.js"></script>
+    <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 
 <body>
 
 <div class="container">
-    <div class="rows">
+    <div class="row">
         <div class="actionTitle">NIGHT</div>
         <div class="actions">Wolves, who do you want to kill tonight?
             <select id="">
@@ -42,17 +47,11 @@
         </div>
     </div>
 
-    <div class="rows">
-        <div class="colums"></div>
-        <div class="colums"></div>
-        <div class="colums"></div>
-    </div>
-
-    <div class="columns">
-        <div id="playersStatus" class="column">
+    <div class="row">
+        <div id="playersStatus" class="column col-md-6 p-2 pb-5">
             <div id="circle"></div>
         </div>
-        <div id="gameLog" class="column">
+        <div id="gameLog" class="column col-md-6 p-2 pb-5">
 
         </div>
     </div>
