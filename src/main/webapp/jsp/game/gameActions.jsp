@@ -13,9 +13,7 @@
     <title>Game</title>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
-    <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
-
-    <jsp:include page="utils/playersStatus_dependency.jsp"/>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
 </head>
 
 <body>
@@ -45,10 +43,13 @@
     </div>
 
     <div class="row">
-        <jsp:include page="utils/playersStatus.jsp"/>
-        <jsp:include page="utils/gameLog.jsp"/>
+        <jsp:include page="../utils/playersStatus.jsp"/>
+        <jsp:include page="../utils/gameLog.jsp"/>
     </div>
 </div>
+
+<script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/playersStatus.js"></script>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>

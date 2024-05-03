@@ -49,9 +49,9 @@ public class Player extends AbstractResource {
     /**
      * Constructs a Player object with the specified username, email, password, and registration date.
      *
-     * @param username The username of the player.
-     * @param email The email address of the player.
-     * @param password The password of the player.
+     * @param username          The username of the player.
+     * @param email             The email address of the player.
+     * @param password          The password of the player.
      * @param registration_date The registration date of the player.
      */
     public Player(final String username, final String email,
@@ -66,13 +66,22 @@ public class Player extends AbstractResource {
      * Constructs a Player object with the specified username, email, and password.
      *
      * @param username The username of the player.
-     * @param email The email address of the player.
+     * @param email    The email address of the player.
      * @param password The password of the player.
      */
     public Player(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    /**
+     * Constructs a Player object.
+     *
+     * @param username The username of the player.
+     */
+    public Player(String username) {
+        this(username, null, null, null);
     }
 
     /**
@@ -127,8 +136,10 @@ public class Player extends AbstractResource {
         jg.writeStartObject();
 
         jg.writeStringField("username", username); // Write the username field
-        jg.writeStringField("email", email);
-        jg.writeStringField("registration_date", registration_date.toString());
+        if (email != null)
+            jg.writeStringField("email", email);
+        if (registration_date != null)
+            jg.writeStringField("registration_date", registration_date.toString());
 
         jg.writeEndObject();
         jg.writeEndObject();

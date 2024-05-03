@@ -122,6 +122,16 @@ public class GameSettingsPostRR extends AbstractRR {
                     selectedPlayers.add(username);
             }
 
+            if (selectedPlayers.contains(gameMaster)) {
+                ErrorCode ec = ErrorCode.MASTER_ALREADY_IN_GAME;
+                res.setStatus(ec.getHTTPCode());
+
+                Message m = new Message("The master can't be a player of a game", ec.getErrorCode(), ec.getErrorMessage());
+                messages.add(m);
+
+                LOGGER.warn("The master can't be a player");
+            }
+
             // Check all the roles
             for (RoleCardinality roleCardinality : roleCardinalities) {
                 if (isValidRole(realRoles, roleCardinality.getRole())) {

@@ -10,53 +10,16 @@ h2:not(#players h2):not(#friends h2) {
     margin-bottom: 20px;
 }
 
+/*tables*/
+#friends_tb, #friends_tb {
 
-/*Search input*/
-.search {
-    display: inline-block;
-    position: absolute;
-    width: 100%;
-    left: 0;
-    padding: 0.5em;
-    bottom: 0;
-}
-
-.search input[type="text"] {
-    width: 100%;
-    height: 40px;
-    padding: 10px;
-    border: none;
-    border-radius: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.searchUser {
-    background-color: #4e99e9;
-    border: none;
-    color: #fff;
-    height: 40px;
-    cursor: pointer;
-    padding: 5px 20px;
-    border-radius: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    position: absolute;
-    top: 0;
-    right: 0;
-    transition: .9s ease;
-
-    margin: 0.5em;
-}
-
-.searchUser:hover {
-    transform: scale(1.05);
-    color: rgb(255, 255, 255);
-    background-color: #6d6dff;
+    overflow-y: auto;
 }
 
 /*create game button*/
 #sendSettings {
     align-items: center;
-    background-image: linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB);
+    background-image: linear-gradient(144deg, #AF40FF, #5B42F3 50%, #00DDEB);
     border: 0;
     border-radius: 8px;
     box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
@@ -111,7 +74,7 @@ h2:not(#players h2):not(#friends h2) {
     align-items: center;
     padding: 0.3em;
     border: 0px solid transparent;
-    background-color: rgba(100,77,237,0.08);
+    background-color: rgba(100, 77, 237, 0.08);
     border-radius: 0.7em;
     transition: all 0.2s linear;
 
@@ -119,7 +82,7 @@ h2:not(#players h2):not(#friends h2) {
     display: inline-block;
 }
 
-.removePlayer:hover{
+.removePlayer:hover {
     box-shadow: 3.4px 2.5px 4.9px rgba(0, 0, 0, 0.025),
     8.6px 6.3px 12.4px rgba(0, 0, 0, 0.035),
     17.5px 12.8px 25.3px rgba(0, 0, 0, 0.045),
@@ -157,7 +120,7 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 /*Add button*/
-.addButton{
+.addButton {
     cursor: pointer;
     fill: none;
     stroke: #60a5fa;
@@ -193,8 +156,6 @@ h2:not(#players h2):not(#friends h2) {
     background-color: #1e40af;
     transform: rotate(45deg);
 }
-
-
 
 
 /*SWITCH*/
@@ -274,8 +235,61 @@ h2:not(#players h2):not(#friends h2) {
     align-items: center;
 }
 
-.toggle-switch, .roleNumber {
+.toggle-switch {
     margin-left: auto;
     width: 60px;
     min-width: 60px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.number_container {
+    display: flex;
+    width: 60px;
+    height: 2em;
+    border-radius: 2em;
+    border: 1px solid #ccc;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+    min-width: 60px;
+}
+
+.number {
+    text-align: center;
+    width: 1em;
+    height: 2em;
+    margin: 0;
+    border: none;
+    outline: none;
+    color: #000;
+    background: rgba(0, 0, 0, 0);
+}
+
+.add, .minus {
+    width: 1.5em;
+    height: 2em;
+    border-radius: 100%;
+    font-size: 1em;
+    margin: 0;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: opacity .15s;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add:focus, .minus:focus {
+    outline: none;
 }

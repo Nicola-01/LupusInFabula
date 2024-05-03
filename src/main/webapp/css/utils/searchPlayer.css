@@ -1,0 +1,66 @@
+.search {
+    display: inline-block;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    padding: 0.5em;
+    bottom: 0;
+}
+
+.search input[type="text"] {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.searchUser {
+    background-color: #4e99e9;
+    border: none;
+    color: #fff;
+    height: 40px;
+    cursor: pointer;
+    padding: 5px 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    right: 0;
+    transition: .9s ease;
+
+    margin: 0.5em;
+}
+
+.searchUser:hover {
+    transform: scale(1.05);
+    color: rgb(255, 255, 255);
+    background-color: #6d6dff;
+}
+
+.popup {
+    position: absolute;
+    display: none;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    z-index: 1;
+    width: 96.8%;
+}
+
+.player-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    max-height: 250px;
+    overflow-y: auto;
+}
+
+.player-list li {
+    padding: 8px 12px;
+    cursor: pointer;
+}
+
+.player-list li:hover {
+    background-color: #ddd;
+}

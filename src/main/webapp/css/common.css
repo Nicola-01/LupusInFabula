@@ -20,6 +20,7 @@ th, td {
     border: 1px solid #ddd !important;
     padding: 8px;
     text-align: center;
+    height: 55px;
 }
 
 tr:nth-child(even) {

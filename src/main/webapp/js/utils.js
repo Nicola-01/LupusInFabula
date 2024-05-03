@@ -46,8 +46,7 @@ const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 /**
  * The context path of the server.
  */
-var contextPath = "http://localhost:8080/lupus/";
-
+let contextPath;
 
 /**
  * The key for JSON resource lists.
@@ -84,7 +83,14 @@ rolesColors.set('jester', '#CA6700');
 rolesColors.set('illusionist', '#595959');
 rolesColors.set('plague spreader', '#3B3B3B');
 
-rolesColors.set('','#6E007B')
+rolesColors.set('', '#6E007B')
+
+
+document.addEventListener('DOMContentLoaded', function (event) {
+    contextPath = window.location.href.substring(0, window.location.href.indexOf("/lupus/") + 7);
+    console.log(contextPath);
+});
+
 
 /**
  * A generic GET XMLHTTPRequest.
@@ -125,32 +131,16 @@ function genericPOSTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
-/**
- * A generic GET XMLHTTPRequest.
- *
- * @param url the url of the request.
- * @param callback the function to invoke when the servlet answer.
- * @returns {boolean} false if the request did not created.
- */
-function templateGETRequest(url, callback) {
-    var httpRequest = new XMLHttpRequest();
+function unLoggedUser(req) {
+    if (req.status === HTTP_STATUS_FORBIDDEN)
+        window.location.replace(contextPath + "login")
+}
 
-    if (!httpRequest) {
-        alert('Cannot create an XMLHTTP instance');
-        return false;
-    }
-    httpRequest.onreadystatechange = function () {
-        if (httpRequest.readyState == XMLHttpRequest.DONE) {
-            if (httpRequest.status == HTTP_STATUS_OK) {
-                callback(httpRequest.responseText)
-            } else {
-                console.log(httpRequest.responseText);
-                alert("problem processing the request");
-            }
-        }
-    }
-
-    httpRequest.open('GET', url, true);
-    httpRequest.withCredentials = true;
-    httpRequest.send();
+function getMessage(req) {
+    let json_message = JSON.parse(req.responseText)['message'];
+    let message = {}
+    message.message = json_message.message;
+    message.errorCode = json_message['error-code'];
+    message.errorDetails = json_message['error-details'];
+    return message
 }

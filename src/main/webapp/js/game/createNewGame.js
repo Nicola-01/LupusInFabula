@@ -20,7 +20,7 @@ function loadGameSettings() {
 
 function HTML_switch(name) {
     return "<label class='toggle-switch'>" +
-        "  <input type='checkbox' id='" + name + "_switch'>" +
+        "  <input type='checkbox' id='" + name + "_roleCard_switch'>" +
         "  <div class='toggle-switch-background'>" +
         "    <div class='toggle-switch-handle'></div>" +
         "  </div>\n" +
@@ -28,7 +28,11 @@ function HTML_switch(name) {
 }
 
 function HTML_number_input(name, max) {
-    return "<input type='number' class='roleNumber' id='" + name + "_num' min='0' max='" + max + "' value='0'/>"
+    return "<div class='number_container'>\n" +
+        "  <button type='button' class='minus'><svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M6 12L18 12' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg></button>\n" +
+        "  <input type='number' class='number' id='" + name + "_roleCard_num' value='0' min='0' max='" + max + "' disabled>\n" +
+        "  <button type='button' class='add'><svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M6 12H18M12 6V18' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg></button>\n" +
+        "</div>"
 }
 
 const HTML_remove_button =
@@ -38,8 +42,8 @@ const HTML_remove_button =
     "  <span class='removeText'>Remove</span>";
 
 function HTML_add_button(username) {
-    return "<input type='checkbox' id='addCheckbox' class='addCheckbox visually-hidden' name='" + username + "' onclick='checkBoxPress(this)'>\n" +
-        "<label for='addCheckbox' class='checkbox-label'>\n" +
+    return "<input type='checkbox' id='addCheckbox_" + username + "' class='addCheckbox visually-hidden' name='" + username + "' onclick='checkBoxPress(this)'>\n" +
+        "<label for='addCheckbox_" + username + "' class='checkbox-label'>\n" +
         "  <svg xmlns='http://www.w3.org/2000/svg' width='50px' height='50px' viewBox='0 0 24 24' class='addButton'>\n" +
         "    <path d='M12 22C17.5 22 22 17.5 22 12C22 6.5 17.5 2 12 2C6.5 2 2 6.5 2 12C2 17.5 6.5 22 12 22Z' stroke-width='1.5'></path>\n" +
         "    <path d='M8 12H16' stroke-width='1.5'></path>\n" +
@@ -48,45 +52,38 @@ function HTML_add_button(username) {
         "</label>\n"
 }
 
-
 function fillFriends(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            var list = JSON.parse(req.responseText)[JSON_resource_list];
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
 
             if (list == null) {
                 alert("No game settings available");
             } else {
-                var table = document.getElementById("friends_tb");
-
-                // Clear existing rows
-                table.innerHTML = "<tr><th>Username</th><th>Add</th></tr>";
+                let tbody = document.getElementById("friends_tb").querySelector("tbody");
 
                 // Loop through the list of friends
                 for (let i = 0; i < list.length; i++) {
-                    let friend = list[i]['friend']; // Use let instead of var to create a new scope for friend
+                    let friend = list[i]['friend']; // Use let instead of let to create a new scope for friend
 
                     // Create a new row
-                    var row = table.insertRow();
+                    let row = tbody.insertRow();
+                    let usernameCell = row.insertCell(0);
+                    let addButtonCell = row.insertCell(1);
 
-                    // Insert username into the first cell
-                    var cell0 = row.insertCell(0);
-                    cell0.innerHTML = friend.username;
-
-                    // Insert checkbox into the second cell
-                    var cell1 = row.insertCell(1);
-
-                    cell1.innerHTML = HTML_add_button(friend.username);
+                    // Fill cells with data
+                    usernameCell.textContent = friend.username;
+                    addButtonCell.innerHTML = HTML_add_button(friend.username);
                 }
             }
-        } else {
-            alert("Not logged in");
-        }
+        } else
+            unLoggedUser(req);
     }
 }
 
 function checkBoxPress(checkbox) {
     const username = checkbox.name;
+    console.log(checkbox.name)
     if (checkbox.checked)
         addToPlayersTable(username);
     else
@@ -96,79 +93,82 @@ function checkBoxPress(checkbox) {
 function fillGameSettings(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            var list = JSON.parse(req.responseText)[JSON_resource_list]
+            let list = JSON.parse(req.responseText)[JSON_resource_list]
 
             if (list == null)
                 alert("No game settings available");
             else {
                 // Get references to the div elements
-                var goodRoles = document.getElementById("goodRoles");
-                var evilRoles = document.getElementById("evilRoles");
-                var neutralRoles = document.getElementById("neutralRoles");
-                var victoryStealerRoles = document.getElementById("victoryStealerRoles");
+                let goodRoles = document.getElementById("goodRoles");
+                let evilRoles = document.getElementById("evilRoles");
+                let neutralRoles = document.getElementById("neutralRoles");
+                let victoryStealerRoles = document.getElementById("victoryStealerRoles");
+
+                // Sorting the list in descending order based on the max_number property of the role object
+                list.sort(function (a, b) {
+                    return b.role.max_number - a.role.max_number;
+                });
 
                 for (let i = 0; i < list.length; i++) {
 
-                    var role = list[i]['role'];
+                    let role = list[i]['role'];
+
+                    // Choose the div element based on the role type
+                    let targetDiv;
+                    // console.log(role.name + " " + role.type);
+                    switch (role.type) {
+                        case 0:
+                            targetDiv = goodRoles;
+                            break;
+                        case 1:
+                            targetDiv = evilRoles;
+                            break;
+                        case 2:
+                            targetDiv = victoryStealerRoles;
+                            break;
+                        case 3:
+                            targetDiv = neutralRoles;
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    // Populate the div element with role data
                     if (role.max_number === 1)
-                        continue;
-
-                    // Choose the div element based on the role type
-                    var targetDiv;
-                    // console.log(role.name + " " + role.type);
-                    switch (role.type) {
-                        case 0:
-                            targetDiv = goodRoles;
-                            break;
-                        case 1:
-                            targetDiv = evilRoles;
-                            break;
-                        case 2:
-                            targetDiv = victoryStealerRoles;
-                            break;
-                        case 3:
-                            targetDiv = neutralRoles;
-                            break;
-                        default:
-                            continue;
-                    }
-
-                    // Populate the div element with role data
-                    targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_number_input(role.name, role.max_number) + "</div><br>";
+                        targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name) + "</div><br>";
+                    else
+                        targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_number_input(role.name, role.max_number) + "</div><br>";
                 }
+                let numberContainers = document.querySelectorAll('.number_container');
+                // Loop through each container
+                numberContainers.forEach(container => {
+                    // Get buttons and input field within the container
+                    const minusButton = container.querySelector('.minus');
+                    const plusButton = container.querySelector('.add');
+                    const numberInput = container.querySelector('.number');
 
-                for (let i = 0; i < list.length; i++) {
+                    // Get maximum and minimum values from HTML attribute
+                    const max = parseInt(numberInput.getAttribute('max'));
+                    const min = 0;
 
-                    var role = list[i]['role'];
-                    if (role.max_number !== 1)
-                        continue;
+                    // Add event listeners for plus and minus buttons
+                    minusButton.addEventListener('click', () => {
+                        // Decrease value of input field if greater than minimum
+                        if (parseInt(numberInput.value) > min) {
+                            numberInput.value = parseInt(numberInput.value) - 1;
+                        }
+                    });
 
-                    // Choose the div element based on the role type
-                    var targetDiv;
-                    // console.log(role.name + " " + role.type);
-                    switch (role.type) {
-                        case 0:
-                            targetDiv = goodRoles;
-                            break;
-                        case 1:
-                            targetDiv = evilRoles;
-                            break;
-                        case 2:
-                            targetDiv = victoryStealerRoles;
-                            break;
-                        case 3:
-                            targetDiv = neutralRoles;
-                            break;
-                        default:
-                            continue;
-                    }
-
-                    // Populate the div element with role data
-                    targetDiv.innerHTML += "<div id='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name) + "</div><br>";
-                }
+                    plusButton.addEventListener('click', () => {
+                        // Increase value of input field if less than maximum
+                        if (parseInt(numberInput.value) < max) {
+                            numberInput.value = parseInt(numberInput.value) + 1;
+                        }
+                    });
+                });
             }
         } else
-            alert("not logged in")
+            unLoggedUser(req);
     }
 
 }
@@ -178,26 +178,21 @@ function capitalizeFirstLetter(string) {
 }
 
 function sendSettings() {
-    const num_elem = document.querySelectorAll('[id$="_num"]');
-    const switch_elem = document.querySelectorAll('[id$="_switch"]');
-    var roleCardinality = []
+    const role_card = document.querySelectorAll('[id*="_roleCard"]');
+    const roleCardinality = [];
 
-    for (let i = 0; i < switch_elem.length; i++) {
-        const role = switch_elem[i].id.replace('_switch', '');
-        const cardinality = switch_elem[i].checked ? 1 : 0;
+    let role;
+    let cardinality;
+    for (let i = 0; i < role_card.length; i++) {
+        if (role_card[i].id.includes("_num")) {
+            role = role_card[i].id.replace('_roleCard_num', '');
+            cardinality = parseInt(role_card[i].value);
+        } else {
+            role = role_card[i].id.replace('_roleCard_switch', '');
+            cardinality = role_card[i].checked ? 1 : 0;
+        }
         roleCardinality.push({role, cardinality});
     }
-
-    for (let i = 0; i < num_elem.length; i++) {
-        const role = num_elem[i].id.replace('_num', '');
-        const cardinality = parseInt(num_elem[i].value);
-        roleCardinality.push({role, cardinality});
-    }
-    // var json_rc = new Object();
-    // json_rc.roleCardinality = roleCardinality
-    //
-    // console.log(roleCardinality);
-    // console.log(JSON.stringify(json_rc));
 
     // Recover usernames from players_tb
     const playersTable = document.getElementById('players_tb');
@@ -208,20 +203,35 @@ function sendSettings() {
         player.push({username});
     }
 
-    // const json_pl = new Object();
-    // json_pl.player = player;
-    // console.log(JSON.stringify(json_pl));
 
     const json = {roleCardinality, player};
-    // json.roleCardinality = roleCardinality;
-    // json.player = player;
-    console.log(JSON.stringify(json));
-
-    genericPOSTRequest(contextPath + "game/settings", JSON.stringify(json), empty)
+    // console.log(JSON.stringify(json));
+    genericPOSTRequest(contextPath + "game/settings", JSON.stringify(json), gameCreation)
 }
 
-function empty(req) {
+function gameCreation(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_CREATED) {
+            let game = JSON.parse(req.responseText)['game'];
+            alert(game.public_ID)
+        } else {
+            let message = getMessage(req)
 
+            console.log(message.message);
+            console.log(message.errorCode);
+            console.log(message.errorDetails);
+
+            if (req.status === HTTP_STATUS_CONFLICT) {
+
+            } else if (req.status === HTTP_STATUS_NOT_FOUND) {
+
+            } else if (req.status === HTTP_STATUS_BAD_REQUEST) {
+
+            } else if (req.status === HTTP_STATUS_INTERNAL_SERVER_ERROR) {
+
+            }
+        }
+    }
 }
 
 function addPlayer() {
@@ -231,7 +241,7 @@ function addPlayer() {
         document.getElementById("playerUsername").value = "";
     }
 
-    var checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
+    let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
     checkboxes.forEach(function (checkbox) {
         if (checkbox.parentElement.previousElementSibling.textContent === username) {
             checkbox.checked = true;
@@ -242,18 +252,23 @@ function addPlayer() {
 // Function to add username to players_tb table
 function addToPlayersTable(username) {
     // no duplicate
-    var rows = document.getElementById("players_tb").rows;
-    for (var i = 0; i < rows.length; i++) {
+    let tbody = document.getElementById("players_tb").querySelector("tbody");
+    let rows = tbody.rows;
+
+    for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[0].textContent === username) {
             return;
         }
     }
-    var playersTable = document.getElementById("players_tb");
-    var newRow = playersTable.insertRow();
-    var usernameCell = newRow.insertCell(0);
-    var removeCell = newRow.insertCell(1);
+
+    // Add new row
+    let newRow = tbody.insertRow();
+    let usernameCell = newRow.insertCell(0);
+    let removeCell = newRow.insertCell(1);
+
     usernameCell.textContent = username;
-    var removeButton = document.createElement("button");
+
+    let removeButton = document.createElement("button");
     removeButton.setAttribute("class", "removePlayer");
     removeButton.innerHTML = HTML_remove_button;
     removeButton.addEventListener("click", function () {
@@ -264,8 +279,8 @@ function addToPlayersTable(username) {
 
 // Function to remove username from players_tb table
 function removeFromPlayersTable(username) {
-    var rows = document.getElementById("players_tb").rows;
-    for (var i = 0; i < rows.length; i++) {
+    let rows = document.getElementById("players_tb").rows;
+    for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[0].textContent === username) {
             document.getElementById("players_tb").deleteRow(i);
             break;
@@ -275,15 +290,14 @@ function removeFromPlayersTable(username) {
 
 // Function to remove row from players_tb table
 function removeRow(button) {
-    var row = button.parentNode.parentNode;
-    var username = row.cells[0].textContent; // Get the username from the row
+    let row = button.parentNode.parentNode;
+    let username = row.cells[0].textContent; // Get the username from the row
     row.parentNode.removeChild(row);
 
     // Uncheck the corresponding checkbox in the "friends" table
-    var checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
+    let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
     checkboxes.forEach(function (checkbox) {
-        if (checkbox.parentElement.previousElementSibling.textContent === username) {
+        if (checkbox.parentElement.previousElementSibling.textContent === username)
             checkbox.checked = false;
-        }
     });
 }

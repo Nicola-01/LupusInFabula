@@ -12,10 +12,9 @@
 <head>
     <title>Create new game</title>
     <c:import url="/jsp/include/head.jsp"/>
-    <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">--%>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">
 
-    <script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
 </head>
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
@@ -24,27 +23,30 @@
         <div id="players" class="column col-sm-12 col-md-6 p-2 pb-5">
             <h2>PLAYERS IN GAME</h2>
             <table id="players_tb">
+                <thead>
                 <tr>
                     <th>Username</th>
                     <th>Remove</th>
                 </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
         </div>
         <div id="friends" class="column col-sm-12 col-md-6 p-2 pb-5">
             <h2>YOUR FRIENDS</h2>
             <table id="friends_tb">
+                <thead>
                 <tr>
                     <th>Username</th>
                     <th>Add</th>
                 </tr>
+                </thead>
+                <tbody>
+                </tbody>
             </table>
             <br>
-            <div class="search">
-                <input id="playerUsername" placeholder="Add a player" type="text" data-1p-ignore data-bwignore
-                       data-lpignore="true" data-form-type="other">
-                <button id="addPlayer" class="searchUser">Add player!</button>
-            </div>
-
+            <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
         </div>
 
     </div>
@@ -70,6 +72,9 @@
         </button>
     </div>
 </div>
+
+<script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
