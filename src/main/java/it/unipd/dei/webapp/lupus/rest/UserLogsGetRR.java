@@ -56,7 +56,8 @@ public class UserLogsGetRR extends AbstractRR {
 
                 m = new Message("Access to logs of Player " + username + " that has played " + logs.size() + " games");
                 res.setStatus(HttpServletResponse.SC_OK);
-                m.toJSON(res.getOutputStream());
+               // m.toJSON(res.getOutputStream());
+                res.setContentType("application/json");
 
                 new ResourceList<PlaysJoinGame>(logs).toJSON(res.getOutputStream());
             }
