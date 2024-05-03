@@ -13,16 +13,9 @@
     <title>Create new game</title>
     <c:import url="/jsp/include/head.jsp"/>
     <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">--%>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">
 
-    <script src="${pageContext.request.contextPath}/js/utils.js"></script>
     <script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </head>
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
@@ -77,5 +70,9 @@
         </button>
     </div>
 </div>
+
+<c:import url="/jsp/include/footer.jsp"/>
+<c:import url="/jsp/include/foot.jsp"/>
+
 </body>
 </html>

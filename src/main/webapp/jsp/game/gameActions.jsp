@@ -12,17 +12,14 @@
 <head>
     <title>Game</title>
     <c:import url="/jsp/include/head.jsp"/>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
-    <script src="${pageContext.request.contextPath}/js/utils.js"></script>
     <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <jsp:include page="utils/playersStatus_dependency.jsp"/>
 </head>
 
 <body>
+<jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container">
     <div class="row">
@@ -48,15 +45,13 @@
     </div>
 
     <div class="row">
-        <div id="playersStatus" class="column col-md-6 p-2 pb-5">
-            <div id="circle"></div>
-        </div>
-        <div id="gameLog" class="column col-md-6 p-2 pb-5">
-
-        </div>
+        <jsp:include page="utils/playersStatus.jsp"/>
+        <jsp:include page="utils/gameLog.jsp"/>
     </div>
 </div>
 
-</body>
+<c:import url="/jsp/include/footer.jsp"/>
+<c:import url="/jsp/include/foot.jsp"/>
 
+</body>
 </html>

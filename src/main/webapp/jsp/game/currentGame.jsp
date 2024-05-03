@@ -16,21 +16,16 @@
     <title>Lupus in Fabula - Current Game</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
 
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
-<%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">--%>
-    <script src="${pageContext.request.contextPath}/js/utils.js"></script>
-
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">--%>
 
 </head>
 <body>
-    <jsp:include page="/jsp/include/navbar.jsp" />
-    <h1>Current Game</h1>
-    <p>Game ID: ${publicGameID}</p>
-    <footer>
-        <p>&copy; 2024 Team LIF - Lupus in Fabula. All rights reserved.</p>
-    </footer>
+<jsp:include page="/jsp/include/navbar.jsp"/>
+<h1>Current Game</h1>
+<p>Game ID: ${publicGameID}</p>
+
+<c:import url="/jsp/include/footer.jsp"/>
+<c:import url="/jsp/include/foot.jsp"/>
+
 </body>
 </html>

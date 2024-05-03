@@ -82,7 +82,9 @@ rolesColors.set('hamster', '#FF9914');
 rolesColors.set('jester', '#CA6700');
 
 rolesColors.set('illusionist', '#595959');
-rolesColors.set('plague spreader', '#3b3b3b');
+rolesColors.set('plague spreader', '#3B3B3B');
+
+rolesColors.set('','#6E007B')
 
 /**
  * A generic GET XMLHTTPRequest.

@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupus in Fabula - Home</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
+    <c:import url="/jsp/include/head.jsp"/>
 </head>
 <body>
 <jsp:include page="include/navbar.jsp" />
@@ -50,8 +51,9 @@
         <c:import url="/jsp/include/show-message.jsp"/>
     </section>
 </main>
-<footer>
-    <p>&copy; 2024 Team LIF - Lupus in Fabula. All rights reserved.</p>
-</footer>
+
+<c:import url="/jsp/include/footer.jsp"/>
+<c:import url="/jsp/include/foot.jsp"/>
+
 </body>
 </html>
