@@ -1,69 +1,14 @@
-body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100vh; /* This ensures the body takes up the full height of the viewport */
+* {
+    box-sizing: border-box
 }
 
-.row {
-    flex: 1; /* Each row will take up equal space */
-    display: flex;
-    justify-content: center; /* Centers the content horizontally */
-    align-items: center; /* Centers the content vertically */
-    position: relative;
+.mySlides {
+    display: none
 }
 
-.row:nth-child(odd) {
-    background-color: mediumpurple; /* Change this to your desired color for the first row */
+img {
+    vertical-align: middle;
 }
-
-.row:nth-child(even) {
-    background-color: rebeccapurple; /* Change this to your desired color for the second row */
-}
-
-.overlay {
-    height: 100%;
-    width: 0;
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: rgb(0,0,0, 1);
-    overflow-x: hidden;
-    transition: 1.5s;
-}
-
-.overlay-content {
-    position: relative;
-    top: 25%;
-    width: 100%;
-    text-align: center;
-    margin-top: 30px;
-}
-
-.overlay a {
-    padding: 8px;
-    text-decoration: none;
-    font-size: 36px;
-    color: #818181;
-    display: block;
-    transition: 0.3s;
-}
-
-.overlay a:hover, .overlay a:focus {
-    color: #f1f1f1;
-}
-
-.overlay .closebtn {
-    position: absolute;
-    top: 20px;
-    right: 45px;
-    font-size: 60px;
-}
-
-.mySlides {display: none}
-/*img {vertical-align: middle;}*/
 
 /* Slideshow container */
 .slideshow-container {
@@ -80,7 +25,7 @@ body {
     width: auto;
     padding: 16px;
     margin-top: -22px;
-    color: white;
+    color: black;
     font-weight: bold;
     font-size: 18px;
     transition: 0.6s ease;
@@ -96,69 +41,5 @@ body {
 
 /* On hover, add a black background color with a little bit see-through */
 .prev:hover, .next:hover {
-    background-color: rgba(0,0,0,0.8);
-}
-
-/* Caption text
-.text {
-    color: #f2f2f2;
-    font-size: 15px;
-    padding: 8px 12px;
-    position: absolute;
-    bottom: 8px;
-    width: 100%;
-    text-align: center;
-}*/
-
-/* Number text (1/3 etc)
-.numbertext {
-    color: #f2f2f2;
-    font-size: 12px;
-    padding: 8px 12px;
-    position: absolute;
-    top: 0;
-}*/
-
-/* The dots/bullets/indicators */
-.dot {
-    cursor: pointer;
-    height: 15px;
-    width: 15px;
-    margin: 0 2px;
-    background-color: #bbb;
-    border-radius: 50%;
-    display: inline-block;
-    transition: background-color 0.6s ease;
-}
-
-.active, .dot:hover {
-    background-color: #717171;
-}
-
-/* Fading animation */
-.fade {
-    animation-name: fade;
-    animation-duration: 1.5s;
-}
-
-@keyframes fade {
-    from {opacity: .4}
-    to {opacity: 1}
-}
-
-/* On smaller screens, decrease text size */
-@media only screen and (max-width: 300px) {
-    .prev, .next,.text {font-size: 11px}
-}
-
-@media screen and (max-height: 450px) {
-    .overlay a {
-        font-size: 20px
-    }
-
-    .overlay .closebtn {
-        font-size: 40px;
-        top: 15px;
-        right: 35px;
-    }
+    background-color: rgba(0, 0, 0, 0.8);
 }
