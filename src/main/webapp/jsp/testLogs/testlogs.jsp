@@ -15,8 +15,6 @@
     <title>Logs user</title>
     <c:import url="/jsp/include/head.jsp"/>
     <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">--%>
-
-    <script src="${pageContext.request.contextPath}/js/testLogs/testlogs.js"></script>
 </head>
 
 <%--<body onload="loadLogs()"> <!-- Quando il body viene caricato, chiamerà la funzione loadLogs() -->--%>
@@ -60,6 +58,8 @@
 <c:import url="/jsp/include/foot.jsp"/>
 
 </body>
+
+<script src="${pageContext.request.contextPath}/js/testLogs/testlogs.js"></script>
 </html>
 
 
