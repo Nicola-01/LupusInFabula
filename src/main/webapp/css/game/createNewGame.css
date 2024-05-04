@@ -260,7 +260,6 @@ input[type=number] {
     border: 1px solid #ccc;
     justify-content: center;
     align-items: center;
-    margin-left: auto;
     min-width: 60px;
 }
 

@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
 let playerRole = [];
 
+const maxPlayersforSircularButtons = 12;
+
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -19,7 +21,7 @@ function fillPlayersStatus(req) {
                     // console.log(playsAsIn)
                     playerRole.push(playsAsIn)
                 }
-                if (list.length <= 12) // todo select a max value
+                if (playerRole.length <= maxPlayersforSircularButtons)
                     createCircularButtons()
                 else
                     createGridButtons()
@@ -30,18 +32,31 @@ function fillPlayersStatus(req) {
     }
 }
 
-// window.onresize = createCircularButtons; // todo -> fix
+window.addEventListener('resize', handleResize);
+
+function handleResize() {
+    if (playerRole.length <= maxPlayersforSircularButtons)
+        createCircularButtons()
+}
 
 // Function to create buttons and position them in a circle around the square div
 function createCircularButtons() {
     const epsilon = 0;
     const numButtons = playerRole.length;
 
-    let circleDiv_ = document.createElement("div");
-    circleDiv_.id = 'circle';
-    document.getElementById("playersStatus").appendChild(circleDiv_);
+    // remove old buttons
+    const bts = document.getElementsByClassName("circular-button");
+    while (bts.length > 0) {
+        bts[0].parentNode.removeChild(bts[0]);
+    }
 
-    const circleDiv = document.getElementById('circle');
+    let circleDiv = document.getElementById('circle');
+    if(circleDiv == null){
+        circleDiv = document.createElement("div");
+        circleDiv.id = 'circle';
+        document.getElementById("playersStatus").appendChild(circleDiv);
+    }
+
     const bt_width = 85;
     const bt_height = 50;
 

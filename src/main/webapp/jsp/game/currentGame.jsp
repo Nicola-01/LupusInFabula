@@ -31,8 +31,8 @@
     </c:choose>
 
     <div class="row">
-        <div id="playersStatus" class="column row col-md-6"></div>
-        <div id="gameLog" class="column col-md-6"></div>
+        <div id="playersStatus" class="column col-md-6 p-2"></div>
+        <div id="gameLog" class="column col-md-6 p-2"></div>
     </div>
 
 </div>
