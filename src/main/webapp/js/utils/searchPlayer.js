@@ -1,9 +1,15 @@
 let searchUserContain;
 let players = [];
 
+const minSizeSearch = 1
+
+const playerUsername = document.getElementById("playerUsername");
+const playerListPopup = document.getElementById("playerListPopup");
+const addPlayerBT = document.getElementById("addPlayer");
+
 function searchUser() {
-    let user = document.getElementById("playerUsername").value;
-    if (user.length >= 3) {
+    let user = playerUsername.value;
+    if (user.length >= minSizeSearch) {
         if (user.includes(searchUserContain)) {
             // local research
             populatePlayerList(players.filter(username => username.toLowerCase().includes(user.toLowerCase())), user);
@@ -29,23 +35,28 @@ function savePlayers(req) {
 
 // Function to show the player list popup
 function showPlayerListPopup() {
-    document.getElementById("playerListPopup").style.display = "block";
+    playerListPopup.style.width = playerUsername.clientWidth + "px";
+    playerListPopup.style.display = "block";
+    playerUsername.classList.add("focus")
+    addPlayerBT.classList.add("focusBT")
 }
 
 // Function to hide the popup
 function hidePlayerListPopup() {
-    document.getElementById("playerListPopup").style.display = "none";
+    playerListPopup.style.display = "none";
+    playerUsername.classList.remove("focus")
+    addPlayerBT.classList.remove("focusBT")
 }
 
-document.getElementById("playerUsername").addEventListener("blur", function () {
+playerUsername.addEventListener("blur", function () {
     hidePlayerListPopup();
 });
 
-document.getElementById("playerUsername").addEventListener("focus", function () {
+playerUsername.addEventListener("focus", function () {
     searchUser();
 });
 
-document.getElementById("playerUsername").addEventListener("keyup", function (event) {
+playerUsername.addEventListener("keyup", function (event) {
     if (event.key === 'Enter')
         hidePlayerListPopup();
     else
@@ -61,7 +72,7 @@ function populatePlayerList(players, contains) {
         const li = document.createElement("li");
         li.innerHTML = highlightContains(player, contains);
         li.addEventListener("mousedown", function () {
-            document.getElementById("playerUsername").value = player; // Insert the player name into the search bar
+            playerUsername.value = player; // Insert the player name into the search bar
             hidePlayerListPopup(); // Hide the popup after selecting a player
         });
         playerList.appendChild(li);
@@ -83,4 +94,10 @@ function highlightContains(player, contains) {
     } else {
         return player;
     }
+}
+
+window.addEventListener('resize', handleResize);
+
+function handleResize() {
+    playerListPopup.style.width = playerUsername.clientWidth + "px";
 }

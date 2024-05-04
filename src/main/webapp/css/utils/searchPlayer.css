@@ -45,22 +45,34 @@
     background-color: #f9f9f9;
     border: 1px solid #ccc;
     z-index: 1;
-    width: 96.8%;
+    border-radius: 0 0 20px 20px;
 }
 
 .player-list {
     list-style-type: none;
     padding: 0;
     margin: 0;
-    max-height: 250px;
+    max-height: 210px;
     overflow-y: auto;
 }
 
 .player-list li {
-    padding: 8px 12px;
+    padding: 4px 12px;
     cursor: pointer;
 }
 
 .player-list li:hover {
     background-color: #ddd;
+}
+
+#playerUsername {
+    outline: none;
+}
+
+.focus{
+    border-radius: 20px 20px 0 0 !important;
+}
+
+.focusBT {
+    border-radius: 20px 20px 0 20px !important;
 }
