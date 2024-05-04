@@ -6,7 +6,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="${pageContext.request.contextPath}/js/pageNotFound.js"></script>
 
-    <c:import url="/jsp/include/head.jsp"/>
+<%--    <c:import url="/jsp/include/head.jsp"/>--%>
     <title>Lupus - page not found</title>
 </head>
 <body>
