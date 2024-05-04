@@ -136,6 +136,12 @@ function unLoggedUser(req) {
         window.location.replace(contextPath + "login")
 }
 
+function notFound(req) {
+    if (req.status === HTTP_STATUS_NOT_FOUND)
+        window.location.replace(contextPath + "jsp/pageNotFound.jsp")
+}
+
+
 function getMessage(req) {
     let json_message = JSON.parse(req.responseText)['message'];
     let message = {}

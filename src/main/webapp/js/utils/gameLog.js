@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     let gameID = window.location.href;
-    gameID = gameID.substring(gameID.lastIndexOf("/gameActions/") + 13);
+    gameID = gameID.substring(gameID.lastIndexOf("/gtmp/") + 6);
     genericGETRequest(contextPath + "game/players/" + gameID, fillGameLog)
 });
 

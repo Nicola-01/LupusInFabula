@@ -74,12 +74,10 @@ function fillFriends(req) {
 }
 
 function checkBoxPress(checkbox) {
-    const username = checkbox.name;
-    console.log(checkbox.name)
     if (checkbox.checked)
-        addToPlayersTable(username);
+        addToPlayersTable(checkbox.name);
     else
-        removeFromPlayersTable(username);
+        removeFromPlayersTable(checkbox.name);
 }
 
 function fillGameSettings(req) {

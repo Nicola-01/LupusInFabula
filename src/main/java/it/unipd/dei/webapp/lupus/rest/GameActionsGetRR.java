@@ -103,14 +103,13 @@ public class GameActionsGetRR extends AbstractRR {
             String publicGameID = game.getPublic_ID();
             LogContext.setGame(publicGameID);
 
-            if(game.getWho_win() == -1) {
+            if (game.getWho_win() == -1) {
                 LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is " + currentPhase);
                 if (GamePhase.NIGHT.getId() != currentPhase)
                     handleDayPhase();
                 else
                     handleNightPhase();
-            }
-            else {
+            } else {
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
                 LOGGER.warn("The game is over");
                 res.setStatus(ec.getHTTPCode());
@@ -176,7 +175,7 @@ public class GameActionsGetRR extends AbstractRR {
     /**
      * Handles the night phase of the game, generating action targets based on the roles' actions.
      *
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException  If an I/O error occurs.
      * @throws SQLException If a SQL exception occurs while accessing the database.
      */
     private void handleNightPhase() throws IOException, SQLException {
@@ -203,6 +202,8 @@ public class GameActionsGetRR extends AbstractRR {
                     if (isValidTarget(player, targetPlayer, role))
                         targets.add(targetPlayer);
                 }
+                if(role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
+                    continue;
                 Collections.sort(targets);
                 LOGGER.info("targets: " + String.join(", ", targets));
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),
@@ -242,8 +243,8 @@ public class GameActionsGetRR extends AbstractRR {
      */
     private boolean isValidTarget(String player, String targetPlayer, String role) throws SQLException {
         // the medium can only target dead players
-        if(role.equals(GameRoleAction.MEDIUM.getName()) && deadPlayers.get(targetPlayer))
-            return true;
+        if (role.equals(GameRoleAction.MEDIUM.getName()))
+            return deadPlayers.get(targetPlayer);
 
         // the target player must be alive
         if (deadPlayers.get(targetPlayer))

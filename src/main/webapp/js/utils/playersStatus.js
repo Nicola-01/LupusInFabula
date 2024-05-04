@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     let gameID = window.location.href;
-    gameID = gameID.substring(gameID.lastIndexOf("/gameActions/") + 13);
+    gameID = gameID.substring(gameID.lastIndexOf("/gtmp/") + 6);
     genericGETRequest(contextPath + "game/players/" + gameID, fillPlayersStatus)
 });
 
@@ -16,7 +16,7 @@ function fillPlayersStatus(req) {
             } else {
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    console.log(playsAsIn)
+                    // console.log(playsAsIn)
                     if(playsAsIn.role !== ROLE_MASTER)
                         playerRole.push(playsAsIn)
                 }
@@ -46,7 +46,7 @@ function createCircularButtons() {
     var div_size = circleDiv.offsetWidth;
     var center = div_size / 2;
 
-    console.log(numButtons)
+    // console.log(numButtons)
 
     for (var i = 0; i < numButtons; i++) {
         var angle = (Math.PI * 2 / numButtons) * i;
@@ -54,7 +54,7 @@ function createCircularButtons() {
 
         // console.log("angle: " + angle);
 
-        console.log(playerRole[i].username)
+        // console.log(playerRole[i].username)
 
         button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
         if(playerRole[i].isDead){
@@ -69,8 +69,8 @@ function createCircularButtons() {
 
         var epsilon_angle = (Math.PI / 2 + angle) * epsilon;
 
-        console.log("epsilon_angle: " + epsilon_angle)
-        console.log("setted angle: " + (angle - epsilon_angle))
+        // console.log("epsilon_angle: " + epsilon_angle)
+        // console.log("setted angle: " + (angle - epsilon_angle))
 
         button.style.left = (center + Math.sin(angle - epsilon_angle) * center - bt_width / 2) + 'px'; // X position of the button
         button.style.top = (center + -Math.cos(angle - epsilon_angle) * center - bt_height / 2) + 'px'; // Y position of the button

@@ -36,10 +36,10 @@ public class GamePlayersRR extends AbstractRR {
     /**
      * Creates a new GamePlayers REST resource.
      *
-     * @param req the HTTP request.
-     * @param res the HTTP response.
-     * @param ds the dataSource for the connection.
-     * @param gameID the ID of the game
+     * @param req         the HTTP request.
+     * @param res         the HTTP response.
+     * @param ds          the dataSource for the connection.
+     * @param gameID      the ID of the game
      * @param URIisMaster whether the requested URI contained /master at the end
      */
     public GamePlayersRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID, boolean URIisMaster) {
@@ -91,9 +91,7 @@ public class GamePlayersRR extends AbstractRR {
             m = new Message("Cannot return game info: unexpected database error.", ec.getErrorCode(), ex.getMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
-        }
-        finally
-        {
+        } finally {
             LogContext.removeAction();
             LogContext.removeUser();
             LogContext.removeIPAddress();

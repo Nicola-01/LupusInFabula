@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.Time;
+import java.sql.Timestamp;
 
 /**
  * Represents a game entity.
@@ -49,7 +50,7 @@ public class Game extends AbstractResource {
     /**
      * The start date of the game.
      */
-    private final Date start;
+    private final Timestamp start;
 
     /**
      * The phase of the game.
@@ -69,11 +70,11 @@ public class Game extends AbstractResource {
      * @param game_duration The duration of the game.
      * @param who_win       The ID of the winning team or player.
      * @param rounds        The number of rounds played in the game.
-     * @param start         The start date of the game.
+     * @param start         The start date and time of the game.
      * @param phase         The phase of the game.
      * @param subphase      The subphase of the game.
      */
-    public Game(final int id, final String public_ID, final Date start, final Time game_duration,
+    public Game(final int id, final String public_ID, final Timestamp start, final Time game_duration,
                 final int who_win, final int rounds, final int phase, final int subphase) {
         this.id = id;
         this.public_ID = public_ID;
@@ -131,11 +132,11 @@ public class Game extends AbstractResource {
     }
 
     /**
-     * Gets the start date of the game.
+     * Gets the start date and time of the game.
      *
-     * @return The start date of the game.
+     * @return The start date and time of the game.
      */
-    public final Date getStart() {
+    public final Timestamp getStart() {
         return start;
     }
 
