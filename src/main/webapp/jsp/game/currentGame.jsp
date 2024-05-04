@@ -31,8 +31,8 @@
     </c:choose>
 
     <div class="row">
-        <jsp:include page="../utils/playersStatus.jsp"/>
-        <jsp:include page="../utils/gameLog.jsp"/>
+        <div id="playersStatus" class="column row col-md-6"></div>
+        <div id="gameLog" class="column col-md-6"></div>
     </div>
 
 </div>

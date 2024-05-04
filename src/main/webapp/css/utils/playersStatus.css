@@ -22,7 +22,18 @@
     font-size: 14px;
     color: white;
     cursor: pointer;
-    transition: z-index 0.3s; /* Add transition for smooth effect */
+    transition: z-index 0.3s;
+}
+
+.grid-button {
+    background-color: orange;
+    border: none;
+    border-radius: 15px;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+    cursor: pointer;
 }
 
 .circular-button:hover {
