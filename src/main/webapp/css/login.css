@@ -1,4 +1,4 @@
-body{
+body {
     margin: 0;
     padding: 0;
     display: flex;
@@ -8,26 +8,26 @@ body{
     font-family: 'Jost', sans-serif;
     background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
 }
-.main{
-    width: 70%;
-    max-width: 700px;
+
+.main {
     height: 500px;
-    margin-left:auto;
-    margin-right:auto;
     overflow: hidden;
-    background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/ cover;
+    background-color: #252057;
     border-radius: 10px;
     box-shadow: 5px 20px 50px #000;
 }
-#chk{
+
+#chk {
     display: none;
 }
-.signup{
+
+.signup {
     position: relative;
-    width:100%;
+    width: 100%;
     height: 100%;
 }
-.lb_login, .lb_singup{
+
+.lb_login, .lb_singup {
     color: #fff;
     font-size: 2.3em;
     justify-content: center;
@@ -38,7 +38,8 @@ body{
     cursor: pointer;
     transition: .5s ease-in-out;
 }
-.custom-input{
+
+.custom-input {
     width: 60%;
     height: 40px;
     background: #e0dede;
@@ -50,20 +51,23 @@ body{
     outline: none;
     border-radius: 5px;
 }
-.additional-options{
+
+.additional-options {
     width: 60%;
     height: 20px;
     margin: 0 auto;
 }
+
 a {
     color: #573b8a;
     text-decoration: none;
 }
+
 a:hover {
     text-decoration: underline;
 }
 
-input[type="submit"]{
+input[type="submit"] {
     width: 60%;
     height: 40px;
     margin: 10px auto;
@@ -80,23 +84,26 @@ input[type="submit"]{
     transition: .2s ease-in;
     cursor: pointer;
 }
-input[type="submit"]:hover{
+
+input[type="submit"]:hover {
     background: #6d44b8;
 }
+
 input[type="submit"]:disabled {
     background: #cfbef7;
     color: #573b8a;
     cursor: not-allowed;
 }
 
-.login{
+.login {
     height: 460px;
     background: #eee;
     border-radius: 60% / 10%;
     transform: translateY(-130px);
     transition: .8s ease-in-out;
 }
-.lb_login{
+
+.lb_login {
     color: #573b8a;
     transform: scale(.6);
 }
@@ -106,16 +113,18 @@ input[type="submit"]:disabled {
     vertical-align: middle;
 }
 
-.forgot-password{
+.forgot-password {
     text-align: right;
 }
 
-#chk:checked ~ .login{
+#chk:checked ~ .login {
     transform: translateY(-480px);
 }
-#chk:checked ~ .login label{
+
+#chk:checked ~ .login label {
     transform: scale(1);
 }
-#chk:checked ~ .signup label{
+
+#chk:checked ~ .signup label {
     transform: scale(.6);
 }
