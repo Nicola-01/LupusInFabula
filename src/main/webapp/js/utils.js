@@ -141,6 +141,23 @@ function notFound(req) {
         window.location.replace(contextPath + "jsp/pageNotFound.jsp")
 }
 
+const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "medium", "sam", "seer", "sheriff"];
+const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
+const victoryStealerRoles = ["hamster", "jester"];
+const neutralRoles = ["illusionist", "plague spreader"];
+
+function getRoleType(role) {
+    if(goodRoles.includes(role))
+        return "good"
+    else if(evilRoles.includes(role))
+        return "evil"
+    else if(victoryStealerRoles.includes(role))
+        return "victory stealer"
+    else if(neutralRoles.includes(role))
+        return "neutral"
+
+}
+
 
 function getMessage(req) {
     let json_message = JSON.parse(req.responseText)['message'];

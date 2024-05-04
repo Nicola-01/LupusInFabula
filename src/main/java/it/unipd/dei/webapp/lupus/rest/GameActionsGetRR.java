@@ -75,6 +75,7 @@ public class GameActionsGetRR extends AbstractRR {
                     && playerRole.containsValue(role.getName())
                     && !role.getAction().equals(GameRoleAction.SAM.getAction())
                     && !role.getAction().equals(GameRoleAction.CARPENTER.getAction())
+                    && !role.getAction().equals(GameRoleAction.KAMIKAZE.getAction())
             )
                 // insert only the role that exist in the game
                 nightAction.put(role.getName(), role.getAction());
@@ -150,7 +151,9 @@ public class GameActionsGetRR extends AbstractRR {
 //        LOGGER.info("Handling day phase. Second ballot: " + secondBallot);
 
         // for each player in the game
-        for (String player : playerRole.keySet()) {
+        for (Map.Entry<String, String> pr : playerRole.entrySet()) {
+            String player = pr.getKey();
+            String role = pr.getValue();
             List<String> targets = new ArrayList<>();
 
 //            // Skip voting for dead players in the second ballot
@@ -165,7 +168,7 @@ public class GameActionsGetRR extends AbstractRR {
             }
 
             Collections.sort(targets);
-            actionTargets.add(new ActionTarget(player, Action.VOTE, targets));
+            actionTargets.add(new ActionTarget(role, player, Action.VOTE, targets));
         }
         LOGGER.info("Returning the actions of day phase.");
         res.setStatus(HttpServletResponse.SC_OK);
@@ -205,6 +208,9 @@ public class GameActionsGetRR extends AbstractRR {
                 if(role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
                     continue;
                 Collections.sort(targets);
+                if(role.equals(GameRoleAction.SHERIFF.getName()))
+                    targets.add(0,"no shot");
+
                 LOGGER.info("targets: " + String.join(", ", targets));
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),
                         getNightAction(role), targets));

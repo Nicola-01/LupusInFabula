@@ -45,79 +45,164 @@ function fillGameActions(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
-                let gameActions = document.getElementById("gameActions");
-
-                // Loop through the list of friends
-                for (let i = 0; i < list.length; i++) {
-                    let actionTarget = list[i]['actionTarget'];
-
-                    // get the wolves that can do ad action for kill someone
-                    if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
-                        let wolfPlayers = actionTarget['players'];
-                        for (let j = 0; j < wolfPlayers.length; j++)
-                            wolfPack.push(wolfPlayers[j].player);
-                    }
-
-                    // Create wrapper element to contain roleTargetsElem and text
-                    let actionWrapper = document.createElement("div");
-                    actionWrapper.setAttribute("class", "action-wrapper");
-
-                    let roleTargetsElem = document.createElement("select");
-                    roleTargetsElem.id = actionTarget.role + "_targets";
-                    roleTargetsElem.setAttribute("player", actionTarget['players'][0].player);
-                    roleTargetsElem.setAttribute("class", "roleTargets");
-
-                    let possibleTargets = actionTarget['possibleTargets'];
-                    for (let j = 0; j < possibleTargets.length; j++) {
-                        let option = document.createElement("option");
-                        option.text = possibleTargets[j].player; // Assuming 'player' is the property containing the player name
-                        roleTargetsElem.add(option);
-                    }
-
-                    // Add text to the wrapper
-                    let actionText = document.createElement("span");
-                    actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-                    actionWrapper.appendChild(actionText);
-
-                    // Add roleTargetsElem to the wrapper
-                    actionWrapper.appendChild(roleTargetsElem);
-
-                    // Add wrapper to the gameActions element
-                    gameActions.appendChild(actionWrapper);
-
-                }
-
-                let actionWrapperWolf = document.createElement("div");
-                actionWrapperWolf.setAttribute("class", "action-wrapper");
-
-                let designatedWolf = document.createElement("select");
-                designatedWolf.id = "designatedWolf";
-                designatedWolf.setAttribute("class", "roleTargets");
-
-                for (let i = 0; i < wolfPack.length; i++) {
-                    let option = document.createElement("option");
-                    option.text = wolfPack[i]; // Assuming 'player' is the property containing the player name
-                    designatedWolf.add(option);
-                }
-
-                // Add text to the wrapper
-                let actionTextWolf = document.createElement("span");
-                actionTextWolf.innerHTML = "Who is the <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> that will make the action?";
-                actionWrapperWolf.appendChild(actionTextWolf);
-
-                // Add roleTargetsElem to the wrapper
-                actionWrapperWolf.appendChild(designatedWolf);
-
-                // Add wrapper to the gameActions element
-                gameActions.appendChild(actionWrapperWolf);
-
+                if (gamePhase === 0)
+                    handleNightPhase(list)
+                else
+                    handleDayPhase(list)
             }
         } else
             unLoggedUser(req);
     }
 }
 
+function handleNightPhase(list) {
+    let gameActions = document.getElementById("gameActions");
+
+    let designatedWolfDiv = document.createElement("div");
+    designatedWolfDiv.id = "designatedWolfDiv";
+    gameActions.appendChild(designatedWolfDiv);
+
+    let goodDiv = document.createElement("div");
+    let evilDiv = document.createElement("div");
+    let neutralDiv = document.createElement("div");
+    let vicStealDiv = document.createElement("div");
+
+    goodDiv.setAttribute("class", "goodRoles");
+    evilDiv.setAttribute("class", "evilRoles");
+    neutralDiv.setAttribute("class", "neutralRoles");
+    vicStealDiv.setAttribute("class", "vivStealRoles");
+
+    gameActions.appendChild(evilDiv);
+    gameActions.appendChild(goodDiv);
+    gameActions.appendChild(neutralDiv);
+    gameActions.appendChild(vicStealDiv);
+
+    // Loop through the list of friends
+    for (let i = 0; i < list.length; i++) {
+        let actionTarget = list[i]['actionTarget'];
+
+        // get the wolves that can do ad action for kill someone
+        if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
+            let wolfPlayers = actionTarget['players'];
+            for (let j = 0; j < wolfPlayers.length; j++)
+                wolfPack.push(wolfPlayers[j].player);
+        }
+
+        // Create wrapper element to contain roleTargetsElem and text
+        let actionWrapper = document.createElement("div");
+        actionWrapper.setAttribute("class", "action-wrapper");
+
+        let roleTargetsElem = document.createElement("select");
+        roleTargetsElem.id = actionTarget.role + "_targets";
+        roleTargetsElem.setAttribute("player", actionTarget['players'][0].player);
+        roleTargetsElem.setAttribute("class", "roleTargets");
+
+        let possibleTargets = actionTarget['possibleTargets'];
+        for (let j = 0; j < possibleTargets.length; j++) {
+            let option = document.createElement("option");
+            option.text = possibleTargets[j].player;
+            roleTargetsElem.add(option);
+        }
+
+        // Add text to the wrapper
+        let actionText = document.createElement("span");
+        actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
+        actionWrapper.appendChild(actionText);
+
+        // Add roleTargetsElem to the wrapper
+        actionWrapper.appendChild(roleTargetsElem);
+
+        let selectedDiv;
+        switch (getRoleType(actionTarget.role)) {
+            case "good":
+                selectedDiv = goodDiv;
+                break;
+            case "evil":
+                selectedDiv = evilDiv;
+                break;
+            case "victory stealer":
+                selectedDiv = vicStealDiv;
+                break;
+            case "neutral":
+                selectedDiv = neutralDiv;
+                break;
+            default:
+                continue;
+        }
+        // Add wrapper to the gameActions element
+        selectedDiv.appendChild(actionWrapper);
+    }
+
+    let actionWrapperWolf = document.createElement("div");
+    actionWrapperWolf.setAttribute("class", "action-wrapper");
+
+    let designatedWolf = document.createElement("select");
+    designatedWolf.id = "designatedWolf";
+    designatedWolf.setAttribute("class", "roleTargets");
+
+    for (let i = 0; i < wolfPack.length; i++) {
+        let option = document.createElement("option");
+        option.text = wolfPack[i]; // Assuming 'player' is the property containing the player name
+        designatedWolf.add(option);
+    }
+
+    // Add text to the wrapper
+    let actionTextWolf = document.createElement("span");
+    actionTextWolf.innerHTML = "Who is the <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> that will make the action?";
+    actionWrapperWolf.appendChild(actionTextWolf);
+
+    // Add roleTargetsElem to the wrapper
+    actionWrapperWolf.appendChild(designatedWolf);
+
+    // Add wrapper to the gameActions element
+    designatedWolfDiv.appendChild(actionWrapperWolf);
+
+}
+
+function handleDayPhase(list) {
+    let gameActions = document.getElementById("gameActions");
+
+    for (let i = 0; i < list.length; i++) {
+        let actionTarget = list[i]['actionTarget'];
+
+        // Create wrapper element to contain roleTargetsElem and text
+        let actionWrapper = document.createElement("div");
+        actionWrapper.setAttribute("class", "action-wrapper");
+
+        let roleTargetsElem = document.createElement("select");
+        roleTargetsElem.id = actionTarget.role + "_targets";
+        roleTargetsElem.setAttribute("player", actionTarget.player);
+        roleTargetsElem.setAttribute("class", "roleTargets");
+
+        let possibleTargets = actionTarget['possibleTargets'];
+        for (let j = 0; j < possibleTargets.length; j++) {
+            let option = document.createElement("option");
+            option.text = possibleTargets[j].player;
+            roleTargetsElem.add(option);
+        }
+
+        // Add text to the wrapper
+        let actionText = document.createElement("span");
+        actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
+        actionWrapper.appendChild(actionText);
+
+        // Add roleTargetsElem to the wrapper
+        actionWrapper.appendChild(roleTargetsElem);
+
+        // Add wrapper to the gameActions element
+        gameActions.appendChild(actionWrapper);
+    }
+
+}
+
 function sendActions() {
+    if (gamePhase === 0)
+        sendNightAction()
+    else
+        sendDayAction()
+}
+
+function sendNightAction() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
     const gameAction = [];
 
@@ -145,15 +230,35 @@ function sendActions() {
     genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
 }
 
+function sendDayAction() {
+    const role_targets = document.querySelectorAll('[id*="_targets"]');
+    const gameAction = [];
+
+    let player;
+    let role;
+    let target;
+    for (let i = 0; i < role_targets.length; i++) {
+
+        player = role_targets[i].getAttribute("player");
+        role = role_targets[i].id.replace('_targets', '');
+        target = role_targets[i].value;
+
+        gameAction.push({player, role, target});
+    }
+
+    const json = {gameAction};
+    console.log(JSON.stringify(json));
+    genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
+}
+
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            if(gamePhase === 0) {
+            if (gamePhase === 0) {
                 let nightActionResults = JSON.parse(req.responseText)['nightActionResults'];
                 console.log(nightActionResults)
                 location.reload()
-            }
-            else {
+            } else {
                 let dayActionResults = JSON.parse(req.responseText)['dayActionResults'];
                 console.log(dayActionResults)
                 location.reload()

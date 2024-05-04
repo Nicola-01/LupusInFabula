@@ -1299,7 +1299,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
+        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0))
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0 && !hamster.isEmpty())

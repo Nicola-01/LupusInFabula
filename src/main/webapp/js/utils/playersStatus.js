@@ -17,8 +17,7 @@ function fillPlayersStatus(req) {
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
                     // console.log(playsAsIn)
-                    if(playsAsIn.role !== ROLE_MASTER)
-                        playerRole.push(playsAsIn)
+                    playerRole.push(playsAsIn)
                 }
                 createCircularButtons()
             }

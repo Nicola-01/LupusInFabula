@@ -26,7 +26,7 @@ public class ActionTarget extends AbstractResource {
     /**
      * The role associated with the action.
      */
-    private String role;
+    private final String role;
 
     /**
      * The list of players associated with the action.
@@ -65,7 +65,8 @@ public class ActionTarget extends AbstractResource {
      * @param action  The action for which the target is defined.
      * @param targets The possible targets for the action.
      */
-    public ActionTarget(String player, String action, List<String> targets) {
+    public ActionTarget(String role, String player, String action, List<String> targets) {
+        this.role = role;
         this.player = player;
         this.action = action;
         this.targets = targets;
@@ -122,14 +123,15 @@ public class ActionTarget extends AbstractResource {
         jg.writeFieldName("actionTarget");
         jg.writeStartObject();
 
+        jg.writeStringField("role", role);
+
         // if the player is set the action is for a single player
         if (player != null)
             jg.writeStringField("player", player);
-        // else the action is for a role, i.e. multiple players
-        else {
-            jg.writeStringField("role", role);
+
+        else // else the action is for a role, i.e. multiple players
             listToJSON(jg, players, "players");
-        }
+
 
         jg.writeStringField("action", action);
         listToJSON(jg, targets, "possibleTargets");

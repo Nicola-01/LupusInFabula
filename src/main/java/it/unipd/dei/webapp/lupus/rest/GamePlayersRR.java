@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Handles the GET request for /game/players.
@@ -67,6 +69,7 @@ public class GamePlayersRR extends AbstractRR {
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");
+                el.removeIf(playsAsIn -> Objects.equals(playsAsIn.getRole(), GameRoleAction.MASTER.getName()));
 
                 res.setStatus(HttpServletResponse.SC_OK);
                 new ResourceList<PlaysAsIn>(el).toJSON(res.getOutputStream());
