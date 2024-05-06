@@ -12,12 +12,16 @@
 <head>
     <title>Game</title>
     <c:import url="/jsp/include/head.jsp"/>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
 <body>
+
+<%--<iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/background.html" frameborder="0"></iframe>--%>
+
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container">
@@ -32,7 +36,7 @@
     </c:choose>
 
     <div class="row">
-        <div id="playersStatus" class="column col-md-6 p-2"></div>
+        <div id="playersStatus" class="column row col-md-6 p-2"></div>
         <div id="gameLog" class="column col-md-6 p-2"></div>
     </div>
 

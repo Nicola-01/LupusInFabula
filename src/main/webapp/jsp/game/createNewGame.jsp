@@ -18,7 +18,9 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 <body>
+
 <jsp:include page="/jsp/include/navbar.jsp"/>
+
 <div class="container">
     <div class="row">
         <div id="players" class="column col-sm-12 col-md-6 p-2 pb-5">
