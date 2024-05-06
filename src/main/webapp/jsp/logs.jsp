@@ -12,7 +12,7 @@
 <html lang="en">
 <head>
     <title>logs</title>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/logs.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/testLogs/logs.css">
 </head>
 
 <h2>Hello, World!</h2>

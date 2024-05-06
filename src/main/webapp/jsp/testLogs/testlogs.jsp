@@ -14,52 +14,75 @@
 <head>
     <title>Logs user</title>
     <c:import url="/jsp/include/head.jsp"/>
-    <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">--%>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/testLogs/logs.css">
 </head>
-
-<%--<body onload="loadLogs()"> <!-- Quando il body viene caricato, chiamerà la funzione loadLogs() -->--%>
 
 
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<%--<div class="log-container">--%>
-<%--    <h2>LOGS</h2>--%>
-<%--    <table id="logs_table">--%>
-<%--        <tr>--%>
-<%--            <th>GameID</th>--%>
 
-<%--        </tr>--%>
+<p>Statistics and history
+    <c:if test="${not empty sessionScope.user}">
+        of
+        <b> ${sessionScope.user.getUsername()} </b>
+    </c:if>
+    <c:if test="${empty sessionScope.user}">
+        Please login to check the statistics
+    </c:if>
+</p>
 
-<%--    </table>--%>
 
+<h1>Statistics</h1>
+<div class="container">
+    <table class="sortable" id="roles_table">
 
-<%--</div>--%>
+        <tr>
+            <th>Role</th>
+            <th>Times</th>
+            <th>Wins</th>
+
+        </tr>
+
+    </table>
+
+</div>
+
 
 <h1>Game Logs</h1>
 
-<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
+
+<div class="container">
+
+    <table class="sortable" id="logs_table">
 
 
+        <tr>
+            <th>GameId</th>
+            <th>Date and time</th>
+            <th>Duration</th>
+            <th>Number of rounds</th>
+            <th>Role played</th>
+            <th>Outcome</th>
+            <th>View logs</th>
+        </tr>
 
-<table class="sortable" id="logs_table">
+    </table>
 
-
-    <tr>
-        <th>GameId</th>
-        <th>number</th>
-    </tr>
-
-</table>
+</div>
 
 
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
 
+
 </body>
 
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <script src="${pageContext.request.contextPath}/js/testLogs/testlogs.js"></script>
+
 </html>
 
 

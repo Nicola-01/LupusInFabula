@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     loadLogs();
+    loadStatics();
 });
 
 
@@ -7,29 +8,43 @@ document.addEventListener('DOMContentLoaded', function (event) {
  * Get logs.
  */
 function loadLogs() {
-    genericGETRequest(contextPath + "user/log_player/logs", getlogs)
-    // genericGETRequest(contextPath + "/temp/logs/", fillGameSettings)
-    //genericGETRequest(contextPath + "/temp/logs/", f)
-    // genericGETRequest(contextPath + "user/me/friend", fillFriends)
+    genericGETRequest(contextPath + "user/log_player/logs", getLogs)
+  //  genericGETRequest(contextPath + "user/log_player/logs", getGeneralStats)
 }
 
-// function f(req){
-//
-// }
+function loadStatics(){
+    genericGETRequest(contextPath + "user/log_player/statistic", getStatsRole)
+}
 
-function getlogs(req) {
+function getLogs(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            console.log("ajddoiaw")
 
             var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
 
             if (list == null)
-                alert("No logs available");
+                alert("User Not Authenticated");
             var table = document.getElementById("logs_table")
 
             //var tableBody = table.createTBody();
             var tbody = table.querySelector("tbody");
+
+            var sizeid = 0;
+            var sizerounds = 0;
+
+            for (let i = 0; i < list.length; i++) {
+                let log = list[i]['PlaysJoinGame'];
+                var gameIdLength = log.game_id.toString().length;
+
+                if (gameIdLength > sizeid) {
+                    sizeid = gameIdLength;
+                }
+
+                var roundsLength = log.number_of_rounds.toString().length;
+                if (roundsLength > sizerounds) {
+                    sizerounds = roundsLength;
+                }
+            }
 
             for (let i = 0; i < list.length; i++) {
 
@@ -39,108 +54,91 @@ function getlogs(req) {
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = log.game_id;
+                cell0.innerHTML = String(log.game_id).padStart(sizeid, '0');
+                // cell0.innerHTML = Number(log.game_id);
+                //cell0.classList.add("cell-with-zero");
+
 
                 var cell1 = row.insertCell(1);
-                cell1.innerHTML = log.number_of_rounds;
+                cell1.innerHTML = log.start;
+
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = log.game_duration;
+
+                var cell3 = row.insertCell(3);
+                // cell3.innerHTML = Number(log.number_of_rounds);
+                cell3.innerHTML = String(log.number_of_rounds).padStart(sizerounds, '0');
+                //cell3.classList.add("cell-with-zero");
+
+                var cell4 = row.insertCell(4);
+                cell4.innerHTML = log.name;
+
+                var cell5 = row.insertCell(5);
+                if (log.has_won)
+                    cell5.innerHTML = "Victory";
+                else {
+                    cell5.innerHTML = "Defeat";
+                }
+
+                var cell6 = row.insertCell(6);
+                cell6.innerHTML = "Not working now";
             }
         }
     }
-
-    //JSON DA' ERRORE:
-    /*
-    * Uncaught SyntaxError: JSON.parse: unexpected end of data at line 1 column 1 of the JSON data
-    getlogs http://localhost:8080/lupus/js/testLogs/testlogs.js:25
-    onreadystatechange http://localhost:8080/lupus/js/utils.js:104
-    genericGETRequest http://localhost:8080/lupus/js/utils.js:107
-    loadLogs http://localhost:8080/lupus/js/testLogs/testlogs.js:10
-    <anonymous> http://localhost:8080/lupus/js/testLogs/testlogs.js:2
-    EventListener.handleEvent* http://localhost:8080/lupus/js/testLogs/testlogs.js:1
-    * */
-
-
-    //var json = '{"resource-list":[{"PlaysJoinGame":{"game_id":109,"start":"2024-04-29 23:13:21.0","game_duration":"00:45:37","number_of_rounds":1,"name":"master","has_won":false}},{"PlaysJoinGame":{"game_id":111,"start":"2024-04-29 23:13:21.0","game_duration":"00:17:12","number_of_rounds":1,"name":"farmer","has_won":true}},{"PlaysJoinGame":{"game_id":104,"start":"2024-04-29 23:13:21.0","game_duration":"00:09:00","number_of_rounds":9,"name":"farmer","has_won":false}},{"PlaysJoinGame":{"game_id":103,"start":"2024-04-29 23:13:21.0","game_duration":"00:15:08","number_of_rounds":7,"name":"farmer","has_won":true}},{"PlaysJoinGame":{"game_id":106,"start":"2024-04-29 23:13:21.0","game_duration":"00:10:45","number_of_rounds":1,"name":"knight","has_won":false}},{"PlaysJoinGame":{"game_id":105,"start":"2024-04-29 23:13:21.0","game_duration":"00:11:17","number_of_rounds":1,"name":"knight","has_won":true}},{"PlaysJoinGame":{"game_id":108,"start":"2024-04-29 23:13:21.0","game_duration":"00:21:17","number_of_rounds":12,"name":"seer","has_won":false}},{"PlaysJoinGame":{"game_id":110,"start":"2024-04-29 23:13:21.0","game_duration":"00:31:20","number_of_rounds":0,"name":"wolf","has_won":true}},{"PlaysJoinGame":{"game_id":107,"start":"2024-04-29 23:13:21.0","game_duration":"00:16:27","number_of_rounds":23,"name":"wolf","has_won":false}},{"PlaysJoinGame":{"game_id":102,"start":"2024-04-29 23:13:21.0","game_duration":"00:01:36","number_of_rounds":5,"name":"wolf","has_won":false}},{"PlaysJoinGame":{"game_id":101,"start":"2024-04-29 23:13:21.0","game_duration":"00:11:02","number_of_rounds":0,"name":"wolf","has_won":true}}]}';
-
-
 }
 
 
-// function f(req) {
-//     // Analizza la risposta JSON ricevuta dalla richiesta
-//     var response = JSON.parse(req.responseText);
-//
-//     // Ottieni il messaggio di accesso ai log
-//     var message = response.message.message;
-//     // Ottieni la lista dei log
-//     return message
-//
-//     var logs = response["resource-list"];
-//
-//     // Crea una stringa per contenere il contenuto da aggiungere alla pagina HTML
-//     var content = "<h2>" + message + "</h2>";
-//
-//     // Itera attraverso ogni log nella lista e aggiungi le informazioni alla stringa di contenuto
-//     for (var i = 0; i < logs.length; i++) {
-//         var log = logs[i].PlaysJoinGame;
-//         content += "<p>Game ID: " + log.game_id + "</p>";
-//         content += "<p>Start: " + log.start + "</p>";
-//         content += "<p>Game Duration: " + log.game_duration + "</p>";
-//         content += "<p>Number of Rounds: " + log.number_of_rounds + "</p>";
-//         content += "<p>Name: " + log.name + "</p>";
-//         content += "<p>Has Won: " + log.has_won + "</p>";
-//         content += "<hr>"; // Aggiungi una linea orizzontale per separare ogni log
-//     }
-//
-//     // Seleziona l'elemento HTML in cui vuoi inserire il contenuto e aggiungilo
-//     document.getElementById("log-container").innerHTML = content;
-// }
-//
-//
-// function fillGameSettings(req) {
-//     if (req.readyState === XMLHttpRequest.DONE) {
-//         if (req.status === HTTP_STATUS_OK) {
-//             var list = JSON.parse(req.responseText)[JSON_resource_list];
-//
-//             if (list == null)
-//                 alert("No game settings available");
-//             else {
-//                 // Get references to the div elements
-//                 var gameLogsContainer = document.getElementById("gameLogsContainer");
-//
-//                 // Clear previous content
-//                 gameLogsContainer.innerHTML = "";
-//
-//                 // Iterate over each log entry
-//                 list.forEach(function(log) {
-//                     var playsJoinGame = log.PlaysJoinGame;
-//                     var gameID = playsJoinGame.game_id;
-//                     var start = playsJoinGame.start;
-//                     var duration = playsJoinGame.game_duration;
-//                     var rounds = playsJoinGame.number_of_rounds;
-//                     var name = playsJoinGame.name;
-//                     var hasWon = playsJoinGame.has_won;
-//
-//                     // Create a new log entry element
-//                     var logEntry = document.createElement("div");
-//                     logEntry.className = "log-entry";
-//
-//                     // Construct the log entry content
-//                     var logContent = "<b>Game ID:</b> " + gameID + "<br>" +
-//                         "<b>Start:</b> " + start + "<br>" +
-//                         "<b>Duration:</b> " + duration + "<br>" +
-//                         "<b>Number of Rounds:</b> " + rounds + "<br>" +
-//                         "<b>Name:</b> " + name + "<br>" +
-//                         "<b>Has Won:</b> " + hasWon;
-//
-//                     // Set the log entry content
-//                     logEntry.innerHTML = logContent;
-//
-//                     // Append the log entry to the container
-//                     gameLogsContainer.appendChild(logEntry);
-//                 });
-//             }
-//         } else {
-//             alert("Error: Unable to fetch game logs");
-//         }
-//     }
-// }
+function getStatsRole(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            var list = JSON.parse(req.responseText)["resource-list"];
+
+            if (list == null)
+                alert("User Not Authenticated");
+            var table = document.getElementById("roles_table");
+            var tbody = table.querySelector("tbody");
+
+            var sizeCountName = 0;
+            var sizeCountWins = 0;
+
+            for (let i = 0; i < list.length; i++) {
+                let stats = list[i]['StatsRole'];
+
+                var countNameLength = stats.countName.toString().length;
+                if (countNameLength > sizeCountName) {
+                    sizeCountName = countNameLength;
+                }
+
+                var countWinsLength = stats.countWins.toString().length;
+                if (countWinsLength > sizeCountWins) {
+                    sizeCountWins = countWinsLength;
+                }
+            }
+
+            for (let i = 0; i < list.length; i++) {
+                let stats = list[i]['StatsRole'];
+                var row = tbody.insertRow();
+
+                row.classList.add("item");
+
+                var cell0 = row.insertCell(0);
+                cell0.innerHTML = stats.name;
+
+                var cell1 = row.insertCell(1);
+                cell1.innerHTML = String(stats.countName).padStart(sizeCountName, '0');
+
+                var cell2 = row.insertCell(2);
+                cell2.innerHTML = String(stats.countWins).padStart(sizeCountWins, '0');
+
+            }
+
+        }
+    }
+}
+
+function getGeneralStats(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+        }
+    }
+}
