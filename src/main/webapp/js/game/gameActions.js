@@ -266,10 +266,11 @@ function actionsResponse(req) {
 
         } else {
             let message = getMessage(req)
+            populateErrorMessage(message.message, message.errorCode, message.errorDetails);
 
-            console.log(message.message);
-            console.log(message.errorCode);
-            console.log(message.errorDetails);
+            // console.log(message.message);
+            // console.log(message.errorCode);
+            // console.log(message.errorDetails);
 
             if (req.status === HTTP_STATUS_CONFLICT) {
 

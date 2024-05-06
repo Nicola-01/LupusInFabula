@@ -14,6 +14,7 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
 <body>
@@ -41,6 +42,7 @@
 
 <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/playersStatus.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 </body>
 </html>

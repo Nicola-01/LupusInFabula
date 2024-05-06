@@ -261,6 +261,7 @@ input[type=number] {
     justify-content: center;
     align-items: center;
     min-width: 60px;
+    margin-left: auto;
 }
 
 .number {

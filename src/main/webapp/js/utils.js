@@ -147,23 +147,28 @@ const victoryStealerRoles = ["hamster", "jester"];
 const neutralRoles = ["illusionist", "plague spreader"];
 
 function getRoleType(role) {
-    if(goodRoles.includes(role))
+    if (goodRoles.includes(role))
         return "good"
-    else if(evilRoles.includes(role))
+    else if (evilRoles.includes(role))
         return "evil"
-    else if(victoryStealerRoles.includes(role))
+    else if (victoryStealerRoles.includes(role))
         return "victory stealer"
-    else if(neutralRoles.includes(role))
+    else if (neutralRoles.includes(role))
         return "neutral"
 
 }
 
 
 function getMessage(req) {
-    let json_message = JSON.parse(req.responseText)['message'];
-    let message = {}
-    message.message = json_message.message;
-    message.errorCode = json_message['error-code'];
-    message.errorDetails = json_message['error-details'];
-    return message
+    let jsonResponse = JSON.parse(req.responseText);
+    if (jsonResponse.hasOwnProperty('message')) {
+        let message = {}
+        let jsonMSG = jsonResponse['message']
+        message.message = jsonMSG.message;
+        message.errorCode = jsonMSG['error-code'];
+        message.errorDetails = jsonMSG['error-details'];
+        return message;
+    }
+    return null;
+
 }

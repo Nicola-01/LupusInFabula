@@ -96,30 +96,31 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("PLAYER " + username + " does not exist", ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("The player '" + username + "' does not exist.", ec.getErrorCode(), ec.getErrorMessage());
                     messages.add(m);
                     // m.toJSON(res.getOutputStream());
 
                     LOGGER.info("USER %s does not exist", username);
+                } else {
+                    // if the user exists, retrieve the correct name (lowercase and lowercase)
+                    username = validPlayer.getUsername();
+
+                    // check if the player is already in a game
+                    if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != -1) {
+                        ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
+                        res.setStatus(ec.getHTTPCode());
+
+                        Message m = new Message("PLAYER " + username + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
+                        messages.add(m);
+                        // m.toJSON(res.getOutputStream());
+
+                        LOGGER.warn("USER %s is already in a game", username);
+                    }
+
+                    // add the player to the list
+                    if (!selectedPlayers.contains(username))
+                        selectedPlayers.add(username);
                 }
-                // if the user exists, retrieve the correct name (lowercase and lowercase)
-                username = validPlayer.getUsername();
-
-                // check if the player is already in a game
-                if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != -1) {
-                    ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
-                    res.setStatus(ec.getHTTPCode());
-
-                    Message m = new Message("PLAYER " + username + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
-                    messages.add(m);
-                    // m.toJSON(res.getOutputStream());
-
-                    LOGGER.warn("USER %s is already in a game", username);
-                }
-
-                // add the player to the list
-                if (!selectedPlayers.contains(username))
-                    selectedPlayers.add(username);
             }
 
             if (selectedPlayers.contains(gameMaster)) {

@@ -15,6 +15,7 @@
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
@@ -66,6 +67,7 @@
         </div>
     </div>
     <br>
+    <c:import url="/jsp/utils/errorMessage.jsp"/>
     <div class="button-container">
         <button id="sendSettings">
             <span class="text">Create new game!</span>
@@ -75,6 +77,7 @@
 
 <script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>

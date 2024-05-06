@@ -205,10 +205,34 @@ function gameCreation(req) {
             let game = JSON.parse(req.responseText)['game'];
         } else {
             let message = getMessage(req)
+            if (message != null)
+                populateErrorMessage(message.message, message.errorCode, message.errorDetails);
+            else {
+                let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
+                let msgs = ""
+                let errorCodes = ""
+                let errorDetails = ""
+                if (listMsg != null) {
+                    for (let i = 0; i < listMsg.length; i++) {
+                        let message = listMsg[i]['message'];
+                        console.log(listMsg[i])
+                        console.log(message.message)
+                        msgs += message.message + "<br>";
+                        console.log(msgs)
+                        if (!errorCodes.includes(message['error-code']))
+                            errorCodes += ", " + message['error-code'];
+                        if (!errorDetails.includes(message['error-details']))
+                            errorDetails += "<br>" + message['error-details'];
+                    }
+                    // remove ", " from errorCodes and "<br>" form errorDetails
+                    populateErrorMessage(msgs, errorCodes.substring(2), errorDetails.substring(4));
+                }
 
-            console.log(message.message);
-            console.log(message.errorCode);
-            console.log(message.errorDetails);
+            }
+
+            // console.log(message.message);
+            // console.log(message.errorCode);
+            // console.log(message.errorDetails);
 
             if (req.status === HTTP_STATUS_CONFLICT) {
 
