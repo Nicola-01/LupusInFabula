@@ -11,14 +11,16 @@
     <c:import url="/jsp/include/head.jsp"/>
 </head>
 <body>
-<jsp:include page="include/navbar.jsp" />
+<jsp:include page="include/navbar.jsp"/>
 <main>
     <p>Welcome,
         <c:if test="${not empty sessionScope.user}">
             <b>${sessionScope.user.getUsername()} </b>
         </c:if>
         <c:if test="${empty sessionScope.user}">
-            please login to check the website in its entirety
+            <script>
+                window.location.href = "http://localhost:8080/lupus/login";
+            </script>
         </c:if>
     </p>
     <section class="centered-box">
@@ -26,7 +28,9 @@
             <h2>Player</h2>
             <!-- if logged in -->
             <c:if test="${not empty sessionScope.user}">
-                <a href="<c:url value="/logout"/>"><button>Logout</button></a>
+                <a href="<c:url value="/logout"/>">
+                    <button>Logout</button>
+                </a>
             </c:if>
             <!-- if NOT logged in -->
             <c:if test="${empty sessionScope.user}">
@@ -48,9 +52,9 @@
             <button>Join a Game</button>
         </div>
     </section>
-    <section class="show-message">
-        <c:import url="/jsp/include/show-message.jsp"/>
-    </section>
+<%--    <section class="show-message">--%>
+<%--        <c:import url="/jsp/include/show-message.jsp"/>--%>
+<%--    </section>--%>
 </main>
 
 <c:import url="/jsp/include/footer.jsp"/>

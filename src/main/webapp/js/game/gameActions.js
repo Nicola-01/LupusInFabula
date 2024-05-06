@@ -92,10 +92,20 @@ function handleNightPhase(list) {
         let actionWrapper = document.createElement("div");
         actionWrapper.setAttribute("class", "action-wrapper");
 
+        // Create select element
         let roleTargetsElem = document.createElement("select");
         roleTargetsElem.id = actionTarget.role + "_targets";
+        roleTargetsElem.setAttribute("required", "required");
         roleTargetsElem.setAttribute("player", actionTarget['players'][0].player);
         roleTargetsElem.setAttribute("class", "roleTargets");
+
+        // Create default option
+        let defaultOption = document.createElement("option");
+        defaultOption.setAttribute("value", "");
+        defaultOption.setAttribute("disabled", "disabled");
+        defaultOption.setAttribute("selected", "selected");
+        defaultOption.textContent = "Select option";
+        roleTargetsElem.append(defaultOption);
 
         let possibleTargets = actionTarget['possibleTargets'];
         for (let j = 0; j < possibleTargets.length; j++) {
@@ -109,8 +119,7 @@ function handleNightPhase(list) {
         actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
         actionWrapper.appendChild(actionText);
 
-        // Add roleTargetsElem to the wrapper
-        actionWrapper.appendChild(roleTargetsElem);
+        insertSelectionBox(actionWrapper, roleTargetsElem)
 
         let selectedDiv;
         switch (getRoleType(actionTarget.role)) {
@@ -138,7 +147,16 @@ function handleNightPhase(list) {
 
     let designatedWolf = document.createElement("select");
     designatedWolf.id = "designatedWolf";
+    designatedWolf.setAttribute("required", "required");
     designatedWolf.setAttribute("class", "roleTargets");
+
+    // Create default option
+    let defaultOption = document.createElement("option");
+    defaultOption.setAttribute("value", "");
+    defaultOption.setAttribute("disabled", "disabled");
+    defaultOption.setAttribute("selected", "selected");
+    defaultOption.textContent = "Select option";
+    designatedWolf.append(defaultOption);
 
     for (let i = 0; i < wolfPack.length; i++) {
         let option = document.createElement("option");
@@ -152,7 +170,7 @@ function handleNightPhase(list) {
     actionWrapperWolf.appendChild(actionTextWolf);
 
     // Add roleTargetsElem to the wrapper
-    actionWrapperWolf.appendChild(designatedWolf);
+    insertSelectionBox(actionWrapperWolf, designatedWolf);
 
     // Add wrapper to the gameActions element
     designatedWolfDiv.appendChild(actionWrapperWolf);
@@ -169,10 +187,20 @@ function handleDayPhase(list) {
         let actionWrapper = document.createElement("div");
         actionWrapper.setAttribute("class", "action-wrapper");
 
+        // Create select element
         let roleTargetsElem = document.createElement("select");
         roleTargetsElem.id = actionTarget.role + "_targets";
+        roleTargetsElem.setAttribute("required", "required");
         roleTargetsElem.setAttribute("player", actionTarget.player);
         roleTargetsElem.setAttribute("class", "roleTargets");
+
+        // Create default option
+        let defaultOption = document.createElement("option");
+        defaultOption.setAttribute("value", "");
+        defaultOption.setAttribute("disabled", "disabled");
+        defaultOption.setAttribute("selected", "selected");
+        defaultOption.textContent = "Select option";
+        roleTargetsElem.append(defaultOption);
 
         let possibleTargets = actionTarget['possibleTargets'];
         for (let j = 0; j < possibleTargets.length; j++) {
@@ -187,12 +215,42 @@ function handleDayPhase(list) {
         actionWrapper.appendChild(actionText);
 
         // Add roleTargetsElem to the wrapper
-        actionWrapper.appendChild(roleTargetsElem);
+        insertSelectionBox(actionWrapper, roleTargetsElem);
 
         // Add wrapper to the gameActions element
         gameActions.appendChild(actionWrapper);
     }
 
+}
+
+function insertSelectionBox(actionWrapper, selectBox){
+    // Create label element
+    var label = document.createElement("label");
+    label.classList.add("select", "roleTargets");
+    label.setAttribute("for", "slct");
+
+    // Create SVG
+    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.innerHTML = '<use xlink:href="#select-arrow-down"></use>';
+
+    // Append SVG to label
+    label.appendChild(svg);
+
+    // Append select to label
+    label.appendChild(selectBox);
+
+    // Create SVG Sprites
+    var svgSprites = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svgSprites.classList.add("sprites");
+    var symbol = document.createElementNS("http://www.w3.org/2000/svg", "symbol");
+    symbol.setAttribute("id", "select-arrow-down");
+    symbol.setAttribute("viewBox", "0 0 10 6");
+    symbol.innerHTML = '<polyline points="1 1 5 5 9 1"></polyline>';
+    svgSprites.appendChild(symbol);
+
+    // Add roleTargetsElem to the wrapper
+    actionWrapper.appendChild(label);
+    actionWrapper.appendChild(svgSprites);
 }
 
 function sendActions() {

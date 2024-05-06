@@ -103,11 +103,8 @@ function createGridButtons() {
     const bt_height = 50;
 
     for (let i = 0; i < playerRole.length; i++) {
-        console.log("inside: " + i);
         let playerRoleDiv = document.createElement("div");
-        // playerRoleDiv.classList.add("col-xs-4", "col-md-3", "p-2")
         playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-2")
-
 
         const button = document.createElement('button');
         button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
