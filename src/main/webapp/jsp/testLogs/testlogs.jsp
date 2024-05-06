@@ -35,21 +35,36 @@
 
 <h1>Statistics</h1>
 <div class="container">
-    <table class="sortable" id="roles_table">
+    <div class="row">
+        <div class="col-md-4">
+            <table id="general_stats">
 
-        <tr>
-            <th>Role</th>
-            <th>Times</th>
-            <th>Wins</th>
-
-        </tr>
-
-    </table>
-
+            </table>
+        </div>
+        <div class="col-md-4">
+            <table class="sortable" id="roles_table">
+                <tr>
+                    <th>Role</th>
+                    <th>Times</th>
+                    <th>Wins</th>
+                    <th>Loss</th>
+                    <th>Rate
+                        <div id="info_rate" title="The percentage of games played as over the total played">&#9432</div>
+                    </th>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <canvas id="myChart"></canvas>
+        </div>
+    </div>
+</div>
 </div>
 
 
 <h1>Game Logs</h1>
+
+<div id="info" title="Questa è una frase informativa">Passa sopra di me</div>
 
 
 <div class="container">
@@ -72,7 +87,6 @@
 </div>
 
 
-
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
 
@@ -82,6 +96,9 @@
 
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <script src="${pageContext.request.contextPath}/js/testLogs/testlogs.js"></script>
+
+<%--for pie chart--%>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 </html>
 

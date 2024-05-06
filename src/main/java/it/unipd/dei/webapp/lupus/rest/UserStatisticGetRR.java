@@ -52,13 +52,9 @@ public class UserStatisticGetRR extends AbstractRR {
              if(new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam() != null)
              {
                  stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
-
                  LOGGER.info("Stats successfully collected for user: %s", username);
 
-                 m = new Message("Access to stats of Player " + username + " that has played " + stats.size() + " roles");
                  res.setStatus(HttpServletResponse.SC_OK);
-                 m.toJSON(res.getOutputStream());
-
                  new ResourceList<StatsRole>(stats).toJSON(res.getOutputStream());
              }
              else {
