@@ -7,12 +7,17 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <header>
     <h1>Lupus in Fabula</h1>
 </header>
 
-<nav>
-    <ul>
-        <li><a href="<c:url value="/"/>">Home</a></li>
-    </ul>
-</nav>
+<div class="navbar">
+    <nav class="navMenu">
+        <a href="<c:url value="/"/>">Home</a>
+        <a href="#">Blog</a>
+        <a href="#">Work</a>
+        <a href="#">About</a>
+        <div class="dot"></div>
+    </nav>
+</div>
