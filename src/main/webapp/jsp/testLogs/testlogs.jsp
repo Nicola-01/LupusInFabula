@@ -12,7 +12,7 @@
 <html lang="en">
 
 <head>
-    <title>Logs user</title>
+    <title>Lupus In Fabula - Logs and Statistics of user</title>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/testLogs/logs.css">
 </head>
@@ -21,6 +21,8 @@
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
+
+<div id="username" style="display: none;">${sessionScope.user.getUsername()}</div>
 
 <p>Statistics and history
     <c:if test="${not empty sessionScope.user}">
@@ -34,14 +36,16 @@
 
 
 <h1>Statistics</h1>
+
 <div class="container">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
+<%--            <p id=gen_stats></p>--%>
             <table id="general_stats">
-
+<%--                style="border-style: hidden;"--%>
             </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <table class="sortable" id="roles_table">
                 <tr>
                     <th>Role</th>
@@ -54,17 +58,14 @@
                 </tr>
             </table>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-6 col-lg-4">
             <canvas id="myChart"></canvas>
         </div>
     </div>
 </div>
-</div>
 
 
 <h1>Game Logs</h1>
-
-<div id="info" title="Questa è una frase informativa">Passa sopra di me</div>
 
 
 <div class="container">

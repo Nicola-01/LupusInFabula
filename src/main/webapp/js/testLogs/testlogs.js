@@ -1,19 +1,23 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    loadLogs();
-    loadStatics();
+    var username = document.getElementById('username').innerText;
+    console.log(username);
+    loadLogs(username);
+    loadStatics(username);
 });
 
 
 /**
  * Get logs.
  */
-function loadLogs() {
-    genericGETRequest(contextPath + "user/log_player/logs", getLogs)
+function loadLogs(username) {
+    genericGETRequest(contextPath + "user/" + username + "/logs", getLogs)
+
+//    genericGETRequest(contextPath + "user/log_player/logs", getLogs)
 }
 
-function loadStatics() {
-    genericGETRequest(contextPath + "user/log_player/statistic", getStatsRole)
-    genericGETRequest(contextPath + "user/log_player/logs", getGeneralStats)
+function loadStatics(username) {
+    genericGETRequest(contextPath + "user/" + username + "/statistic", getStatsRole)
+    genericGETRequest(contextPath + "user/" + username + "/logs", getGeneralStats)
 }
 
 function getLogs(req) {
@@ -23,22 +27,24 @@ function getLogs(req) {
             var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
 
             if (list == null)
-                alert("User Not Authenticated");
+                alert("User Not Existing");
+
             var table = document.getElementById("logs_table")
 
             //var tableBody = table.createTBody();
             var tbody = table.querySelector("tbody");
 
-            var sizeid = 0;
+            //var sizeid = 0;
             var sizerounds = 0;
 
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
-                var gameIdLength = log.game_id.toString().length;
 
-                if (gameIdLength > sizeid) {
-                    sizeid = gameIdLength;
-                }
+              //  var gameIdLength = log.game_id.toString().length;
+
+                // if (gameIdLength > sizeid) {
+                //     sizeid = gameIdLength;
+                // }
 
                 var roundsLength = log.number_of_rounds.toString().length;
                 if (roundsLength > sizerounds) {
@@ -54,7 +60,7 @@ function getLogs(req) {
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = String(log.game_id).padStart(sizeid, '0');
+                cell0.innerHTML = log.public_id; //.padStart(sizeid, '0');
                 // cell0.innerHTML = Number(log.game_id);
                 //cell0.classList.add("cell-with-zero");
 
@@ -74,14 +80,21 @@ function getLogs(req) {
                 cell4.innerHTML = log.name;
 
                 var cell5 = row.insertCell(5);
-                if (log.has_won)
-                    cell5.innerHTML = "Victory";
-                else {
-                    cell5.innerHTML = "Defeat";
+                if (log.name !== "master") {
+                    if (log.has_won)
+                        cell5.innerHTML = "Victory";
+                    else {
+                        cell5.innerHTML = "Defeat";
+                    }
+                }
+                else{
+                    cell5.innerHTML = "-";
                 }
 
                 var cell6 = row.insertCell(6);
-                cell6.innerHTML = "Not working now";
+                const link = contextPath + "game/logs/" + log.public_id;
+                cell6.innerHTML = '<a href="' + link + '" target="_blank">View logs</a>';
+                //cell6.innerHTML = "Not working now";
             }
         }
     }
@@ -94,7 +107,8 @@ function getStatsRole(req) {
             var list = JSON.parse(req.responseText)["resource-list"];
 
             if (list == null)
-                alert("User Not Authenticated");
+                alert("User Not Existing");
+
             var table = document.getElementById("roles_table");
             var tbody = table.querySelector("tbody");
 
@@ -105,45 +119,50 @@ function getStatsRole(req) {
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
 
-                var countNameLength = stats.countName.toString().length;
-                if (countNameLength > sizeCountName) {
-                    sizeCountName = countNameLength;
-                }
+                if (stats.name !== "master") {
+                    var countNameLength = stats.countName.toString().length;
+                    if (countNameLength > sizeCountName) {
+                        sizeCountName = countNameLength;
+                    }
 
-                var countWinsLength = stats.countWins.toString().length;
-                if (countWinsLength > sizeCountWins) {
-                    sizeCountWins = countWinsLength;
-                }
+                    var countWinsLength = stats.countWins.toString().length;
+                    if (countWinsLength > sizeCountWins) {
+                        sizeCountWins = countWinsLength;
+                    }
 
-                size +=  stats.countName;
+                    size += stats.countName;
+                }
             }
 
-            size = (size == 0) ? 1 : size;
+            size = (size === 0) ? 1 : size;
 
             const pairs = [];
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
-                var row = tbody.insertRow();
 
-                pairs.push([stats.name, stats.countName]);
+                if (stats.name !== "master") {
+                    var row = tbody.insertRow();
 
-                row.classList.add("item");
+                    pairs.push([stats.name, stats.countName]);
 
-                var cell0 = row.insertCell(0);
-                cell0.innerHTML = stats.name;
+                    row.classList.add("item");
 
-                var cell1 = row.insertCell(1);
-                cell1.innerHTML = String(stats.countName).padStart(sizeCountName, '0');
+                    var cell0 = row.insertCell(0);
+                    cell0.innerHTML = stats.name;
 
-                var cell2 = row.insertCell(2);
-                cell2.innerHTML = String(stats.countWins).padStart(sizeCountWins, '0');
+                    var cell1 = row.insertCell(1);
+                    cell1.innerHTML = String(stats.countName).padStart(sizeCountName, '0');
 
-                var cell3 = row.insertCell(3);
-                cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
+                    var cell2 = row.insertCell(2);
+                    cell2.innerHTML = String(stats.countWins).padStart(sizeCountWins, '0');
 
-                var cell4 = row.insertCell(4);
-                cell4.innerHTML = (stats.countName/size).toFixed(3);
+                    var cell3 = row.insertCell(3);
+                    cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
 
+                    var cell4 = row.insertCell(4);
+                    cell4.innerHTML = (stats.countName / size).toFixed(3);
+
+                }
             }
 
             completePieChart(pairs);
@@ -151,11 +170,10 @@ function getStatsRole(req) {
     }
 }
 
-function completePieChart(pairs){
+function completePieChart(pairs) {
 
     const ctx = document.getElementById('myChart');
     const names = pairs.map(pair => pair[0]);
-
     const rates = pairs.map(pair => pair[1]);
 
 
@@ -169,8 +187,7 @@ function completePieChart(pairs){
                 borderWidth: 1
             }]
         },
-        options: {
-        }
+        options: {}
     });
 }
 
@@ -178,25 +195,52 @@ function getGeneralStats(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             var table = document.getElementById("general_stats");
+            //var par = document.getElementById("gen_stats");
 
             var list = JSON.parse(req.responseText)["resource-list"];
+            if (list == null)
+                alert("User Not Existing");
+
             var totalPlayTime = "00:00:00";
-            var totalGamesPlayed = list.length;
+            var totalGamesAsMaster = 0;
             var totalGamesWon = 0;
+
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
-                totalPlayTime = sumTime(totalPlayTime, log.game_duration);
-                totalGamesWon += log.has_won ? 1 : 0;
+                if (log.name !== "master") {
+                    totalPlayTime = sumTime(totalPlayTime, log.game_duration);
+                    totalGamesWon += log.has_won ? 1 : 0;
+                } else {
+                    totalGamesAsMaster++;
+                }
             }
 
+            var totalGamesPlayed = list.length - totalGamesAsMaster;
+            var ratio = (totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3);
+
             let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed],
-                ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed-totalGamesWon],
-                ["Ratio", (totalGamesWon/totalGamesPlayed).toFixed(3)]];
-            for (i=0; i<couple.length; i++){
+                ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed - totalGamesWon],
+                ["Ratio", ratio],
+                ["Games as master", totalGamesAsMaster]];
+
+            for (let i = 0; i < couple.length; i++) {
+
+                // var paragraph = document.createElement('p');
+                // var info = "";
+                // if (couple[i][0] === "Ratio") {
+                //     info = '<div id="info_ratio" title="The percentage of games won over the total played">&#9432</div>';
+                // }
+                // console.log(info);
+                // var text = couple[i][0] + info + ": " + couple[i][1];
+                // console.log("text=" + text);
+                // paragraph.innerHTML = text;
+                // par.appendChild(paragraph);
+
                 var row = table.insertRow();
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = couple[i][0];
+                cell0.innerHTML = '<b>' + couple[i][0] + '</b>';
+
                 if (couple[i][0] === "Ratio") {
                     cell0.innerHTML += '<div id="info_ratio" title="The percentage of games won over the total played">&#9432</div>';
                 }
@@ -217,11 +261,9 @@ function sumTime(time1, time2) {
     var hours = Math.floor(sumSecond / 3600);
     var minutes = Math.floor((sumSecond % 3600) / 60);
     var seconds = sumSecond % 60;
+    var sizeHours = Math.max(hours, 99).toString().length;
 
-    var sizeHours = Math.max(hours, 99).toString().length; // Lunghezza massima delle ore: 99
-    var sum = `${String(hours).padStart(sizeHours, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-    return sum;
+    return `${String(hours).padStart(sizeHours, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 }
 
 function convertInSeconds(time) {

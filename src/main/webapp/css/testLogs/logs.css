@@ -17,6 +17,15 @@
 /*}*/
 
 
+.table-no-border {
+    border-collapse: collapse;
+}
+
+.table-no-border td, .table-no-border th {
+    border: none;
+}
+
+
 
 
 
