@@ -16,7 +16,6 @@
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/navbar.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules.css">
-    <script src="${pageContext.request.contextPath}/js/rules.js"></script>
 </head>
 <body>
 
@@ -147,7 +146,10 @@
                         <div class="mySlides slide1 p-2">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png">
+                                    <img class="asyncImage"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
                                     <h5 class="roleName">
@@ -187,7 +189,10 @@
                         <div class="mySlides slide2 p-2">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png">
+                                    <img class="asyncImage"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
                                     <h5 class="roleName">
@@ -227,7 +232,10 @@
                         <div class="mySlides slide3 p-2">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png">
+                                    <img class="asyncImage"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
                                     <h5 class="roleName">
@@ -267,7 +275,10 @@
                         <div class="mySlides slide4 p-2">
                             <div class="row">
                                 <div class="col-md-5">
-                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png">
+                                    <img class="asyncImage"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
                                     <h5 class="roleName">
@@ -301,6 +312,7 @@
 </div>
 
 <c:import url="/jsp/include/footer.jsp"/>
+<script src="${pageContext.request.contextPath}/js/rules.js"></script>
 
 </body>
 </html>
