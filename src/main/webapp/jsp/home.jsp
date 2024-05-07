@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lupus in Fabula - Home</title>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/navbar.css">
     <c:import url="/jsp/include/head.jsp"/>
 </head>
 <body>

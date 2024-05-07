@@ -11,7 +11,7 @@
     margin: auto;
 }
 
-img {
+.cards {
     vertical-align: middle;
     height: 280px;
     width: 200px;
@@ -172,13 +172,13 @@ p {
     line-height: 1.6;
 }
 
-ol {
+.list {
     list-style: none;
-    counter-reset: list;
+    counter-reset: item;
     padding: 0 1rem;
 }
 
-ol li {
+.list .rules {
     --stop: calc(100% / var(--length) * var(--i));
     --l: 62%;
     --l2: 88%;
@@ -197,8 +197,46 @@ ol li {
     background-color: white;
 }
 
-ol li::before {
-    content: '';
+.list .rules::before {
+    content: ' ';
+    counter-increment: item;
+    display: block;
+    width: 100%;
+    height: 1rem;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: linear-gradient(to right, var(--c1) var(--stop), var(--c2) var(--stop));
+}
+
+.sublist {
+    list-style: none;
+    counter-reset: list;
+    padding: 0 1rem;
+}
+
+.sublist .subrules {
+    --stop: calc(100% / var(--length) * var(--i));
+    --l: 62%;
+    --l2: 88%;
+    --h: calc((var(--i) - 1) * (180 / var(--length)));
+    --c1: hsl(var(--h), 71%, var(--l));
+    --c2: hsl(var(--h), 71%, var(--l2));
+
+    position: relative;
+    counter-increment: list;
+    max-width: 45rem;
+    margin: 2rem auto;
+    padding: 2rem 1rem 1rem;
+    box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: white;
+}
+
+.sublist .subrules::before {
+    content: ' ';
+    counter-increment: item;
     display: block;
     width: 100%;
     height: 1rem;
@@ -231,7 +269,7 @@ h3::before {
 }
 
 @media (min-width: 40em) {
-    li {
+    .rules {
         margin: 3rem auto;
         padding: 3rem 2rem 2rem;
     }
@@ -244,4 +282,41 @@ h3::before {
     h3::before {
         margin-right: 1.5rem;
     }
+}
+
+.introduction {
+    position: relative;
+    max-width: 45rem;
+    margin: 2rem auto;
+    padding: 2rem 1rem 1rem;
+    box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: white;
+}
+
+.h3intro {
+    display: flex;
+    align-items: baseline;
+    color: rgb(70 70 70);
+    font-size: 2.25rem;
+    margin: 0 0 2rem;
+}
+
+.h3intro::before {
+    --l: 62%;
+    --c1: hsl(var(--h), 71%, var(--l));
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+    margin-right: 1rem;
+    width: 4rem;
+    height: 4rem;
+    content: counter(list);
+    padding: 1rem;
+    border-radius: 50%;
+    background-color: var(--c1);
+    color: white;
 }
