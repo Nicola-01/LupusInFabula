@@ -16,7 +16,7 @@
         <div class=" col-sm-12 col-md-10 col-lg-8 p-0" style="margin: auto">
             <c:import url="/jsp/include/show-message.jsp"/>
             <div class="main">
-                <input type="checkbox" id="chk" aria-hidden="true">
+                <input type="checkbox" id="chk" aria-hidden="true" checked>
                 <div class="signup">
                     <form action="<c:url value="/signup"/>" method="POST">
                         <label class="lb_singup" for="chk" aria-hidden="true">Sign up</label>

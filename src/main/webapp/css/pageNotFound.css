@@ -334,12 +334,12 @@ body {
 
 @keyframes float {
     0% {
-        top: 45%;
+        top: 25%;
     }
     50% {
-        top: 46%;
+        top: 26%;
     }
     100% {
-        top: 45%;
+        top: 25%;
     }
 }

@@ -7,6 +7,68 @@ const playerUsername = document.getElementById("playerUsername");
 const playerListPopup = document.getElementById("playerListPopup");
 const addPlayerBT = document.getElementById("addPlayer");
 
+const playerList = document.getElementById('playerList');
+const playerListItems = playerList.getElementsByTagName('li');
+let selectedItem;
+document.getElementById("addPlayer").addEventListener("click", addPlayer);
+
+let keyDownTimer = null;
+playerUsername.addEventListener("keyup", handleKeyDown);
+
+let startedText = "";
+
+function handleKeyDown(event) {
+    selectedItem = document.querySelector('li.selected');
+    switch (event.key) {
+        case "ArrowUp":
+            if (selectedItem) {
+                const prevItem = selectedItem.previousElementSibling;
+                if (prevItem) {
+                    selectedItem.classList.remove('selected');
+                    prevItem.classList.add('selected');
+                    playerUsername.value = prevItem.textContent;
+                    prevItem.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+                } else {
+                    selectedItem.classList.remove('selected');
+                    playerUsername.value = startedText;
+                }
+            }
+            break;
+        case "ArrowDown":
+            if (selectedItem) {
+                const nextItem = selectedItem.nextElementSibling;
+                if (nextItem) {
+                    selectedItem.classList.remove('selected');
+                    nextItem.classList.add('selected');
+                    playerUsername.value = nextItem.textContent;
+                    nextItem.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+                }
+            } else {
+                playerListItems[0].classList.add('selected');
+                playerUsername.value = playerListItems[0].textContent;
+                playerListItems[0].scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
+            }
+            break;
+        case "Enter":
+            searchUserContain = null;
+            addPlayer();
+            hidePlayerListPopup();
+            break;
+        default:
+            startedText = playerUsername.value;
+            searchUser();
+            break;
+    }
+}
+
+playerUsername.addEventListener("blur", function () {
+    hidePlayerListPopup();
+});
+
+playerUsername.addEventListener("focus", function () {
+    searchUser();
+});
+
 function searchUser() {
     let user = playerUsername.value;
     if (user.length >= minSizeSearch) {
@@ -37,31 +99,18 @@ function savePlayers(req) {
 function showPlayerListPopup() {
     playerListPopup.style.width = playerUsername.clientWidth + "px";
     playerListPopup.style.display = "block";
-    playerUsername.classList.add("focus")
-    addPlayerBT.classList.add("focusBT")
+    playerUsername.classList.add("focus");
+    addPlayerBT.classList.add("focusBT");
 }
 
 // Function to hide the popup
 function hidePlayerListPopup() {
     playerListPopup.style.display = "none";
-    playerUsername.classList.remove("focus")
-    addPlayerBT.classList.remove("focusBT")
+    playerUsername.classList.remove("focus");
+    addPlayerBT.classList.remove("focusBT");
+    if(selectedItem)
+        selectedItem.classList.remove('selected');
 }
-
-playerUsername.addEventListener("blur", function () {
-    hidePlayerListPopup();
-});
-
-playerUsername.addEventListener("focus", function () {
-    searchUser();
-});
-
-playerUsername.addEventListener("keyup", function (event) {
-    if (event.key === 'Enter')
-        hidePlayerListPopup();
-    else
-        searchUser();
-});
 
 // Function to populate the player list in the popup
 function populatePlayerList(players, contains) {
@@ -72,8 +121,10 @@ function populatePlayerList(players, contains) {
         const li = document.createElement("li");
         li.innerHTML = highlightContains(player, contains);
         li.addEventListener("mousedown", function () {
-            playerUsername.value = player; // Insert the player name into the search bar
-            hidePlayerListPopup(); // Hide the popup after selecting a player
+            playerUsername.value = player;
+            searchUserContain = null;
+            addPlayer();
+            hidePlayerListPopup();
         });
         playerList.appendChild(li);
     });

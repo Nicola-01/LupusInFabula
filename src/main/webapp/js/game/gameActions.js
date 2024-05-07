@@ -58,10 +58,6 @@ function fillGameActions(req) {
 function handleNightPhase(list) {
     let gameActions = document.getElementById("gameActions");
 
-    let designatedWolfDiv = document.createElement("div");
-    designatedWolfDiv.id = "designatedWolfDiv";
-    gameActions.appendChild(designatedWolfDiv);
-
     let goodDiv = document.createElement("div");
     let evilDiv = document.createElement("div");
     let neutralDiv = document.createElement("div");
@@ -70,12 +66,12 @@ function handleNightPhase(list) {
     goodDiv.setAttribute("class", "goodRoles");
     evilDiv.setAttribute("class", "evilRoles");
     neutralDiv.setAttribute("class", "neutralRoles");
-    vicStealDiv.setAttribute("class", "vivStealRoles");
+    vicStealDiv.setAttribute("class", "victoryStealerRoles");
 
-    gameActions.appendChild(evilDiv);
-    gameActions.appendChild(goodDiv);
-    gameActions.appendChild(neutralDiv);
-    gameActions.appendChild(vicStealDiv);
+    let designatedWolfDiv = document.createElement("div");
+    designatedWolfDiv.id = "designatedWolfDiv";
+    evilDiv.appendChild(designatedWolfDiv);
+    evilDiv.appendChild(document.createElement("hr"));
 
     // Loop through the list of friends
     for (let i = 0; i < list.length; i++) {
@@ -175,6 +171,10 @@ function handleNightPhase(list) {
     // Add wrapper to the gameActions element
     designatedWolfDiv.appendChild(actionWrapperWolf);
 
+    if (evilDiv.innerHTML !== "") gameActions.appendChild(evilDiv);
+    if (goodDiv.innerHTML !== "") gameActions.appendChild(goodDiv);
+    if (neutralDiv.innerHTML !== "") gameActions.appendChild(neutralDiv);
+    if (vicStealDiv.innerHTML !== "") gameActions.appendChild(vicStealDiv);
 }
 
 function handleDayPhase(list) {
@@ -223,7 +223,7 @@ function handleDayPhase(list) {
 
 }
 
-function insertSelectionBox(actionWrapper, selectBox){
+function insertSelectionBox(actionWrapper, selectBox) {
     // Create label element
     var label = document.createElement("label");
     label.classList.add("select", "roleTargets");

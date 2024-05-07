@@ -26,14 +26,10 @@ document.addEventListener("DOMContentLoaded", function() {
     enableLogin();
 
     function enableSignup() {
-        const setStatus = !(singUsername.value.trim() !== '' && singEmail.value.trim() !== '' && singPassword.value.trim() !== '' && singPasswordRp.value.trim() !== '' && singPassword.value === singPasswordRp.value);
-        console.log(setStatus)
-        singSubmit.disabled = setStatus;
+        singSubmit.disabled = !(singUsername.value.trim() !== '' && singEmail.value.trim() !== '' && singPassword.value.trim() !== '' && singPasswordRp.value.trim() !== '' && singPassword.value === singPasswordRp.value);
     }
 
     function enableLogin() {
-        const setStatus = !(loginUser.value.trim() !== '' && loginPassword.value.trim() !== '');
-        console.log(setStatus)
-        loginSubmit.disabled = setStatus;
+        loginSubmit.disabled = !(loginUser.value.trim() !== '' && loginPassword.value.trim() !== '');
     }
 });

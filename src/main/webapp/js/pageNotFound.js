@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
         });
         $(".title").animate(
             {
-                top: "45%"
+                top: "25%"
             },
             5000,
             () => {

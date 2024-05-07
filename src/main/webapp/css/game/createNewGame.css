@@ -90,35 +90,6 @@ h2:not(#players h2):not(#friends h2) {
     99px 72px 143px rgba(0, 0, 0, 0.08);
 }
 
-.removePlayer .removeText {
-    visibility: hidden;
-    width: 4em;
-    background-color: rgba(0, 0, 0, 0.253);
-    color: #fff;
-    text-align: center;
-    border-radius: 6px;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
-    top: 0;
-    left: 110%;
-}
-
-.removePlayer .removeText::after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    right: 100%;
-    margin-top: -5px;
-    border-width: 5px;
-    border-style: solid;
-    border-color: transparent rgba(0, 0, 0, 0.253) transparent transparent;
-}
-
-.removePlayer:hover .removeText {
-    visibility: visible;
-}
-
 /*Add button*/
 .addButton {
     cursor: pointer;
@@ -262,6 +233,7 @@ input[type=number] {
     align-items: center;
     min-width: 60px;
     margin-left: auto;
+    background-color: #ddd;
 }
 
 .number {
@@ -293,4 +265,8 @@ input[type=number] {
 
 .add:focus, .minus:focus {
     outline: none;
+}
+
+.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
+    height: 100%;
 }

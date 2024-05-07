@@ -55,17 +55,25 @@
     </div>
     <br>
     <div class="row">
-        <div id="goodRoles" class="column col-sm-12 col-md-6 col-lg-3 p-2">
-            <h2>GOOD</h2>
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
+            <div id="goodRoles" class="goodRoles p-2">
+                <h2>GOOD</h2>
+            </div>
         </div>
-        <div id="evilRoles" class="column col-sm-12 col-md-6 col-lg-3 p-2">
-            <h2>EVIL</h2>
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
+            <div id="evilRoles" class="p-2 evilRoles">
+                <h2>EVIL</h2>
+            </div>
         </div>
-        <div id="neutralRoles" class="column col-sm-12 col-md-6 col-lg-3 p-2">
-            <h2>NEUTRAL</h2>
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
+            <div id="neutralRoles" class="p-2 neutralRoles">
+                <h2>NEUTRAL</h2>
+            </div>
         </div>
-        <div id="victoryStealerRoles" class="column col-sm-12 col-md-6 col-lg-3 p-2">
-            <h2>VICTORY STEALER</h2>
+        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
+            <div id="victoryStealerRoles" class="p-2 victoryStealerRoles">
+                <h2>VICTORY STEALER</h2>
+            </div>
         </div>
     </div>
     <br>

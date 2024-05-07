@@ -57,3 +57,24 @@ footer {
     padding: 20px;
     text-align: center;
 }
+
+.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
+    border-radius: 1rem;
+    padding: 2em 0.5em;
+}
+
+.goodRoles {
+    background-color: #c8f3c8;
+}
+
+.evilRoles {
+    background-color: #efb3b6;
+}
+
+.victoryStealerRoles {
+    background-color: #e6d58f;
+}
+
+.neutralRoles {
+    background-color: #9f9f9f;
+}

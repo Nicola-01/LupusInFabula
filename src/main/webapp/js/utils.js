@@ -85,12 +85,10 @@ rolesColors.set('plague spreader', '#3B3B3B');
 
 rolesColors.set('', '#6E007B')
 
-
 document.addEventListener('DOMContentLoaded', function (event) {
-    contextPath = window.location.href.substring(0, window.location.href.indexOf("/lupus/") + 7);
-    console.log(contextPath);
+    contextPath = window.location.origin + "/lupus/";
+    // console.log(contextPath);
 });
-
 
 /**
  * A generic GET XMLHTTPRequest.
