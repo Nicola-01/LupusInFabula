@@ -59,6 +59,19 @@
         <url-pattern>/gtmp/*</url-pattern>
     </servlet-mapping>
 
+
+
+
+    <servlet>
+        <servlet-name>UserpageServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserpageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserpageServlet</servlet-name>
+        <url-pattern>/temp/logs</url-pattern>
+    </servlet-mapping>
+
 <!--    finish test area-->
 
     <servlet-mapping>

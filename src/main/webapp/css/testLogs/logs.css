@@ -1,0 +1,40 @@
+/*body {*/
+/*    font-family: Arial, sans-serif;*/
+/*    margin: 10px;*/
+/*    background-color: #ff9913;*/
+/*}*/
+
+/*p {*/
+/*    margin-bottom: 10px;*/
+/*}*/
+
+/*hr {*/
+/*    border: 0;*/
+/*    height: 12px;*/
+/*    !*background-color: #ccc;*!*/
+/*    background-color: darkorange;*/
+/*    margin: 125px 0;*/
+/*}*/
+
+
+.table-no-border {
+    border-collapse: collapse;
+}
+
+.table-no-border td, .table-no-border th {
+    border: none;
+}
+
+
+
+
+
+
+
+
+
+
+/*.cell-with-zero {*/
+/*    !* Nasconde gli zeri iniziali all'interno della cella *!*/
+/*    font-variant-numeric: tabular-nums;*/
+/*}*/

@@ -46,18 +46,14 @@ public class UserLogsGetRR extends AbstractRR {
         List<PlaysJoinGame> logs = null;
 
         try {
+            LogContext.setUser(username);
+
             if (new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam() != null)
             {
-                LogContext.setUser(username);
-
                 logs = new GetPlayerLogsDAO(ds.getConnection(), username).access().getOutputParam();
-
                 LOGGER.info("Logs successfully collected for user: %s", username);
 
-                m = new Message("Access to logs of Player " + username + " that has played " + logs.size() + " games");
                 res.setStatus(HttpServletResponse.SC_OK);
-                m.toJSON(res.getOutputStream());
-
                 new ResourceList<PlaysJoinGame>(logs).toJSON(res.getOutputStream());
             }
             else {
