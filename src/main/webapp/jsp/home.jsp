@@ -18,7 +18,9 @@
         </c:if>
         <c:if test="${empty sessionScope.user}">
             <script>
-                window.location.href = "http://localhost:8080/lupus/login";
+                var currentOrigin = window.location.origin;
+                var loginURL = currentOrigin + "/lupus/login";
+                window.location.href = loginURL;
             </script>
         </c:if>
     </p>
