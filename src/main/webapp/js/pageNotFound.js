@@ -32,14 +32,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         let nodeW = (50 / treeHeight); // difference of width of rodes (%)
         let internalNodeW = Math.floor(Math.random() * 3 + 27 / treeHeight); // difference of width of rodes (%)
 
-        console.log("treeHeight:", treeHeight);
-        console.log("nodeH:", nodeH);
-        console.log("internalNodeH:", internalNodeH);
-        console.log("nodeW:", nodeW);
-        console.log("internalNodeW:", internalNodeW);
-
-        console.log()
-
         posNodesH[0] = 0;
         posNodesW[0] = 50;
 
@@ -77,19 +69,18 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
 
         polygonPoints = polygonPoints.substring(0, polygonPoints.length - 2);
-        console.log(polygonPoints)
 
         let rX = Math.floor(Math.random() * 110 - 5);
-        let rH = Math.floor(Math.random() * 13) + 27;
-        let rW = Math.floor(Math.random() * 3) + 14;
+        let rH = Math.random() * 10 + 15;
+        let rW = Math.random() * 2 + 14;
         let rR =
             Math.floor(Math.random() * 3) *
             Math.cos(Math.PI * Math.round(Math.random()));
         $(".tree:nth-child(" + i + ")").css({
             // left: ((i - 2) * 5) + rX + "vw",
             left: rX + "vw",
-            height: rH + "vh",
-            width: rW + "vw",
+            height: rH + "em",
+            width: rW + "em",
             // left: "3vw",
             bottom: "3dvw",
             transform: "rotateZ(" + rR + "deg)",

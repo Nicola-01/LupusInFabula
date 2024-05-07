@@ -133,7 +133,7 @@
 <div class="container">
     <h1 id="roles">ROLES</h1>
     <div class="slideshow-container goodRoles">
-        <h4 class="text-center">GOOD</h4>
+        <h2 class="text-center">GOOD</h2>
         <div class="rolesDescription">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sapien dolor, pulvinar ac maximus non,
             egestas a libero. Praesent quis sollicitudin risus. Cras vulputate placerat nunc vel accumsan. Mauris elit
@@ -176,7 +176,7 @@
     <br>
 
     <div class="slideshow-container evilRoles">
-        <h4 class="text-center">EVIL</h4>
+        <h2 class="text-center">EVIL</h2>
         <div class="rolesDescription">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sapien dolor, pulvinar ac maximus non,
             egestas a libero. Praesent quis sollicitudin risus. Cras vulputate placerat nunc vel accumsan. Mauris elit
@@ -219,7 +219,7 @@
     <br>
 
     <div class="slideshow-container victoryStealerRoles">
-        <h4 class="text-center">VICTORY STEALER</h4>
+        <h2 class="text-center">VICTORY STEALER</h2>
         <div class="rolesDescription">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sapien dolor, pulvinar ac maximus non,
             egestas a libero. Praesent quis sollicitudin risus. Cras vulputate placerat nunc vel accumsan. Mauris elit
@@ -262,7 +262,7 @@
     <br>
 
     <div class="slideshow-container neutralRoles">
-        <h4 class="text-center">NEUTRAL ROLES</h4>
+        <h2 class="text-center">NEUTRAL ROLES</h2>
         <div class="rolesDescription">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus sapien dolor, pulvinar ac maximus non,
             egestas a libero. Praesent quis sollicitudin risus. Cras vulputate placerat nunc vel accumsan. Mauris elit

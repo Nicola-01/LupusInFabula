@@ -101,7 +101,7 @@ a {
 }
 
 .goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
-    border-radius: 50px;
+    border-radius: 1rem;
     padding: 2em 0.5em;
 }
 
@@ -192,7 +192,7 @@ ol li {
     margin: 2rem auto;
     padding: 2rem 1rem 1rem;
     box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
-    border-radius: 0.25rem;
+    border-radius: 1rem;
     overflow: hidden;
     background-color: white;
 }

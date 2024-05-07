@@ -2,14 +2,13 @@
     font-family: "stranger";
     src: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/455279/stranger.ttf") format("truetype");
 }
-html {
+
+body {
+    margin: 0;
+    min-height: 0;
     background: linear-gradient(0deg, #050514, #30336b);
     overflow: hidden;
     height: 100%;
-}
-html body {
-    margin: 0;
-    min-height: 0;
 }
 
 .patch {
@@ -20,6 +19,7 @@ html body {
     background-color: black;
     z-index: 2;
 }
+
 .patch:nth-child(odd) {
     background-color: rgba(0, 0, 0, 0.9);
     z-index: 0;
@@ -38,21 +38,19 @@ html body {
 }
 
 .tree1 {
-    background-color: #0f0c29;
+    background-color: #100d2d;
     z-index: -1;
 }
 
 .tree2 {
-    background-color: #08051e;
-    z-index: -1;
+    background-color: #0a0724;
+    z-index: -2;
 }
 
 .tree3 {
-    background-color: #030110;
-    z-index: -1;
+    background-color: #040117;
+    z-index: -3;
 }
-
-
 
 .gravestones .cross {
     position: absolute;
@@ -62,6 +60,7 @@ html body {
     bottom: 0;
     z-index: 1;
 }
+
 .gravestones .cross:after {
     content: "";
     position: absolute;
@@ -72,13 +71,16 @@ html body {
     left: 50%;
     transform: translateX(-50%);
 }
+
 .gravestones .cross:nth-child(1) {
     left: 20%;
 }
+
 .gravestones .cross:nth-child(2) {
     left: 70%;
     bottom: -4vh;
 }
+
 .gravestones .cross:nth-child(3) {
     left: 90%;
 }
@@ -103,6 +105,7 @@ html body {
     width: 38vh;
     height: 40vh;
 }
+
 .crypt .roof {
     height: 10vh;
     width: 100%;
@@ -110,12 +113,14 @@ html body {
     -webkit-clip-path: polygon(21% 0%, 79% 0%, 100% 100%, 0% 100%);
     clip-path: polygon(21% 0%, 79% 14%, 100% 100%, 0% 100%);
 }
+
 .crypt .body {
     width: 86%;
     height: 100%;
     background-color: black;
     margin: -1vh auto 0 auto;
 }
+
 .crypt .body .door {
     position: absolute;
     bottom: 0;
@@ -128,24 +133,34 @@ html body {
     background-color: black;
 }
 
-.fog {
-    width: 40vh;
-    height: 20vh;
+/*flame flare*/
+.fogRed, .fogOrange {
     border-top-right-radius: 100%;
     border-top-left-radius: 100%;
-    background-color: rgba(255, 255, 255, 0.2);
+    /*background-color: rgba(255, 255, 255, 0.2);*/
     position: absolute;
     bottom: 0;
     z-index: 1;
-    animation-name: fog;
+    /*animation-name: move;*/
     animation-iteration-count: infinite;
-    animation-duration: 80s;
+    animation-direction: alternate;
+    animation-duration: 40s;
+}
+
+.fogRed {
+    background-color: rgba(255, 0, 0, 0.4);
+    animation-name: redFade;
+}
+
+.fogOrange {
+    background-color: rgba(250, 161, 74, 0.3);
+    animation-name: orangeFade;
 }
 
 .moon {
     position: absolute;
     top: 8vh;
-    right: 18vh;
+    right: 18vw;
     height: 20vh;
     width: 20vh;
     border-radius: 20vh;
@@ -184,22 +199,139 @@ html body {
     z-index: -5;
 }
 
-@keyframes fog {
+@keyframes redFade {
     0% {
+        width: 45vh;
+        height: 25vh;
         filter: blur(10vh);
         left: -9vw;
+        bottom: 2vh;
         transform: rotateZ(19deg);
     }
-    50% {
+    7% {
+        width: 40vh;
+        height: 20vh;
+        filter: blur(15vh);
+        bottom: 1.2vh;
+    }
+    23% {
+        width: 20vh;
+        height: 15vh;
+        filter: blur(7vh);
+        bottom: 0.5vh;
+    }
+    30% {
+        width: 34vh;
+        height: 18vh;
+        filter: blur(12vh);
+        left: 40vw;
+        transform: rotateZ(19deg);
+        bottom: 1vh;
+    }
+    43% {
+        width: 45vh;
+        height: 25vh;
+        filter: blur(15vh);
+        bottom: 2vh;
+    }
+    58% {
+        width: 30vh;
+        height: 20vh;
         filter: blur(13vh);
-        left: 109vw;
+        bottom: 1.5vh;
+    }
+    70% {
+        width: 25vh;
+        height: 19vh;
+        filter: blur(12vh);
+        left: 60vw;
+        transform: rotateZ(-19deg);
+        bottom: 1vh;
+    }
+    83% {
+        width: 20vh;
+        height: 10vh;
+        filter: blur(13vh);
+        bottom: 0.5vh;
     }
     100% {
-        filter: blur(10vh);
-        left: 9vw;
-        transform: rotateZ(-19deg);
+        width: 33vh;
+        height: 17vh;
+        filter: blur(13vh);
+        left: 109vw;
+        bottom: 0.7vh;
     }
 }
+
+@keyframes orangeFade {
+    0% {
+        width: 20vh;
+        height: 15vh;
+        filter: blur(10vh);
+        left: -6vw;
+        bottom: 0;
+        transform: rotateZ(19deg);
+    }
+    9% {
+        width: 24vh;
+        height: 15vh;
+        left: 20vw;
+        filter: blur(11vh);
+        bottom: 0.5vh;
+    }
+    25% {
+        width: 34vh;
+        height: 18vh;
+        left: 28vw;
+        filter: blur(12vh);
+        bottom: 1.5vh;
+    }
+    33% {
+        width: 44vh;
+        height: 23vh;
+        left: 45vw;
+        transform: rotateZ(13deg);
+        bottom: 2vh;
+    }
+    47% {
+        width: 23vh;
+        height: 14vh;
+        left: 48vw;
+        bottom: 0.5vh;
+        filter: blur(4vh);
+    }
+    68% {
+        width: 15vh;
+        height: 23vh;
+        left: 57vw;
+        bottom: 0.8vh;
+    }
+    76% {
+        width: 30vh;
+        height: 22vh;
+        filter: blur(12vh);
+        left: 60vw;
+        transform: rotateZ(-19deg);
+        bottom: 1vh;
+    }
+    87% {
+        width: 35vh;
+        height: 22vh;
+        left: 73vw;
+        filter: blur(11vh);
+        bottom: 1.4vh;
+        transform: rotateZ(-16deg);
+    }
+    100% {
+        width: 33vh;
+        height: 17vh;
+        filter: blur(13vh);
+        left: 109vw;
+        bottom: 0.7vh;
+    }
+}
+
+
 @keyframes float {
     0% {
         top: 45%;

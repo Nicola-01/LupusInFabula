@@ -30,7 +30,7 @@
 </div>
 
 <div class='trees'>
-    <c:forEach var="i" begin="1" end="23">
+    <c:forEach var="i" begin="1" end="25">
         <div class='tree'></div>
     </c:forEach>
 </div>
@@ -44,7 +44,8 @@
         <div class='door'></div>
     </div>
 </div>
-<div class='fog'></div>
+<div class='fogRed'></div>
+<div class='fogOrange'></div>
 <div class='moon'></div>
 
 </body>
