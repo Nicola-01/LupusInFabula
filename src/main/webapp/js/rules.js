@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 var slideIndex = [1,1,1,1];
-var slideId = ["slide", "slide2", "slide3", "slide4"]
+var slideId = ["slide1", "slide2", "slide3", "slide4"]
 
 function plusSlides(n, no) {
     showSlides(slideIndex[no] += n, no);
