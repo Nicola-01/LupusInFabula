@@ -768,8 +768,9 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                     // check for the "look" action --> MEDIUM
-                    // (he looks at the RoleType of the target that died by the stake during the day)
-                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())) {
+                    // (he looks at the RoleType of the target that died by the stake during the previous day - it start to activate his effect from the second night)
+                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())
+                            && !(currentRound == 1 && currentPhase == 0)) {
 
                         String medium = getPlayerByRole(gameActions, GameRoleAction.MEDIUM.getName()).getPlayer();
                         LOGGER.info("The target " + target + " have seen if the stake dead target is good, evil or neutral");
@@ -780,8 +781,10 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
             }
+
             nightActionResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
             nightActionResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
+
         } catch (SQLException | IOException e) {
 
             LOGGER.error("ERROR: something went wrong", e);
@@ -989,51 +992,102 @@ public class GameActionsPostRR extends AbstractRR {
 
             } else if (gameRoleAction.getAction() != null
                     && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
 
+            } else if (gameRoleAction.getAction() != null
+                    && gameRoleAction.getName().equals(GameRoleAction.MEDIUM.getName())
+                    && !(currentRound == 1 && currentPhase == 0)) {
+
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+
+            }
         }
 
-        //check if each role with an effect has done the action
-        if (berserkerCount == 0) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
-                //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
-                LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
+        // check for the medium (during the first night he has not to do any action)
+        if (!(currentRound == 1 && currentPhase == 0)) {
 
+            //check if each role with an effect has done the action
+            if (berserkerCount == 0) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                    //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                    LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+            } else if (berserkerCount == 1) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
+                    LOGGER.error("ERROR: someone has not done his action this turn");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+            } else if (berserkerCount == 2) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
+                    //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                    LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
             }
-        } else if (berserkerCount == 1) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
 
-                LOGGER.error("ERROR: someone has not done his action this turn");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
+        } else {
 
+            //check if each role with an effect has done the action
+            if (berserkerCount == 0) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+                    //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                    LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+            } else if (berserkerCount == 1) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+
+                    LOGGER.error("ERROR: someone has not done his action this turn");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+            } else if (berserkerCount == 2) {
+                if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                    //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                    LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                    ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                    m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
             }
-        } else if (berserkerCount == 2) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
-                LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
-                LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
 
-            }
         }
 
         return true;
 
     }
+
 
     /**
      * Checks the validity of night actions performed by players ensuring that the
