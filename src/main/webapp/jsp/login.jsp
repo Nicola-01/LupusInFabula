@@ -13,7 +13,7 @@
 <body>
 <div class="container">
     <div class="row">
-        <div class=" col-sm-12 col-md-10 col-lg-8 p-0" style="margin: auto">
+        <div class=" col-sm-12 col-md-10 col-lg-8 col-xl-6 p-0" style="margin: auto">
             <c:import url="/jsp/include/show-message.jsp"/>
             <div class="main">
                 <input type="checkbox" id="chk" aria-hidden="true" checked>

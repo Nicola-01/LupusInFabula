@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("sendSettings").addEventListener("click", sendSettings);
     genericGETRequest(contextPath + "game/settings", fillGameSettings)
     genericGETRequest(contextPath + "user/me/friend", fillFriends)
+
+    document.getElementById("sendSettings").disabled = true;
 });
 
 function HTML_switch(name) {
@@ -137,27 +139,42 @@ function fillGameSettings(req) {
                     // Add event listeners for plus and minus buttons
                     minusButton.addEventListener('click', () => {
                         // Decrease value of input field if greater than minimum
-                        if (parseInt(numberInput.value) > min) {
+                        if (parseInt(numberInput.value) > min)
                             numberInput.value = parseInt(numberInput.value) - 1;
-                        }
+                        enableButton()
                     });
 
                     plusButton.addEventListener('click', () => {
                         // Increase value of input field if less than maximum
-                        if (parseInt(numberInput.value) < max) {
+                        if (parseInt(numberInput.value) < max)
                             numberInput.value = parseInt(numberInput.value) + 1;
-                        }
+                        enableButton()
                     });
+                });
+
+                $('[id*="_roleCard"]').click(function (event) {
+                    enableButton()
                 });
             }
         } else
             unLoggedUser(req);
     }
-
 }
 
-function capitalizeFirstLetter(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
+function enableButton() {
+    const role_card = document.querySelectorAll('[id*="_roleCard"]');
+    let totRoles = 0;
+
+    let totPlayer  = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
+
+    for (let i = 0; i < role_card.length; i++) {
+        if (role_card[i].id.includes("_num"))
+            totRoles += parseInt(role_card[i].value);
+        else
+            totRoles += role_card[i].checked ? 1 : 0;
+    }
+
+    document.getElementById("sendSettings").disabled = !(totPlayer >= 5 && totPlayer === totRoles );
 }
 
 function sendSettings() {
@@ -307,3 +324,21 @@ function removeRow(button) {
             checkbox.checked = false;
     });
 }
+
+// Select the table you want to observe
+const table = document.getElementById('players_tb');
+
+// Create a new instance of MutationObserver
+const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+        // Check if nodes are added or removed from the table
+        if (mutation.type === 'childList')
+            enableButton()
+    });
+});
+
+// Configure the MutationObserver to observe changes in the table's child nodes
+const config = { childList: true, subtree: true };
+
+// Start observing the table
+observer.observe(table, config);

@@ -7,6 +7,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
 
     document.getElementById("sendActions").addEventListener("click", sendActions);
+    document.getElementById("sendActions").disabled = true;
+
+    document.getElementsByClassName("")
 });
 
 let gameID;
@@ -55,6 +58,37 @@ function fillGameActions(req) {
     }
 }
 
+function enableButton() {
+    const role_targets = document.querySelectorAll('[id*="_targets"]');
+
+    let disable = false;
+    for (let i = 0; i < role_targets.length && !disable; i++)
+        disable = (role_targets[i].value === "")
+
+    document.getElementById("sendActions").disabled = disable;
+}
+
+function changeDesignatedWolf() {
+    let designatedWolf = document.getElementById("designatedWolf").value;
+
+    const wolves = document.querySelectorAll('.evilRoles [id$="_targets"]');
+    for (let i = 0; i < wolves.length; i++) {
+        if (wolfPack.includes(wolves[i].getAttribute("player"))) {
+            const defaultOption = wolves[i].querySelector('option[value=""]');
+            if (wolves[i].getAttribute("player") !== designatedWolf) {
+                defaultOption.textContent = "Is not the designated wolf";
+                defaultOption.selected = true;
+                wolves[i].disabled = true;
+            } else {
+                wolves[i].disabled = false;
+                defaultOption.textContent = "Select a target";
+                defaultOption.selected = true;
+            }
+        }
+        // else it's a wolf that is not part of the wolf pack
+    }
+}
+
 function handleNightPhase(list) {
     let gameActions = document.getElementById("gameActions");
 
@@ -100,7 +134,7 @@ function handleNightPhase(list) {
         defaultOption.setAttribute("value", "");
         defaultOption.setAttribute("disabled", "disabled");
         defaultOption.setAttribute("selected", "selected");
-        defaultOption.textContent = "Select option";
+        defaultOption.textContent = "Select a target";
         roleTargetsElem.append(defaultOption);
 
         let possibleTargets = actionTarget['possibleTargets'];
@@ -114,6 +148,8 @@ function handleNightPhase(list) {
         let actionText = document.createElement("span");
         actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
         actionWrapper.appendChild(actionText);
+
+        roleTargetsElem.addEventListener('change', enableButton);
 
         insertSelectionBox(actionWrapper, roleTargetsElem)
 
@@ -160,6 +196,8 @@ function handleNightPhase(list) {
         designatedWolf.add(option);
     }
 
+    designatedWolf.addEventListener('change', changeDesignatedWolf);
+
     // Add text to the wrapper
     let actionTextWolf = document.createElement("span");
     actionTextWolf.innerHTML = "Who is the <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> that will make the action?";
@@ -175,6 +213,8 @@ function handleNightPhase(list) {
     if (goodDiv.innerHTML !== "") gameActions.appendChild(goodDiv);
     if (neutralDiv.innerHTML !== "") gameActions.appendChild(neutralDiv);
     if (vicStealDiv.innerHTML !== "") gameActions.appendChild(vicStealDiv);
+
+    changeDesignatedWolf()
 }
 
 function handleDayPhase(list) {
@@ -213,6 +253,8 @@ function handleDayPhase(list) {
         let actionText = document.createElement("span");
         actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
         actionWrapper.appendChild(actionText);
+
+        roleTargetsElem.addEventListener('change', enableButton);
 
         // Add roleTargetsElem to the wrapper
         insertSelectionBox(actionWrapper, roleTargetsElem);
@@ -325,20 +367,6 @@ function actionsResponse(req) {
         } else {
             let message = getMessage(req)
             populateErrorMessage(message.message, message.errorCode, message.errorDetails);
-
-            // console.log(message.message);
-            // console.log(message.errorCode);
-            // console.log(message.errorDetails);
-
-            if (req.status === HTTP_STATUS_CONFLICT) {
-
-            } else if (req.status === HTTP_STATUS_NOT_FOUND) {
-
-            } else if (req.status === HTTP_STATUS_BAD_REQUEST) {
-
-            } else if (req.status === HTTP_STATUS_INTERNAL_SERVER_ERROR) {
-
-            }
         }
     }
 }

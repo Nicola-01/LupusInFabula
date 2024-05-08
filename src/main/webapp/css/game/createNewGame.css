@@ -11,8 +11,7 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 /*tables*/
-#friends_tb, #friends_tb {
-
+#players_tb, #friends_tb {
     overflow-y: auto;
 }
 
@@ -56,11 +55,19 @@ h2:not(#players h2):not(#friends h2) {
     transition: 300ms;
 }
 
-#sendSettings:hover span {
+#sendSettings:enabled:hover span {
     background: none;
 }
 
-#sendSettings:active {
+#sendSettings:disabled {
+    cursor: not-allowed;
+}
+
+#sendSettings:disabled span {
+    background-color: rgb(162, 15, 18);
+}
+
+#sendSettings:enabled:active {
     transform: scale(0.9);
 }
 

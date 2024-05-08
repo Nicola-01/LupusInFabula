@@ -96,7 +96,6 @@ function createCircularButtons() {
 }
 
 function createGridButtons() {
-    console.log("here")
     let playersStatusDiv = document.getElementById("playersStatus");
 
     const bt_width = 85;

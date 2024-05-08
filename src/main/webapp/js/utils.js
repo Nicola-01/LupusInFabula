@@ -156,7 +156,6 @@ function getRoleType(role) {
 
 }
 
-
 function getMessage(req) {
     let jsonResponse = JSON.parse(req.responseText);
     if (jsonResponse.hasOwnProperty('message')) {
@@ -169,4 +168,8 @@ function getMessage(req) {
     }
     return null;
 
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }

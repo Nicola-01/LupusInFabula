@@ -28,7 +28,7 @@
             <table id="players_tb">
                 <thead>
                 <tr>
-                    <th>Username</th>
+                    <th style="width:65%">Username</th>
                     <th>Remove</th>
                 </tr>
                 </thead>
@@ -41,7 +41,7 @@
             <table id="friends_tb">
                 <thead>
                 <tr>
-                    <th>Username</th>
+                    <th style="width:65%">Username</th>
                     <th>Add</th>
                 </tr>
                 </thead>
@@ -55,23 +55,23 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
-            <div id="goodRoles" class="goodRoles p-2">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-1">
+            <div id="goodRoles" class="goodRoles p-3">
                 <h2>GOOD</h2>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
-            <div id="evilRoles" class="p-2 evilRoles">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-1">
+            <div id="evilRoles" class="evilRoles p-3">
                 <h2>EVIL</h2>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
-            <div id="neutralRoles" class="p-2 neutralRoles">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-1">
+            <div id="neutralRoles" class="neutralRoles p-3">
                 <h2>NEUTRAL</h2>
             </div>
         </div>
-        <div class="col-sm-12 col-md-6 col-lg-3 p-2">
-            <div id="victoryStealerRoles" class="p-2 victoryStealerRoles">
+        <div class="col-sm-12 col-md-6 col-lg-3 p-1">
+            <div id="victoryStealerRoles" class="victoryStealerRoles p-3">
                 <h2>VICTORY STEALER</h2>
             </div>
         </div>

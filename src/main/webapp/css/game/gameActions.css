@@ -46,7 +46,6 @@
     transition: all .3s;
 }
 
-
 #sendActions:active,
 #sendActions:hover {
     outline: 0;
@@ -61,18 +60,26 @@
     transition: 300ms;
 }
 
-#sendActions:hover span {
+#sendActions:enabled:hover span {
     background: none;
 }
 
-#sendActions:active {
+#sendActions:disabled {
+    cursor: not-allowed;
+}
+
+#sendActions:disabled span {
+    background-color: rgb(162, 15, 18);
+}
+
+#sendActions:enabled:active {
     transform: scale(0.9);
 }
 
 .select {
     position: relative;
-    width: 150px;
-    min-width: 150px;
+    width: 240px;
+    min-width: 240px;
     margin-bottom: 0;
 }
 
@@ -124,6 +131,10 @@
 
 .select select:hover + svg {
     stroke: #07f;
+}
+
+select:disabled, select:disabled ~ .roleTargets label {
+    cursor: not-allowed !important;
 }
 
 .sprites {
