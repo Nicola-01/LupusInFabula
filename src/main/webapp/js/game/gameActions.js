@@ -28,7 +28,7 @@ function gameStatus(req) {
                 const bt_text = document.getElementById("textActionsBt");
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
                 gamePhase = game.phase;
-                if (gamePhase === 0) {
+                if (gamePhase === GamePhase.NIGHT) {
                     bt_text.textContent += "DAY!";
                     bt_gameStatus.textContent = "NIGHT " + gameRound;
                 } else {
@@ -48,10 +48,10 @@ function fillGameActions(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
-                if (gamePhase === 0)
-                    handleNightPhase(list)
+                if (gamePhase === GamePhase.NIGHT)
+                    fillNightActions(list)
                 else
-                    handleDayPhase(list)
+                    fillDayActions(list)
             }
         } else
             unLoggedUser(req);
@@ -62,7 +62,7 @@ function enableButton() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
     let disable = false;
 
-    if (gamePhase === 0) { // night
+    if (gamePhase === GamePhase.NIGHT) { // night
         const designatedWolf = document.getElementById("designatedWolf").value
 
         if (designatedWolf === "")
@@ -108,7 +108,7 @@ function changeDesignatedWolf() {
     }
 }
 
-function handleNightPhase(list) {
+function fillNightActions(list) {
     let gameActions = document.getElementById("gameActions");
 
     let goodDiv = document.createElement("div");
@@ -126,6 +126,13 @@ function handleNightPhase(list) {
     evilDiv.appendChild(designatedWolfDiv);
     evilDiv.appendChild(document.createElement("hr"));
 
+    const divMap = {
+        "good": goodDiv,
+        "evil": evilDiv,
+        "victory stealer": vicStealDiv,
+        "neutral": neutralDiv
+    };
+
     // Loop through the list of friends
     for (let i = 0; i < list.length; i++) {
         let actionTarget = list[i]['actionTarget'];
@@ -137,60 +144,11 @@ function handleNightPhase(list) {
                 wolfPack.push(wolfPlayers[j].player);
         }
 
-        // Create wrapper element to contain roleTargetsElem and text
-        let actionWrapper = document.createElement("div");
-        actionWrapper.classList.add("action-wrapper", "row");
-
-        // Create select element
-        let roleTargetsElem = document.createElement("select");
-        roleTargetsElem.id = actionTarget.role + "_targets";
-        roleTargetsElem.setAttribute("required", "required");
-        roleTargetsElem.setAttribute("player", actionTarget['players'][0].player);
-
-        // Create default option
-        let defaultOption = document.createElement("option");
-        defaultOption.setAttribute("value", "");
-        defaultOption.setAttribute("disabled", "disabled");
-        defaultOption.setAttribute("selected", "selected");
-        defaultOption.textContent = "Select a target";
-        roleTargetsElem.append(defaultOption);
-
-        let possibleTargets = actionTarget['possibleTargets'];
-        for (let j = 0; j < possibleTargets.length; j++) {
-            let option = document.createElement("option");
-            option.text = possibleTargets[j].player;
-            roleTargetsElem.add(option);
-        }
-
-        // Add text to the wrapper
-        let actionText = document.createElement("span");
-        actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-        actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
-        actionWrapper.appendChild(actionText);
-
-        roleTargetsElem.addEventListener('change', enableButton);
-
-        insertSelectionBox(actionWrapper, roleTargetsElem)
-
-        let selectedDiv;
-        switch (getRoleType(actionTarget.role)) {
-            case "good":
-                selectedDiv = goodDiv;
-                break;
-            case "evil":
-                selectedDiv = evilDiv;
-                break;
-            case "victory stealer":
-                selectedDiv = vicStealDiv;
-                break;
-            case "neutral":
-                selectedDiv = neutralDiv;
-                break;
-            default:
-                continue;
-        }
         // Add wrapper to the gameActions element
-        selectedDiv.appendChild(actionWrapper);
+        const targetDiv = divMap[getRoleType(actionTarget.role)];
+        if (targetDiv) {
+            targetDiv.appendChild(getActionWrapper(actionTarget));
+        }
     }
 
     let actionWrapperWolf = document.createElement("div");
@@ -238,52 +196,54 @@ function handleNightPhase(list) {
     changeDesignatedWolf()
 }
 
-function handleDayPhase(list) {
+function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
+    for (let i = 0; i < list.length; i++)
+        gameActions.appendChild(getActionWrapper(list[i]['actionTarget']));
 
-    for (let i = 0; i < list.length; i++) {
-        let actionTarget = list[i]['actionTarget'];
+}
 
-        // Create wrapper element to contain roleTargetsElem and text
-        let actionWrapper = document.createElement("div");
-        actionWrapper.setAttribute("class", "action-wrapper");
+function getActionWrapper(actionTarget) {
+    // Create wrapper element to contain roleTargetsElem and text
+    let actionWrapper = document.createElement("div");
+    actionWrapper.classList.add("action-wrapper", "row");
 
-        // Create select element
-        let roleTargetsElem = document.createElement("select");
-        roleTargetsElem.id = actionTarget.role + "_targets";
-        roleTargetsElem.setAttribute("required", "required");
-        roleTargetsElem.setAttribute("player", actionTarget.player);
-        roleTargetsElem.setAttribute("class", "roleTargets");
+    // Create select element
+    let roleTargetsElem = document.createElement("select");
+    roleTargetsElem.id = actionTarget.role + "_targets";
+    roleTargetsElem.setAttribute("required", "required");
+    roleTargetsElem.setAttribute("player", actionTarget.player);
 
-        // Create default option
-        let defaultOption = document.createElement("option");
-        defaultOption.setAttribute("value", "");
-        defaultOption.setAttribute("disabled", "disabled");
-        defaultOption.setAttribute("selected", "selected");
-        defaultOption.textContent = "Select option";
-        roleTargetsElem.append(defaultOption);
+    // Create default option
+    let defaultOption = document.createElement("option");
+    defaultOption.setAttribute("value", "");
+    defaultOption.setAttribute("disabled", "disabled");
+    defaultOption.setAttribute("selected", "selected");
+    defaultOption.textContent = "Select option";
+    roleTargetsElem.append(defaultOption);
 
-        let possibleTargets = actionTarget['possibleTargets'];
-        for (let j = 0; j < possibleTargets.length; j++) {
-            let option = document.createElement("option");
-            option.text = possibleTargets[j].player;
-            roleTargetsElem.add(option);
-        }
-
-        // Add text to the wrapper
-        let actionText = document.createElement("span");
-        actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
-        actionWrapper.appendChild(actionText);
-
-        roleTargetsElem.addEventListener('change', enableButton);
-
-        // Add roleTargetsElem to the wrapper
-        insertSelectionBox(actionWrapper, roleTargetsElem);
-
-        // Add wrapper to the gameActions element
-        gameActions.appendChild(actionWrapper);
+    let possibleTargets = actionTarget['possibleTargets'];
+    for (let j = 0; j < possibleTargets.length; j++) {
+        let option = document.createElement("option");
+        option.text = possibleTargets[j].player;
+        roleTargetsElem.add(option);
     }
 
+    // Add text to the wrapper
+    let actionText = document.createElement("span");
+    if (gamePhase === GamePhase.NIGHT)
+        actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
+    else
+        actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
+    actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
+    actionWrapper.appendChild(actionText);
+
+    roleTargetsElem.addEventListener('change', enableButton);
+
+    // Add roleTargetsElem to the wrapper
+    insertSelectionBox(actionWrapper, roleTargetsElem);
+
+    return actionWrapper;
 }
 
 function insertSelectionBox(actionWrapper, selectBox) {
@@ -315,56 +275,31 @@ function insertSelectionBox(actionWrapper, selectBox) {
 }
 
 function sendActions() {
-    if (gamePhase === 0)
-        sendNightAction()
-    else
-        sendDayAction()
-}
-
-function sendNightAction() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
     const gameAction = [];
-
-    const designatedWolf = document.getElementById("designatedWolf").value
 
     let player;
     let role;
     let target;
+
+    let designatedWolf;
+    if (gamePhase === GamePhase.NIGHT)
+        designatedWolf = document.getElementById("designatedWolf").value
+
     for (let i = 0; i < role_targets.length; i++) {
 
         player = role_targets[i].getAttribute("player");
         role = role_targets[i].id.replace('_targets', '');
         target = role_targets[i].value;
 
-        if (wolfPack.includes(player) && designatedWolf !== player) {
-            console.log("Discard the action of " + player + " it's not the designated wolf")
-            continue;
+        if (gamePhase === GamePhase.NIGHT) {
+            if (wolfPack.includes(player) && designatedWolf !== player) {
+                console.log("Discard the action of " + player + " it's not the designated wolf")
+                continue;
+            }
+            if (role === "sheriff" && target.toLowerCase() === "no shot")
+                continue;
         }
-
-        if (role === "sheriff" && target.toLowerCase() === "no shot")
-            continue;
-
-        gameAction.push({player, role, target});
-    }
-
-    const json = {gameAction};
-    console.log(JSON.stringify(json));
-    genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
-}
-
-function sendDayAction() {
-    const role_targets = document.querySelectorAll('[id*="_targets"]');
-    const gameAction = [];
-
-    let player;
-    let role;
-    let target;
-    for (let i = 0; i < role_targets.length; i++) {
-
-        player = role_targets[i].getAttribute("player");
-        role = role_targets[i].id.replace('_targets', '');
-        target = role_targets[i].value;
-
         gameAction.push({player, role, target});
     }
 
@@ -376,7 +311,7 @@ function sendDayAction() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            if (gamePhase === 0) {
+            if (gamePhase === GamePhase.NIGHT) {
                 let nightActionResults = JSON.parse(req.responseText)['nightActionResults'];
                 console.log(nightActionResults)
                 location.reload()

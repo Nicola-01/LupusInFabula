@@ -85,6 +85,11 @@ rolesColors.set('plague spreader', '#3B3B3B');
 
 rolesColors.set('', '#6E007B')
 
+const GamePhase = {
+    NIGHT: 0,
+    DAY: 1
+};
+
 document.addEventListener('DOMContentLoaded', function (event) {
     contextPath = window.location.origin + "/lupus/";
     // console.log(contextPath);

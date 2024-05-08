@@ -21,7 +21,7 @@
 
 /* Slideshow container */
 .slideshow-container {
-    max-width: 45rem;
+    max-width: 50rem;
     position: relative;
     margin: auto;
 }
@@ -189,7 +189,7 @@ p {
 .introduction, .sublist .subrules, .list .rules {
     counter-increment: list;
     position: relative;
-    max-width: 45rem;
+    max-width: 50rem;
     padding: 2rem 1rem 1rem;
     box-shadow: 0.01rem 0.01rem 0.3rem rgba(0, 0, 0, 0.2);
     border-radius: 1rem;
