@@ -98,12 +98,9 @@ function createCircularButtons() {
 function createGridButtons() {
     let playersStatusDiv = document.getElementById("playersStatus");
 
-    const bt_width = 85;
-    const bt_height = 50;
-
     for (let i = 0; i < playerRole.length; i++) {
         let playerRoleDiv = document.createElement("div");
-        playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-2")
+        playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-1")
 
         const button = document.createElement('button');
         button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
@@ -113,8 +110,6 @@ function createGridButtons() {
         }
         button.className = "grid-button";
         button.style.backgroundColor = rolesColors.get(playerRole[i].role);
-        button.style.width = bt_width + 'px'
-        button.style.height = bt_height + 'px'
 
         playerRoleDiv.appendChild(button)
         playersStatusDiv.appendChild(playerRoleDiv);

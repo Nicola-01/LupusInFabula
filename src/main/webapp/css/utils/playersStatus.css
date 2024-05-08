@@ -35,6 +35,8 @@
     font-size: 14px;
     color: white;
     cursor: pointer;
+    width: 100%;
+    height: 4.5em;
 }
 
 .circular-button:hover {

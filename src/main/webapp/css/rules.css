@@ -63,13 +63,13 @@ a {
 }
 
 .rules {
-    padding: 2%;
+    padding: 0.7em;
     justify-content: center;
     align-items: center
 }
 
 .description {
-    padding: 3%;
+    padding: 1em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -125,7 +125,7 @@ a {
 
 
 .container-fluid h1 {
-    padding: 3%;
+    padding: 1em;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -154,7 +154,7 @@ p {
 .list {
     list-style: none;
     counter-reset: item;
-    padding: 0 1rem;
+    padding: 0;
 }
 
 .list .rules {
@@ -165,15 +165,7 @@ p {
     --c1: hsl(var(--h), 71%, var(--l));
     --c2: hsl(var(--h), 71%, var(--l2));
 
-    position: relative;
-    counter-increment: list;
-    max-width: 45rem;
-    margin: 2rem auto;
-    padding: 2rem 1rem 1rem;
-    box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
-    border-radius: 1rem;
-    overflow: hidden;
-    background-color: white;
+    margin: 2rem auto !important;
 }
 
 .list .rules::before {
@@ -194,6 +186,22 @@ p {
     padding: 0 0;
 }
 
+.introduction, .sublist .subrules, .list .rules {
+    counter-increment: list;
+    position: relative;
+    max-width: 45rem;
+    padding: 2rem 1rem 1rem;
+    box-shadow: 0.01rem 0.01rem 0.3rem rgba(0, 0, 0, 0.2);
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: white;
+    margin: auto;
+}
+
+.subrules{
+    margin: 0.7em auto !important;
+}
+
 .sublist .subrules {
     --stop: calc(100% / var(--length) * var(--i));
     --l: 62%;
@@ -201,16 +209,6 @@ p {
     --h: calc((var(--i) - 1) * (180 / var(--length)));
     --c1: hsl(var(--h), 71%, var(--l));
     --c2: hsl(var(--h), 71%, var(--l2));
-
-    position: relative;
-    counter-increment: list;
-    max-width: 45rem;
-    margin: 2rem auto;
-    padding: 2rem 1rem 1rem;
-    box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
-    border-radius: 1rem;
-    overflow: hidden;
-    background-color: white;
 }
 
 .sublist .subrules::before {
@@ -261,17 +259,6 @@ h3::before {
     h3::before {
         margin-right: 1.5rem;
     }
-}
-
-.introduction {
-    position: relative;
-    max-width: 45rem;
-    margin: 2rem auto;
-    padding: 2rem 1rem 1rem;
-    box-shadow: 0.1rem 0.1rem 1.5rem rgba(0, 0, 0, 0.3);
-    border-radius: 1rem;
-    overflow: hidden;
-    background-color: white;
 }
 
 .h3intro {
