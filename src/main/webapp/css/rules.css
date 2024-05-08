@@ -124,7 +124,7 @@ a {
 }
 
 
-.container h1 {
+.container-fluid h1 {
     padding: 3%;
     display: flex;
     justify-content: center;
@@ -191,7 +191,7 @@ p {
 .sublist {
     list-style: none;
     counter-reset: list;
-    padding: 0 1rem;
+    padding: 0 0;
 }
 
 .sublist .subrules {

@@ -20,9 +20,9 @@
 
 <jsp:include page="include/navbar.jsp"/>
 
-<div class="container">
+<div class="container-fluid">
     <h1>RULES</h1>
-    <ol class="introduction">
+    <ol class="list introduction">
         <h3 class="h3intro"><strong>Introduction to Lupus</strong></h3>
         <p>In the remote village of Fabula, some people become werewolves at night. They attack an innocent person
             to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the
@@ -52,8 +52,10 @@
             <ol class="sublist" role="list">
                 <li class="subrules" style="--i: 4">
                     <h3><strong>Night</strong></h3>
-                    <p>The moderator declares the beginning of the night (”it is night, everyone close your eyes”). All players
-                        then close their eyes, trying not to make any kind of noise for all the duration of this phase. The
+                    <p>The moderator declares the beginning of the night (”it is night, everyone close your eyes”). All
+                        players
+                        then close their eyes, trying not to make any kind of noise for all the duration of this phase.
+                        The
                         master then begins to call each role with effect:<br>
                         Example of wolves calling:<br>
                         - Master: ”Wolves open their eyes and choose who to go and maul.”<br>
@@ -66,32 +68,49 @@
                         - Seer points to the player he wants to investigate<br>
                         - Master nods to say whether the player has a bad or good role<br>
                         - Master: ”Seer closes eyes.”<br>
-                    <hr>Note: This phase should be played even if the called role is already dead in order to not give clues to
+                    <hr>
+                    Note: This phase should be played even if the called role is already dead in order to not give clues
+                    to
                     others. Once the master has called all roles with night effect, the night is over.</p>
                 </li>
                 <li class="subrules" style="--i: 5">
                     <h3><strong>Day</strong></h3>
                     <p>The master now declares the start of the day (”it’s day, everybody open your eyes”). The master
-                        then gives a recap of what happened during the past night, listing who died (if anyone died), who was
-                        anointed, etc. without giving explicit information about what happened (e.g. recap: Master: ”A died,
-                        B died, C was anointed”). Once the master has finished the recap, the still-living players can then
-                        start discussing among themselves to decide who to lynch. You may lie freely but under no circumstances
+                        then gives a recap of what happened during the past night, listing who died (if anyone died),
+                        who was
+                        anointed, etc. without giving explicit information about what happened (e.g. recap: Master: ”A
+                        died,
+                        B died, C was anointed”). Once the master has finished the recap, the still-living players can
+                        then
+                        start discussing among themselves to decide who to lynch. You may lie freely but under no
+                        circumstances
                         may you show your card to others.</p>
                 </li>
                 <li class="subrules" style="--i: 6">
                     <h3><strong>Voting</strong></h3>
-                    <p>After a maximum of three minutes of discussion, the master stops the discussion and asks each player,
-                        starting with the one to the left of the one who died first and proceeding clockwise, who he thinks
-                        should be lynched. All players, including ghosts (i.e., those who died), in their turn vote indicating
-                        who they want to lynch. At the end of the voting, the two players with the most votes will be clued (in
-                        case of a tie, the player closest to the first dead will be chosen). The two suspected players can now
-                        take a short speech defending themselves against the charges. After the two speeches are over, the
-                        remaining alive unindicted players will vote again for the new player to be lynched among the two
-                        suspects (in this case the voting will be counterclockwise starting with the alive unindicted player who
-                        was last to vote before). At this point the day is over and the master can start a new night and so on
+                    <p>After a maximum of three minutes of discussion, the master stops the discussion and asks each
+                        player,
+                        starting with the one to the left of the one who died first and proceeding clockwise, who he
+                        thinks
+                        should be lynched. All players, including ghosts (i.e., those who died), in their turn vote
+                        indicating
+                        who they want to lynch. At the end of the voting, the two players with the most votes will be
+                        clued (in
+                        case of a tie, the player closest to the first dead will be chosen). The two suspected players
+                        can now
+                        take a short speech defending themselves against the charges. After the two speeches are over,
+                        the
+                        remaining alive unindicted players will vote again for the new player to be lynched among the
+                        two
+                        suspects (in this case the voting will be counterclockwise starting with the alive unindicted
+                        player who
+                        was last to vote before). At this point the day is over and the master can start a new night and
+                        so on
                         until one faction wins.
-                        <br><hr>
-                    Note: all dead players (i.e. ghosts) for the rest of the entire game must not speak or show their role
+                        <br>
+                    <hr>
+                    Note: all dead players (i.e. ghosts) for the rest of the entire game must not speak or show their
+                    role
                     to other players.</p>
                 </li>
             </ol>
@@ -104,16 +123,12 @@
                 unceremoniously maul the remaining villagers! In case there are victory stealer roles in the game, they
                 will win if their victory condition is fulfilled, and in that case the master will declare them winners
                 any time in the game when they have completed their victory condition.
-                This game requires at least five participants, one of whom will be the game-master, and the other will
-                get roles assigned randomly, for instance by drawing a card. The main roles are wolves and farmers, but
-                other roles are used - like medium, knight, werehamster etc - in order to make the game more
-                entertaining, with specific rules applying to each character.</p>
+            </p>
         </li>
     </ol>
-</div>
-<br>
 
-<div class="container">
+    <br>
+
     <h1 id="roles">ROLES</h1>
     <div class="slideshow-container goodRoles">
         <h2 class="text-center">GOOD</h2>
