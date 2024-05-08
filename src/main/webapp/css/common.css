@@ -64,17 +64,17 @@ footer {
 }
 
 .goodRoles {
-    background-color: #c8f3c8;
+    background-color: #caecca; /*#c8f3c8;*/
 }
 
 .evilRoles {
-    background-color: #efb3b6;
+    background-color: #ecbabc; /*#efb3b6;*/
 }
 
 .victoryStealerRoles {
-    background-color: #e6d58f;
+    background-color: #fbebab; /*#e6d58f;*/
 }
 
 .neutralRoles {
-    background-color: #9f9f9f;
+    background-color: #b7b7b7; /*#e6d58f;*/
 }

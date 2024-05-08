@@ -211,13 +211,13 @@ h2:not(#players h2):not(#friends h2) {
 .role {
     display: flex;
     align-items: center;
-    margin-bottom: .7em;
 }
 
 .toggle-switch {
     margin-left: auto;
     width: 60px;
     min-width: 60px;
+    margin-bottom: 0;
 }
 
 input::-webkit-outer-spin-button,
@@ -274,6 +274,11 @@ input[type=number] {
     outline: none;
 }
 
-.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
+.goodRoles, .evilRoles, .neutralRoles, .victoryStealerRoles {
     height: 100%;
+}
+
+.goodRoles > .role:not(:last-child), .evilRoles > .role:not(:last-child),
+.neutralRoles > .role:not(:last-child), .victoryStealerRoles > .role:not(:last-child) {
+    margin-bottom: .7em;
 }

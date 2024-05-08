@@ -1,16 +1,10 @@
-.gameActions {
-
-}
-
 .action-wrapper {
     display: flex;
     align-items: center;
-    margin-bottom: .5em;
 }
 
 .roleTargets {
     margin-left: auto;
-
 }
 
 /*insert action*/
@@ -78,8 +72,6 @@
 
 .select {
     position: relative;
-    width: 240px;
-    min-width: 240px;
     margin-bottom: 0;
 }
 
@@ -99,7 +91,7 @@
 
 .select select {
     -webkit-appearance: none;
-    padding: 5px 30px 5px 10px;
+    padding: 5px 10px;
     width: 100%;
     border: 1px solid #e8eaed;
     border-radius: 5px;
@@ -133,7 +125,7 @@
     stroke: #07f;
 }
 
-select:disabled, select:disabled ~ .roleTargets label {
+select:disabled, select:disabled~label {
     cursor: not-allowed !important;
 }
 
@@ -152,4 +144,9 @@ select:disabled, select:disabled ~ .roleTargets label {
 
 hr {
     margin: 0.8em 0;
+}
+
+.goodRoles > .action-wrapper:not(:last-child), .evilRoles > .action-wrapper:not(:last-child),
+.neutralRoles > .action-wrapper:not(:last-child), .victoryStealerRoles > .action-wrapper:not(:last-child) {
+    margin-bottom: .7em;
 }

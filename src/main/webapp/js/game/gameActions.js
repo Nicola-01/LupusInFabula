@@ -60,10 +60,29 @@ function fillGameActions(req) {
 
 function enableButton() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
-
     let disable = false;
-    for (let i = 0; i < role_targets.length && !disable; i++)
-        disable = (role_targets[i].value === "")
+
+    if (gamePhase === 0) { // night
+        const designatedWolf = document.getElementById("designatedWolf").value
+
+        if (designatedWolf === "")
+            disable = true
+
+        for (let i = 0; i < role_targets.length && !disable; i++) {
+            let player = role_targets[i].getAttribute("player");
+            if (wolfPack.includes(player)) {
+                if (designatedWolf === player)
+                    disable = (role_targets[i].value === "")
+                else
+                    disable = (role_targets[i].value !== "")
+            } else
+                disable = (role_targets[i].value === "")
+        }
+    } else { // day
+        for (let i = 0; i < role_targets.length && !disable; i++)
+            disable = (role_targets[i].value === "")
+    }
+
 
     document.getElementById("sendActions").disabled = disable;
 }
@@ -120,14 +139,13 @@ function handleNightPhase(list) {
 
         // Create wrapper element to contain roleTargetsElem and text
         let actionWrapper = document.createElement("div");
-        actionWrapper.setAttribute("class", "action-wrapper");
+        actionWrapper.classList.add("action-wrapper", "row");
 
         // Create select element
         let roleTargetsElem = document.createElement("select");
         roleTargetsElem.id = actionTarget.role + "_targets";
         roleTargetsElem.setAttribute("required", "required");
         roleTargetsElem.setAttribute("player", actionTarget['players'][0].player);
-        roleTargetsElem.setAttribute("class", "roleTargets");
 
         // Create default option
         let defaultOption = document.createElement("option");
@@ -147,6 +165,7 @@ function handleNightPhase(list) {
         // Add text to the wrapper
         let actionText = document.createElement("span");
         actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
+        actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
         actionWrapper.appendChild(actionText);
 
         roleTargetsElem.addEventListener('change', enableButton);
@@ -175,12 +194,13 @@ function handleNightPhase(list) {
     }
 
     let actionWrapperWolf = document.createElement("div");
-    actionWrapperWolf.setAttribute("class", "action-wrapper");
+    actionWrapperWolf.classList.add("action-wrapper", "row");
 
     let designatedWolf = document.createElement("select");
     designatedWolf.id = "designatedWolf";
     designatedWolf.setAttribute("required", "required");
-    designatedWolf.setAttribute("class", "roleTargets");
+    designatedWolf.classList.add("roleTargets");
+    designatedWolf.addEventListener('change', enableButton);
 
     // Create default option
     let defaultOption = document.createElement("option");
@@ -201,6 +221,7 @@ function handleNightPhase(list) {
     // Add text to the wrapper
     let actionTextWolf = document.createElement("span");
     actionTextWolf.innerHTML = "Who is the <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> that will make the action?";
+    actionTextWolf.classList.add("col-12", "col-sm-8", "col-md-7")
     actionWrapperWolf.appendChild(actionTextWolf);
 
     // Add roleTargetsElem to the wrapper
@@ -268,31 +289,29 @@ function handleDayPhase(list) {
 function insertSelectionBox(actionWrapper, selectBox) {
     // Create label element
     var label = document.createElement("label");
-    label.classList.add("select", "roleTargets");
-    label.setAttribute("for", "slct");
+    label.classList.add("select", "roleTargets", "col-12", "col-sm-4", "col-md-5");
+    label.setAttribute("for", selectBox.id);
 
-    // Create SVG
-    var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svg.innerHTML = '<use xlink:href="#select-arrow-down"></use>';
-
-    // Append SVG to label
-    label.appendChild(svg);
+    // // Create SVG
+    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // // svg.innerHTML = '<use xlink:href="#select-arrow-down"></use>';
+    //
+    // const svgSprites = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    // const symbol = document.createElementNS("http://www.w3.org/2000/svg", "symbol");
+    // symbol.setAttribute("viewBox", "0 0 10 6");
+    // symbol.innerHTML = '<polyline points="1 1 5 5 9 1"></polyline>';
+    // svgSprites.appendChild(symbol);
+    // svg.appendChild(svgSprites)
+    //
+    // // Append SVG to label
+    // label.appendChild(svg);
 
     // Append select to label
     label.appendChild(selectBox);
 
-    // Create SVG Sprites
-    var svgSprites = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    svgSprites.classList.add("sprites");
-    var symbol = document.createElementNS("http://www.w3.org/2000/svg", "symbol");
-    symbol.setAttribute("id", "select-arrow-down");
-    symbol.setAttribute("viewBox", "0 0 10 6");
-    symbol.innerHTML = '<polyline points="1 1 5 5 9 1"></polyline>';
-    svgSprites.appendChild(symbol);
-
     // Add roleTargetsElem to the wrapper
     actionWrapper.appendChild(label);
-    actionWrapper.appendChild(svgSprites);
+    // actionWrapper.appendChild(svgSprites);
 }
 
 function sendActions() {
@@ -321,6 +340,9 @@ function sendNightAction() {
             console.log("Discard the action of " + player + " it's not the designated wolf")
             continue;
         }
+
+        if (role === "sheriff" && target.toLowerCase() === "no shot")
+            continue;
 
         gameAction.push({player, role, target});
     }
