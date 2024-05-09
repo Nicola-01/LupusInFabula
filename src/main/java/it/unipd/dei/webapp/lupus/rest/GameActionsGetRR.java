@@ -89,6 +89,9 @@ public class GameActionsGetRR extends AbstractRR {
                 playerWithRole(GameRoleAction.EXPLORER.getName()).stream()).toList();
         wolfPlayers = Stream.concat(wolfPlayers.stream(),
                 playerWithRole(GameRoleAction.PUPPY.getName()).stream()).toList();
+        if(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+            wolfPlayers = Stream.concat(wolfPlayers.stream(),
+                    playerWithRole(GameRoleAction.DORKY.getName()).stream()).toList();
     }
 
     @Override
@@ -106,10 +109,10 @@ public class GameActionsGetRR extends AbstractRR {
 
             if (game.getWho_win() == -1) {
                 LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is " + currentPhase);
-                if (GamePhase.NIGHT.getId() != currentPhase)
-                    handleDayPhase();
-                else
+                if (currentPhase == GamePhase.NIGHT.getId())
                     handleNightPhase();
+                else
+                    handleDayPhase();
             } else {
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
                 LOGGER.warn("The game is over");
@@ -205,15 +208,22 @@ public class GameActionsGetRR extends AbstractRR {
                     if (isValidTarget(player, targetPlayer, role))
                         targets.add(targetPlayer);
                 }
-                if(role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
+                if (role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
                     continue;
                 Collections.sort(targets);
-                if(role.equals(GameRoleAction.SHERIFF.getName()))
-                    targets.add(0,"no shot");
+                if (role.equals(GameRoleAction.SHERIFF.getName()))
+                    targets.add(0, "No shot");
 
                 LOGGER.info("targets: " + String.join(", ", targets));
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),
                         getNightAction(role), targets));
+
+                if (role.equals((GameRoleAction.BERSERKER.getName()))) {
+                    List<String> targetsTmp = new ArrayList<>(targets);
+                    targetsTmp.add(0, "No rage");
+                    actionTargets.add(new ActionTarget(role, playerWithRole(role),
+                            getNightAction(role), targetsTmp));
+                }
             }
         }
 

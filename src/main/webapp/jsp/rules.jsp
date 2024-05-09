@@ -22,13 +22,14 @@
 
 <div class="container-fluid">
     <h1>RULES</h1>
-    <ol class="list introduction m-auto">
-        <h3 class="h3intro"><strong>Introduction to Lupus</strong></h3>
-        <p>In the remote village of Fabula, some people become werewolves at night. They attack an innocent person
-            to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the
-            discussion, they lynch one of them. Who will survive the massacre?</p>
-    </ol>
     <ol class="list" style="--length: 7" role="list">
+        <li class="rules" style="--i: 0">
+            <h3><strong>Introduction to Lupus</strong></h3>
+            <p>In the remote village of Fabula, some people become werewolves at night. They attack an innocent person
+                to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the
+                discussion, they lynch one of them. Who will survive the massacre?</p>
+        </li>
+
         <li class="rules" style="--i: 1">
             <h3><strong>Aim of the game</strong></h3>
             <p>There are two factions in the game: the Werewolves and the Villagers. The aim of the Werewolf faction is

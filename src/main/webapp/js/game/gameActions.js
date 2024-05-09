@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
     console.log(gameID)
 
     document.getElementById("sendActions").addEventListener("click", sendActions);
-    document.getElementById("sendActions").disabled = true;
 
     elementSReload();
 });
@@ -13,6 +12,8 @@ function elementSReload() {
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
     genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
     genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus)
+
+    document.getElementById("sendActions").disabled = true;
 }
 
 let gameID;
@@ -75,7 +76,6 @@ function enableButton() {
 
         if (designatedPlayer === "")
             disable = true
-
         for (let i = 0; i < role_targets.length && !disable; i++) {
             let role = role_targets[i].getAttribute("role");
             if (wolfPackContainRole(role)) {
@@ -90,8 +90,6 @@ function enableButton() {
         for (let i = 0; i < role_targets.length && !disable; i++)
             disable = (role_targets[i].value === "")
     }
-
-
     document.getElementById("sendActions").disabled = disable;
 }
 
@@ -151,17 +149,22 @@ function fillNightActions(list) {
         "neutral": neutralDiv
     };
 
+    let berserkAlreadyInsert = false;
+
     for (let i = 0; i < list.length; i++) {
         let actionTarget = list[i]['actionTarget'];
 
         // get the wolves that can do ad action for kill someone
         if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
             let wolfPlayers = actionTarget['players'];
-            for (let j = 0; j < wolfPlayers.length; j++)
+            for (let j = 0; j < wolfPlayers.length && !berserkAlreadyInsert; j++)
                 wolfPack.push({
                     player: wolfPlayers[j].player,
                     role: actionTarget.role
                 });
+
+            if(actionTarget.action === "rage")
+                berserkAlreadyInsert = true;
 
             designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true))
         } else {
@@ -234,11 +237,14 @@ function getActionWrapper(actionTarget, memberOfWolfPack = false) {
     // Create select element
     let roleTargetsElem = document.createElement("select");
     roleTargetsElem.id = actionTarget.role + "_targets";
-    // roleTargetsElem.setAttribute("required", "required");
+    roleTargetsElem.setAttribute("required", "required");
     roleTargetsElem.setAttribute("role", actionTarget.role);
-    if (!memberOfWolfPack)
-        roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
-    roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
+    if (gamePhase === GamePhase.NIGHT) {
+        if (!memberOfWolfPack)
+            roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
+        roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
+    } else
+        roleTargetsElem.setAttribute("player", actionTarget.player);
 
     // Create default option
     let defaultOption = document.createElement("option");
@@ -323,17 +329,16 @@ function sendActions() {
         target = role_target.value;
 
         if (gamePhase === GamePhase.NIGHT) {
-            console.log(role_target.getAttribute("memberOfWolfPack"))
             if (role_target.getAttribute("memberOfWolfPack") === "true")
                 if (designatedRole === role_target.getAttribute("role")) {
                     player = designatedPlayer;
-                } else {
-                    console.log("Discard the action of " + player + " it's not the designated wolf")
+                } else
                     continue;
-                }
         }
-        if (role === "sheriff" && target.toLowerCase() === "no shot")
+        if ((role === "sheriff" && target.toLowerCase() === "no shot")
+            || (role === "berserker" && target.toLowerCase() === "no rage"))
             continue;
+
         gameAction.push({player, role, target});
     }
 
