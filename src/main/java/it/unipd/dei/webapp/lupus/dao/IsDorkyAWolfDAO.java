@@ -84,8 +84,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
                 if (wolfMap.get(player).equals(GameRoleAction.WOLF.getName())
                         || wolfMap.get(player).equals(GameRoleAction.GIUDA.getName())
                         || wolfMap.get(player).equals(GameRoleAction.EXPLORER.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.BERSERKER.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.PUPPY.getName())) {
+                        || wolfMap.get(player).equals(GameRoleAction.BERSERKER.getName())) {
 
                     result = true;
 

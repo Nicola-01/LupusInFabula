@@ -40,6 +40,13 @@ public class GameActionsPostRR extends AbstractRR {
     private final Map<String, String> playersRole;
 
     /**
+     * List containing the actions that has to be inserted into the database
+     */
+    List<Action> insertActions;
+
+    List<PlaysAsIn> updatePlayersDeath;
+
+    /**
      * The results of the night actions.
      */
     private final NightActionResults nightActionResults;
@@ -94,6 +101,9 @@ public class GameActionsPostRR extends AbstractRR {
 
         nightActionResults = new NightActionResults();
         dayActionResults = new DayActionResults();
+
+        insertActions = new ArrayList<>();
+        updatePlayersDeath = new ArrayList<>();
     }
 
     /**
@@ -114,11 +124,13 @@ public class GameActionsPostRR extends AbstractRR {
             currentSubPhase = game.getSubphase();
 
             if (game.getWho_win() != -1) {
+
                 LOGGER.error("ERROR: the game is over");
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
                 Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
+
             } else {
                 if (currentPhase == GamePhase.NIGHT.getId()) {
                     // check of the correctness of the actions
@@ -208,11 +220,12 @@ public class GameActionsPostRR extends AbstractRR {
                 String target = gameAction.getTarget();
 
                 if (numberAction <= voteNumber) { //first votation
-                    LOGGER.info(player + " with role " + role + " has voted " + target);
+                    //LOGGER.info(player + " with role " + role + " has voted " + target);
 
                     Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
                     // DAO for add the action to the database
-                    new InsertIntoActionDAO(ds.getConnection(), action).access();
+                    insertActions.add(action);
+                    //new InsertIntoActionDAO(ds.getConnection(), action).access();
                     votesMap.put(target, votesMap.get(target) + 1);
 
                     //First vote
@@ -234,7 +247,8 @@ public class GameActionsPostRR extends AbstractRR {
                             } else {
                                 LOGGER.info(votedPlayer1 + " is voted out");
                                 dayActionResults.setVotedPlayer(votedPlayer1);
-                                updatePlayerDeath(votedPlayer1);
+                                updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
+//                                updatePlayerDeath(votedPlayer1);
                             }
                         }
 
@@ -254,7 +268,8 @@ public class GameActionsPostRR extends AbstractRR {
 
                     Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
                     // DAO for add the action to the database
-                    new InsertIntoActionDAO(ds.getConnection(), action).access();
+                    insertActions.add(action);
+                    //new InsertIntoActionDAO(ds.getConnection(), action).access();
                     ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
 
                     if (numberAction == (voteNumber + ballotVoteNumber)) {
@@ -269,7 +284,8 @@ public class GameActionsPostRR extends AbstractRR {
                         } else {
                             LOGGER.info(votedPlayer1 + " is voted out");
                             dayActionResults.setVotedPlayer(votedPlayer1);
-                            updatePlayerDeath(votedPlayer1);
+                            updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
+//                            updatePlayerDeath(votedPlayer1);
                         }
 
                     }
@@ -278,16 +294,20 @@ public class GameActionsPostRR extends AbstractRR {
                     if (role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
                         //He can decide to kill someone else before his dead
                         Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
-                        new InsertIntoActionDAO(ds.getConnection(), samAction).access();
+                        insertActions.add(samAction);
+                        //new InsertIntoActionDAO(ds.getConnection(), samAction).access();
                         LOGGER.info("Sam killed " + target);
                         dayActionResults.setSamTarget(target);
-                        updatePlayerDeath(target);
+                        updatePlayersDeath.add(updatePlayerDeath(target));
+                        //updatePlayerDeath(target);
                     } else if (role.equals("plague spreader")) {
                         Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
-                        new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
+                        insertActions.add(plagueAction);
+                        //new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
                         LOGGER.info("Plague spreader killed " + target);
                         dayActionResults.setPlaguePlayer(target);
-                        updatePlayerDeath(target);
+                        updatePlayersDeath.add(updatePlayerDeath(target));
+//                        updatePlayerDeath(target);
                     } else {
                         //error
                         LOGGER.error("ERROR: not valid action");
@@ -301,22 +321,36 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-            return true;
+            for (Action action : insertActions) {
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+            }
+
+            for (PlaysAsIn playsAsIn : updatePlayersDeath) {
+                new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+            }
+
         } catch (SQLException e) {
+
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
+
         } catch (IOException e) {
+
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
+
         }
+
+        return true;
+
     }
 
     /**
@@ -391,6 +425,7 @@ public class GameActionsPostRR extends AbstractRR {
     private boolean correctnessOfDayActions(List<GameAction> gameActions) throws SQLException, IOException {
 
         try {
+
             int voteNumber = playersRole.size();
             int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
             int numberAction = 0;
@@ -587,7 +622,8 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                     LOGGER.info("The target " + target + " has been blocked during the night by the illusionist");
-                    new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target)).access();
+                    insertActions.add(new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target));
+                    //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target)).access();
                 }
 
             }
@@ -606,10 +642,11 @@ public class GameActionsPostRR extends AbstractRR {
                     if (actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())) {
                         if (!new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction())) {
                             LOGGER.info("The target " + target + " has been killed by the explorer");
-//
+
                             String explorer = getPlayerByRole(gameActions, GameRoleAction.EXPLORER.getName()).getPlayer();
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
                     }
 
@@ -630,11 +667,12 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.info("The knight has protect " + target);
 
                         String knight = getPlayerByRole(gameActions, GameRoleAction.KNIGHT.getName()).getPlayer();
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
 
                         if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
                             LOGGER.info("The knight has protected the hamster " + target);
-                            updatePlayerDeath(target);
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
 
                     }
@@ -656,14 +694,16 @@ public class GameActionsPostRR extends AbstractRR {
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())) {
 
                             LOGGER.info("The target " + target + " has been killed by the wolves during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         } else if (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) && (number_of_wolves <= 1)) {
 
                             LOGGER.info("The target " + target + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         }
 
@@ -677,7 +717,8 @@ public class GameActionsPostRR extends AbstractRR {
                             String dorky = getPlayerByRole(gameActions, GameRoleAction.DORKY.getName()).getPlayer();
                             //add the action point to action table since the dorky is not a wolf
                             LOGGER.info("The target " + target + " has been pointed by the dorky");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
+                            insertActions.add(new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
                         }
                     }
 
@@ -687,11 +728,12 @@ public class GameActionsPostRR extends AbstractRR {
                         String seer = getPlayerByRole(gameActions, GameRoleAction.SEER.getName()).getPlayer();
                         // in case the seer sees the puppy he will see that is a good role
                         LOGGER.info("The target " + target + " has been seen during the night");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
 
                         if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
                             LOGGER.info("The seer has seen the hamster " + target);
-                            updatePlayerDeath(target);
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
 
                     }
@@ -707,14 +749,16 @@ public class GameActionsPostRR extends AbstractRR {
                         if (player_role.getRoleType().getType() == 1 || player_role.getRoleType().getType() == 2) {
 
                             LOGGER.info("The target " + target + " has been killed by the sheriff during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         } else {
 
                             LOGGER.info("The sheriff " + sheriff + " has killed himself during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
-                            updatePlayerDeath(sheriff);
+                            insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(sheriff));
                         }
 
                     }
@@ -731,8 +775,9 @@ public class GameActionsPostRR extends AbstractRR {
                                 wolf = gameAction.getPlayer();
 
                         LOGGER.info("The target " + target + " is blown up with the wolf");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
-                        updatePlayerDeath(wolf);
+                        insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
+                        updatePlayersDeath.add(updatePlayerDeath(wolf));;
                     }
 
                     // check for the "plague" action --> PLAGUE SPREADER
@@ -740,7 +785,8 @@ public class GameActionsPostRR extends AbstractRR {
 
                         String plague_spreader = getPlayerByRole(gameActions, GameRoleAction.PLAGUE_SPREADER.getName()).getPlayer();
                         LOGGER.info("The target " + target + " is anointed");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
                         nightActionResults.setPlaguedPlayer(target);
                     }
 
@@ -753,14 +799,15 @@ public class GameActionsPostRR extends AbstractRR {
                             String berserker = getPlayerByRole(gameActions, GameRoleAction.BERSERKER.getName()).getPlayer();
                             LOGGER.info("The target " + target + " has been killed by the berserker");
                             berserker_count++;
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
+                            insertActions.add(new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
 
                             if (berserker_count == 2) {
                                 LOGGER.info("The berserker has killed also himself during the night");
-                                updatePlayerDeath(target);
-                                updatePlayerDeath(berserker);
+                                updatePlayersDeath.add(updatePlayerDeath(target));
+                                updatePlayersDeath.add(updatePlayerDeath(berserker));
                             } else if (berserker_count == 1) {
-                                updatePlayerDeath(target);
+                                updatePlayersDeath.add(updatePlayerDeath(target));
                             }
 
                         }
@@ -768,20 +815,32 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                     // check for the "look" action --> MEDIUM
-                    // (he looks at the RoleType of the target that died by the stake during the day)
-                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())) {
+                    // (he looks at the RoleType of the target that died by the stake during the previous day - it start to activate his effect from the second night)
+                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())
+                            && !(currentRound == 1 && currentPhase == 0)) {
 
                         String medium = getPlayerByRole(gameActions, GameRoleAction.MEDIUM.getName()).getPlayer();
                         LOGGER.info("The target " + target + " have seen if the stake dead target is good, evil or neutral");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target)).access();
 
                     }
 
                 }
 
             }
+
             nightActionResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
             nightActionResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
+
+            for (Action action : insertActions)
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+
+            for (PlaysAsIn playsAsIn : updatePlayersDeath) {
+                new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+                nightActionResults.addDeadPlayer(playsAsIn.getPlayerUsername());
+            }
+
         } catch (SQLException | IOException e) {
 
             LOGGER.error("ERROR: something went wrong", e);
@@ -843,6 +902,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         Message m;
         boolean wolfActionDone = false;
+        boolean hasSheriffShoot = false;
         int berserkerCount = 0;
         int game_id;
 
@@ -888,7 +948,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-            // check if the target and the player are alive
+            // check if the player is alive
             if (deadPlayers.get(gameAction.getPlayer())) {
 
                 LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead");
@@ -898,14 +958,34 @@ public class GameActionsPostRR extends AbstractRR {
                 m.toJSON(res.getOutputStream());
                 return false;
 
-            } else if (deadPlayers.get(gameAction.getTarget())) {
+            }
 
-                LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
-                ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
+            // check if the target is alive (normal case) or not (in the case of a medium action)
+            if (!gameAction.getRole().equals(GameRoleAction.MEDIUM.getName())) {
+
+                 if (deadPlayers.get(gameAction.getTarget())) {
+
+                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
+                    ErrorCode ec = ErrorCode.DEAD_PLAYER;
+                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
+
+            } else {
+
+                if (!deadPlayers.get(gameAction.getTarget())) {
+
+                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is alive");
+                    ErrorCode ec = ErrorCode.DEAD_PLAYER;
+                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is alive", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+
+                }
 
             }
 
@@ -969,10 +1049,17 @@ public class GameActionsPostRR extends AbstractRR {
                 return false;
 
             }
+
+            if (gameAction.getRole().equals(GameRoleAction.SHERIFF.getName())) {
+
+                hasSheriffShoot = true;
+
+            }
+
         }
 
-        //map with the player and his role in the game (only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him) and alive)
-        //if in the game there's the berserker he can do two action
+        // map with the player and his role in the game (only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him) and alive)
+        // if in the game there's the berserker he can do two action
         Map<String, String> rolesWithEffect = new HashMap<>();
         for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
 
@@ -989,51 +1076,196 @@ public class GameActionsPostRR extends AbstractRR {
 
             } else if (gameRoleAction.getAction() != null
                     && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
+                    && !deadPlayers.get(playerRoleEntry.getKey())) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
 
+            } else if (gameRoleAction.getAction() != null
+                    && gameRoleAction.getName().equals(GameRoleAction.MEDIUM.getName())
+                    && !(currentRound == 1 && currentPhase == 0)
+                    && !deadPlayers.get(playerRoleEntry.getKey())) {
+
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+
+            } else if (gameRoleAction.getAction() != null
+                    && gameRoleAction.getName().equals(GameRoleAction.SHERIFF.getName())
+                    && hasSheriffShoot
+                    && !deadPlayers.get(playerRoleEntry.getKey())) {
+
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+
+            }
         }
 
-        //check if each role with an effect has done the action
-        if (berserkerCount == 0) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
-                //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
-                LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
+        if (hasSheriffShoot) {
+
+            // check for the medium (during the first night he has not to do any action)
+            if (!(currentRound == 1 && currentPhase == 0)) {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
+
+            } else {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
 
             }
-        } else if (berserkerCount == 1) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
 
-                LOGGER.error("ERROR: someone has not done his action this turn");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
+        } else {
+
+            // check for the medium (during the first night he has not to do any action)
+            if (!(currentRound == 1 && currentPhase == 0)) {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount()) + 1) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount()) + 1) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
+
+            } else {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() - 1 )) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() - 1)) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
 
             }
-        } else if (berserkerCount == 2) {
-            if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
-                LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
-                LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
-                ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
-                m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
 
-            }
         }
 
         return true;
 
     }
+
 
     /**
      * Checks the validity of night actions performed by players ensuring that the
@@ -1231,10 +1463,10 @@ public class GameActionsPostRR extends AbstractRR {
      * @param player The username of the player who died.
      * @throws SQLException if a database access error occurs.
      */
-    private void updatePlayerDeath(String player) throws SQLException {
-        PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
-        new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
-        nightActionResults.addDeadPlayer(player);
+    private PlaysAsIn updatePlayerDeath(String player) throws SQLException {
+        return new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
+//        new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+//        nightActionResults.addDeadPlayer(player);
     }
 
     /**
