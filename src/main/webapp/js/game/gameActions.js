@@ -135,11 +135,13 @@ function fillNightActions(list) {
 
     let designatedWolfDiv = document.createElement("div");
     designatedWolfDiv.id = "designatedWolfDiv";
-    evilDiv.appendChild(designatedWolfDiv);
-    evilDiv.appendChild(document.createElement("hr"));
 
     let designatedWolvesDiv = document.createElement("div");
     designatedWolvesDiv.id = "designatedWolves";
+
+    designatedWolvesDiv.appendChild(designatedWolfDiv);
+    designatedWolvesDiv.appendChild(document.createElement("hr"));
+
     evilDiv.appendChild(designatedWolvesDiv);
 
     const divMap = {
@@ -163,10 +165,13 @@ function fillNightActions(list) {
                     role: actionTarget.role
                 });
 
-            if(actionTarget.action === "rage")
-                berserkAlreadyInsert = true;
-
-            designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true))
+            if (berserkAlreadyInsert)
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true, true))
+            else {
+                if (actionTarget.action === "rage")
+                    berserkAlreadyInsert = true;
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true))
+            }
         } else {
             // Add wrapper to the gameActions element
             const targetDiv = divMap[getRoleType(actionTarget.role)];
@@ -204,7 +209,7 @@ function fillNightActions(list) {
 
     // Add text to the wrapper
     let actionTextWolf = document.createElement("span");
-    actionTextWolf.innerHTML = "Who is the <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> that will make the action?";
+    actionTextWolf.innerHTML = "Which <u style='color: " + rolesColors.get("wolf") + ";'> wolf</u> will do the action?";
     actionTextWolf.classList.add("col-12", "col-sm-8", "col-md-7")
     actionWrapperWolf.appendChild(actionTextWolf);
 
@@ -229,7 +234,7 @@ function fillDayActions(list) {
 
 }
 
-function getActionWrapper(actionTarget, memberOfWolfPack = false) {
+function getActionWrapper(actionTarget, memberOfWolfPack = false, secondActionOfBerserk = false) {
     // Create wrapper element to contain roleTargetsElem and text
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
@@ -263,9 +268,11 @@ function getActionWrapper(actionTarget, memberOfWolfPack = false) {
 
     // Add text to the wrapper
     let actionText = document.createElement("span");
-    if (gamePhase === GamePhase.NIGHT)
+    if (gamePhase === GamePhase.NIGHT) {
         actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-    else
+        if (secondActionOfBerserk)
+            actionText.innerHTML = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?";
+    } else
         actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
     actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
     actionWrapper.appendChild(actionText);

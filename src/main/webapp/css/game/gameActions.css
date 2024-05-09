@@ -146,12 +146,16 @@ hr {
     margin: 0.8em 0;
 }
 
-.goodRoles > .action-wrapper:not(:last-child), .evilRoles > .action-wrapper:not(:last-child),
-.neutralRoles > .action-wrapper:not(:last-child), .victoryStealerRoles > .action-wrapper:not(:last-child),
-#designatedWolves .action-wrapper {
+.action-wrapper:not(:last-child) {
     margin-bottom: .7em;
 }
 
- #designatedWolves {
-    background-color: red;
+.evilRoles > .action-wrapper:not(#designatedWolves .action-wrapper) {
+    margin-top: .7em;
+}
+
+#designatedWolves {
+    background-color: #e17f7f;
+    padding: 1em;
+    border-radius: 1rem;
 }
