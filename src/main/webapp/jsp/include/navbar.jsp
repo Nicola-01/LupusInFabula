@@ -21,6 +21,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value="/"/>">Personal Area</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value="/"/>">Statistics</a>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                        aria-expanded="false">
@@ -35,5 +38,21 @@
                 </li>
             </ul>
         </div>
+
+        <div class="container">
+            <div class="menu-toggle">
+                <span class="fa fa-plus"></span>
+            </div>
+
+            <div class="menu-round">
+                <div class="btn-app">
+                    <div class="fa fa-sign-out"></div>
+                </div>
+                <div class="btn-app">
+                    <div class="fa-solid fa-user"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </nav>
