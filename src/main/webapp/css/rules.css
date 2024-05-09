@@ -187,7 +187,6 @@ p {
 }
 
 .introduction, .sublist .subrules, .list .rules {
-    counter-increment: list;
     position: relative;
     max-width: 50rem;
     padding: 2rem 1rem 1rem;
@@ -196,6 +195,10 @@ p {
     overflow: hidden;
     background-color: white;
     margin: auto;
+}
+
+.sublist .subrules, .list .rules{
+    counter-increment: list;
 }
 
 .subrules{

@@ -1,9 +1,3 @@
-document.addEventListener('DOMContentLoaded', function (event) {
-    let gameID = window.location.href;
-    gameID = gameID.substring(gameID.lastIndexOf("/gtmp/") + 6);
-    genericGETRequest(contextPath + "game/players/" + gameID, fillPlayersStatus)
-});
-
 let playerRole = [];
 
 const maxPlayersforSircularButtons = 12;
@@ -16,6 +10,9 @@ function fillPlayersStatus(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
+                document.getElementById("playersStatus").innerHTML="";
+                playerRole = [];
+
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
                     // console.log(playsAsIn)
@@ -45,13 +42,13 @@ function createCircularButtons() {
     const numButtons = playerRole.length;
 
     // remove old buttons
-    const bts = document.getElementsByClassName("circular-button");
-    while (bts.length > 0) {
-        bts[0].parentNode.removeChild(bts[0]);
-    }
+    // const bts = document.getElementsByClassName("circular-button");
+    // while (bts.length > 0) {
+    //     bts[0].parentNode.removeChild(bts[0]);
+    // }
 
     let circleDiv = document.getElementById('circle');
-    if(circleDiv == null){
+    if (circleDiv == null) {
         circleDiv = document.createElement("div");
         circleDiv.id = 'circle';
         document.getElementById("playersStatus").appendChild(circleDiv);

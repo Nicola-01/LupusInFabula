@@ -11,6 +11,6 @@
 <c:import url="/jsp/utils/errorMessage.jsp"/>
 <div class="button-container">
     <button id="sendActions">
-        <span class="text" id="textActionsBt">New </span>
+        <span class="text" id="textActionsBt"></span>
     </button>
 </div>

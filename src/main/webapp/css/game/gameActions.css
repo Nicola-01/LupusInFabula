@@ -125,7 +125,7 @@
     stroke: #07f;
 }
 
-select:disabled, select:disabled~label {
+select:disabled, select:disabled ~ label {
     cursor: not-allowed !important;
 }
 
@@ -147,6 +147,11 @@ hr {
 }
 
 .goodRoles > .action-wrapper:not(:last-child), .evilRoles > .action-wrapper:not(:last-child),
-.neutralRoles > .action-wrapper:not(:last-child), .victoryStealerRoles > .action-wrapper:not(:last-child) {
+.neutralRoles > .action-wrapper:not(:last-child), .victoryStealerRoles > .action-wrapper:not(:last-child),
+#designatedWolves .action-wrapper {
     margin-bottom: .7em;
+}
+
+ #designatedWolves {
+    background-color: red;
 }

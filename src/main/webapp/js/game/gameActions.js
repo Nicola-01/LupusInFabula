@@ -1,16 +1,19 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
-    gameID = url.substring(url.lastIndexOf("/gtmp/") + 6, url.lastIndexOf("/"));
+    gameID = url.substring(url.lastIndexOf("/gtmp/") + 6, url.lastIndexOf("/")); // todo work only if the url finish with /master
     console.log(gameID)
-
-    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
-    genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
 
     document.getElementById("sendActions").addEventListener("click", sendActions);
     document.getElementById("sendActions").disabled = true;
 
-    document.getElementsByClassName("")
+    elementSReload();
 });
+
+function elementSReload() {
+    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
+    genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
+    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus)
+}
 
 let gameID;
 let wolfPack = []
@@ -29,10 +32,10 @@ function gameStatus(req) {
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
                 gamePhase = game.phase;
                 if (gamePhase === GamePhase.NIGHT) {
-                    bt_text.textContent += "DAY!";
+                    bt_text.textContent = "NEW DAY!";
                     bt_gameStatus.textContent = "NIGHT " + gameRound;
                 } else {
-                    bt_text.textContent += "NIGHT!";
+                    bt_text.textContent = "NEW NIGHT!";
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
             }
@@ -44,6 +47,8 @@ function fillGameActions(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let list = JSON.parse(req.responseText)[JSON_resource_list];
+
+            document.getElementById("gameActions").innerHTML = "";
 
             if (list == null) {
                 alert("No game settings available");
@@ -63,15 +68,18 @@ function enableButton() {
     let disable = false;
 
     if (gamePhase === GamePhase.NIGHT) { // night
-        const designatedWolf = document.getElementById("designatedWolf").value
 
-        if (designatedWolf === "")
+        const designatedWolfSB = document.getElementById("designatedWolf");
+        const designatedPlayer = designatedWolfSB.value
+        const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+
+        if (designatedPlayer === "")
             disable = true
 
         for (let i = 0; i < role_targets.length && !disable; i++) {
-            let player = role_targets[i].getAttribute("player");
-            if (wolfPack.includes(player)) {
-                if (designatedWolf === player)
+            let role = role_targets[i].getAttribute("role");
+            if (wolfPackContainRole(role)) {
+                if (designatedRole === role)
                     disable = (role_targets[i].value === "")
                 else
                     disable = (role_targets[i].value !== "")
@@ -87,24 +95,30 @@ function enableButton() {
     document.getElementById("sendActions").disabled = disable;
 }
 
-function changeDesignatedWolf() {
-    let designatedWolf = document.getElementById("designatedWolf").value;
+function wolfPackContainRole(role) {
+    for (const wp of wolfPack)
+        if (wp.role === role)
+            return true;
+    return false;
+}
 
-    const wolves = document.querySelectorAll('.evilRoles [id$="_targets"]');
-    for (let i = 0; i < wolves.length; i++) {
-        if (wolfPack.includes(wolves[i].getAttribute("player"))) {
-            const defaultOption = wolves[i].querySelector('option[value=""]');
-            if (wolves[i].getAttribute("player") !== designatedWolf) {
-                defaultOption.textContent = "Is not the designated wolf";
-                defaultOption.selected = true;
-                wolves[i].disabled = true;
-            } else {
-                wolves[i].disabled = false;
-                defaultOption.textContent = "Select a target";
-                defaultOption.selected = true;
-            }
+function changeDesignatedWolf() {
+    let designatedWolfSB = document.getElementById("designatedWolf");
+    let designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+
+    // for each select box associate to a role
+    const designatedWolves = document.querySelectorAll('#designatedWolves [id$="_targets"]');
+    for (let i = 0; i < designatedWolves.length; i++) {
+        const defaultOption = designatedWolves[i].querySelector('option[value=""]');
+        if (designatedWolves[i].getAttribute("role") !== designatedRole) {
+            defaultOption.textContent = "Not the designated role";
+            defaultOption.selected = true;
+            designatedWolves[i].disabled = true;
+        } else {
+            designatedWolves[i].disabled = false;
+            defaultOption.textContent = "Select a target";
+            defaultOption.selected = true;
         }
-        // else it's a wolf that is not part of the wolf pack
     }
 }
 
@@ -116,15 +130,19 @@ function fillNightActions(list) {
     let neutralDiv = document.createElement("div");
     let vicStealDiv = document.createElement("div");
 
-    goodDiv.setAttribute("class", "goodRoles");
-    evilDiv.setAttribute("class", "evilRoles");
-    neutralDiv.setAttribute("class", "neutralRoles");
-    vicStealDiv.setAttribute("class", "victoryStealerRoles");
+    goodDiv.classList.add("goodRoles");
+    evilDiv.classList.add("evilRoles");
+    neutralDiv.classList.add("neutralRoles");
+    vicStealDiv.classList.add("victoryStealerRoles");
 
     let designatedWolfDiv = document.createElement("div");
     designatedWolfDiv.id = "designatedWolfDiv";
     evilDiv.appendChild(designatedWolfDiv);
     evilDiv.appendChild(document.createElement("hr"));
+
+    let designatedWolvesDiv = document.createElement("div");
+    designatedWolvesDiv.id = "designatedWolves";
+    evilDiv.appendChild(designatedWolvesDiv);
 
     const divMap = {
         "good": goodDiv,
@@ -133,7 +151,6 @@ function fillNightActions(list) {
         "neutral": neutralDiv
     };
 
-    // Loop through the list of friends
     for (let i = 0; i < list.length; i++) {
         let actionTarget = list[i]['actionTarget'];
 
@@ -141,13 +158,18 @@ function fillNightActions(list) {
         if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
             let wolfPlayers = actionTarget['players'];
             for (let j = 0; j < wolfPlayers.length; j++)
-                wolfPack.push(wolfPlayers[j].player);
-        }
+                wolfPack.push({
+                    player: wolfPlayers[j].player,
+                    role: actionTarget.role
+                });
 
-        // Add wrapper to the gameActions element
-        const targetDiv = divMap[getRoleType(actionTarget.role)];
-        if (targetDiv) {
-            targetDiv.appendChild(getActionWrapper(actionTarget));
+            designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true))
+        } else {
+            // Add wrapper to the gameActions element
+            const targetDiv = divMap[getRoleType(actionTarget.role)];
+            if (targetDiv) {
+                targetDiv.appendChild(getActionWrapper(actionTarget));
+            }
         }
     }
 
@@ -170,7 +192,8 @@ function fillNightActions(list) {
 
     for (let i = 0; i < wolfPack.length; i++) {
         let option = document.createElement("option");
-        option.text = wolfPack[i]; // Assuming 'player' is the property containing the player name
+        option.text = wolfPack[i].player; // Assuming 'player' is the property containing the player name
+        option.classList.add(wolfPack[i].role)
         designatedWolf.add(option);
     }
 
@@ -203,7 +226,7 @@ function fillDayActions(list) {
 
 }
 
-function getActionWrapper(actionTarget) {
+function getActionWrapper(actionTarget, memberOfWolfPack = false) {
     // Create wrapper element to contain roleTargetsElem and text
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
@@ -211,8 +234,11 @@ function getActionWrapper(actionTarget) {
     // Create select element
     let roleTargetsElem = document.createElement("select");
     roleTargetsElem.id = actionTarget.role + "_targets";
-    roleTargetsElem.setAttribute("required", "required");
-    roleTargetsElem.setAttribute("player", actionTarget.player);
+    // roleTargetsElem.setAttribute("required", "required");
+    roleTargetsElem.setAttribute("role", actionTarget.role);
+    if (!memberOfWolfPack)
+        roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
+    roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
 
     // Create default option
     let defaultOption = document.createElement("option");
@@ -248,7 +274,7 @@ function getActionWrapper(actionTarget) {
 
 function insertSelectionBox(actionWrapper, selectBox) {
     // Create label element
-    var label = document.createElement("label");
+    const label = document.createElement("label");
     label.classList.add("select", "roleTargets", "col-12", "col-sm-4", "col-md-5");
     label.setAttribute("for", selectBox.id);
 
@@ -282,24 +308,32 @@ function sendActions() {
     let role;
     let target;
 
-    let designatedWolf;
-    if (gamePhase === GamePhase.NIGHT)
-        designatedWolf = document.getElementById("designatedWolf").value
+    let designatedPlayer;
+    let designatedRole;
+    if (gamePhase === GamePhase.NIGHT) {
+        let designatedWolfSB = document.getElementById("designatedWolf");
+        designatedPlayer = designatedWolfSB.value
+        designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+    }
 
     for (let i = 0; i < role_targets.length; i++) {
-
-        player = role_targets[i].getAttribute("player");
-        role = role_targets[i].id.replace('_targets', '');
-        target = role_targets[i].value;
+        const role_target = role_targets[i];
+        player = role_target.getAttribute("player");
+        role = role_target.getAttribute('role');
+        target = role_target.value;
 
         if (gamePhase === GamePhase.NIGHT) {
-            if (wolfPack.includes(player) && designatedWolf !== player) {
-                console.log("Discard the action of " + player + " it's not the designated wolf")
-                continue;
-            }
-            if (role === "sheriff" && target.toLowerCase() === "no shot")
-                continue;
+            console.log(role_target.getAttribute("memberOfWolfPack"))
+            if (role_target.getAttribute("memberOfWolfPack") === "true")
+                if (designatedRole === role_target.getAttribute("role")) {
+                    player = designatedPlayer;
+                } else {
+                    console.log("Discard the action of " + player + " it's not the designated wolf")
+                    continue;
+                }
         }
+        if (role === "sheriff" && target.toLowerCase() === "no shot")
+            continue;
         gameAction.push({player, role, target});
     }
 
@@ -311,15 +345,14 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            if (gamePhase === GamePhase.NIGHT) {
-                let nightActionResults = JSON.parse(req.responseText)['nightActionResults'];
-                console.log(nightActionResults)
-                location.reload()
-            } else {
-                let dayActionResults = JSON.parse(req.responseText)['dayActionResults'];
-                console.log(dayActionResults)
-                location.reload()
-            }
+            let actionResults
+            if (gamePhase === GamePhase.NIGHT)
+                actionResults = JSON.parse(req.responseText)['nightActionResults'];
+            else
+                actionResults = JSON.parse(req.responseText)['dayActionResults'];
+            console.log(actionResults)
+            // location.reload()
+            elementSReload()
 
         } else {
             let message = getMessage(req)
