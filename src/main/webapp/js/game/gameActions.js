@@ -371,21 +371,19 @@ function actionsResponse(req) {
             let deadPlayers;
             let phaseInfo = "";
             if (JSON.parse(req.responseText).hasOwnProperty('gameWin')) { // the game is over
-                let gameWin = ['gameWin']
+                let gameWin = JSON.parse(req.responseText)['gameWin']
                 let message = gameWin.message;
-                let winners = "Winner faction: " + gameWin.winnerFaction + ":<br>";
 
                 let players = gameWin['players'];
                 for (let i = 0; i < players.length; i++)
-                    winners += players[i].player + ", ";
-                winners = phaseInfo.substring(0, phaseInfo.length - 2);
+                    phaseInfo += players[i].player + ", ";
+                phaseInfo = phaseInfo.substring(0, phaseInfo.length - 2);
 
                 gameOver = true
 
-
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(gameWin)
-                populateInfoMessage(message, winners)
+                populateInfoMessage(message, phaseInfo)
                 // location.reload()
                 elementSReload()
 
