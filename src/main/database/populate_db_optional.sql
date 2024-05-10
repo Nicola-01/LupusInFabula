@@ -66,7 +66,7 @@ VALUES ('newGameM', LOWER('newGameM@example.com'), md5('newGame'), CURRENT_DATE)
 
 INSERT INTO public.game (public_ID, start, phase)
 VALUES ('dorky-farmer-explorer', NOW(), 0),
-       ('farmer-wolf-sam', NOW(), 1),
+       ('farmer-wolf-sam', NOW(), 0),
        ('sheriff-carpenter-sam', NOW(), 0);
 
 INSERT INTO public.plays_as_in (player_username, game_id, role, round_of_death, phase_of_death, duration_of_life)

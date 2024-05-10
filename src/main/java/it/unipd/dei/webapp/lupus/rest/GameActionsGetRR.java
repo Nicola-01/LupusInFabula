@@ -89,7 +89,7 @@ public class GameActionsGetRR extends AbstractRR {
                 playerWithRole(GameRoleAction.EXPLORER.getName()).stream()).toList();
         wolfPlayers = Stream.concat(wolfPlayers.stream(),
                 playerWithRole(GameRoleAction.PUPPY.getName()).stream()).toList();
-        if(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+        if (new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
             wolfPlayers = Stream.concat(wolfPlayers.stream(),
                     playerWithRole(GameRoleAction.DORKY.getName()).stream()).toList();
     }
@@ -189,6 +189,8 @@ public class GameActionsGetRR extends AbstractRR {
 
         List<ActionTarget> actionTargets = new ArrayList<>();
 
+        boolean wolfAlreadyInsert = false;
+
         // for each player in the game
         for (Map.Entry<String, String> pr : playerRole.entrySet()) {
 
@@ -203,27 +205,34 @@ public class GameActionsGetRR extends AbstractRR {
             List<String> targets = new ArrayList<>();
 
             // if the role is not a puppy or is a puppy but is the last wolf alive
-            if (!role.equals(GameRoleAction.PUPPY.getName()) || new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
-                for (String targetPlayer : playerRole.keySet()) {
-                    if (isValidTarget(player, targetPlayer, role))
-                        targets.add(targetPlayer);
-                }
-                if (role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
+            if (role.equals(GameRoleAction.PUPPY.getName()) && !(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()))
+                continue;
+
+            if (role.equals(GameRoleAction.WOLF.getName())){
+                if(wolfAlreadyInsert)
                     continue;
-                Collections.sort(targets);
-                if (role.equals(GameRoleAction.SHERIFF.getName()))
-                    targets.add(0, "No shot");
+                wolfAlreadyInsert = true;
+            }
 
-                LOGGER.info("targets: " + String.join(", ", targets));
+            for (String targetPlayer : playerRole.keySet()) {
+                if (isValidTarget(player, targetPlayer, role))
+                    targets.add(targetPlayer);
+            }
+            if (role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
+                continue;
+            Collections.sort(targets);
+            if (role.equals(GameRoleAction.SHERIFF.getName()))
+                targets.add(0, "No shot");
+
+            LOGGER.info("targets: " + String.join(", ", targets));
+            actionTargets.add(new ActionTarget(role, playerWithRole(role),
+                    getNightAction(role), targets));
+
+            if (role.equals((GameRoleAction.BERSERKER.getName()))) {
+                List<String> targetsTmp = new ArrayList<>(targets);
+                targetsTmp.add(0, "No rage");
                 actionTargets.add(new ActionTarget(role, playerWithRole(role),
-                        getNightAction(role), targets));
-
-                if (role.equals((GameRoleAction.BERSERKER.getName()))) {
-                    List<String> targetsTmp = new ArrayList<>(targets);
-                    targetsTmp.add(0, "No rage");
-                    actionTargets.add(new ActionTarget(role, playerWithRole(role),
-                            getNightAction(role), targetsTmp));
-                }
+                        getNightAction(role), targetsTmp));
             }
         }
 
@@ -242,7 +251,7 @@ public class GameActionsGetRR extends AbstractRR {
     private List<String> playerWithRole(String role) {
         List<String> players = new ArrayList<>();
         for (Map.Entry<String, String> player : playerRole.entrySet()) {
-            if (player.getValue().equals(role))
+            if (player.getValue().equals(role) && !deadPlayers.get(player.getKey()))
                 players.add(player.getKey());
         }
         return players;
