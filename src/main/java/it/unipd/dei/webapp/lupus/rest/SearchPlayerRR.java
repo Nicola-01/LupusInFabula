@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetStatsPerRoleDAO;
+import it.unipd.dei.webapp.lupus.dao.PlayerInGameDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByPartialUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
@@ -35,11 +36,13 @@ public class SearchPlayerRR extends AbstractRR {
 
         try {
             LogContext.setUser(username);
-
             List<Player> players = new SearchPlayerByPartialUsernameDAO(ds.getConnection(), username).access().getOutputParam();
+
+            for (Player p : players)
+                p.setGameId(new PlayerInGameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam());
+
             res.setStatus(HttpServletResponse.SC_OK);
             new ResourceList<>(players).toJSON(res.getOutputStream());
-
 
         } catch (SQLException e) {
             ErrorCode ec = ErrorCode.DATABASE_ERROR;

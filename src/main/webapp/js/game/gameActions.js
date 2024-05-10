@@ -238,8 +238,11 @@ function fillNightActions(list) {
 
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
+    let voteDiv = document.createElement("div");
+    voteDiv.classList.add("votes")
+    gameActions.appendChild(voteDiv)
     for (let i = 0; i < list.length; i++)
-        gameActions.appendChild(getActionWrapper(list[i]['actionTarget']));
+        voteDiv.appendChild(getActionWrapper(list[i]['actionTarget']));
 
 }
 

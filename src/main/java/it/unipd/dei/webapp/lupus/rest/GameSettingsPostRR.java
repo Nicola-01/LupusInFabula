@@ -52,7 +52,7 @@ public class GameSettingsPostRR extends AbstractRR {
 
             List<Message> messages = new ArrayList<>();
 
-            if (new PlayerInGameDAO(ds.getConnection(), gameMaster.getUsername()).access().getOutputParam() != -1) {
+            if (new PlayerInGameDAO(ds.getConnection(), gameMaster.getUsername()).access().getOutputParam() != null) {
                 ErrorCode ec = ErrorCode.MASTER_ALREADY_IN_GAME;
                 res.setStatus(ec.getHTTPCode());
 
@@ -106,7 +106,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     username = validPlayer.getUsername();
 
                     // check if the player is already in a game
-                    if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != -1) {
+                    if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != null) {
                         ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
                         res.setStatus(ec.getHTTPCode());
 

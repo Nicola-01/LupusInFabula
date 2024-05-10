@@ -61,6 +61,22 @@
     cursor: pointer;
 }
 
+.playerContainer {
+    display: flex;
+}
+
+.available {
+    color: #78b159;
+}
+
+.inGame{
+    color: #dd2e44;
+}
+
+.playerStatus {
+    margin-left: auto;
+}
+
 .player-list li:hover, .selected {
     background-color: #ddd;
 }

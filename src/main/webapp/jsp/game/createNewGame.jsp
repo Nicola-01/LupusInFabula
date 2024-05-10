@@ -28,7 +28,8 @@
             <table id="players_tb">
                 <thead>
                 <tr>
-                    <th style="width:65%">Username</th>
+                    <th style="width:60%">Username</th>
+                    <th style="width:20%">Available</th>
                     <th>Remove</th>
                 </tr>
                 </thead>
@@ -41,7 +42,8 @@
             <table id="friends_tb">
                 <thead>
                 <tr>
-                    <th style="width:65%">Username</th>
+                    <th style="width:60%">Username</th>
+                    <th style="width:20%">Available</th>
                     <th>Add</th>
                 </tr>
                 </thead>

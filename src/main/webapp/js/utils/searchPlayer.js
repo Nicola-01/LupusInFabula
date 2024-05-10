@@ -26,7 +26,7 @@ function handleKeyDown(event) {
                 if (prevItem) {
                     selectedItem.classList.remove('selected');
                     prevItem.classList.add('selected');
-                    playerUsername.value = prevItem.textContent;
+                    playerUsername.value = prevItem.id;
                     prevItem.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
                 } else {
                     selectedItem.classList.remove('selected');
@@ -40,12 +40,12 @@ function handleKeyDown(event) {
                 if (nextItem) {
                     selectedItem.classList.remove('selected');
                     nextItem.classList.add('selected');
-                    playerUsername.value = nextItem.textContent;
+                    playerUsername.value = nextItem.id;
                     nextItem.scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
                 }
-            } else {
+            } else if (playerListItems.length > 0) {
                 playerListItems[0].classList.add('selected');
-                playerUsername.value = playerListItems[0].textContent;
+                playerUsername.value = playerListItems[0].id;
                 playerListItems[0].scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
             }
             break;
@@ -74,7 +74,7 @@ function searchUser() {
     if (user.length >= minSizeSearch) {
         if (user.includes(searchUserContain)) {
             // local research
-            populatePlayerList(players.filter(username => username.toLowerCase().includes(user.toLowerCase())), user);
+            populatePlayerList(players.filter(player => player.username.toLowerCase().includes(user.toLowerCase())), user);
         } else {
             // db request
             searchUserContain = user;
@@ -85,13 +85,18 @@ function searchUser() {
 }
 
 function savePlayers(req) {
-    players = [];
-    if (req.readyState === XMLHttpRequest.DONE && req.status === HTTP_STATUS_OK) {
-        let list = JSON.parse(req.responseText)[JSON_resource_list];
-        if (list != null)
-            for (let i = 0; i < list.length; i++)
-                players.push(list[i]['player']['username']);
-        populatePlayerList(players, searchUserContain);
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            players = [];
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
+            if (list != null)
+                for (let i = 0; i < list.length; i++)
+                    players.push({
+                        username: list[i]['player']['username'],
+                        gameId: list[i]['player']['gameId']
+                    });
+            populatePlayerList(players, searchUserContain);
+        }
     }
 }
 
@@ -108,7 +113,7 @@ function hidePlayerListPopup() {
     playerListPopup.style.display = "none";
     playerUsername.classList.remove("focus");
     addPlayerBT.classList.remove("focusBT");
-    if(selectedItem)
+    if (selectedItem)
         selectedItem.classList.remove('selected');
 }
 
@@ -119,9 +124,15 @@ function populatePlayerList(players, contains) {
 
     players.forEach(player => {
         const li = document.createElement("li");
-        li.innerHTML = highlightContains(player, contains);
+        let element = "<div class='playerContainer'>" + highlightContains(player.username, contains);
+        if (player.gameId === null)
+            element += "<span class='playerStatus available'>Available &#128994;</span></div>";
+        else
+            element += "<span class='playerStatus inGame'>In game   &#128308; </span></div>";
+        li.innerHTML = element
+        li.id = player.username;
         li.addEventListener("mousedown", function () {
-            playerUsername.value = player;
+            playerUsername.value = player.username;
             searchUserContain = null;
             addPlayer();
             hidePlayerListPopup();

@@ -59,7 +59,6 @@ public class SearchPlayerByPartialUsernameDAO extends AbstractDAO<List<Player>> 
             while (rs.next())
                 players.add(new Player(rs.getString("username")));
 
-
         } finally {
             if (pstmt != null) {
                 pstmt.close();

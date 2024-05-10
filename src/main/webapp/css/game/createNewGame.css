@@ -105,6 +105,7 @@ h2:not(#players h2):not(#friends h2) {
     outline: 2px solid transparent;
     outline-offset: 2px;
     height: 30px;
+    width: 30px;
 }
 
 .visually-hidden {

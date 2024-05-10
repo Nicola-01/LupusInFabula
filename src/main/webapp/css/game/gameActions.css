@@ -137,6 +137,13 @@ select:disabled, select:disabled ~ label {
     user-select: none;
 }
 
+.votes {
+    padding: 1em;
+    margin: 1em 0;
+    background-color: antiquewhite;
+    border-radius: 0.6rem;
+}
+
 .goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
     padding: 1em;
     margin: 1em 0;

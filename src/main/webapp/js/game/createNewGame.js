@@ -56,15 +56,48 @@ function fillFriends(req) {
                     // Create a new row
                     let row = tbody.insertRow();
                     let usernameCell = row.insertCell(0);
-                    let addButtonCell = row.insertCell(1);
+                    row.insertCell(1);
+                    let addButtonCell = row.insertCell(2);
 
                     // Fill cells with data
                     usernameCell.textContent = friend.username;
                     addButtonCell.innerHTML = HTML_add_button(friend.username);
+
+                    sendAvailabilityRequest()
                 }
             }
         } else
             isLoggedUser(req);
+    }
+}
+
+// Set interval to send request every 30 seconds
+setInterval(sendAvailabilityRequest, 30000);
+
+function sendAvailabilityRequest(){
+    genericGETRequest(contextPath + "user/search/", updateAvailability)
+}
+
+function updateAvailability(req) {
+// Since the database is small, I retrieve all users every time.
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+
+            let players = new Map();
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
+            if (list != null)
+                for (let i = 0; i < list.length; i++)
+                    players.set(list[i]['player']['username'], list[i]['player']['gameId']);
+
+            let rows = document.getElementById("players_tb").querySelector("tbody").rows;
+            for (let i = 0; i < rows.length; i++)
+                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent) === null) ? "&#128994;" : "&#128308;"
+
+            rows = document.getElementById("friends_tb").querySelector("tbody").rows;
+            for (let i = 0; i < rows.length; i++)
+                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent) === null) ? "&#128994;" : "&#128308;"
+
+        }
     }
 }
 
@@ -165,7 +198,7 @@ function enableButton() {
     const role_card = document.querySelectorAll('[id*="_roleCard"]');
     let totRoles = 0;
 
-    let totPlayer  = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
+    let totPlayer = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
 
     for (let i = 0; i < role_card.length; i++) {
         if (role_card[i].id.includes("_num"))
@@ -174,7 +207,7 @@ function enableButton() {
             totRoles += role_card[i].checked ? 1 : 0;
     }
 
-    document.getElementById("sendSettings").disabled = !(totPlayer >= 5 && totPlayer === totRoles );
+    document.getElementById("sendSettings").disabled = !(totPlayer >= 5 && totPlayer === totRoles);
 }
 
 function sendSettings() {
@@ -202,7 +235,6 @@ function sendSettings() {
         const username = playerRows[i].cells[0].textContent.trim();
         player.push({username});
     }
-
 
     const json = {roleCardinality, player};
     // console.log(JSON.stringify(json));
@@ -270,6 +302,8 @@ function addPlayer() {
             checkbox.checked = true;
         }
     });
+
+    sendAvailabilityRequest();
 }
 
 // Function to add username to players_tb table
@@ -287,7 +321,8 @@ function addToPlayersTable(username) {
     // Add new row
     let newRow = tbody.insertRow();
     let usernameCell = newRow.insertCell(0);
-    let removeCell = newRow.insertCell(1);
+    newRow.insertCell(1);
+    let removeCell = newRow.insertCell(2);
 
     usernameCell.textContent = username;
 
@@ -329,8 +364,8 @@ function removeRow(button) {
 const table = document.getElementById('players_tb');
 
 // Create a new instance of MutationObserver
-const observer = new MutationObserver(function(mutations) {
-    mutations.forEach(function(mutation) {
+const observer = new MutationObserver(function (mutations) {
+    mutations.forEach(function (mutation) {
         // Check if nodes are added or removed from the table
         if (mutation.type === 'childList')
             enableButton()
@@ -338,7 +373,7 @@ const observer = new MutationObserver(function(mutations) {
 });
 
 // Configure the MutationObserver to observe changes in the table's child nodes
-const config = { childList: true, subtree: true };
+const config = {childList: true, subtree: true};
 
 // Start observing the table
 observer.observe(table, config);
