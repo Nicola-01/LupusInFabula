@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/navbar.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet"  type='text/css'>
 
 <header>
     <h1>Lupus in Fabula</h1>
@@ -10,7 +12,8 @@
         <a class="navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
             <img src="${pageContext.request.contextPath}/media/favicon.ico" alt="logo" style="width:40px;">
         </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01"
+                aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
@@ -39,18 +42,17 @@
             </ul>
         </div>
 
-        <div class="container">
-            <div class="menu-toggle">
-                <span class="fa fa-plus"></span>
-            </div>
-
-            <div class="menu-round">
-                <div class="btn-app">
-                    <div class="fa fa-sign-out"></div>
-                </div>
-                <div class="btn-app">
-                    <div class="fa-solid fa-user"></div>
-                </div>
+        <div>
+            <input id="check-for-clicking" type="checkbox">
+            <label class="main-add-button-plus" for="check-for-clicking">
+                <div class="menu-add-button-title"><i class="fas fa-bars"></i></div>
+            </label>
+            <label class="main-add-button-minus" for="check-for-clicking">
+                <div class="menu-add-button-title"><i class="fas fa-times"></i></div>
+            </label>
+            <div class="menu-add-items">
+                <span class="plate"><a href="<c:url value="/"/>"><i class="fas fa-user"></i></a></span>
+                <span class="plate"><a href="<c:url value="/logout"/>"><i class="fas fa-sign-out-alt"></i></a></span>
             </div>
         </div>
 

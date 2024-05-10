@@ -1,0 +1,165 @@
+#check-for-clicking {
+    display: none;
+}
+
+.main-add-button-plus, .menu-add-items, .main-add-button-minus {
+    margin: auto;
+    position: absolute;
+    top: 0;
+    right: 20px;
+    bottom: 0;
+    left: auto;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+}
+
+.main-add-button-plus, .main-add-button-minus {
+    /*background: slategray;*/
+    cursor: pointer;
+    z-index: 50;
+}
+
+.main-add-button-plus:hover {
+    /*background: slategray;*/
+}
+
+.main-add-button-minus:hover {
+    /*background: slategray;*/
+}
+
+.main-add-button-plus:active {
+    /*background-color: slategray;*/
+}
+
+.main-add-button-minus:active {
+    /*background-color: slategray;*/
+}
+
+.main-add-button-plus .menu-add-button-title {
+    padding: 9px 1px 1px 1px;
+    width: 100%;
+    font-size: 3em;
+    line-height: 80px;
+    text-align: center;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.main-add-button-minus .menu-add-button-title {
+    padding: 9px 1px 1px 1px;
+    width: 100%;
+    font-size: 3em;
+    line-height: 80px;
+    text-align: center;
+    color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.menu-add-items {
+    z-index: 10;
+}
+
+.plate {
+    margin: auto;
+    position: absolute;
+    text-align: center;
+    top: 0;
+    right: 20px;
+    bottom: 0;
+    left: auto;
+    width: 50px;
+    height: 50px;
+    opacity: 0;
+    border-radius: 50%;
+    -webkit-transition: all 0.4s ease-in;
+    -moz-transition: all 0.4s ease-in;
+    transition: all 0.4s ease-in;
+    cursor: pointer;
+    background: slategray;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plate i {
+    width: 100%;
+    font-size: 24px;
+    line-height: 50px;
+    text-align: center;
+    color: black;
+    /*font-family: Helvetica;*/
+    font-style: normal;
+    font-weight: bold;
+}
+
+.plate:hover i {
+    color: #111;
+}
+
+.plate:nth-of-type(1) {
+    background: slategray;
+    -webkit-transition-delay: 0s;
+    -moz-transition-delay: 0s;
+    transition-delay: 0s;
+}
+
+.plate:nth-of-type(2) {
+    background: slategray;
+    -webkit-transition-delay: 0.1s;
+    -moz-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+.plate:nth-of-type(1):hover {
+    background: slategray;
+}
+
+.plate:nth-of-type(2):hover {
+    background: slategray;
+}
+
+#check-for-clicking:checked ~ .main-add-button-minus + .menu-add-items .plate {
+    opacity: 1;
+}
+
+#check-for-clicking:checked ~ .main-add-button-minus + .menu-add-items .plate:nth-of-type(1) {
+    left: -180%;
+}
+
+#check-for-clicking:checked ~ .main-add-button-minus + .menu-add-items .plate:nth-of-type(2) {
+    left: -370%;
+
+}
+
+#check-for-clicking:checked ~ .main-add-button-plus {
+    display: none;
+    -webkit-transition-delay: 0.1s;
+    -moz-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+#check-for-clicking:checked ~ .main-add-button-minus {
+    display: inline;
+    -webkit-transition-delay: 0.1s;
+    -moz-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+#check-for-clicking:not(:checked) ~ .main-add-button-minus {
+    display: none;
+    -webkit-transition-delay: 0.1s;
+    -moz-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
+
+#check-for-clicking:not(:checked) ~ .main-add-button-plus {
+    display: inline;
+    -webkit-transition-delay: 0.1s;
+    -moz-transition-delay: 0.1s;
+    transition-delay: 0.1s;
+}
