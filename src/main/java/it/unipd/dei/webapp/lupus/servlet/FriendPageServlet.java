@@ -10,6 +10,6 @@ public class FriendPageServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/friend.jsp").forward(req, resp);
+        req.getRequestDispatcher("/jsp/friend/friend.jsp").forward(req, resp);
     }
 }

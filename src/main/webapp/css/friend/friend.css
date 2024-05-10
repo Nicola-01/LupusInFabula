@@ -1,0 +1,47 @@
+/* Style for the container */
+.container {
+    margin-top: 20px;
+}
+
+/* Style for the table */
+#my_friends {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #ddd;
+}
+
+/* Style for table headers */
+#my_friends th {
+    background-color: #f2f2f2;
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+/* Style for table data cells */
+#my_friends td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+
+/* Style for the delete button */
+#my_friends .delete-button {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Hover effect for delete button */
+#my_friends .delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.search-player {
+    text-align: center;
+}

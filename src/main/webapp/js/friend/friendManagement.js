@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    //document.getElementById("deleteFriend").addEventListener("click", deleteFriend);
     //document.getElementById("addFriend").addEventListener("click", addFriend);
     //document.getElementById("playerUsername").addEventListener("keyup", function (event) {
     //    if (event.key === "Enter") {
@@ -50,10 +49,44 @@ function fillFriendsList(req){
     }
 }
 
-function deleteFriend(){
+function deleteFriend(username){
 
+    var url = contextPath + "user/me/friend"; // Endpoint for deleting friend
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", url, true);
+    xhr.setRequestHeader("Content-Type", "application/json"); // Set content type to JSON
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === HTTP_STATUS_OK) {
+                // Friend successfully deleted
+                removeFromFriendsTable(username);
+            } else {
+                // Handle error case
+                console.error("Error deleting friend:", xhr.status);
+            }
+        }
+    };
+
+    var requestData = {
+        friend: {
+            username: username,
+        }
+    };
+
+    // Send the username as JSON data in the request body
+    xhr.send(JSON.stringify(requestData));
 }
 
+// Function to remove username from players_tb table
+function removeFromFriendsTable(username) {
+    let rows = document.getElementById("my_friends").rows;
+    for (let i = 0; i < rows.length; i++) {
+        if (rows[i].cells[0].textContent === username) {
+            document.getElementById("my_friends").deleteRow(i);
+            break;
+        }
+    }
+}
 //function addFriend(){
 
 //}
