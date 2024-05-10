@@ -49,12 +49,12 @@ public class GameActionsPostRR extends AbstractRR {
     /**
      * The results of the night actions.
      */
-    private final NightActionResults nightActionResults;
+    private final NightActionsResults nightActionsResults;
 
     /**
      * The results of the day actions.
      */
-    private final DayActionResults dayActionResults;
+    private final DayActionsResults dayActionsResults;
 
 
     /**
@@ -99,8 +99,8 @@ public class GameActionsPostRR extends AbstractRR {
         deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-        nightActionResults = new NightActionResults();
-        dayActionResults = new DayActionResults();
+        nightActionsResults = new NightActionsResults();
+        dayActionsResults = new DayActionsResults();
 
         insertActions = new ArrayList<>();
         updatePlayersDeath = new ArrayList<>();
@@ -154,24 +154,24 @@ public class GameActionsPostRR extends AbstractRR {
                     currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
                     LOGGER.info("The game finished, winner(s): " + vm.getMessage());
-                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
+                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, vm.getFaction()).access();
                 } else {
 
                     res.setStatus(HttpServletResponse.SC_OK);
                     // return the action result before updating the round and the phase
                     if (currentPhase == GamePhase.DAY.getId()) {
                         res.setStatus(HttpServletResponse.SC_OK);
-                        dayActionResults.toJSON(res.getOutputStream());
+                        dayActionsResults.toJSON(res.getOutputStream());
                         currentRound++;
                         currentPhase = GamePhase.NIGHT.getId();
                     } else {
                         res.setStatus(HttpServletResponse.SC_OK);
-                        nightActionResults.toJSON(res.getOutputStream());
+                        nightActionsResults.toJSON(res.getOutputStream());
                         currentPhase = GamePhase.DAY.getId();
                     }
 
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                    LOGGER.info(nightActionResults.toString());
+                    LOGGER.info(nightActionsResults.toString());
                 }
             }
 
@@ -243,10 +243,10 @@ public class GameActionsPostRR extends AbstractRR {
 
                             if (carpenterCheck(votedPlayer1)) {
                                 LOGGER.info("The carpenter use his ability");
-                                dayActionResults.setCarpenterAbility(true);
+                                dayActionsResults.setCarpenterAbility(true);
                             } else {
                                 LOGGER.info(votedPlayer1 + " is voted out");
-                                dayActionResults.setVotedPlayer(votedPlayer1);
+                                dayActionsResults.setVotedPlayer(votedPlayer1);
                                 updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
 //                                updatePlayerDeath(votedPlayer1);
                             }
@@ -280,10 +280,10 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.info("Players " + votedPlayer1 + " is voted");
                         if (carpenterCheck(votedPlayer1)) {
                             LOGGER.info("The carpenter use his ability");
-                            dayActionResults.setCarpenterAbility(true);
+                            dayActionsResults.setCarpenterAbility(true);
                         } else {
                             LOGGER.info(votedPlayer1 + " is voted out");
-                            dayActionResults.setVotedPlayer(votedPlayer1);
+                            dayActionsResults.setVotedPlayer(votedPlayer1);
                             updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
 //                            updatePlayerDeath(votedPlayer1);
                         }
@@ -297,7 +297,7 @@ public class GameActionsPostRR extends AbstractRR {
                         insertActions.add(samAction);
                         //new InsertIntoActionDAO(ds.getConnection(), samAction).access();
                         LOGGER.info("Sam killed " + target);
-                        dayActionResults.setSamTarget(target);
+                        dayActionsResults.setSamTarget(target);
                         updatePlayersDeath.add(updatePlayerDeath(target));
                         //updatePlayerDeath(target);
                     } else if (role.equals("plague spreader")) {
@@ -305,7 +305,7 @@ public class GameActionsPostRR extends AbstractRR {
                         insertActions.add(plagueAction);
                         //new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
                         LOGGER.info("Plague spreader killed " + target);
-                        dayActionResults.setPlaguePlayer(target);
+                        dayActionsResults.addPlaguePlayer(target);
                         updatePlayersDeath.add(updatePlayerDeath(target));
 //                        updatePlayerDeath(target);
                     } else {
@@ -787,7 +787,7 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.info("The target " + target + " is anointed");
                         insertActions.add(new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target));
                         //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
-                        nightActionResults.setPlaguedPlayer(target);
+                        nightActionsResults.setPlaguedPlayer(target);
                     }
 
                     // check for the "rage" action --> BERSERKER
@@ -830,15 +830,15 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-            nightActionResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
-            nightActionResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
+            nightActionsResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
 
             for (Action action : insertActions)
                 new InsertIntoActionDAO(ds.getConnection(), action).access();
 
             for (PlaysAsIn playsAsIn : updatePlayersDeath) {
                 new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
-                nightActionResults.addDeadPlayer(playsAsIn.getPlayerUsername());
+                nightActionsResults.addDeadPlayer(playsAsIn.getPlayerUsername());
             }
 
         } catch (SQLException | IOException e) {
@@ -1532,16 +1532,16 @@ public class GameActionsPostRR extends AbstractRR {
         // Check victory conditions and return the appropriate VictoryMessage
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0))
-            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
+            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0 && !hamster.isEmpty())
-            return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getName());
+            return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getId());
 
         if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0)
-            return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getName());
+            return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getId());
 
         if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
-            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getName());
+            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getId());
 
         // No victory condition met
         return null;

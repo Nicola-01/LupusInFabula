@@ -25,7 +25,7 @@ public class VictoryMessage extends AbstractResource {
     /**
      * The faction associated with the victory.
      */
-    private final String faction;
+    private final int faction;
 
 
     /**
@@ -35,7 +35,7 @@ public class VictoryMessage extends AbstractResource {
      * @param players the list of players involved in the victory
      * @param faction the faction associated with the victory
      */
-    public VictoryMessage(String message, List<String> players, String faction) {
+    public VictoryMessage(String message, List<String> players, int faction) {
         this.message = message;
         this.players = players;
         this.faction = faction;
@@ -64,7 +64,7 @@ public class VictoryMessage extends AbstractResource {
      *
      * @return the faction associated with the victory
      */
-    public String getFaction() {
+    public int getFaction() {
         return faction;
     }
 
@@ -83,13 +83,9 @@ public class VictoryMessage extends AbstractResource {
         jg.writeStartObject();
 
         jg.writeStringField("message", message);
-        jg.writeStringField("winnerFaction", faction);
-        // Write the player field if there is only one player involved in the victory
-        if (players.size() == 1)
-            jg.writeStringField("player", players.get(0));
-            // Otherwise, use ActionTarget.listToJSON to write the list of players to the JSON object
-        else
-            ActionTarget.listToJSON(jg, players, "players");
+        jg.writeNumberField("winnerFaction", faction);
+
+        ActionTarget.listToJSON(jg, players, "players");
 
         jg.writeEndObject();
         jg.writeEndObject();

@@ -9,17 +9,21 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 function elementSReload() {
-    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
-    genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
-    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus)
-
+    // reset of variables and state
+    wolfPack = []
     document.getElementById("sendActions").disabled = true;
+
+    // recover the data
+    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
+    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus)
+    genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
 }
 
 let gameID;
 let wolfPack = []
 let gameRound
 let gamePhase
+let gameOver = false
 
 function gameStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
@@ -27,6 +31,9 @@ function gameStatus(req) {
             let game = JSON.parse(req.responseText)['game'];
             if (game.who_win !== -1) {
                 // todo -> the game is over
+                if (!gameOver)
+                    populateInfoMessage("THE GAME IS OVER", "");
+                gameOver = true
             } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
@@ -59,8 +66,10 @@ function fillGameActions(req) {
                 else
                     fillDayActions(list)
             }
-        } else
-            unLoggedUser(req);
+        } else {
+            document.getElementById("sendActions").style.display = "none"
+            isLoggedUser(req);
+        }
     }
 }
 
@@ -357,15 +366,77 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            let actionResults
-            if (gamePhase === GamePhase.NIGHT)
-                actionResults = JSON.parse(req.responseText)['nightActionResults'];
-            else
-                actionResults = JSON.parse(req.responseText)['dayActionResults'];
-            console.log(actionResults)
-            // location.reload()
-            elementSReload()
+            let actionResults;
+            let phase;
+            let deadPlayers;
+            let phaseInfo = "";
+            if (JSON.parse(req.responseText).hasOwnProperty('gameWin')) { // the game is over
+                let gameWin = ['gameWin']
+                let message = gameWin.message;
+                let winners = "Winner faction: " + gameWin.winnerFaction + ":<br>";
 
+                let players = gameWin['players'];
+                for (let i = 0; i < players.length; i++)
+                    winners += players[i].player + ", ";
+                winners = phaseInfo.substring(0, phaseInfo.length - 2);
+
+                gameOver = true
+
+
+                window.scrollTo({top: 0, behavior: 'smooth'})
+                console.log(gameWin)
+                populateInfoMessage(message, winners)
+                // location.reload()
+                elementSReload()
+
+            } else {
+                if (gamePhase === GamePhase.NIGHT) {
+                    actionResults = JSON.parse(req.responseText)['nightActionsResults'];
+                    phase = "night";
+
+                    let deadPlayersList = actionResults['deadPlayers'];
+
+                    if (deadPlayersList.length === 0)
+                        deadPlayers = "No deaths during the night."
+                    else {
+                        deadPlayers = "Deaths of the night:<br>";
+                        for (let i = 0; i < deadPlayersList.length; i++)
+                            deadPlayers += deadPlayersList[i].player + ", ";
+                        deadPlayers = deadPlayers.substring(0, deadPlayers.length - 2);
+                    }
+
+                    if (actionResults.dorkyIsWolf)
+                        phaseInfo += "<br>The Dorky became a wolf!";
+                    if (actionResults.puppyIsWolf)
+                        phaseInfo += "<br>The puppy became a wolf!";
+                    if (actionResults.plaguedPlayer !== "")
+                        phaseInfo += "<br> " + actionResults.plaguedPlayer + " has the plague!";
+                } else {
+                    actionResults = JSON.parse(req.responseText)['dayActionsResults'];
+                    phase = "day";
+
+                    if (actionResults.votedPlayer !== "")
+                        deadPlayers = actionResults.votedPlayer + " was voted out:";
+                    else
+                        deadPlayers = "No players were voted out.";
+
+                    if (actionResults.samTarget !== "")
+                        phaseInfo += "<br>" + actionResults.samTarget + " was killed by sam:"
+
+                    let deadPlayersList = actionResults['plaguePlayers'];
+                    if (deadPlayersList.length !== 0) {
+                        phaseInfo += "<br>Player(s) killed by the plague:<br>";
+                        for (let i = 0; i < deadPlayersList.length; i++)
+                            phaseInfo += deadPlayersList[i].player + ", ";
+                        phaseInfo = phaseInfo.substring(0, phaseInfo.length - 2);
+                    }
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'})
+                console.log(actionResults)
+                populateInfoMessage("Results of the " + phase, deadPlayers + phaseInfo)
+                // location.reload()
+                elementSReload()
+            }
         } else {
             let message = getMessage(req)
             populateErrorMessage(message.message, message.errorCode, message.errorDetails);

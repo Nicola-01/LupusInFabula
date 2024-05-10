@@ -64,7 +64,7 @@ function fillFriends(req) {
                 }
             }
         } else
-            unLoggedUser(req);
+            isLoggedUser(req);
     }
 }
 
@@ -157,7 +157,7 @@ function fillGameSettings(req) {
                 });
             }
         } else
-            unLoggedUser(req);
+            isLoggedUser(req);
     }
 }
 

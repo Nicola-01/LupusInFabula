@@ -42,10 +42,10 @@ function createCircularButtons() {
     const numButtons = playerRole.length;
 
     // remove old buttons
-    // const bts = document.getElementsByClassName("circular-button");
-    // while (bts.length > 0) {
-    //     bts[0].parentNode.removeChild(bts[0]);
-    // }
+    const bts = document.getElementsByClassName("circular-button");
+    while (bts.length > 0) {
+        bts[0].parentNode.removeChild(bts[0]);
+    }
 
     let circleDiv = document.getElementById('circle');
     if (circleDiv == null) {
@@ -53,9 +53,6 @@ function createCircularButtons() {
         circleDiv.id = 'circle';
         document.getElementById("playersStatus").appendChild(circleDiv);
     }
-
-    const bt_width = 85;
-    const bt_height = 50;
 
     const div_size = circleDiv.offsetWidth;
     const center = div_size / 2;
@@ -78,8 +75,11 @@ function createCircularButtons() {
         button.className = "circular-button";
         button.style.backgroundColor = rolesColors.get(playerRole[i].role);
         button.style.position = 'absolute';
-        button.style.width = bt_width + 'px'
-        button.style.height = bt_height + 'px'
+
+        circleDiv.appendChild(button); // Append button to the circle div
+
+        let bt_width = button.getBoundingClientRect().width
+        let bt_height = button.getBoundingClientRect().height
 
         const epsilon_angle = (Math.PI / 2 + angle) * epsilon;
 
@@ -88,7 +88,6 @@ function createCircularButtons() {
 
         button.style.left = (center + Math.sin(angle - epsilon_angle) * center - bt_width / 2) + 'px'; // X position of the button
         button.style.top = (center + -Math.cos(angle - epsilon_angle) * center - bt_height / 2) + 'px'; // Y position of the button
-        circleDiv.appendChild(button); // Append button to the circle div
     }
 }
 

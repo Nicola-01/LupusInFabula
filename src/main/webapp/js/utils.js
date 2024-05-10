@@ -60,30 +60,30 @@ const ROLE_MASTER = "master";
  */
 const rolesColors = new Map();
 
-rolesColors.set('farmer', '#005C00');
-rolesColors.set('carpenter', '#3F9741');
-rolesColors.set('hobbit', '#28AE59');
-rolesColors.set('kamikaze', '#7DD181');
-rolesColors.set('knight', '#96E8BC');
-rolesColors.set('medium', '#7FCCBF');
-rolesColors.set('sam', '#489FB5');
-rolesColors.set('seer', '#16697A');
-rolesColors.set('sheriff', '#173753');
+rolesColors.set('farmer', '#014701');
+rolesColors.set('carpenter', '#0F5A13');
+rolesColors.set('hobbit', '#1D6D25');
+rolesColors.set('kamikaze', '#2A8037');
+rolesColors.set('knight', '#389449');
+rolesColors.set('medium', '#46A75B');
+rolesColors.set('sam', '#54BA6D');
+rolesColors.set('seer', '#61CD7F');
+rolesColors.set('sheriff', '#6FE091');
 
-rolesColors.set('berserker', '#37123C');
-rolesColors.set('dorky', '#431035');
-rolesColors.set('explorer', '#4F0E2D');
-rolesColors.set('giuda', '#67091E');
-rolesColors.set('puppy', '#7F050F');
+rolesColors.set('berserker', '#45002A');
+rolesColors.set('dorky', '#5E0022');
+rolesColors.set('explorer', '#780019');
+rolesColors.set('giuda', '#910011');
 rolesColors.set('wolf', '#970000');
+rolesColors.set('puppy', '#C40000');
 
-rolesColors.set('hamster', '#FF9914');
+rolesColors.set('hamster', '#E08A19');
 rolesColors.set('jester', '#CA6700');
 
-rolesColors.set('illusionist', '#595959');
-rolesColors.set('plague spreader', '#3B3B3B');
+rolesColors.set('illusionist', '#7A7A7A');
+rolesColors.set('plague spreader', '#595959');
 
-rolesColors.set('', '#6E007B')
+rolesColors.set('', '#9f9f9f')
 
 const GamePhase = {
     NIGHT: 0,
@@ -134,7 +134,7 @@ function genericPOSTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
-function unLoggedUser(req) {
+function isLoggedUser(req) {
     if (req.status === HTTP_STATUS_FORBIDDEN)
         window.location.replace(contextPath + "login")
 }

@@ -10,6 +10,7 @@
     margin: 10%;
     padding-top: 80%;
     position: relative;
+    flex-shrink: unset;
 }
 
 .circular-button {
@@ -24,6 +25,8 @@
     color: white;
     cursor: pointer;
     transition: z-index 0.3s;
+    width: 8em;
+    height: 4.5em;
 }
 
 .grid-button {

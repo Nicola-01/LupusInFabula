@@ -3,6 +3,8 @@ package it.unipd.dei.webapp.lupus.resource;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents the results of day actions in the game.
@@ -12,7 +14,7 @@ import java.io.OutputStream;
  * @version 1.0
  * @since 1.0
  */
-public class DayActionResults extends AbstractResource {
+public class DayActionsResults extends AbstractResource {
 
     /**
      * The player who was voted during the day.
@@ -30,9 +32,9 @@ public class DayActionResults extends AbstractResource {
     private String samTarget;
 
     /**
-     * The player killed by the plague during the day.
+     * The players killed by the plague during the day.
      */
-    private String plaguePlayer;
+    private List<String> plaguePlayers;
 
     /**
      * Constructs a DayActionResults object with the specified parameters.
@@ -40,20 +42,20 @@ public class DayActionResults extends AbstractResource {
      * @param votedPlayer      the player who was voted during the day.
      * @param carpenterAbility indicates whether the Carpenter's ability was used during the day.
      * @param samTarget        the player targeted by the Seer Apprentice's scan during the day.
-     * @param plaguePlayer     the player killed by the plague during the day.
+     * @param plaguePlayers    the players killed by the plague during the day.
      */
-    public DayActionResults(String votedPlayer, boolean carpenterAbility, String samTarget, String plaguePlayer) {
+    public DayActionsResults(String votedPlayer, boolean carpenterAbility, String samTarget, List<String> plaguePlayers) {
         this.votedPlayer = votedPlayer;
         this.carpenterAbility = carpenterAbility;
         this.samTarget = samTarget;
-        this.plaguePlayer = plaguePlayer;
+        this.plaguePlayers = plaguePlayers;
     }
 
     /**
      * Constructs a new DayActionResults object with default values.
      */
-    public DayActionResults() {
-        this("", false, "", "");
+    public DayActionsResults() {
+        this("", false, "", new ArrayList<>());
     }
 
     /**
@@ -102,21 +104,31 @@ public class DayActionResults extends AbstractResource {
     }
 
     /**
-     * Gets the player killed by the plague during the day.
+     * Gets the players killed by the plague during the day.
      *
-     * @return the player killed by the plague.
+     * @return the players killed by the plague.
      */
-    public String getPlaguePlayer() {
-        return plaguePlayer;
+    public List<String> getPlaguePlayer() {
+        return plaguePlayers;
     }
 
     /**
-     * Sets the player killed by the plague during the day.
+     * Sets the players killed by the plague during the day.
      *
-     * @param plaguePlayer the player killed by the plague.
+     * @param plaguePlayers the player killed by the plague.
      */
-    public void setPlaguePlayer(String plaguePlayer) {
-        this.plaguePlayer = plaguePlayer;
+    public void setPlaguePlayers(List<String> plaguePlayers) {
+        this.plaguePlayers = plaguePlayers;
+    }
+
+    /**
+     * Adds a player killed by the plague.
+     *
+     * @param player the player to add.
+     */
+    public void addPlaguePlayer(String player) {
+        if(!plaguePlayers.contains(player))
+            this.plaguePlayers.add(player);
     }
 
     /**
@@ -130,13 +142,14 @@ public class DayActionResults extends AbstractResource {
         final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
 
         jg.writeStartObject();
-        jg.writeFieldName("dayActionResults");
+        jg.writeFieldName("dayActionsResults");
         jg.writeStartObject();
 
         jg.writeStringField("votedPlayer", votedPlayer);
         jg.writeBooleanField("carpenterAbility", carpenterAbility);
         jg.writeStringField("samTarget", samTarget);
-        jg.writeStringField("plaguePlayer", plaguePlayer);
+
+        ActionTarget.listToJSON(jg, plaguePlayers, "plaguePlayers");
 
         jg.writeEndObject();
         jg.writeEndObject();
@@ -151,11 +164,17 @@ public class DayActionResults extends AbstractResource {
     @Override
     public String toString() {
 
-        return "DayActionResults{" +
+        String deads = "";
+        for (String deadPlayer : plaguePlayers)
+            deads = deads.concat(deadPlayer + ", ");
+        if (!deads.isEmpty())
+            deads = deads.substring(0, deads.length() - 2);
+
+        return "DayActionsResults{" +
                 "; votedPlayer='" + votedPlayer +
                 "; carpenterAbility=" + carpenterAbility +
                 "; samTarget=" + samTarget +
-                ", plaguePlayer='" + plaguePlayer +
+                ", plaguePlayer='" + deads +
                 '}';
     }
 }

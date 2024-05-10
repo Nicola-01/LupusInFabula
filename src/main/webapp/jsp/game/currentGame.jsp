@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/infoMessage.css">
 </head>
 
 <body>
@@ -25,6 +26,10 @@
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container">
+
+    <div id="actionResults">
+
+    </div>
 
     <c:choose>
         <c:when test="${isMaster}">
@@ -48,6 +53,7 @@
 <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/playersStatus.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/infoMessage.js"></script>
 
 </body>
 </html>

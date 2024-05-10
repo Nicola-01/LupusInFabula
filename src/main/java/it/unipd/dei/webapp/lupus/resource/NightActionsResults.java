@@ -13,7 +13,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public class NightActionResults extends AbstractResource {
+public class NightActionsResults extends AbstractResource {
 
     /**
      * The list of dead players.
@@ -43,7 +43,7 @@ public class NightActionResults extends AbstractResource {
      * @param puppyIsWolf   indicates whether the Puppy has turned into a Wolf.
      * @param dorkyIsWolf   indicates whether the Dorky has turned into a Wolf.
      */
-    public NightActionResults(List<String> deadPlayers, String plaguedPlayer, boolean puppyIsWolf, boolean dorkyIsWolf) {
+    public NightActionsResults(List<String> deadPlayers, String plaguedPlayer, boolean puppyIsWolf, boolean dorkyIsWolf) {
         this.deadPlayers = deadPlayers;
         this.plaguedPlayer = plaguedPlayer;
         this.puppyIsWolf = puppyIsWolf;
@@ -53,7 +53,7 @@ public class NightActionResults extends AbstractResource {
     /**
      * Constructs a new NightActionResults object with default values.
      */
-    public NightActionResults() {
+    public NightActionsResults() {
         this(new ArrayList<>(), "", false, false);
     }
 
@@ -108,7 +108,7 @@ public class NightActionResults extends AbstractResource {
      * @param player the dead player to add.
      */
     public void addDeadPlayer(String player) {
-        if(!deadPlayers.contains(player))
+        if (!deadPlayers.contains(player))
             this.deadPlayers.add(player);
     }
 
@@ -150,7 +150,7 @@ public class NightActionResults extends AbstractResource {
         final JsonGenerator jg = JSON_FACTORY.createGenerator(out);
 
         jg.writeStartObject();
-        jg.writeFieldName("nightActionResults");
+        jg.writeFieldName("nightActionsResults");
         jg.writeStartObject();
 
         jg.writeStringField("plaguedPlayer", plaguedPlayer);
@@ -174,11 +174,12 @@ public class NightActionResults extends AbstractResource {
     public String toString() {
 
         String deads = "";
-        for (String deadPlayer : deadPlayers) {
+        for (String deadPlayer : deadPlayers)
             deads = deads.concat(deadPlayer + ", ");
-        }
+        if (!deads.isEmpty())
+            deads = deads.substring(0, deads.length() - 2);
 
-        return "NightActionResults{" +
+        return "NightActionsResults{" +
                 "deadPlayers=" + deads +
                 "; plaguedPlayer='" + plaguedPlayer +
                 "; puppyIsWolf=" + puppyIsWolf +
