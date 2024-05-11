@@ -137,16 +137,29 @@ select:disabled, select:disabled ~ label {
     user-select: none;
 }
 
-.votes {
+.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles,
+.votes, .samDiv, .plagueDiv {
     padding: 1em;
     margin: 1em 0;
+}
+
+.votes {
     background-color: antiquewhite;
     border-radius: 0.6rem;
 }
 
-.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles {
-    padding: 1em;
-    margin: 1em 0;
+.plagueDiv {
+    background-color: #afafaf;
+    border-radius: 0.6rem;
+}
+
+.plague_CB {
+    height: 24px;
+}
+
+.samDiv {
+    background-color: #8fb197;
+    border-radius: 0.6rem;
 }
 
 hr {

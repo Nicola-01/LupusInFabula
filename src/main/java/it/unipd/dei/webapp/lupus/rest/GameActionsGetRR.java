@@ -31,6 +31,11 @@ public class GameActionsGetRR extends AbstractRR {
     private final int gameID;
 
     /**
+     * The round of current game.
+     */
+    private int currentRound;
+
+    /**
      * Map containing the actions available during the night phase of the game.
      * The key is the role name, and the value is the corresponding action.
      */
@@ -100,7 +105,7 @@ public class GameActionsGetRR extends AbstractRR {
             LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            int currentRound = game.getRounds();
+            currentRound = game.getRounds();
             int currentPhase = game.getPhase();
             int currentSubphase = game.getSubphase();
 
@@ -148,16 +153,26 @@ public class GameActionsGetRR extends AbstractRR {
      *
      * @throws IOException If an I/O error occurs.
      */
-    private void handleDayPhase() throws IOException {
+    private void handleDayPhase() throws IOException, SQLException {
         List<ActionTarget> actionTargets = new ArrayList<>();
 
 //        LOGGER.info("Handling day phase. Second ballot: " + secondBallot);
 
+        // Get the players in order of insert
+        List<String> players = new GetPlayersByGameDAO(ds.getConnection(), gameID).access().getOutputParam();
+
         // for each player in the game
-        for (Map.Entry<String, String> pr : playerRole.entrySet()) {
-            String player = pr.getKey();
-            String role = pr.getValue();
+        String sam = "";
+        String plagueSpreader = "";
+
+        for (String player : players) {
+            String role = playerRole.get(player);
             List<String> targets = new ArrayList<>();
+
+            if (role.equals(GameRoleAction.SAM.getName()) && !deadPlayers.get(player))
+                sam = player;
+            if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName()) && !deadPlayers.get(player))
+                plagueSpreader = player;
 
 //            // Skip voting for dead players in the second ballot
 //            if (secondBallot && areDead.get(player))
@@ -173,6 +188,23 @@ public class GameActionsGetRR extends AbstractRR {
             Collections.sort(targets);
             actionTargets.add(new ActionTarget(role, player, Action.VOTE, targets));
         }
+
+        if (!sam.isEmpty()) {
+            List<String> targets = new ArrayList<>(players);
+            final String finalSam = sam;
+            targets.removeIf(player -> Objects.equals(finalSam, player));
+            actionTargets.add(new ActionTarget(GameRoleAction.SAM.getName(), sam, GameRoleAction.SAM.getAction(), targets));
+        }
+        if (!plagueSpreader.isEmpty()) {
+            String plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
+
+            List<String> targets = new ArrayList<>(players);
+            // the first player is the one with the plague
+            targets.add(0, plaguedPlayer);
+            actionTargets.add(new ActionTarget(GameRoleAction.PLAGUE_SPREADER.getName(), plagueSpreader, GameRoleAction.PLAGUE_SPREADER.getAction(), targets));
+        }
+
+
         LOGGER.info("Returning the actions of day phase.");
         res.setStatus(HttpServletResponse.SC_OK);
         new ResourceList<>(actionTargets).toJSON(res.getOutputStream());
@@ -208,8 +240,8 @@ public class GameActionsGetRR extends AbstractRR {
             if (role.equals(GameRoleAction.PUPPY.getName()) && !(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()))
                 continue;
 
-            if (role.equals(GameRoleAction.WOLF.getName())){
-                if(wolfAlreadyInsert)
+            if (role.equals(GameRoleAction.WOLF.getName())) {
+                if (wolfAlreadyInsert)
                     continue;
                 wolfAlreadyInsert = true;
             }

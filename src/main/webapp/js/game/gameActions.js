@@ -18,15 +18,6 @@ function elementsReload() {
 
     genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
-        .then(() => {
-            if (!gameOver){
-                document.getElementById("sendActions").style.display = "flex";
-                return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
 }
 
 let gameID;
@@ -34,7 +25,6 @@ let wolfPack = []
 let gameRound
 let gamePhase
 let gameOver = false
-let wait = false
 
 function gameStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
@@ -43,9 +33,7 @@ function gameStatus(req) {
             wait = true
             if (game.who_win !== -1) {
                 // todo -> the game is over
-                if (!gameOver)
-                    populateInfoMessage("THE GAME IS OVER", "");
-                gameOver = true
+                populateInfoMessage("THE GAME IS OVER", "");
             } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
@@ -58,8 +46,10 @@ function gameStatus(req) {
                     bt_text.textContent = "NEW NIGHT!";
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
+
+                document.getElementById("sendActions").style.display = "flex";
+                return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
             }
-            wait = false
         }
     }
 }
@@ -174,6 +164,7 @@ function fillNightActions(list) {
     };
 
     let berserkAlreadyInsert = false;
+    let text;
 
     for (let i = 0; i < list.length; i++) {
         let actionTarget = list[i]['actionTarget'];
@@ -187,18 +178,21 @@ function fillNightActions(list) {
                     role: actionTarget.role
                 });
 
-            if (berserkAlreadyInsert)
-                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true, true))
-            else {
+            if (berserkAlreadyInsert) {
+                text = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?"
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, true, true))
+            } else {
                 if (actionTarget.action === "rage")
                     berserkAlreadyInsert = true;
-                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, true))
+                text = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, true))
             }
         } else {
             // Add wrapper to the gameActions element
             const targetDiv = divMap[getRoleType(actionTarget.role)];
             if (targetDiv) {
-                targetDiv.appendChild(getActionWrapper(actionTarget));
+                text = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
+                targetDiv.appendChild(getActionWrapper(actionTarget, text));
             }
         }
     }
@@ -249,17 +243,67 @@ function fillNightActions(list) {
     changeDesignatedWolf()
 }
 
+let playersOrder = []
+
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
     let voteDiv = document.createElement("div");
+    let samDiv = document.createElement("div");
+    let plagueDiv = document.createElement("div");
+
     voteDiv.classList.add("votes")
     gameActions.appendChild(voteDiv)
-    for (let i = 0; i < list.length; i++)
-        voteDiv.appendChild(getActionWrapper(list[i]['actionTarget']));
+
+    samDiv.classList.add("samDiv")
+    plagueDiv.classList.add("plagueDiv")
+
+    for (let i = 0; i < list.length; i++) {
+        let text;
+        switch (list[i]['actionTarget']['action']) {
+            case "revenge": // is Sam
+                // todo -> handle Sam
+                gameActions.appendChild(samDiv);
+                text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
+                samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text));
+                // samDiv.style.display = "none"
+                break;
+            case "plague": // is Plague spreader
+                gameActions.appendChild(plagueDiv);
+                let tmpList = list[i]['actionTarget']['possibleTargets'];
+                for (let j = 0; j < tmpList.length; j++)
+                    playersOrder.push(tmpList[j].player)
+                let plaguedPlayer = playersOrder[0];
+                // remove the first player, is the one with the plagued
+                playersOrder.splice(0, 1);
+                console.log(playersOrder)
+                // todo -> handle plague spreader
+
+                let actionWrapper = document.createElement("div");
+                actionWrapper.classList.add("action-wrapper", "row");
+
+                let actionText = document.createElement("span");
+                actionText.innerHTML = "<u>" + plaguedPlayer + "</u> died of the plague?"
+                actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
+                actionWrapper.appendChild(actionText);
+
+                let checkBox = document.createElement("input")
+                checkBox.type = "checkbox"
+                checkBox.id = plaguedPlayer + "_plaguedCB"
+                checkBox.classList.add("plague_CB", "col-12", "col-sm-4", "col-md-5");
+                actionWrapper.appendChild(checkBox);
+
+                plagueDiv.appendChild(actionWrapper)
+                break;
+            default:
+                text = "Which player does <u>" + list[i]['actionTarget'].player + "</u>  want to vote out?";
+                voteDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text));
+                break;
+        }
+    }
 
 }
 
-function getActionWrapper(actionTarget, memberOfWolfPack = false, secondActionOfBerserk = false) {
+function getActionWrapper(actionTarget, text, memberOfWolfPack = false) {
     // Create wrapper element to contain roleTargetsElem and text
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
@@ -293,12 +337,7 @@ function getActionWrapper(actionTarget, memberOfWolfPack = false, secondActionOf
 
     // Add text to the wrapper
     let actionText = document.createElement("span");
-    if (gamePhase === GamePhase.NIGHT) {
-        actionText.innerHTML = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-        if (secondActionOfBerserk)
-            actionText.innerHTML = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?";
-    } else
-        actionText.innerHTML = "Which player does <u>" + actionTarget.player + "</u>  want to vote out?";
+    actionText.innerHTML = text
     actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
     actionWrapper.appendChild(actionText);
 
