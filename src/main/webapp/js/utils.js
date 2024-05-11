@@ -49,6 +49,11 @@ const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 let contextPath;
 
 /**
+ * Name of the current player
+ */
+let playerName;
+
+/**
  * The key for JSON resource lists.
  */
 const JSON_resource_list = "resource-list";

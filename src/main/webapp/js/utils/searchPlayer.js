@@ -17,6 +17,9 @@ playerUsername.addEventListener("keyup", handleKeyDown);
 
 let startedText = "";
 
+// list of players to be ignored by search player element
+let playersToIgnore = []
+
 function handleKeyDown(event) {
     selectedItem = document.querySelector('li.selected');
     switch (event.key) {
@@ -123,6 +126,9 @@ function populatePlayerList(players, contains) {
     playerList.innerHTML = ""; // Clear the list before populating
 
     players.forEach(player => {
+        if (playersToIgnore.includes(player.username.toLowerCase()))
+            return; // Skip this iteration if player is to be ignored
+
         const li = document.createElement("li");
         let element = "<div class='playerContainer'>" + highlightContains(player.username, contains);
         if (player.gameId === null)

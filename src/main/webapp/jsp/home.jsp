@@ -14,7 +14,7 @@
 <main>
     <p>Welcome,
         <c:if test="${not empty sessionScope.user}">
-            <b>${sessionScope.user.getUsername()} </b>
+            <b id="username">${sessionScope.user.getUsername()} </b>
         </c:if>
         <c:if test="${empty sessionScope.user}">
             <script>
@@ -58,6 +58,11 @@
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
+
+<script>
+    playerName = document.getElementById("username").innerText;
+    localStorage.setItem('playerName', playerName);
+</script>
 
 </body>
 </html>

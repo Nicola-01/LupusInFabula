@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
     genericGETRequest(contextPath + "user/me/friend", fillFriends)
 
     document.getElementById("sendSettings").disabled = true;
+
+    // list of players to be ignored by search player element, used in searchPlayer.js
+    // ignore the current player
+    playersToIgnore.push(localStorage.getItem("playerName").toLowerCase())
 });
 
 function HTML_switch(name) {
@@ -317,11 +321,12 @@ function addToPlayersTable(username) {
     let tbody = document.getElementById("players_tb").querySelector("tbody");
     let rows = tbody.rows;
 
-    for (let i = 0; i < rows.length; i++) {
-        if (rows[i].cells[1].textContent === username) {
+    for (let i = 0; i < rows.length; i++)
+        if (rows[i].cells[1].textContent.toLowerCase() === username.toLowerCase())
             return;
-        }
-    }
+
+    // add to players to ignore
+    playersToIgnore.push(username.toLowerCase())
 
     // Add new row
     let newRow = tbody.insertRow();
@@ -359,6 +364,10 @@ function moveDown(btn) {
 
 // Function to remove username from players_tb table
 function removeFromPlayersTable(username) {
+
+    // remove the player from the list
+    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
+
     let rows = document.getElementById("players_tb").rows;
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[1].textContent === username) {

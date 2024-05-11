@@ -92,8 +92,8 @@
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 <c:import url="/jsp/include/footer.jsp"/>
