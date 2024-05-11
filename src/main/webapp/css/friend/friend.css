@@ -1,13 +1,11 @@
-/* Style for the container */
-.container {
-    margin-top: 20px;
-}
+
 
 /* Style for the table */
 #my_friends {
     width: 100%;
     border-collapse: collapse;
     border: 1px solid #ddd;
+    margin-top: 20px;
 }
 
 /* Style for table headers */
@@ -42,6 +40,10 @@
     background-color: #d32f2f;
 }
 
-.search-player {
-    text-align: center;
+#addFriend{
+    height: 100px;
+}
+
+#listFriend{
+    padding-top: 40px;
 }

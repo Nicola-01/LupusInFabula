@@ -15,31 +15,41 @@
     <title>Friends</title>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
-
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
 <body>
+
 <jsp:include page="../include/navbar.jsp" />
 
-<div class="container">
-    <div class="search-player"> <!-- New div for centering content -->
-        <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
+<div class="container text-center">
+
+    <div id="addFriend" class="row justify-content-center">
+        <div  class="col-9">
+            <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
+        </div>
     </div>
-    <h2>Friends List</h2>
-    <table id="my_friends">
-        <thead>
-        <tr>
-            <th>Username</th>
-            <th>Date</th>
-            <th>Remove</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+
+    <div id="listFriend" class="row justify-content-center">
+        <h2>Friends List</h2>
+        <table id="my_friends">
+            <thead>
+            <tr>
+                <th>Username</th>
+                <th>Date</th>
+                <th>Remove</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
