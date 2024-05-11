@@ -203,7 +203,7 @@ public class GameSettingsPostRR extends AbstractRR {
 
                     // set the gamemaster role to the player who created the game
                     PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
-                    new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn).access();
+                    new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
 
                     // add a session attribute to the user corresponding to the private game ID
                     session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
@@ -221,7 +221,7 @@ public class GameSettingsPostRR extends AbstractRR {
 
                         // Create a PlaysAsIn for the player with the selected role and game ID, and insert into the database
                         PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
-                        new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn).access();
+                        new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn, i + 1).access();
 
                         LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), selectedRole);
                     }

@@ -116,6 +116,7 @@ CREATE TABLE PLAYS_AS_IN
     player_username  VARCHAR(20) REFERENCES Player (username),
     game_id          SERIAL REFERENCES Game (ID),
     role             VARCHAR(20) REFERENCES Role (name),
+    order_in_game    SMALLINT,
     round_of_death   SMALLINT,
     phase_of_death   SMALLINT,
     duration_of_life TIME,
@@ -126,6 +127,7 @@ COMMENT ON TABLE PLAYS_AS_IN IS 'Represents the role played by a player in a gam
 COMMENT ON COLUMN PLAYS_AS_IN.player_username IS 'The username of the player who played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.game_id IS 'The ID of the game in which the player played the role.';
 COMMENT ON COLUMN PLAYS_AS_IN.role IS 'The ID of the role played by the player.';
+COMMENT ON COLUMN PLAYS_AS_IN.order_in_game IS 'The order of the player in the game.';
 COMMENT ON COLUMN PLAYS_AS_IN.round_of_death IS 'The round number in which the player died (0 if the player is alive and the game is not finished or the player has not died in that game).';
 COMMENT ON COLUMN PLAYS_AS_IN.phase_of_death IS 'The phase of the game in which the player died (0 or 1 (Night or Day)).';
 COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The duration of of life of the player in the game.';
@@ -141,9 +143,9 @@ CREATE TABLE Action
 (
     game_id         SERIAL REFERENCES Game (ID),
     player_username VARCHAR(20) REFERENCES Player (username),
-    round           SMALLINT                                  NOT NULL,
-    phase           SMALLINT                                  NOT NULL,
-    subphase        SMALLINT                                  NOT NULL,
+    round           SMALLINT                                 NOT NULL,
+    phase           SMALLINT                                 NOT NULL,
+    subphase        SMALLINT                                 NOT NULL,
     type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
     PRIMARY KEY (game_id, player_username, round, phase, subphase, target),

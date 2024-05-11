@@ -74,7 +74,7 @@ function fillFriends(req) {
 // Set interval to send request every 30 seconds
 setInterval(sendAvailabilityRequest, 30000);
 
-function sendAvailabilityRequest(){
+function sendAvailabilityRequest() {
     genericGETRequest(contextPath + "user/search/", updateAvailability)
 }
 
@@ -87,15 +87,22 @@ function updateAvailability(req) {
             let list = JSON.parse(req.responseText)[JSON_resource_list];
             if (list != null)
                 for (let i = 0; i < list.length; i++)
-                    players.set(list[i]['player']['username'], list[i]['player']['gameId']);
+                    players.set(list[i]['player']['username'].toLowerCase(), list[i]['player']['gameId']);
 
             let rows = document.getElementById("players_tb").querySelector("tbody").rows;
-            for (let i = 0; i < rows.length; i++)
-                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent) === null) ? "&#128994;" : "&#128308;"
+            for (let i = 0; i < rows.length; i++) {
+                if (players.has(rows[i].cells[1].textContent.toLowerCase()))
+                    rows[i].cells[2].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
+                else {
+                    console.log("The player: " + players.has(rows[i].cells[1].textContent) + " not exists")
+                    rows[i].remove()
+                    i--; // go back of one position
+                }
+            }
 
             rows = document.getElementById("friends_tb").querySelector("tbody").rows;
             for (let i = 0; i < rows.length; i++)
-                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent) === null) ? "&#128994;" : "&#128308;"
+                rows[i].cells[2].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
 
         }
     }
@@ -232,7 +239,7 @@ function sendSettings() {
     const playerRows = playersTable.querySelectorAll('tr');
     const player = [];
     for (let i = 1; i < playerRows.length; i++) { // Start from index 1 to skip header row
-        const username = playerRows[i].cells[0].textContent.trim();
+        const username = playerRows[i].cells[1].textContent.trim();
         player.push({username});
     }
 
@@ -258,9 +265,7 @@ function gameCreation(req) {
                     for (let i = 0; i < listMsg.length; i++) {
                         let message = listMsg[i]['message'];
                         console.log(listMsg[i])
-                        console.log(message.message)
                         msgs += message.message + "<br>";
-                        console.log(msgs)
                         if (!errorCodes.includes(message['error-code']))
                             errorCodes += ", " + message['error-code'];
                         if (!errorDetails.includes(message['error-details']))
@@ -313,17 +318,22 @@ function addToPlayersTable(username) {
     let rows = tbody.rows;
 
     for (let i = 0; i < rows.length; i++) {
-        if (rows[i].cells[0].textContent === username) {
+        if (rows[i].cells[1].textContent === username) {
             return;
         }
     }
 
     // Add new row
     let newRow = tbody.insertRow();
-    let usernameCell = newRow.insertCell(0);
-    newRow.insertCell(1);
-    let removeCell = newRow.insertCell(2);
+    let arrows = newRow.insertCell(0);
+    let usernameCell = newRow.insertCell(1);
+    newRow.insertCell(2);
+    let removeCell = newRow.insertCell(3);
 
+    arrows.innerHTML = "<div class='arrows-container'>" +
+        "  <button class='arrow-up' onclick='moveUp(this)'>▲</button>" +
+        "  <button class='arrow-down' onclick='moveDown(this)'>▼</button>" +
+        "</div>\n"
     usernameCell.textContent = username;
 
     let removeButton = document.createElement("button");
@@ -335,11 +345,23 @@ function addToPlayersTable(username) {
     removeCell.appendChild(removeButton);
 }
 
+function moveUp(btn) {
+    console.log("moveUp")
+    const row = $(btn).parents('tr:first');
+    row.insertBefore(row.prev());
+}
+
+function moveDown(btn) {
+    console.log("moveDown")
+    const row = $(btn).parents('tr:first');
+    row.insertAfter(row.next());
+}
+
 // Function to remove username from players_tb table
 function removeFromPlayersTable(username) {
     let rows = document.getElementById("players_tb").rows;
     for (let i = 0; i < rows.length; i++) {
-        if (rows[i].cells[0].textContent === username) {
+        if (rows[i].cells[1].textContent === username) {
             document.getElementById("players_tb").deleteRow(i);
             break;
         }
@@ -349,7 +371,7 @@ function removeFromPlayersTable(username) {
 // Function to remove row from players_tb table
 function removeRow(button) {
     let row = button.parentNode.parentNode;
-    let username = row.cells[0].textContent; // Get the username from the row
+    let username = row.cells[1].textContent; // Get the username from the row
     row.parentNode.removeChild(row);
 
     // Uncheck the corresponding checkbox in the "friends" table

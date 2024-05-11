@@ -3,20 +3,30 @@ document.addEventListener('DOMContentLoaded', function (event) {
     gameID = url.substring(url.lastIndexOf("/gtmp/") + 6, url.lastIndexOf("/")); // todo work only if the url finish with /master
     console.log(gameID)
 
+    document.getElementById("sendActions").style.display = "none"
     document.getElementById("sendActions").addEventListener("click", sendActions);
 
-    elementSReload();
+    elementsReload();
 });
 
-function elementSReload() {
+function elementsReload() {
     // reset of variables and state
     wolfPack = []
     document.getElementById("sendActions").disabled = true;
 
     // recover the data
+
+    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
-    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus)
-    genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions)
+        .then(() => {
+            if (!gameOver){
+                document.getElementById("sendActions").style.display = "flex";
+                return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
+            }
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
 }
 
 let gameID;
@@ -24,11 +34,13 @@ let wolfPack = []
 let gameRound
 let gamePhase
 let gameOver = false
+let wait = false
 
 function gameStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
+            wait = true
             if (game.who_win !== -1) {
                 // todo -> the game is over
                 if (!gameOver)
@@ -47,6 +59,7 @@ function gameStatus(req) {
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
             }
+            wait = false
         }
     }
 }
@@ -388,7 +401,7 @@ function actionsResponse(req) {
                 console.log(gameWin)
                 populateInfoMessage(message, phaseInfo)
                 // location.reload()
-                elementSReload()
+                elementsReload()
 
             } else {
                 if (gamePhase === GamePhase.NIGHT) {
@@ -436,7 +449,7 @@ function actionsResponse(req) {
                 console.log(actionResults)
                 populateInfoMessage("Results of the " + phase, deadPlayers + phaseInfo)
                 // location.reload()
-                elementSReload()
+                elementsReload()
             }
         } else {
             let message = getMessage(req)

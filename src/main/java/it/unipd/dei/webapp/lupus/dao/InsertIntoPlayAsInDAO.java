@@ -17,7 +17,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "INSERT INTO PLAYS_AS_IN VALUES(?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO PLAYS_AS_IN VALUES(?, ?, ?, ?)";
 
     /**
      * The PlaysAsIn object representing the player's role in a game.
@@ -25,14 +25,21 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
     private final PlaysAsIn playsAsIn;
 
     /**
+     * Represents the order of the player in the game.
+     */
+    private final int orderInGame;
+
+    /**
      * Creates a new object for ad PlaysAsIn into database
      *
      * @param con       the connection to the database.
      * @param playsAsIn the PlaysAsIn object representing the player's role in a game.
+     * @param orderInGame the order of the player in the game.
      */
-    public InsertIntoPlayAsInDAO(final Connection con, final PlaysAsIn playsAsIn) {
+    public InsertIntoPlayAsInDAO(final Connection con, final PlaysAsIn playsAsIn, int orderInGame) {
         super(con);
         this.playsAsIn = playsAsIn;
+        this.orderInGame = orderInGame;
     }
 
     /**
@@ -48,6 +55,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
             pstmt.setString(1, playsAsIn.getPlayerUsername());
             pstmt.setInt(2, playsAsIn.getGameId());
             pstmt.setString(3, playsAsIn.getRole());
+            pstmt.setInt(4, orderInGame);
 
             pstmt.execute();
         } finally {

@@ -25,31 +25,36 @@
     <div class="row">
         <div id="players" class="column col-sm-12 col-md-6 p-2 pb-5">
             <h2>PLAYERS IN GAME</h2>
-            <table id="players_tb">
-                <thead>
-                <tr>
-                    <th style="width:60%">Username</th>
-                    <th style="width:20%">Available</th>
-                    <th>Remove</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="playersTableContainer">
+                <table id="players_tb">
+                    <thead>
+                    <tr>
+                        <th style="width:10%">Order</th>
+                        <th style="width:60%">Username</th>
+                        <th style="width:15%">Available</th>
+                        <th style="width:15%">Remove</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div id="friends" class="column col-sm-12 col-md-6 p-2 pb-5">
             <h2>YOUR FRIENDS</h2>
-            <table id="friends_tb">
-                <thead>
-                <tr>
-                    <th style="width:60%">Username</th>
-                    <th style="width:20%">Available</th>
-                    <th>Add</th>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div class="friendsTableContainer">
+                <table id="friends_tb">
+                    <thead>
+                    <tr>
+                        <th style="width:60%">Username</th>
+                        <th style="width:20%">Available</th>
+                        <th>Add</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
             <br>
             <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
         </div>
