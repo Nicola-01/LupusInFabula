@@ -21,7 +21,11 @@ fetch(apiUrl)
     {
         var messageDiv = document.getElementById("messageDiv");
         if (data !== null) {
-            messageDiv.innerHTML = "You are currently playing a match: <a href='/lupus/gtmp/" + data.game.public_ID + "'>" + data.game.public_ID + "</a>";
+            var is_playing = null;
+            if(data.game.who_win !== -1) { is_playing = "Your latest match is:"; }
+            else { is_playing = "You are currently playing a match:";}
+
+            messageDiv.innerHTML = is_playing + " <a href='/lupus/gtmp/" + data.game.public_ID + "'>" + data.game.public_ID + "</a>";
         } else {
             messageDiv.textContent = "You are not currently playing in any game";
         }
