@@ -12,9 +12,10 @@
 <body>
 <jsp:include page="include/navbar.jsp"/>
 <main>
-    <p>Welcome,
+    <p class="my-2">
+        <span>Welcome, </span>
         <c:if test="${not empty sessionScope.user}">
-            <b id="username">${sessionScope.user.getUsername()} </b>
+            <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
         </c:if>
         <c:if test="${empty sessionScope.user}">
             <script>
@@ -22,6 +23,7 @@
             </script>
         </c:if>
     </p>
+
 
     <div id="messageDiv"></div>
 

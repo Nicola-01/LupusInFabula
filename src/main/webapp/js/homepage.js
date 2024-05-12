@@ -21,13 +21,15 @@ fetch(apiUrl)
     {
         var messageDiv = document.getElementById("messageDiv");
         if (data !== null) {
-            var is_playing = null;
-            if(data.game.who_win !== -1) { is_playing = "Your latest match is:"; }
-            else { is_playing = "You are currently playing a match:";}
+            var isPlaying = (data.game.who_win !== -1) ? "Your latest match is:" : "You are currently playing a match:";
+            var colorClass = (data.game.who_win !== -1) ? "alert-info" : "alert-success";
 
-            messageDiv.innerHTML = is_playing + " <a href='/lupus/gtmp/" + data.game.public_ID + "'>" + data.game.public_ID + "</a>";
-        } else {
+            messageDiv.classList.add("alert", colorClass);
+            messageDiv.innerHTML = isPlaying + " <a href='/lupus/gtmp/" + data.game.public_ID + "'>" + data.game.public_ID + "</a>";
+        }
+        else {
             messageDiv.textContent = "You are not currently playing in any game";
+            messageDiv.classList.add("alert", "alert-warning");
         }
     })
     .catch(function(error) {
