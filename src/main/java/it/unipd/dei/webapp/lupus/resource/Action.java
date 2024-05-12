@@ -175,6 +175,7 @@ public class Action extends AbstractResource
                     jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
+        jg.writeEndObject();
         jg.flush();
     }
 }
