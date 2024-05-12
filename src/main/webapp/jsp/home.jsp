@@ -22,6 +22,9 @@
             </script>
         </c:if>
     </p>
+
+    <div id="messageDiv"></div>
+
     <section class="centered-box">
         <div class="box">
             <h2>Player</h2>
@@ -63,6 +66,7 @@
     playerName = document.getElementById("username").innerText;
     localStorage.setItem('playerName', playerName);
 </script>
+<script src="${pageContext.request.contextPath}/js/homepage.js"></script>
 
 </body>
 </html>

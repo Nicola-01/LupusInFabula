@@ -1,6 +1,8 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
+import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
@@ -127,6 +129,30 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
                     m.toJSON(res.getOutputStream());
             }
             return true;
+        }
+
+        // GET /lupus/game/list
+        // returns the match that the logged in player is playing
+        if (path.equals("/list"))
+        {
+            if(method.equals("GET"))
+            {
+                String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                int privateGameID = new GetGameIdByPlayerUsernameDAO(getConnection(), username).access().getOutputParam();
+                new GameStatusRR(req, res, getDataSource(), privateGameID).serve();
+                return true;
+            }
+            else
+            {
+                    LOGGER.warn("Unsupported operation for URI /game/list: %s.", method);
+
+                    ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                    m = new Message("Unsupported operation for URI /game/list.", ec.getErrorCode(),
+                            String.format("Requested operation %s, but required GET.", method));
+                    res.setStatus(ec.getHTTPCode());
+
+                    m.toJSON(res.getOutputStream());
+            }
         }
 
         // GET /game/actions/

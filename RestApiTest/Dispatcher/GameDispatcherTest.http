@@ -5,6 +5,16 @@ Content-Type: application/x-www-form-urlencoded
 user = esempio &
 password = password123
 
+### Correct Login
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = user1 &
+password = ciao
+
+### Correct logout
+POST http://localhost:8080/lupus/logout HTTP/1.1
+
 ###
 GET http://localhost:8080/lupus/game/settings
 
@@ -17,6 +27,9 @@ PUT http://localhost:8080/lupus/game/settings
 Content-Type: application/json
 
 ### REQUIRED populate_db_optional.sql
+
+###
+GET http://localhost:8080/lupus/game/list
 
 ###
 GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer
