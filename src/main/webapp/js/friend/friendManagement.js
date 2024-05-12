@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("addPlayer").addEventListener("click", addFriend);
-    //document.getElementById("playerUsername").addEventListener("keyup", function (event) {
-    //    if (event.key === "Enter") {
-    //        addFriend();
-    //    }
-    //});
+    document.getElementById("playerUsername").addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            addFriend();
+        }
+    });
     loadFriendList();
     playersToIgnore.push(localStorage.getItem("playerName").toLowerCase())
 });
@@ -40,6 +40,7 @@ function fillFriendsList(req){
 
                     let deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
+                    deleteButton.classList.add("deleteFriendButton")
                     deleteButton.addEventListener("click", function() {
                         deleteFriend(friend.username);
                     });
@@ -145,6 +146,7 @@ function addToFriendsTable(username, friendshipDate) {
     // Create delete button
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
+    deleteButton.classList.add("deleteFriendButton")
     deleteButton.addEventListener("click", function() {
         deleteFriend(username);
     });
