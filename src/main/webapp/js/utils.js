@@ -139,6 +139,12 @@ function genericPOSTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
+function genericPUTRequest() {
+
+
+
+}
+
 function isLoggedUser(req) {
     if (req.status === HTTP_STATUS_FORBIDDEN)
         window.location.replace(contextPath + "login")
