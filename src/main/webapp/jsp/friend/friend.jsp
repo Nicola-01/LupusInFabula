@@ -16,6 +16,8 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/navbar.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
@@ -32,18 +34,20 @@
     </div>
 
     <div id="listFriend" class="row justify-content-center">
-        <h2>Friends List</h2>
-        <table id="my_friends">
-            <thead>
-            <tr>
-                <th>Username</th>
-                <th>Date</th>
-                <th>Remove</th>
-            </tr>
-            </thead>
-            <tbody>
-            </tbody>
+        <h2>Your Friends</h2>
+        <div id="friendsTable">
+            <table id="my_friends">
+                <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Date</th>
+                    <th>Remove</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
         </table>
+        </div>
     </div>
 </div>
 
