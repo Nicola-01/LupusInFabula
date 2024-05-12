@@ -5,8 +5,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var startIndex = url.lastIndexOf("/gtmp/") + 6;
     var endIndex = url.indexOf("/", startIndex);
     // if url doesn't end with /
-    if (endIndex === -1)
-    {
+    if (endIndex === -1) {
         endIndex = url.length;
     }
     gameID = url.substring(startIndex, endIndex);
@@ -15,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var lastSegment = url.substring(url.lastIndexOf("/") + 1);
     endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
-    if(document.getElementById("sendActions") !== null)
-    {
+    if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").style.display = "none"
         document.getElementById("sendActions").addEventListener("click", sendActions);
     }
@@ -27,13 +25,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
 function elementsReload() {
     // reset of variables and state
     wolfPack = []
-    if(document.getElementById("sendActions") !== null)
-    {
+    if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").disabled = true;
     }
 
     // recover the data
-    var master = endsWithMaster? "/master" : "";
+    var master = endsWithMaster ? "/master" : "";
     genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
 }
@@ -59,10 +56,10 @@ function gameStatus(req) {
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
                 gamePhase = game.phase;
                 if (gamePhase === GamePhase.NIGHT) {
-                    if(bt_text !== null) bt_text.textContent = "NEW DAY!";
+                    if (bt_text !== null) bt_text.textContent = "NEW DAY!";
                     bt_gameStatus.textContent = "NIGHT " + gameRound;
                 } else {
-                    if(bt_text !== null) bt_text.textContent = "NEW NIGHT!";
+                    if (bt_text !== null) bt_text.textContent = "NEW NIGHT!";
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
 
@@ -199,19 +196,19 @@ function fillNightActions(list) {
 
             if (berserkAlreadyInsert) {
                 text = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?"
-                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, true, true))
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.NIGHT, true))
             } else {
                 if (actionTarget.action === "rage")
                     berserkAlreadyInsert = true;
                 text = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, true))
+                designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.NIGHT, true))
             }
         } else {
             // Add wrapper to the gameActions element
             const targetDiv = divMap[getRoleType(actionTarget.role)];
             if (targetDiv) {
                 text = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
-                targetDiv.appendChild(getActionWrapper(actionTarget, text));
+                targetDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.NIGHT));
             }
         }
     }
@@ -262,7 +259,11 @@ function fillNightActions(list) {
     changeDesignatedWolf()
 }
 
+// order of players in the game
 let playersOrder = []
+
+// if Sam was voted out
+let samWasVotedOut = false;
 
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
@@ -280,11 +281,18 @@ function fillDayActions(list) {
         let text;
         switch (list[i]['actionTarget']['action']) {
             case "revenge": // is Sam
-                // todo -> handle Sam
+                            // todo -> handle Sam
                 gameActions.appendChild(samDiv);
-                text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
-                samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text));
+                // todo to fix
+                // text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
+                text = "NOT WORK YET"
+                samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
+
+                let samSB = document.querySelector(".samDiv select")
+                samSB.id = "sam_SB";
+
                 // samDiv.style.display = "none"
+                console.log(samDiv)
                 break;
             case "plague": // is Plague spreader
                 gameActions.appendChild(plagueDiv);
@@ -297,47 +305,35 @@ function fillDayActions(list) {
                 console.log(playersOrder)
                 // todo -> handle plague spreader
 
-                let actionWrapper = document.createElement("div");
-                actionWrapper.classList.add("action-wrapper", "row");
-
-                let actionText = document.createElement("span");
-                actionText.innerHTML = "<u>" + plaguedPlayer + "</u> died of the plague?"
-                actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
-                actionWrapper.appendChild(actionText);
-
-                let checkBox = document.createElement("input")
-                checkBox.type = "checkbox"
-                checkBox.id = plaguedPlayer + "_plaguedCB"
-                checkBox.classList.add("plague_CB", "col-12", "col-sm-4", "col-md-5");
-                actionWrapper.appendChild(checkBox);
-
-                plagueDiv.appendChild(actionWrapper)
+                plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true))
                 break;
             default:
                 text = "Which player does <u>" + list[i]['actionTarget'].player + "</u>  want to vote out?";
-                voteDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text));
+                voteDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
                 break;
         }
     }
-
 }
 
-function getActionWrapper(actionTarget, text, memberOfWolfPack = false) {
+function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = false) {
     // Create wrapper element to contain roleTargetsElem and text
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
 
     // Create select element
     let roleTargetsElem = document.createElement("select");
-    roleTargetsElem.id = actionTarget.role + "_targets";
-    roleTargetsElem.setAttribute("required", "required");
-    roleTargetsElem.setAttribute("role", actionTarget.role);
     if (gamePhase === GamePhase.NIGHT) {
+        roleTargetsElem.id = actionTarget.role + "_targets";
         if (!memberOfWolfPack)
             roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
         roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
-    } else
+    } else {
+        roleTargetsElem.id = actionTarget.possibleTargets[0].player + "_targets";
         roleTargetsElem.setAttribute("player", actionTarget.player);
+    }
+    roleTargetsElem.setAttribute("required", "required");
+    roleTargetsElem.setAttribute("role", actionTarget.role);
+
 
     // Create default option
     let defaultOption = document.createElement("option");
@@ -396,6 +392,79 @@ function insertSelectionBox(actionWrapper, selectBox) {
     // actionWrapper.appendChild(svgSprites);
 }
 
+function updatePlaguesVictims() {
+    let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
+
+    let original = ""
+
+    let playersPlague = []
+    for (let i = 0; i < playersOrder.length; i++) {
+        let value = false
+        let CB_ofPlayer = document.getElementById(playersOrder[i] + "_plaguedCB");
+
+        if (CB_ofPlayer !== null) {
+            value = CB_ofPlayer.checked;
+            if (CB_ofPlayer.getAttribute("original") === "true")
+                original = CB_ofPlayer.getAttribute("player");
+        }
+
+        playersPlague.push({
+            player: playersOrder[i],
+            value: value
+        })
+    }
+
+    // remove contet
+    plagueDiv.innerText = "";
+
+    let nPlayers = playersOrder.length;
+    let inxedOriginal = playersOrder.indexOf(original);
+
+    plagueDiv.appendChild(createActionWrapperForPlague(original, playersPlague[inxedOriginal].value, true))
+
+    let infectedNumber = 0
+    // next player
+    for (let i = inxedOriginal; i < nPlayers + inxedOriginal; i++) {
+        if (playersPlague[(i + nPlayers) % nPlayers].value) {
+            plagueDiv.appendChild(createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers], playersPlague[(i + 1) % nPlayers].value))
+            infectedNumber++;
+        } else break;
+    }
+
+    // todo -> fix a bug when all players are checked
+    if(infectedNumber === nPlayers - 1)
+        return;
+
+    // previous player
+    for (let i = inxedOriginal; i > inxedOriginal - nPlayers; i--) {
+        if (playersPlague[(i + nPlayers) % nPlayers].value)
+            plagueDiv.prepend(createActionWrapperForPlague(playersOrder[(i + nPlayers - 1) % nPlayers], playersPlague[(i + nPlayers - 1) % nPlayers].value))
+        else break;
+    }
+}
+
+function createActionWrapperForPlague(plaguedPlayer, checked, original = false) {
+    let actionWrapper = document.createElement("div");
+    actionWrapper.classList.add("action-wrapper", "row");
+
+    let actionText = document.createElement("span");
+    actionText.innerHTML = "<u>" + plaguedPlayer + "</u> died of the plague?"
+    actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
+    actionWrapper.appendChild(actionText);
+
+    let checkBox = document.createElement("input")
+    checkBox.type = "checkbox"
+    checkBox.id = plaguedPlayer + "_plaguedCB"
+    checkBox.setAttribute("original", original.toString());
+    checkBox.setAttribute("player", plaguedPlayer);
+    checkBox.checked = checked;
+    checkBox.classList.add("plague_CB", "col-12", "col-sm-4", "col-md-5");
+    checkBox.addEventListener("click", updatePlaguesVictims)
+    actionWrapper.appendChild(checkBox);
+
+    return actionWrapper;
+}
+
 function sendActions() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
     const gameAction = [];
@@ -425,12 +494,21 @@ function sendActions() {
                 } else
                     continue;
         }
+
         if ((role === "sheriff" && target.toLowerCase() === "no shot")
             || (role === "berserker" && target.toLowerCase() === "no rage"))
             continue;
 
         gameAction.push({player, role, target});
     }
+
+    let sem_SB = document.getElementById("sam_SB")
+    if (sem_SB !== null && samWasVotedOut) {
+        // todo to finish
+        // let sam = "sam"
+        // gameAction.push({samPlayer, sam, samTarget});
+    }
+
 
     const json = {gameAction};
     console.log(JSON.stringify(json));
