@@ -13,10 +13,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
     console.log(gameID);
 
     var lastSegment = url.substring(url.lastIndexOf("/") + 1);
-    var endsWithMaster = lastSegment === "master" || lastSegment === "master/";
+    endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
-    document.getElementById("sendActions").style.display = "none"
-    document.getElementById("sendActions").addEventListener("click", sendActions);
+    if(document.getElementById("sendActions") !== null)
+    {
+        document.getElementById("sendActions").style.display = "none"
+        document.getElementById("sendActions").addEventListener("click", sendActions);
+    }
 
     elementsReload();
 });
@@ -24,14 +27,18 @@ document.addEventListener('DOMContentLoaded', function (event) {
 function elementsReload() {
     // reset of variables and state
     wolfPack = []
-    document.getElementById("sendActions").disabled = true;
+    if(document.getElementById("sendActions") !== null)
+    {
+        document.getElementById("sendActions").disabled = true;
+    }
 
     // recover the data
-
-    genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillPlayersStatus);
-    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus)
+    var master = endsWithMaster? "/master" : "";
+    genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
+    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
 }
 
+let endsWithMaster; // whether the url ends with /master
 let gameID;
 let wolfPack = []
 let gameRound

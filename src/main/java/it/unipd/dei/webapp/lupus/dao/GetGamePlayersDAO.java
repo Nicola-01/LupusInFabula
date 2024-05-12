@@ -94,7 +94,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                 while (rs.next()) {
                     String playerRole = rs.getString("role");
                     String sentUsername = rs.getString("player_username");
-                    if (!(this.playerUsername.equals(sentUsername) || (this.role.equals("wolf") && playerRole.equals("wolf"))))
+                    if (!(this.playerUsername.equals(sentUsername) || (this.role.equals("wolf") && playerRole.equals("wolf")) || playerRole.equals("master")))
                         playerRole = "";
 
                     join.add(new PlaysAsIn(
