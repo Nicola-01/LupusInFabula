@@ -59,10 +59,10 @@ function gameStatus(req) {
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
                 gamePhase = game.phase;
                 if (gamePhase === GamePhase.NIGHT) {
-                    bt_text.textContent = "NEW DAY!";
+                    if(bt_text !== null) bt_text.textContent = "NEW DAY!";
                     bt_gameStatus.textContent = "NIGHT " + gameRound;
                 } else {
-                    bt_text.textContent = "NEW NIGHT!";
+                    if(bt_text !== null) bt_text.textContent = "NEW NIGHT!";
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
 
