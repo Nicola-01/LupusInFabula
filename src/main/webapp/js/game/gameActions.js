@@ -1,7 +1,19 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
-    gameID = url.substring(url.lastIndexOf("/gtmp/") + 6, url.lastIndexOf("/")); // todo work only if the url finish with /master
-    console.log(gameID)
+
+    // extract gameID
+    var startIndex = url.lastIndexOf("/gtmp/") + 6;
+    var endIndex = url.indexOf("/", startIndex);
+    // if url doesn't end with /
+    if (endIndex === -1)
+    {
+        endIndex = url.length;
+    }
+    var gameID = url.substring(startIndex, endIndex);
+    console.log(gameID);
+
+    var lastSegment = url.substring(url.lastIndexOf("/") + 1);
+    var endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
     document.getElementById("sendActions").style.display = "none"
     document.getElementById("sendActions").addEventListener("click", sendActions);
