@@ -243,6 +243,8 @@
     flex-direction: column;
     gap: 4px;
     animation: fadeOutAnimation ease-in-out 0.3s forwards;
+    z-index: 1;
+    background: white;
 }
 
 .dropdown__wrapper--fade-in {
