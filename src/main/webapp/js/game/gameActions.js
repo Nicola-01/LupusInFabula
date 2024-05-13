@@ -117,6 +117,15 @@ function enableButton() {
     } else { // day
         for (let i = 0; i < role_targets.length && !disable; i++)
             disable = (role_targets[i].value === "")
+
+        // todo -> to finish
+        let samDiv = document.getElementsByClassName("samDiv");
+        if (samDiv.length > 0){
+            samDiv[0].style.display = "none"
+            if (!disable) {
+                let sem_SB = document.getElementById("sam_SB")
+            }
+        }
     }
     document.getElementById("sendActions").disabled = disable;
 }
@@ -264,6 +273,8 @@ let playersOrder = []
 
 // if Sam was voted out
 let samWasVotedOut = false;
+let samPlayer;
+let plagueSpreaderPlayer;
 
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
@@ -281,9 +292,8 @@ function fillDayActions(list) {
         let text;
         switch (list[i]['actionTarget']['action']) {
             case "revenge": // is Sam
-                            // todo -> handle Sam
+                samPlayer = list[i]['actionTarget'].player;
                 gameActions.appendChild(samDiv);
-                // todo to fix
                 // text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
                 text = "NOT WORK YET"
                 samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
@@ -291,10 +301,11 @@ function fillDayActions(list) {
                 let samSB = document.querySelector(".samDiv select")
                 samSB.id = "sam_SB";
 
-                // samDiv.style.display = "none"
-                console.log(samDiv)
+                samDiv.style.display = "none"
                 break;
             case "plague": // is Plague spreader
+                plagueSpreaderPlayer = list[i]['actionTarget'].player;
+
                 gameActions.appendChild(plagueDiv);
                 let tmpList = list[i]['actionTarget']['possibleTargets'];
                 for (let j = 0; j < tmpList.length; j++)
@@ -302,8 +313,6 @@ function fillDayActions(list) {
                 let plaguedPlayer = playersOrder[0];
                 // remove the first player, is the one with the plagued
                 playersOrder.splice(0, 1);
-                console.log(playersOrder)
-                // todo -> handle plague spreader
 
                 plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true))
                 break;
@@ -422,24 +431,23 @@ function updatePlaguesVictims() {
 
     plagueDiv.appendChild(createActionWrapperForPlague(original, playersPlague[inxedOriginal].value, true))
 
-    let infectedNumber = 0
+    let insertPlayers = 1
     // next player
-    for (let i = inxedOriginal; i < nPlayers + inxedOriginal; i++) {
+    for (let i = inxedOriginal; i < nPlayers + inxedOriginal - 1; i++) {
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
             plagueDiv.appendChild(createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers], playersPlague[(i + 1) % nPlayers].value))
-            infectedNumber++;
+            insertPlayers++;
         } else break;
     }
 
-    // todo -> fix a bug when all players are checked
-    if(infectedNumber === nPlayers - 1)
-        return;
-
     // previous player
-    for (let i = inxedOriginal; i > inxedOriginal - nPlayers; i--) {
-        if (playersPlague[(i + nPlayers) % nPlayers].value)
+    for (let i = inxedOriginal; i > inxedOriginal - nPlayers + 1; i--) {
+        if (insertPlayers >= nPlayers)
+            break
+        if (playersPlague[(i + nPlayers) % nPlayers].value) {
             plagueDiv.prepend(createActionWrapperForPlague(playersOrder[(i + nPlayers - 1) % nPlayers], playersPlague[(i + nPlayers - 1) % nPlayers].value))
-        else break;
+            insertPlayers++;
+        } else break;
     }
 }
 
@@ -456,6 +464,8 @@ function createActionWrapperForPlague(plaguedPlayer, checked, original = false) 
     checkBox.type = "checkbox"
     checkBox.id = plaguedPlayer + "_plaguedCB"
     checkBox.setAttribute("original", original.toString());
+    if (original)
+        checkBox.classList.add("originalPlagued")
     checkBox.setAttribute("player", plaguedPlayer);
     checkBox.checked = checked;
     checkBox.classList.add("plague_CB", "col-12", "col-sm-4", "col-md-5");
@@ -503,10 +513,30 @@ function sendActions() {
     }
 
     let sem_SB = document.getElementById("sam_SB")
+
     if (sem_SB !== null && samWasVotedOut) {
         // todo to finish
-        // let sam = "sam"
+        let sam = "sam";
+        let target = sem_SB.value;
+        console.log({samPlayer, sam, target});
         // gameAction.push({samPlayer, sam, samTarget});
+    }
+
+    let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
+    if (plagueDiv !== null) {
+        let CB_ofPlayer = document.getElementsByClassName("plague_CB");
+        let plague_spreader = "plague spreader"
+        for (let i = 0; i < CB_ofPlayer.length; i++) {
+            let infectedPlayer = CB_ofPlayer[i].getAttribute("player");
+            if (CB_ofPlayer[i].checked) {
+                console.log({
+                    plagueSpreaderPlayer,
+                    plague_spreader,
+                    infectedPlayer
+                })
+                // gameAction.push({plagueSpreaderPlayer, sam, samTarget});
+            }
+        }
     }
 
 

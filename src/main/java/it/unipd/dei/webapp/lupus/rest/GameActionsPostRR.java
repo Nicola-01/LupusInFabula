@@ -285,7 +285,7 @@ public class GameActionsPostRR extends AbstractRR {
                         currentSubPhase++;
                     }
                 } else {
-                    if (role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
+                    if (role.equals(GameRoleAction.SAM.getName()) && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
                         //He can decide to kill someone else before his dead
                         Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
                         insertActions.add(samAction);
@@ -294,7 +294,7 @@ public class GameActionsPostRR extends AbstractRR {
                         dayActionsResults.setSamTarget(target);
                         updatePlayersDeath.add(updatePlayerDeath(target));
                         //updatePlayerDeath(target);
-                    } else if (role.equals("plague spreader")) {
+                    } else if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
                         //todo check if the action of the plague spreader is correct
                         Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
                         insertActions.add(plagueAction);
