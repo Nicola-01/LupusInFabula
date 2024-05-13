@@ -237,7 +237,7 @@ public class GameActionsGetRR extends AbstractRR {
             List<String> targets = new ArrayList<>();
 
             // if the role is not a puppy or is a puppy but is the last wolf alive
-            if (role.equals(GameRoleAction.PUPPY.getName()) && !(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()))
+            if (role.equals(GameRoleAction.PUPPY.getName()) && !(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()))
                 continue;
 
             if (role.equals(GameRoleAction.WOLF.getName())) {
@@ -339,7 +339,7 @@ public class GameActionsGetRR extends AbstractRR {
             return nightAction.get(role);
 
         // if the role is Puppy and is a wolf, or Explorer and is a wolf, or Dorky and is a wolf, return the wolf action
-        if ((role.equals(GameRoleAction.PUPPY.getName()) && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+        if ((role.equals(GameRoleAction.PUPPY.getName()) && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
                 || (role.equals(GameRoleAction.EXPLORER.getName()) && new IsExplorerAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
                 || (role.equals(GameRoleAction.DORKY.getName()) && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()))
             return GameRoleAction.WOLF.getAction();

@@ -817,7 +817,7 @@ public class GameActionsPostRR extends AbstractRR {
             }
 
             nightActionsResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
-            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
+            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
 
             for (Action action : insertActions)
                 new InsertIntoActionDAO(ds.getConnection(), action).access();
@@ -861,7 +861,7 @@ public class GameActionsPostRR extends AbstractRR {
                     && !deadPlayers.get(playerRole.getKey()))
                 number_of_wolves++;
             else if (playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
+                    && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()
                     && !deadPlayers.get(playerRole.getKey()))
                 number_of_wolves++;
             else if (playerRole.getValue().equals(GameRoleAction.DORKY.getName())
@@ -1025,7 +1025,7 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
             } else if (gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
-                    && !new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                    && !new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                 LOGGER.error("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive");
                 ErrorCode ec = ErrorCode.NOT_VALID_TARGET;
@@ -1062,7 +1062,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             } else if (gameRoleAction.getAction() != null
                     && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
+                    && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()
                     && !deadPlayers.get(playerRoleEntry.getKey())) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
@@ -1417,7 +1417,7 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 } else if (entry1.getKey().equals(GameRoleAction.PUPPY.getName())) {
                     // if the puppy is the last wolf pack member alive he can start to maul
-                    if (new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                    if (new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
                         tmp.put(GameRoleAction.WOLF.getAction(), false);
                 } else if (entry1.getKey().equals(GameRoleAction.EXPLORER.getName())) {
                     // if the explorer has already activated his effect then he can only maul
@@ -1448,7 +1448,7 @@ public class GameActionsPostRR extends AbstractRR {
                         tmp.put(nightAction.get(gameAction.getRole()), true);
                         actions.put(gameAction.getTarget(), tmp);
 
-                    } else if (new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                    } else if (new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                         Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
                         tmp.put(nightAction.get(gameAction.getRole()), true);
@@ -1483,7 +1483,7 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
                 if (gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
-                        && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                        && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                     Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
                     tmp.put(nightAction.get(GameRoleAction.WOLF.getName()), true);
