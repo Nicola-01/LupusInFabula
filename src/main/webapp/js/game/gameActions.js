@@ -48,10 +48,16 @@ function gameStatus(req) {
         if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
             wait = true
-            if (game.who_win !== -1) {
+            if (game.who_win !== -1)
+            {
                 // todo -> the game is over
-                populateInfoMessage("THE GAME IS OVER", "");
-            } else {
+                var factions = ["farmers", "wolf pack", "hamster", "jester"];
+                var s = "s";
+                if (game.who_win < 2) s = "";
+                var msg = "The " + factions[game.who_win] + " win"+s+"!";
+                populateInfoMessage("THE GAME IS OVER", msg);
+            }
+            else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;

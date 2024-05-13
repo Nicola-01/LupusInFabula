@@ -89,7 +89,8 @@ public class GameActionsPostRR extends AbstractRR {
      * @param ds     The data source.
      * @throws SQLException If an SQL error occurs.
      */
-    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
+    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException
+    {
         super(Actions.POST_GAME_ACTIONS_ACTION, req, res, ds);
         this.gameID = gameID;
 
@@ -142,7 +143,8 @@ public class GameActionsPostRR extends AbstractRR {
                     LOGGER.info("correctness of night actions done");
                     if (!handleNightPhase(gameActions))
                         return;
-                } else {
+                }
+                else {
                     if (!correctnessOfDayActions(gameActions))
                         return;
                     LOGGER.info("correctness of day actions done");
@@ -158,8 +160,8 @@ public class GameActionsPostRR extends AbstractRR {
 
                     LOGGER.info("The game finished, winner(s): " + vm.getMessage());
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, vm.getFaction()).access();
-                } else {
-
+                } else
+                {
                     res.setStatus(HttpServletResponse.SC_OK);
                     // return the action result before updating the round and the phase
                     if (currentPhase == GamePhase.DAY.getId()) {
@@ -1333,7 +1335,6 @@ public class GameActionsPostRR extends AbstractRR {
         return true;
 
     }
-
 
     /**
      * Checks the validity of night actions performed by players ensuring that the
