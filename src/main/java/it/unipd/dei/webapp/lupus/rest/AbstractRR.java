@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * Abstract base class for REST resources.
@@ -135,7 +136,7 @@ public abstract class AbstractRR implements RestResource {
      *
      * @throws IOException if any error occurs in the client/server communication.
      */
-    protected abstract void doServe() throws IOException;
+    protected abstract void doServe() throws IOException, SQLException;
 
     /**
      * Checks that the request method and MIME media type are allowed.
