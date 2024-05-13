@@ -73,12 +73,20 @@ public class PossibleGameActions {
     /**
      * List with for each action the possible targets
      */
-    private List<ActionTarget> actionTargets = new ArrayList<>();
+    private final List<ActionTarget> actionTargets = new ArrayList<>();
 
-
+    /**
+     * Indicates whether the current phase of the game is the night phase.
+     */
     private Boolean isNightPhase;
 
-
+    /**
+     * Constructs a new PossibleGameActions instance with the specified data source and game ID.
+     *
+     * @param ds     The DataSource used to connect to the database.
+     * @param gameID The ID of the game for which to generate possible actions.
+     * @throws SQLException If a database access error occurs.
+     */
     public PossibleGameActions(DataSource ds, int gameID) throws SQLException {
         this.ds = ds;
         this.gameID = gameID;
@@ -111,6 +119,11 @@ public class PossibleGameActions {
                     playerWithRole(GameRoleAction.DORKY.getName()).stream()).toList();
     }
 
+    /**
+     * Populates the list of possible game actions based on the current game state.
+     *
+     * @return A Message object indicating the success or failure of populating the action list.
+     */
     public Message populateList() {
         try {
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
@@ -272,7 +285,6 @@ public class PossibleGameActions {
         LOGGER.info("Returning the actions of night phase.");
     }
 
-
     /**
      * Retrieves a list of players with the specified role.
      *
@@ -408,7 +420,6 @@ public class PossibleGameActions {
             return true;
         }
     }
-
 
     /**
      * Finds the index of the first ActionTarget with the specified role.
