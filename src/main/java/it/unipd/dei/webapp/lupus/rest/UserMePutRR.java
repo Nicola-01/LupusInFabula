@@ -86,8 +86,6 @@ public class UserMePutRR extends AbstractRR {
                         LOGGER.info("User " + user + " has successfully updated the password");
                         res.setStatus(HttpServletResponse.SC_OK);
                         m.toJSON(res.getOutputStream());
-                        // TODO --> add the page linked to this servlet (for successfully updated password)
-                        //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
                     } else {
 
@@ -97,8 +95,6 @@ public class UserMePutRR extends AbstractRR {
                         m = new Message("User " + user + " failed to update the password", ec.getErrorCode(), ec.getErrorMessage());
                         res.setStatus(ec.getHTTPCode());
                         m.toJSON(res.getOutputStream());
-                        // TODO --> add the page linked to this servlet (for not successfully updated password)
-                        //req.getRequestDispatcher("/jsp/...").forward(req, resp);
 
                     }
 
@@ -110,8 +106,6 @@ public class UserMePutRR extends AbstractRR {
                     Message m = new Message("New password and repeatNewPassword do not match", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
-                    // TODO --> add the page linked to this servlet (for not successfully updated password)
-                    //req.getRequestDispatcher("/jsp/...").forward(req, resp);
 
                 }
 
@@ -130,8 +124,6 @@ public class UserMePutRR extends AbstractRR {
                     LOGGER.info("Player " + user + "'s successfully updated the old email " + oldEmail + " to the new one " + newEmail);
                     res.setStatus(HttpServletResponse.SC_OK);
                     m.toJSON(res.getOutputStream());
-                    // TODO --> add the page linked to this servlet (for successfully updated email)
-                    //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
                 } else {
 
@@ -141,8 +133,6 @@ public class UserMePutRR extends AbstractRR {
                     m = new Message("Impossible to update the old email to the new one", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
-                    // TODO --> add the page linked to this servlet (for not successfully updated email)
-                    //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
                 }
 

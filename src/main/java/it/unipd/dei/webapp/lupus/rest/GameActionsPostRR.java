@@ -40,10 +40,13 @@ public class GameActionsPostRR extends AbstractRR {
     private final Map<String, String> playersRole;
 
     /**
-     * List containing the actions that has to be inserted into the database
+     * List containing the actions that have to be inserted into the database
      */
     List<Action> insertActions;
 
+    /**
+     * List containing the deaths that have to be inserted into the database
+     */
     List<PlaysAsIn> updatePlayersDeath;
 
     /**
@@ -235,25 +238,11 @@ public class GameActionsPostRR extends AbstractRR {
 
                         votedPlayer1 = votesList.get(0).getKey();
                         votedPlayer2 = votesList.get(1).getKey();
-                        if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
-                            LOGGER.info("Ballot between " + votedPlayer1 + " and " + votedPlayer2);
-                            currentSubPhase++;
-                        } else {
-                            LOGGER.info("Player " + votedPlayer1 + " is voted");
-
-                            if (carpenterCheck(votedPlayer1)) {
-                                LOGGER.info("The carpenter use his ability");
-                                dayActionsResults.setCarpenterAbility(true);
-                            } else {
-                                LOGGER.info(votedPlayer1 + " is voted out");
-                                dayActionsResults.setVotedPlayer(votedPlayer1);
-                                updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
-//                                updatePlayerDeath(votedPlayer1);
-                            }
-                        }
-
+                        LOGGER.info("Ballot between " + votedPlayer1 + " and " + votedPlayer2);
+                        currentSubPhase++;
                     }
-                } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0) && (gameActions.size() > deadPlayers.size()+2)) { //ballot votes
+
+                } else if (numberAction <= (voteNumber + ballotVoteNumber)) { //ballot votes
                     LOGGER.info(player +  " with role " + role + " has voted " + target);
 
                     if (!(target.equals(votedPlayer1) || target.equals(votedPlayer2))) {
@@ -276,8 +265,14 @@ public class GameActionsPostRR extends AbstractRR {
                         List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
                         Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
 
-                        votedPlayer1 = ballotVotesList.get(0).getKey();
+                        //If in the ballot we don't have a tie the voted player is the one with more votes in the ballot
+                        //If we have a tie the voted player is the one with more votes in the first votation
+                        if (!Objects.equals(ballotVotesList.get(0).getValue(), ballotVotesList.get(1).getValue())){
+                            votedPlayer1 = ballotVotesList.get(0).getKey();
+                        }
+
                         LOGGER.info("Players " + votedPlayer1 + " is voted");
+
                         if (carpenterCheck(votedPlayer1)) {
                             LOGGER.info("The carpenter use his ability");
                             dayActionsResults.setCarpenterAbility(true);
@@ -287,11 +282,10 @@ public class GameActionsPostRR extends AbstractRR {
                             updatePlayersDeath.add(updatePlayerDeath(votedPlayer1));
 //                            updatePlayerDeath(votedPlayer1);
                         }
-
+                        currentSubPhase++;
                     }
                 } else {
-                    currentSubPhase++;
-                    if (role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
+                    if (role.equals(GameRoleAction.SAM.getName()) && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
                         //He can decide to kill someone else before his dead
                         Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
                         insertActions.add(samAction);
@@ -300,7 +294,8 @@ public class GameActionsPostRR extends AbstractRR {
                         dayActionsResults.setSamTarget(target);
                         updatePlayersDeath.add(updatePlayerDeath(target));
                         //updatePlayerDeath(target);
-                    } else if (role.equals("plague spreader")) {
+                    } else if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
+                        //todo check if the action of the plague spreader is correct
                         Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
                         insertActions.add(plagueAction);
                         //new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
@@ -392,7 +387,6 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.info("Carpenter ability check");
                 if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
                     LOGGER.info("Carpenter is safe this round");
-                    currentSubPhase++;
                     Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
                     new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
                     return true;
@@ -432,31 +426,21 @@ public class GameActionsPostRR extends AbstractRR {
             int deadListCount = 0;
             Message m = null;
 
-            int stop = deadPlayers.size();
-            List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, stop));
+
+            List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, voteNumber));
             Collections.sort(firstGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
 
-            List<GameAction> secondGameAction = null;
-            if (gameActions.size() > voteNumber + 2) {
-                stop = voteNumber + ballotVoteNumber;
-                secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size(), stop));
-                Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
-            }
+            List<GameAction> secondGameAction = new ArrayList<>(gameActions.subList(voteNumber, (voteNumber + ballotVoteNumber)));
+            Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
 
-            List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(stop, gameActions.size()));
+            List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList((voteNumber + ballotVoteNumber), gameActions.size()));
 
             List<GameAction> orderedGameActions = firstGameAction;
-            if (!(gameActions.size() <= deadPlayers.size())) {
-                if (secondGameAction != null) {
-                    orderedGameActions.addAll(secondGameAction);
-                    orderedGameActions.addAll(thirdGameAction);
-                } else {
-                    orderedGameActions.addAll(thirdGameAction);
-                }
-            }
+            orderedGameActions.addAll(secondGameAction);
+            orderedGameActions.addAll(thirdGameAction);
+
             List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
             Collections.sort(deadPlayersList, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()));
-
 
             for (GameAction gameAction : orderedGameActions) {
                 numberAction++;
@@ -519,7 +503,7 @@ public class GameActionsPostRR extends AbstractRR {
                         m.toJSON(res.getOutputStream());
                         return false;
                     }
-                } else if ((gameActions.size() > voteNumber + 2) && (numberAction <= (voteNumber + ballotVoteNumber))) {
+                } else if (numberAction <= (voteNumber + ballotVoteNumber)) {
                     if (deadPlayers.get(gameAction.getPlayer())) {
                         LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
                         ErrorCode ec = ErrorCode.DEAD_PLAYER;
@@ -1098,10 +1082,18 @@ public class GameActionsPostRR extends AbstractRR {
             }
         }
 
+        boolean isMediumInGame = false;
+        for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
+            if (playerRoleEntry.getValue().equals(GameRoleAction.MEDIUM.getName())) {
+                isMediumInGame = true;
+                break;
+            }
+        }
+
         if (hasSheriffShoot) {
 
             // check for the medium (during the first night he has not to do any action)
-            if (!(currentRound == 1 && currentPhase == 0)) {
+            if (!(currentRound == 1 && currentPhase == 0) && isMediumInGame) {
 
                 //check if each role with an effect has done the action
                 if (berserkerCount == 0) {
@@ -1139,12 +1131,12 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 }
 
-            } else {
+            } else if (isMediumInGame) {
 
                 //check if each role with an effect has done the action
                 if (berserkerCount == 0) {
                     if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
-                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                         LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
                         ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                         m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
@@ -1166,6 +1158,44 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 } else if (berserkerCount == 2) {
                     if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
+
+            } else {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
                         //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                         LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                         ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
@@ -1182,7 +1212,7 @@ public class GameActionsPostRR extends AbstractRR {
         } else {
 
             // check for the medium (during the first night he has not to do any action)
-            if (!(currentRound == 1 && currentPhase == 0)) {
+            if (!(currentRound == 1 && currentPhase == 0) && isMediumInGame) {
 
                 //check if each role with an effect has done the action
                 if (berserkerCount == 0) {
@@ -1220,7 +1250,7 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 }
 
-            } else {
+            } else if (isMediumInGame) {
 
                 //check if each role with an effect has done the action
                 if (berserkerCount == 0) {
@@ -1247,6 +1277,44 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 } else if (berserkerCount == 2) {
                     if (gameActions.size() != (rolesWithEffect.size() - wolfCount())) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                }
+
+            } else {
+
+                //check if each role with an effect has done the action
+                if (berserkerCount == 0) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+                        //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                        LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action, or has done too many actions this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 1) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
+
+                        LOGGER.error("ERROR: someone has not done his action this turn");
+                        ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
+                        m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
+                        res.setStatus(ec.getHTTPCode());
+                        m.toJSON(res.getOutputStream());
+                        return false;
+
+                    }
+                } else if (berserkerCount == 2) {
+                    if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
                         //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                         LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                         ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
@@ -1531,13 +1599,13 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0))
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0))
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0 && !hamster.isEmpty())
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0 && !hamster.isEmpty())
             return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getId());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0)
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0)
             return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getId());
 
         if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())

@@ -1,43 +1,39 @@
 
-
-/* Style for the table */
 #my_friends {
-    width: 100%;
     border-collapse: collapse;
-    border: 1px solid #ddd;
     margin-top: 20px;
 }
 
-/* Style for table headers */
-#my_friends th {
-    background-color: #f2f2f2;
+#my_friends th,
+#my_friends td {
+    border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-    border: 1px solid #ddd;
 }
 
-/* Style for table data cells */
-#my_friends td {
-    padding: 8px;
-    border: 1px solid #ddd;
+#my_friends th {
+    background-color: #f2f2f2;
 }
 
-/* Style for the delete button */
-#my_friends .delete-button {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 5px 10px;
+#listFriend h2 {
     text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    cursor: pointer;
-    border-radius: 4px;
+    margin-bottom: 20px;
 }
 
-/* Hover effect for delete button */
-#my_friends .delete-button:hover {
-    background-color: #d32f2f;
+#my_friends .deleteFriendButton {
+    display: block;
+    background-color: #4e99e9;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+#my_friends .deleteFriendButton:hover {
+    transform: scale(1.05);
+    background-color: #ff4d4d;
 }
 
 #addFriend{
@@ -46,4 +42,9 @@
 
 #listFriend{
     padding-top: 40px;
+}
+
+#friendsTable{
+    max-height: 500px;
+    overflow-y: auto;
 }

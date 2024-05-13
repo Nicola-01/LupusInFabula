@@ -22,9 +22,6 @@
                     <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">Home</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="<c:url value="/"/>">Personal Area</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="<c:url value="/"/>">Statistics</a>
                 </li>
                 <li class="nav-item dropdown">
@@ -51,7 +48,7 @@
                 <div class="menu-add-button-title"><i class="fas fa-times"></i></div>
             </label>
             <div class="menu-add-items">
-                <span class="plate"><a href="<c:url value="/"/>"><i class="fas fa-user"></i></a></span>
+                <span class="plate"><a href="<c:url value="/user/"/>"><i class="fas fa-user"></i></a></span>
                 <span class="plate"><a href="<c:url value="/logout"/>"><i class="fas fa-sign-out-alt"></i></a></span>
             </div>
         </div>

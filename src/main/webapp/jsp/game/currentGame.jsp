@@ -31,6 +31,12 @@
 
     </div>
 
+    <div class="row">
+        <div class="col-sm-12 col-md-10 col-lg-8 p-2" style="margin: auto">
+            <h2 id="gameStatus"></h2>
+        </div>
+    </div>
+
     <c:choose>
         <c:when test="${isMaster}">
             <jsp:include page="gameActions.jsp"/>
