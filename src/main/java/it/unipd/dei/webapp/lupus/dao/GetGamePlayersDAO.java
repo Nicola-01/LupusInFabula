@@ -2,11 +2,13 @@ package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -40,20 +42,27 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
     private final String role;
 
     /**
+     * The data source used for obtaining connections.
+     */
+    private final DataSource ds;
+
+    /**
      * Creates a new object to list all the players in a game using the private gameID.
      *
+     * @param ds             The data source used to get connections
      * @param con            The connection to the database.
      * @param gameID         The private gameID used to find the game.
      * @param isMaster       Whether the URI contained a /master at the end.
      * @param playerUsername The username of the player who made the request
      * @param role           The role of the player who made the request
      */
-    public GetGamePlayersDAO(final Connection con, final int gameID, boolean isMaster, String playerUsername, String role) {
+    public GetGamePlayersDAO(DataSource ds, final Connection con, final int gameID, boolean isMaster, String playerUsername, String role) {
         super(con);
         this.gameID = gameID;
         this.URIisMaster = isMaster;
         this.playerUsername = playerUsername;
         this.role = role;
+        this.ds = ds;
 
     }
 
@@ -91,16 +100,29 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
             // who made the request
             // Only exception: If the user's role is "wolf", he can see all the other players role if they are "wolf" as well
             else {
-                while (rs.next()) {
+                while (rs.next())
+                {
                     String playerRole = rs.getString("role");
                     String sentUsername = rs.getString("player_username");
+
+                    // check whether send the role or not
+                    // check if the dorky is a wolf
+                    String[] wolfFaction = {"wolf", "puppy", "berserker", "explorer"};
+                    boolean isDorkyActive = new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam();
+
+                    boolean bothWolves = Arrays.asList(wolfFaction).contains(this.role) && Arrays.asList(wolfFaction).contains(playerRole);
+                    boolean imDorky = this.role.equals("dorky") && isDorkyActive && Arrays.asList(wolfFaction).contains(playerRole);
+                    boolean heIsDorky = Arrays.asList(wolfFaction).contains(this.role) && playerRole.equals("dorky") && isDorkyActive;
+
                     if (!(
                             this.playerUsername.equals(sentUsername) ||
-                            ((this.role.equals("wolf") || this.role.equals("puppy") || this.role.equals("berserker") || this.role.equals("explorer"))
-                            && (playerRole.equals("wolf") || playerRole.equals("puppy") || playerRole.equals("berserker") || playerRole.equals("explorer")) ) ||
+                            bothWolves ||
+                            imDorky ||
+                            heIsDorky ||
                             playerRole.equals("master")
                     )) { playerRole = ""; }
                     // Wolf - explorer - berserker  - puppy see each other
+                    // dorky see other wolves only if he became a wolf (and other way around)
 
                     join.add(new PlaysAsIn(
                             sentUsername,
