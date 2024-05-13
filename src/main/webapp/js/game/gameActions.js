@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var lastSegment = url.substring(url.lastIndexOf("/") + 1);
     endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
-    if (document.getElementById("sendActions") !== null) {
+    if (document.getElementById("sendActions") !== null)
+    {
         document.getElementById("sendActions").style.display = "none"
         document.getElementById("sendActions").addEventListener("click", sendActions);
     }
@@ -63,8 +64,12 @@ function gameStatus(req) {
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
 
-                document.getElementById("sendActions").style.display = "flex";
-                return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
+                // if url ends with master/, update actions
+                if(endsWithMaster)
+                {
+                    document.getElementById("sendActions").style.display = "flex";
+                    return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
+                }
             }
         }
     }
