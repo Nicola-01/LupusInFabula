@@ -1,7 +1,10 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/navbar.css">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet"  type='text/css'>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.3.0/css/font-awesome.css" rel="stylesheet"
+      type='text/css'>
+
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display&display=swap" rel="stylesheet">
 
 <header>
     <h1>Lupus in Fabula</h1>
@@ -40,18 +43,40 @@
         </div>
 
         <div>
-            <input id="check-for-clicking" type="checkbox">
-            <label class="main-add-button-plus" for="check-for-clicking">
-                <div class="menu-add-button-title"><i class="fas fa-bars"></i></div>
-            </label>
-            <label class="main-add-button-minus" for="check-for-clicking">
-                <div class="menu-add-button-title"><i class="fas fa-times"></i></div>
-            </label>
-            <div class="menu-add-items">
-                <span class="plate"><a href="<c:url value="/user/"/>"><i class="fas fa-user"></i></a></span>
-                <span class="plate"><a href="<c:url value="/logout"/>"><i class="fas fa-sign-out-alt"></i></a></span>
+            <div class="header">
+            <span class="navigation__group">
+                <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Joe Doe Picture">
+            </span>
+                <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
+                    <div class="dropdown__group">
+                        <div class="user-name">Joe Doe</div>
+                        <div class="email">joe.doe@atheros.ai</div>
+                    </div>
+                    <hr class="divider">
+                    <nav class="profile_nav">
+                        <ul>
+                            <li>
+                                <img src="${pageContext.request.contextPath}/media/navbar/profile.svg" alt="Profile"> My
+                                Profile
+                            </li>
+                            <li>
+                                <img src="${pageContext.request.contextPath}/media/navbar/settings.svg" alt="Settings">
+                                Settings
+                            </li>
+                        </ul>
+                        <hr class="divider">
+                        <ul>
+                            <li style="color: #E3452F;">
+                                <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out">Log
+                                out
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
 
     </div>
 </nav>
+
+<script src="${pageContext.request.contextPath}/js/navbar.js"></script>
