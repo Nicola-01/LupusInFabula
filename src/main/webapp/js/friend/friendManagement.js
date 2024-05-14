@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("playerUsername").addEventListener("keyup", function (event) {
         if (event.key === "Enter") {
             addFriend();
+            hidePlayerListPopup();
         }
     });
     loadFriendList();
@@ -154,5 +155,6 @@ function addToFriendsTable(username, friendshipDate) {
     // Append delete button to delete cell
     deleteCell.appendChild(deleteButton);
 
-    playersToIgnore.push(username.toLowerCase())
+    playersToIgnore.push(username.toLowerCase());
+    clearSearchBar();
 }
