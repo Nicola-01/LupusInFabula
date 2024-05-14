@@ -1,7 +1,12 @@
-const profile = document.querySelector('.profile');
+const profile = document.getElementsByClassName('profile')
 const dropdown = document.querySelector('.dropdown__wrapper');
 
-profile.addEventListener('click', () => {
+profile[0].addEventListener('click', () => {
+    dropdown.classList.remove('none');
+    dropdown.classList.toggle('hide');
+})
+
+profile[1].addEventListener('click', () => {
     dropdown.classList.remove('none');
     dropdown.classList.toggle('hide');
 })
@@ -9,7 +14,7 @@ profile.addEventListener('click', () => {
 
 document.addEventListener("click", (event) => {
     const isClickInsideDropdown = dropdown.contains(event.target);
-    const isProfileClicked = profile.contains(event.target);
+    const isProfileClicked = profile[0].contains(event.target) || profile[1].contains(event.target);
 
     if (!isClickInsideDropdown && !isProfileClicked) {
         dropdown.classList.add('hide');

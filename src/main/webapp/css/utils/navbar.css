@@ -1,3 +1,10 @@
+.navbar-toggler:focus,
+.navbar-toggler:active,
+.navbar-toggler-icon:focus {
+    outline: none;
+    box-shadow: none;
+}
+
 #check-for-clicking {
     display: none;
 }
@@ -178,16 +185,6 @@
     box-sizing: border-box;
 }
 
-.header {
-    /*position: fixed;*/
-    /*height: 80px;*/
-    padding: 0 16px;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: end;
-}
-
 .navigation__group {
     display: flex;
     gap: 16px;
@@ -233,8 +230,8 @@
 
 .dropdown__wrapper {
     width: 240px;
-    top: 88px;
-    right: 16px;
+    top: 75px;
+    right: 15px;
     position: absolute;
     border-radius: 8px;
     border: 1px solid var(--text-gray);
@@ -242,7 +239,7 @@
     flex-direction: column;
     gap: 4px;
     animation: fadeOutAnimation ease-in-out 0.3s forwards;
-    z-index: 1;
+    z-index: 2;
     background: white;
 }
 
