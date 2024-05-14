@@ -124,6 +124,9 @@ function enableButton() {
                 disable = (role_targets[i].value === "")
         }
     } else { // day
+
+        let samDivDisplay = "none";
+
         // maximum one vote and 2 ballot => 3
         const maxPhase = 3
         for (let i = 0; i < maxPhase; i++) {
@@ -139,6 +142,9 @@ function enableButton() {
                 let votedPlayers = getMostVotedPlayers(i)
                 // if there are at least 2 players is a ballot
                 if ((votedPlayers.length) < 2) {
+                    // the player is sam => enable his input box
+                    if (votedPlayers[0].player === samPlayer)
+                        samDivDisplay = "block"
                     if (i + 1 < maxPhase)
                         document.getElementById("voteRadio_" + (i + 1)).disabled = true
                     disable = false
@@ -155,16 +161,14 @@ function enableButton() {
                 break;
             }
         }
+        document.querySelector(".samDiv").style.display = samDivDisplay;
 
-        // todo -> to finish
-        // if (!disable) { // all players have voted
-        //
-        //     let samDiv = document.getElementsByClassName("samDiv");
-        //     if (samDiv.length > 0) {
-        //         samDiv[0].style.display = "none"
-        //         let sem_SB = document.getElementById("sam_SB")
-        //     }
-        // }
+        // if the player to voted out is sam, check if his input is not null
+        if (samDivDisplay === "block")
+            disable = (document.getElementById("sam_SB").value === "");
+        else // reset the default value
+            document.getElementById("sam_SB").querySelector('option[value=""]').selected = true;
+
     }
     document.getElementById("sendActions").disabled = disable;
 }
@@ -204,9 +208,6 @@ function changeSubPhase(radioBT) {
         enableButton()
     }
     currentVoteSection = subPhase;
-
-    //todo ge
-
 }
 
 function fillVotes(req) {
@@ -227,14 +228,14 @@ function fillVotes(req) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
                     // If the player is not dead or not in the ballot.
                     if (!playsAsIn.isDead && !votedPlayers.some(item => item.player === playsAsIn.username)) {
-                            let text = "Who <u>" + playsAsIn.username + "</u> voted out?";
-                            let actionTarget = {
-                                "player": playsAsIn.username,
-                                "role": playsAsIn.role,
-                                "possibleTargets": votedPlayers
-                            }
-                            votesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
+                        let text = "Who <u>" + playsAsIn.username + "</u> voted out?";
+                        let actionTarget = {
+                            "player": playsAsIn.username,
+                            "role": playsAsIn.role,
+                            "possibleTargets": votedPlayers
                         }
+                        votesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
+                    }
                 }
             }
         }
@@ -421,7 +422,6 @@ function fillNightActions(list) {
 let playersOrder = []
 
 // if Sam was voted out
-let samWasVotedOut = false;
 let samPlayer;
 let plagueSpreaderPlayer;
 
@@ -464,8 +464,7 @@ function fillDayActions(list) {
             case "revenge": // is Sam
                 samPlayer = list[i]['actionTarget'].player;
                 gameActions.appendChild(samDiv);
-                // text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
-                text = "NOT WORK YET"
+                text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
                 samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
 
                 let samSB = document.querySelector(".samDiv select")
@@ -647,7 +646,6 @@ function createActionWrapperForPlague(plaguedPlayer, checked, original = false) 
 
 function sendActions() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
-    const gameAction = [];
 
     let player;
     let role;
@@ -655,19 +653,22 @@ function sendActions() {
 
     let designatedPlayer;
     let designatedRole;
+
+    let json = {};
+
     if (gamePhase === GamePhase.NIGHT) {
         let designatedWolfSB = document.getElementById("designatedWolf");
         designatedPlayer = designatedWolfSB.value
         designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
-    }
 
-    for (let i = 0; i < role_targets.length; i++) {
-        const role_target = role_targets[i];
-        player = role_target.getAttribute("player");
-        role = role_target.getAttribute('role');
-        target = role_target.value;
+        let gameAction = [];
 
-        if (gamePhase === GamePhase.NIGHT) {
+        for (let i = 0; i < role_targets.length; i++) {
+            const role_target = role_targets[i];
+            player = role_target.getAttribute("player");
+            role = role_target.getAttribute('role');
+            target = role_target.value;
+
             if (role_target.getAttribute("memberOfWolfPack") === "true")
                 if (designatedRole === role_target.getAttribute("role")) {
                     player = designatedPlayer;
@@ -677,40 +678,73 @@ function sendActions() {
             if ((role === "sheriff" && target.toLowerCase() === "no shot")
                 || (role === "berserker" && target.toLowerCase() === "no rage"))
                 continue;
+
+            gameAction.push({player, role, target});
+        }
+        json = {gameAction}
+    } else {
+        // day phase
+
+        // 3 -> 1 vote + two ballot
+        for (let i = 0; i < 3; i++) {
+            const role_targets = document.querySelectorAll('#votes_' + i + ' [id*="_targets"]');
+            if (role_targets.length === 0)
+                break;
+
+            let votes = []
+
+            for (let i = 0; i < role_targets.length; i++) {
+                const role_target = role_targets[i];
+                player = role_target.getAttribute("player");
+                role = role_target.getAttribute('role');
+                target = role_target.value;
+                votes.push({player, role, target});
+            }
+            json['votes_' + i] = votes;
         }
 
-        gameAction.push({player, role, target});
-    }
+        console.log(json)
 
-    let sem_SB = document.getElementById("sam_SB")
+        let sem_SB = document.getElementById("sam_SB")
 
-    if (sem_SB !== null && samWasVotedOut) {
-        // todo to finish
-        let sam = "sam";
-        let target = sem_SB.value;
-        console.log({samPlayer, sam, target});
-        // gameAction.push({samPlayer, sam, samTarget});
-    }
+        let extraActions = []
 
-    let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
-    if (plagueDiv !== null) {
-        let CB_ofPlayer = document.getElementsByClassName("plague_CB");
-        let plague_spreader = "plague spreader"
-        for (let i = 0; i < CB_ofPlayer.length; i++) {
-            let infectedPlayer = CB_ofPlayer[i].getAttribute("player");
-            if (CB_ofPlayer[i].checked) {
-                console.log({
-                    plagueSpreaderPlayer,
-                    plague_spreader,
-                    infectedPlayer
-                })
-                // gameAction.push({plagueSpreaderPlayer, sam, samTarget});
+        if (sem_SB !== null) {
+            // todo to finish
+            let sam = "sam";
+            let target = sem_SB.value;
+            console.log({samPlayer, sam, target});
+            extraActions.push({
+                "player": samPlayer,
+                "role": sam,
+                "target": target
+            });
+        }
+
+        let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
+        if (plagueDiv !== null) {
+            let CB_ofPlayer = document.getElementsByClassName("plague_CB");
+            let plague_spreader = "plague spreader"
+            for (let i = 0; i < CB_ofPlayer.length; i++) {
+                let infectedPlayer = CB_ofPlayer[i].getAttribute("player");
+                if (CB_ofPlayer[i].checked) {
+                    console.log({
+                        plagueSpreaderPlayer,
+                        plague_spreader,
+                        infectedPlayer
+                    })
+                    extraActions.push({
+                        "player": plagueSpreaderPlayer,
+                        "role": plague_spreader,
+                        "target": infectedPlayer
+                    });
+                }
             }
         }
+        if (extraActions.length > 0)
+            json['extraActions'] = extraActions;
     }
 
-
-    const json = {gameAction};
     console.log(JSON.stringify(json));
     genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
 }
