@@ -49,15 +49,16 @@
             </span>
                 <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
                     <div class="dropdown__group">
-                        <div class="user-name">Joe Doe</div>
-                        <div class="email">joe.doe@atheros.ai</div>
+                        <c:if test="${not empty sessionScope.user}">
+                            <div class="user-name">${sessionScope.user.getUsername()}</div>
+                            <div class="email">${sessionScope.user.getEmail()}</div>
+                        </c:if>
                     </div>
                     <hr class="divider">
                     <nav class="profile_nav">
                         <ul>
                             <li>
-                                <img src="${pageContext.request.contextPath}/media/navbar/profile.svg" alt="Profile"> My
-                                Profile
+                        <img src="${pageContext.request.contextPath}/media/navbar/profile.svg" alt="Profile"><a href="${pageContext.request.contextPath}/jsp/user/userPage.jsp"> My Profile</a>
                             </li>
                             <li>
                                 <img src="${pageContext.request.contextPath}/media/navbar/settings.svg" alt="Settings">
@@ -67,8 +68,8 @@
                         <hr class="divider">
                         <ul>
                             <li style="color: #E3452F;">
-                                <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out">Log
-                                out
+                                <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a href="<c:url value="/logout"/>">Log
+                                out</a>
                             </li>
                         </ul>
                     </nav>
