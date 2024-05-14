@@ -709,8 +709,7 @@ function sendActions() {
 
         let extraActions = []
 
-        if (sem_SB !== null) {
-            // todo to finish
+        if (sem_SB !== null && sem_SB.value !== "") {
             let sam = "sam";
             let target = sem_SB.value;
             console.log({samPlayer, sam, target});
