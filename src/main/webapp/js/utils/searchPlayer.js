@@ -169,3 +169,7 @@ window.addEventListener('resize', handleResize);
 function handleResize() {
     playerListPopup.style.width = playerUsername.clientWidth + "px";
 }
+
+function clearSearchBar() {
+    playerUsername.value = "";
+}
