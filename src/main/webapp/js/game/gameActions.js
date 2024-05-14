@@ -14,8 +14,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     var lastSegment = url.substring(url.lastIndexOf("/") + 1);
     endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
-    if (document.getElementById("sendActions") !== null)
-    {
+    if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").style.display = "none"
         document.getElementById("sendActions").addEventListener("click", sendActions);
     }
@@ -48,16 +47,14 @@ function gameStatus(req) {
         if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
             wait = true
-            if (game.who_win !== -1)
-            {
+            if (game.who_win !== -1) {
                 // todo -> the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
                 var s = "s";
                 if (game.who_win < 2) s = "";
-                var msg = "The " + factions[game.who_win] + " win"+s+"!";
+                var msg = "The " + factions[game.who_win] + " win" + s + "!";
                 populateInfoMessage("THE GAME IS OVER", msg);
-            }
-            else {
+            } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
@@ -71,8 +68,7 @@ function gameStatus(req) {
                 }
 
                 // if url ends with master/, update actions
-                if(endsWithMaster)
-                {
+                if (endsWithMaster) {
                     document.getElementById("sendActions").style.display = "flex";
                     return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
                 }
@@ -103,6 +99,9 @@ function fillGameActions(req) {
     }
 }
 
+let votes = []
+let currentSubPhase = 0;
+
 function enableButton() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
     let disable = false;
@@ -128,17 +127,129 @@ function enableButton() {
     } else { // day
         for (let i = 0; i < role_targets.length && !disable; i++)
             disable = (role_targets[i].value === "")
+        if (!disable) { // all players have voted
 
-        // todo -> to finish
-        let samDiv = document.getElementsByClassName("samDiv");
-        if (samDiv.length > 0){
-            samDiv[0].style.display = "none"
-            if (!disable) {
+            // todo -> to finish
+            let samDiv = document.getElementsByClassName("samDiv");
+            if (samDiv.length > 0) {
+                samDiv[0].style.display = "none"
                 let sem_SB = document.getElementById("sam_SB")
             }
         }
     }
     document.getElementById("sendActions").disabled = disable;
+}
+
+function changeSubPhase(radioBT) {
+    let subPhase = Number(radioBT.getAttribute("subPhase"));
+
+    // go in a new empty subphase
+    if (subPhase == currentSubPhase)
+        return;
+    if (subPhase > currentSubPhase) {
+        let gameActions = document.getElementById("gameActions");
+
+        let voteDiv = document.createElement("div");
+
+        // let sectionChange = document.createElement("div");
+        // sectionChange.classList.add("sections", "radio-inputs");
+        // sectionChange.innerHTML +=
+        //     "  <label class='radio' id='check_votes_" + (subPhase) + "'>" +
+        //     "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase=" + (subPhase) + ">" +
+        //     "    <span class='name'>VOTE</span>" +
+        //     "  </label>"
+        // sectionChange.appendChild(sectionChange);
+
+        voteDiv.classList.add("votes");
+        voteDiv.id = "votes_" + (subPhase);
+        // insert the element after the radio buttons
+        gameActions.insertBefore(voteDiv, gameActions.childNodes[1]);
+
+        let index = subPhase - 1;
+        while (document.getElementById("votes_" + index) !== null) {
+            document.getElementById("votes_" + index).style.display = "none"
+            index--;
+        }
+
+        currentSubPhase = subPhase;
+
+        genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillVotes);
+
+    } else {
+        // if the game master go to a previous subPhase, all subPhase after will be reset
+        document.getElementById("votes_" + subPhase).style.display = "block"
+        let index = subPhase + 1;
+        while (document.getElementById("votes_" + index) !== null) {
+            document.getElementById("votes_" + index).remove()
+            // document.getElementById("check_votes_" + index).remove()
+            index++;
+        }
+        currentSubPhase = subPhase;
+    }
+
+    //todo ge
+
+}
+
+function fillVotes(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            const list = JSON.parse(req.responseText)[JSON_resource_list];
+            if (list == null) {
+                alert("No game settings available");
+            } else {
+                const votes = document.getElementById("votes_" + currentSubPhase)
+                const role_targets = document.querySelectorAll('#votes_' + (currentSubPhase - 1) + ' [id*="_targets"]');
+
+                let voteResults = new Map()
+
+                // get the votes of the players
+                for (let i = 0; i < role_targets.length; i++) {
+                    let target = role_targets[i].value;
+
+                    // get the votes of the current player, 0 if is not yet present
+                    let votesOfPlayer = voteResults.has(target) ? voteResults.get(target) + 1 : 1;
+
+                    voteResults.set(target, votesOfPlayer)
+                }
+
+                const mapSort = new Map([...voteResults.entries()].sort((a, b) => b[1] - a[1]));
+                console.log(mapSort);
+
+                // get the players with the highest number of vote, at lest 2 player
+                let previousValue = Array.from(mapSort.values())[0]
+                let selected = 0;
+                for (let [key, value] of mapSort) {
+                    if (previousValue === value)
+                        selected++;
+                    else if (selected < 2) {
+                        previousValue = value;
+                        selected++
+                    }
+                }
+
+                let votedPlayers = []
+                for (let i = 0; i <selected ; i++)
+                    votedPlayers.push({"player" : Array.from(mapSort.keys())[i]})
+
+                playerRole = [];
+
+                // populate the vote only for the living players
+                for (let i = 0; i < list.length; i++) {
+                    let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
+                    if (!playsAsIn.isDead) {
+                        text = "Which player does <u>" + playsAsIn.username + "</u>  want to vote out?";
+                        let actionTarget = {
+                            "player": playsAsIn.username,
+                            "role": playsAsIn.role,
+                            "possibleTargets": votedPlayers
+                        }
+                        votes.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
+                    }
+                }
+            }
+        }
+    }
 }
 
 function wolfPackContainRole(role) {
@@ -289,15 +400,36 @@ let plagueSpreaderPlayer;
 
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
+
+    let sectionChange = document.createElement("div");
     let voteDiv = document.createElement("div");
     let samDiv = document.createElement("div");
     let plagueDiv = document.createElement("div");
 
-    voteDiv.classList.add("votes")
-    gameActions.appendChild(voteDiv)
+    sectionChange.classList.add("sections", "radio-inputs");
+    sectionChange.innerHTML =
+        "  <label class='radio' id='check_votes_0'>" +
+        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +
+        "    <span class='name'>VOTE</span>" +
+        "  </label>"
+    sectionChange.innerHTML +=
+        "  <label class='radio' id='check_votes_1'>" +
+        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase='1'>" +
+        "    <span class='name'>1 BALLOT</span>" +
+        "  </label>"
+    sectionChange.innerHTML +=
+        "  <label class='radio' id='check_votes_2'>" +
+        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase='2'>" +
+        "    <span class='name'>2 BALLOT</span>" +
+        "  </label>"
+    gameActions.appendChild(sectionChange);
 
-    samDiv.classList.add("samDiv")
-    plagueDiv.classList.add("plagueDiv")
+    voteDiv.classList.add("votes");
+    voteDiv.id = "votes_0";
+    gameActions.appendChild(voteDiv);
+
+    samDiv.classList.add("samDiv");
+    plagueDiv.classList.add("plagueDiv");
 
     for (let i = 0; i < list.length; i++) {
         let text;
@@ -348,7 +480,7 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
             roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
         roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
     } else {
-        roleTargetsElem.id = actionTarget.possibleTargets[0].player + "_targets";
+        roleTargetsElem.id = actionTarget.player + "_targets";
         roleTargetsElem.setAttribute("player", actionTarget.player);
     }
     roleTargetsElem.setAttribute("required", "required");
@@ -514,11 +646,11 @@ function sendActions() {
                     player = designatedPlayer;
                 } else
                     continue;
-        }
 
-        if ((role === "sheriff" && target.toLowerCase() === "no shot")
-            || (role === "berserker" && target.toLowerCase() === "no rage"))
-            continue;
+            if ((role === "sheriff" && target.toLowerCase() === "no shot")
+                || (role === "berserker" && target.toLowerCase() === "no rage"))
+                continue;
+        }
 
         gameAction.push({player, role, target});
     }
