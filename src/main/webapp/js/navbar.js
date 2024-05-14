@@ -1,20 +1,18 @@
-const profile = document.getElementsByClassName('profile')
+const profile = document.querySelectorAll('.profile');
 const dropdown = document.querySelector('.dropdown__wrapper');
 
-profile[0].addEventListener('click', () => {
+profile.forEach((element) => {
+    element.addEventListener('click', toggleDropdown);
+});
+
+function toggleDropdown() {
     dropdown.classList.remove('none');
     dropdown.classList.toggle('hide');
-})
-
-profile[1].addEventListener('click', () => {
-    dropdown.classList.remove('none');
-    dropdown.classList.toggle('hide');
-})
-
+}
 
 document.addEventListener("click", (event) => {
     const isClickInsideDropdown = dropdown.contains(event.target);
-    const isProfileClicked = profile[0].contains(event.target) || profile[1].contains(event.target);
+    const isProfileClicked = Array.from(profile).some((element) => element.contains(event.target));
 
     if (!isClickInsideDropdown && !isProfileClicked) {
         dropdown.classList.add('hide');
