@@ -99,14 +99,13 @@ function fillGameActions(req) {
     }
 }
 
-let votes = []
-let currentSubPhase = 0;
+let currentVoteSection = 0;
 
 function enableButton() {
-    const role_targets = document.querySelectorAll('[id*="_targets"]');
     let disable = false;
 
     if (gamePhase === GamePhase.NIGHT) { // night
+        const role_targets = document.querySelectorAll('[id*="_targets"]');
 
         const designatedWolfSB = document.getElementById("designatedWolf");
         const designatedPlayer = designatedWolfSB.value
@@ -125,17 +124,47 @@ function enableButton() {
                 disable = (role_targets[i].value === "")
         }
     } else { // day
-        for (let i = 0; i < role_targets.length && !disable; i++)
-            disable = (role_targets[i].value === "")
-        if (!disable) { // all players have voted
+        // maximum one vote and 2 ballot => 3
+        const maxPhase = 3
+        for (let i = 0; i < maxPhase; i++) {
+            const role_targets = document.querySelectorAll('#votes_' + i + ' [id*="_targets"]');
+            if (role_targets.length === 0)
+                break;
 
-            // todo -> to finish
-            let samDiv = document.getElementsByClassName("samDiv");
-            if (samDiv.length > 0) {
-                samDiv[0].style.display = "none"
-                let sem_SB = document.getElementById("sam_SB")
+            let allSelected = true
+            for (let i = 0; i < role_targets.length && allSelected; i++)
+                allSelected = (role_targets[i].value !== "")
+
+            if (allSelected) {
+                let votedPlayers = getMostVotedPlayers(i)
+                // if there are at least 2 players is a ballot
+                if ((votedPlayers.length) < 2) {
+                    if (i + 1 < maxPhase)
+                        document.getElementById("voteRadio_" + (i + 1)).disabled = true
+                    disable = false
+                    break;
+                } else {
+                    if (i + 1 < maxPhase)
+                        document.getElementById("voteRadio_" + (i + 1)).disabled = false
+                    disable = true
+                }
+            } else {
+                for (let j = i + 1; j < 3; j++)
+                    document.getElementById("voteRadio_" + j).disabled = true
+                disable = true;
+                break;
             }
         }
+
+        // todo -> to finish
+        // if (!disable) { // all players have voted
+        //
+        //     let samDiv = document.getElementsByClassName("samDiv");
+        //     if (samDiv.length > 0) {
+        //         samDiv[0].style.display = "none"
+        //         let sem_SB = document.getElementById("sam_SB")
+        //     }
+        // }
     }
     document.getElementById("sendActions").disabled = disable;
 }
@@ -144,21 +173,12 @@ function changeSubPhase(radioBT) {
     let subPhase = Number(radioBT.getAttribute("subPhase"));
 
     // go in a new empty subphase
-    if (subPhase == currentSubPhase)
+    if (subPhase === currentVoteSection)
         return;
-    if (subPhase > currentSubPhase) {
+    if (subPhase > currentVoteSection) {
         let gameActions = document.getElementById("gameActions");
 
         let voteDiv = document.createElement("div");
-
-        // let sectionChange = document.createElement("div");
-        // sectionChange.classList.add("sections", "radio-inputs");
-        // sectionChange.innerHTML +=
-        //     "  <label class='radio' id='check_votes_" + (subPhase) + "'>" +
-        //     "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase=" + (subPhase) + ">" +
-        //     "    <span class='name'>VOTE</span>" +
-        //     "  </label>"
-        // sectionChange.appendChild(sectionChange);
 
         voteDiv.classList.add("votes");
         voteDiv.id = "votes_" + (subPhase);
@@ -170,9 +190,6 @@ function changeSubPhase(radioBT) {
             document.getElementById("votes_" + index).style.display = "none"
             index--;
         }
-
-        currentSubPhase = subPhase;
-
         genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillVotes);
 
     } else {
@@ -181,11 +198,12 @@ function changeSubPhase(radioBT) {
         let index = subPhase + 1;
         while (document.getElementById("votes_" + index) !== null) {
             document.getElementById("votes_" + index).remove()
-            // document.getElementById("check_votes_" + index).remove()
+            document.getElementById("voteRadio_" + index).disabled = true
             index++;
         }
-        currentSubPhase = subPhase;
+        enableButton()
     }
+    currentVoteSection = subPhase;
 
     //todo ge
 
@@ -198,58 +216,67 @@ function fillVotes(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
-                const votes = document.getElementById("votes_" + currentSubPhase)
-                const role_targets = document.querySelectorAll('#votes_' + (currentSubPhase - 1) + ' [id*="_targets"]');
 
-                let voteResults = new Map()
-
-                // get the votes of the players
-                for (let i = 0; i < role_targets.length; i++) {
-                    let target = role_targets[i].value;
-
-                    // get the votes of the current player, 0 if is not yet present
-                    let votesOfPlayer = voteResults.has(target) ? voteResults.get(target) + 1 : 1;
-
-                    voteResults.set(target, votesOfPlayer)
-                }
-
-                const mapSort = new Map([...voteResults.entries()].sort((a, b) => b[1] - a[1]));
-                console.log(mapSort);
-
-                // get the players with the highest number of vote, at lest 2 player
-                let previousValue = Array.from(mapSort.values())[0]
-                let selected = 0;
-                for (let [key, value] of mapSort) {
-                    if (previousValue === value)
-                        selected++;
-                    else if (selected < 2) {
-                        previousValue = value;
-                        selected++
-                    }
-                }
-
-                let votedPlayers = []
-                for (let i = 0; i <selected ; i++)
-                    votedPlayers.push({"player" : Array.from(mapSort.keys())[i]})
-
+                let currentSection = document.querySelector('input[name="radio"]:checked').getAttribute("subphase")
+                let votesDiv = document.getElementById("votes_" + currentSection);
+                let votedPlayers = getMostVotedPlayers(currentSection - 1);
                 playerRole = [];
 
                 // populate the vote only for the living players
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    if (!playsAsIn.isDead) {
-                        text = "Which player does <u>" + playsAsIn.username + "</u>  want to vote out?";
-                        let actionTarget = {
-                            "player": playsAsIn.username,
-                            "role": playsAsIn.role,
-                            "possibleTargets": votedPlayers
+                    // If the player is not dead or not in the ballot.
+                    if (!playsAsIn.isDead && !votedPlayers.some(item => item.player === playsAsIn.username)) {
+                            let text = "Who <u>" + playsAsIn.username + "</u> voted out?";
+                            let actionTarget = {
+                                "player": playsAsIn.username,
+                                "role": playsAsIn.role,
+                                "possibleTargets": votedPlayers
+                            }
+                            votesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
                         }
-                        votes.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
-                    }
                 }
             }
         }
     }
+}
+
+function getMostVotedPlayers(currentSection = Number(document.querySelector('input[name="radio"]:checked').getAttribute)) {
+    const role_targets = document.querySelectorAll('#votes_' + currentSection + ' [id*="_targets"]');
+
+    let voteResults = new Map()
+
+    // get the votes of the players
+    for (let i = 0; i < role_targets.length; i++) {
+        let target = role_targets[i].value;
+
+        // get the votes of the current player, 0 if is not yet present
+        let votesOfPlayer = voteResults.has(target) ? voteResults.get(target) + 1 : 1;
+
+        voteResults.set(target, votesOfPlayer)
+    }
+
+    const mapSort = new Map([...voteResults.entries()].sort((a, b) => b[1] - a[1]));
+
+    // get the players with the highest number of vote, at lest 2 player
+    let previousValue = Array.from(mapSort.values())[0]
+    let selected = 0;
+    for (let [key, value] of mapSort) {
+        if (previousValue === value)
+            selected++;
+        // if is the first ballot, will take only the players with the sam max number of votes
+        else if (selected < 2 && currentSection === 0) {
+            previousValue = value;
+            if (value === 0)
+                break;
+            selected++
+        } else break;
+    }
+
+    let votedPlayers = []
+    for (let i = 0; i < selected; i++)
+        votedPlayers.push({"player": Array.from(mapSort.keys())[i]})
+    return votedPlayers;
 }
 
 function wolfPackContainRole(role) {
@@ -408,18 +435,18 @@ function fillDayActions(list) {
 
     sectionChange.classList.add("sections", "radio-inputs");
     sectionChange.innerHTML =
-        "  <label class='radio' id='check_votes_0'>" +
-        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +
+        "  <label class='radio' for='voteRadio_0'>" +
+        "    <input type='radio' name='radio' id='voteRadio_0' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +
         "    <span class='name'>VOTE</span>" +
         "  </label>"
     sectionChange.innerHTML +=
-        "  <label class='radio' id='check_votes_1'>" +
-        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase='1'>" +
+        "  <label class='radio' for='voteRadio_1'>" +
+        "    <input type='radio' name='radio' id='voteRadio_1' onclick='changeSubPhase(this)' subPhase='1' disabled=''>" +
         "    <span class='name'>1 BALLOT</span>" +
         "  </label>"
     sectionChange.innerHTML +=
-        "  <label class='radio' id='check_votes_2'>" +
-        "    <input type='radio' name='radio' onclick='changeSubPhase(this)' subPhase='2'>" +
+        "  <label class='radio' for='voteRadio_2'>" +
+        "    <input type='radio' name='radio' id='voteRadio_2' onclick='changeSubPhase(this)' subPhase='2' disabled=''>" +
         "    <span class='name'>2 BALLOT</span>" +
         "  </label>"
     gameActions.appendChild(sectionChange);
@@ -460,7 +487,7 @@ function fillDayActions(list) {
                 plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true))
                 break;
             default:
-                text = "Which player does <u>" + list[i]['actionTarget'].player + "</u>  want to vote out?";
+                text = "Who <u>" + list[i]['actionTarget'].player + "</u> voted out?";
                 voteDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
                 break;
         }

@@ -218,5 +218,12 @@ hr {
 
 .radio-inputs .radio input:checked + .name {
     background-color: #fff;
-    font-weight: 600;
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: #334155;
+}
+
+.radio input[type="radio"]:disabled + .name {
+    color: #5a667f;
+    cursor: not-allowed;
 }
