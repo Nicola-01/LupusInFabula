@@ -1,12 +1,25 @@
-let url = window.location.href;
-gameID =  url.substring(url.lastIndexOf("/gtmp/") + 6);
 logs = []
 divLogs = null
 
-elementsReload()
+document.addEventListener('DOMContentLoaded', function (event) {
+    let url = window.location.href;
 
+    // extract gameID
+    var startIndex = url.lastIndexOf("/gtmp/") + 6;
+    var endIndex = url.indexOf("/", startIndex);
+    // if url doesn't end with /
+    if (endIndex === -1) {
+        endIndex = url.length;
+    }
+    gameID = url.substring(startIndex, endIndex);
 
-function elementsReload()
+    var lastSegment = url.substring(url.lastIndexOf("/") + 1);
+    endsWithMaster = lastSegment === "master" || lastSegment === "master/";
+
+    logElementsReload();
+});
+
+function logElementsReload()
 {
     // reset of variables and state
     logs = []
@@ -15,7 +28,8 @@ function elementsReload()
 
 
     divLogs.disabled = true;
-    genericGETRequest(contextPath + "game/logs/" + gameID, fillGameLog);
+    var masterlog = endsWithMaster? "/master" : "";
+    genericGETRequest(contextPath + "game/logs/" + gameID + masterlog, fillGameLog);
     document.getElementById("gameLog").disabled = false;
 }
 
@@ -26,7 +40,7 @@ function fillGameLog(req)
         if (req.status === HTTP_STATUS_OK)
         {
             logs = JSON.parse(req.responseText)[JSON_resource_list]
-            creaTabella(logs)
+            createTable(logs)
         }
     }
 }
@@ -39,6 +53,7 @@ function createButtonRound(round)
                 '</span>' +
             '</button>'
 }
+
 function createActionBlock(phase, subphase, typeOfAction, user, targhet)
 {
     return  '<li className="d-flex flex-column flex-md-row py-4">' +
@@ -53,6 +68,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, targhet)
                 '</div>'+
             '</li>'
 }
+
 function createContAction(round, actionBlocks)
 {
     return  '<div class="tab-pane fade active show" id="round-'+round+'" role="tabpanel" aria-labelledby="round-'+round+'-tab">' +
@@ -62,6 +78,7 @@ function createContAction(round, actionBlocks)
             '</div>'
 
 }
+
 function createCont(buttonsRound, ContAction)
 {
     return  ' <div class="container py-9 py-lg-11 position-relative z-index-1">' +
@@ -80,7 +97,7 @@ function createCont(buttonsRound, ContAction)
             ' </div>'
 }
 
-function creaTabella(data)
+function createTable(data)
 {
     let key = ["player", "round", "phase", "subphase", "typeAction", "target"]
     let i = data.length > 0 ? Object.keys(data[0]) : [0]

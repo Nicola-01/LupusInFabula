@@ -50,8 +50,7 @@ function gameStatus(req) {
             if (game.who_win !== -1) {
                 // todo -> the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
-                var s = "s";
-                if (game.who_win < 2) s = "";
+                var s = game.who_win < 2? "" : "s";
                 var msg = "The " + factions[game.who_win] + " win" + s + "!";
                 populateInfoMessage("THE GAME IS OVER", msg);
             } else {
