@@ -101,6 +101,18 @@ public class GameAction extends AbstractResource {
      * @throws IOException If an error occurs while parsing JSON.
      */
     public static List<GameAction> fromJSON(final InputStream in) throws IOException {
+        return fromJSON(in, JSON_NAME);
+    }
+
+    /**
+     * Parses a JSON input stream to create a list of GameAction objects.
+     *
+     * @param in The input stream containing JSON data.
+     * @param jsonName The name of the list to parse.
+     * @return A list of GameAction objects parsed from the JSON input stream.
+     * @throws IOException If an error occurs while parsing JSON.
+     */
+    public static List<GameAction> fromJSON(final InputStream in, final String jsonName) throws IOException {
         List<GameAction> gameActions = new ArrayList<>();
 
         try {
@@ -108,7 +120,7 @@ public class GameAction extends AbstractResource {
 
             // while we are not on the start of an element or the element is not
             // a token element, advance to the next element (if any)
-            while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !JSON_NAME.equals(jp.getCurrentName())) {
+            while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !jsonName.equals(jp.getCurrentName())) {
 
                 // there are no more events
                 if (jp.nextToken() == null) {

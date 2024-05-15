@@ -18,7 +18,7 @@
 </head>
 <body>
 
-<jsp:include page="include/navbar.jsp"/>
+<jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container-fluid">
     <h1>RULES</h1>

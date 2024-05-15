@@ -106,7 +106,7 @@ function updateAvailability(req) {
 
             rows = document.getElementById("friends_tb").querySelector("tbody").rows;
             for (let i = 0; i < rows.length; i++)
-                rows[i].cells[2].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
+                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
 
         }
     }

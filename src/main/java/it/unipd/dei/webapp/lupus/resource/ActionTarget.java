@@ -91,6 +91,15 @@ public class ActionTarget extends AbstractResource {
     }
 
     /**
+     * Retrieves the role associated tho the action.
+     *
+     * @return The player associated to the action, or null if not specified.
+     */
+    public String getRole() {
+        return role;
+    }
+
+    /**
      * Retrieves the action for which the target is defined.
      *
      * @return The action for which the target is defined.

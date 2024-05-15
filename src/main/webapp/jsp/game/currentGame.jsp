@@ -30,6 +30,8 @@
 
 <div class="container">
 
+    <c:import url="/jsp/utils/infoMessage.jsp"/>
+
     <div id="actionResults">
 
     </div>

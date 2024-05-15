@@ -65,7 +65,7 @@ public class GamePlayersRR extends AbstractRR {
         LogContext.setGame(gameID);
         try {
             String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
-            el = new GetGamePlayersDAO(ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
+            el = new GetGamePlayersDAO(ds, ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");

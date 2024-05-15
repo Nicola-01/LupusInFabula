@@ -1,4 +1,5 @@
-function populateInfoMessage(infoTitle, messageDetails, infoDetails = "") {
+function populateInfoMessage(infoTitle, messageDetails, infoDetails = "")
+{
     document.getElementById("infoTitle").innerHTML = infoTitle;
     document.getElementById("info").style.display = "block";
     document.getElementById("infoDetails").innerHTML = messageDetails;

@@ -155,4 +155,12 @@ public enum ErrorCode {
         info.put("error", data);
         return info;
     }
+
+    // todo add javadoc
+    public static ErrorCode getErrorCode(String errorCode) {
+        for (ErrorCode ec : ErrorCode.values())
+            if (ec.errorCode.equals(errorCode))
+                return ec;
+        return null;
+    }
 }
