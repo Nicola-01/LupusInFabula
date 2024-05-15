@@ -10,9 +10,9 @@
 <%--    <h1>Lupus in Fabula</h1>--%>
 <%--</header>--%>
 
-<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light navbar-inverse navbar-fixed-top">
+<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light sticky-top">
 
-    <a class="d-flex w-50 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
+    <a class="d-flex w-25 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
         <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="height:40px;">
     </a>
     <button class="border-0 px-3 py-2 p-lg-0 navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
@@ -23,7 +23,10 @@
     <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
         <div class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">Home</a>
+                <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">
+<%--                    <i class="fa-solid fa-house"></i>--%>
+                    Home
+                </a>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">Statistics</a>
             </li>
@@ -34,6 +37,9 @@
                 </a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="<c:url value="/rules"/>">Rules</a></li>
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
                     <li><a class="dropdown-item" href="<c:url value="/jsp/game/createNewGame.jsp"/>">Create New
                         Game</a></li>
                     <li><a class="dropdown-item" href="<c:url value="/"/>">Join Game</a></li>
@@ -47,7 +53,7 @@
         </div>
     </div>
 
-    <div class="d-flex w-50 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand justify-content-end d-none d-md-flex">
+    <div class="d-flex w-25 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand justify-content-end d-none d-md-flex">
         <span class="navigation__group">
             <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Lupus logo">
         </span>
