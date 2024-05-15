@@ -21,11 +21,30 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
-<body>
+<body style="background-image: url('${pageContext.request.contextPath}/media/forest_background.jpeg');
+        background-position: center;
+        background-size: cover;">
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container" style="padding-top: 6rem;">
+<div class="container card">
+
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+
     <div class="radio-inputs">
         <label class="radio">
             <input type="radio" name="radio" value="friends" checked="">
