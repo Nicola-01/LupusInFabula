@@ -54,7 +54,7 @@ function createButtonRound(round)
             '</button>'
 }
 
-function createActionBlock(phase, subphase, typeOfAction, user, targhet)
+function createActionBlock(phase, subphase, typeOfAction, user, target)
 {
     return  '<li className="d-flex flex-column flex-md-row py-4">' +
                 '<span className="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
@@ -63,7 +63,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, targhet)
                 '<div className="flex-grow-1 ps-4 border-start border-3">' +
                     '<h4>'+typeOfAction+'</h4>'+// type action
                     ' <p className="mb-0">'+
-                        'the user '+user+' make the action '+typeOfAction+' on '+ targhet + //user , typeaction, targhet
+                        'the user '+user+' make the action '+typeOfAction+' on '+ target + //user , typeaction, target
                     '</p>'+
                 '</div>'+
             '</li>'
@@ -86,15 +86,14 @@ function createCont(buttonsRound, ContAction)
         '           <div class="col-lg-5 mb-5 mb-lg-0">' +
             '            <div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
                              buttonsRound + ''+
-            '            </div>' +
+            '            </div></div>' +
                 '        <div class="col-lg-7 col-xl-6">' +
                 '            <div data-aos="fade-up" class="tab-content aos-init aos-animate" id="myTabContent">' +
                                 ContAction +
                 '            </div>' +
                 '        </div>' +
         '           </div>' +
-            '    </div>' +
-            ' </div>'
+            '    </div>'
 }
 
 function createTable(data)
