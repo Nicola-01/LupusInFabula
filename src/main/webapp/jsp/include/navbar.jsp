@@ -6,21 +6,21 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display&display=swap" rel="stylesheet">
 
-<header>
-    <h1>Lupus in Fabula</h1>
-</header>
+<%--<header>--%>
+<%--    <h1>Lupus in Fabula</h1>--%>
+<%--</header>--%>
 
-<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light">
+<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light navbar-inverse navbar-fixed-top">
 
-    <a class="d-flex w-20 order px-3 py-2 p-lg-0 mx-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
-        <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="width:40px;">
+    <a class="d-flex w-50 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
+        <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="height:40px;">
     </a>
     <button class="border-0 px-3 py-2 p-lg-0 navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#headerNavbar"
             aria-controls="headerNavbar" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
-    <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-60 navbar-collapse collapse show">
+    <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
         <div class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">Home</a>
@@ -47,7 +47,7 @@
         </div>
     </div>
 
-    <div class="d-flex w-20 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand d-none d-md-flex">
+    <div class="d-flex w-50 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand justify-content-end d-none d-md-flex">
         <span class="navigation__group">
             <img class="profile" src="/lupus/media/favicon.ico" alt="Lupus logo">
         </span>

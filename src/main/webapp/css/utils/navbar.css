@@ -5,6 +5,10 @@
     box-shadow: none;
 }
 
+.nav-link {
+    margin: 0 0.8em;
+}
+
 #check-for-clicking {
     display: none;
 }
