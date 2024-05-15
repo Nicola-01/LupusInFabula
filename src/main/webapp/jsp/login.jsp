@@ -7,11 +7,41 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
 </head>
 
-<body>
+<body style="background-image: url('${pageContext.request.contextPath}/media/forest_background.jpeg');
+        background-position: center;
+        background-size: cover;">
 <div class="container">
+
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+
     <div class="row">
         <div class=" col-sm-12 col-md-10 col-lg-8 col-xl-6 p-0" style="margin: auto">
             <c:import url="/jsp/include/show-message.jsp"/>

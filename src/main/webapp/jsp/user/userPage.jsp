@@ -14,6 +14,7 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/firefly.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
@@ -29,6 +30,16 @@
 
 <div class="container card">
 
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
+    <div class="firefly"></div>
     <div class="firefly"></div>
     <div class="firefly"></div>
     <div class="firefly"></div>
