@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Lupus in Fabula">
 <meta name="author" content="LIF">
-<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/media/favicon.ico">
+<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/media/favicon_BG.ico">
 
 <!-- Bootstrap core CSS -->
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"

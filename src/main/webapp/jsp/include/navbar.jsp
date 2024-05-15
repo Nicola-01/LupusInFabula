@@ -13,7 +13,7 @@
 <nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light">
 
     <a class="d-flex w-20 order px-3 py-2 p-lg-0 mx-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
-        <img src="${pageContext.request.contextPath}/media/favicon.ico" alt="logo" style="width:40px;">
+        <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="width:40px;">
     </a>
     <button class="border-0 px-3 py-2 p-lg-0 navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
             data-bs-target="#headerNavbar"
