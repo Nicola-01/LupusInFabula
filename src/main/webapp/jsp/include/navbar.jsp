@@ -25,7 +25,7 @@
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">Home</a>
             <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/"/>">Statistics</a>
+                <a class="nav-link" href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">Statistics</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -41,7 +41,7 @@
             </li>
             <div class="d-flex d-md-none pb-2 text-center nav-item">
                 <span class="navigation__group">
-                    <img class="profile" src="/lupus/media/favicon.ico" alt="Joe Doe Picture">
+                    <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Joe Doe Picture">
                 </span>
             </div>
         </div>
@@ -49,29 +49,32 @@
 
     <div class="d-flex w-50 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand justify-content-end d-none d-md-flex">
         <span class="navigation__group">
-            <img class="profile" src="/lupus/media/favicon.ico" alt="Lupus logo">
+            <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Lupus logo">
         </span>
         <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
             <div class="dropdown__group">
-
+                <c:if test="${not empty sessionScope.user}">
+                    <div class="user-name">${sessionScope.user.getUsername()}</div>
+                    <div class="email">${sessionScope.user.getEmail()}</div>
+                </c:if>
             </div>
             <hr class="divider">
             <nav class="profile_nav">
                 <ul>
                     <li>
-                        <img src="/lupus/media/navbar/profile.svg" alt="Profile"><a
-                            href="/lupus/jsp/user/userPage.jsp">
+                        <img src="${pageContext.request.contextPath}/media/navbar/profile.svg" alt="Profile"><a
+                            href="${pageContext.request.contextPath}/jsp/user/userPage.jsp">
                         My Profile</a>
                     </li>
                     <li>
-                        <img src="/lupus/media/navbar/settings.svg" alt="Settings">
+                        <img src="${pageContext.request.contextPath}/media/navbar/settings.svg" alt="Settings">
                         Settings
                     </li>
                 </ul>
                 <hr class="divider">
                 <ul>
                     <li style="color: #E3452F;">
-                        <img src="/lupus/media/navbar/logout.svg" alt="Log Out"><a href="/lupus/logout">Log
+                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a href="/lupus/logout">Log
                         out</a>
                     </li>
                 </ul>

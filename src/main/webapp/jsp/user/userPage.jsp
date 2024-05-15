@@ -14,30 +14,45 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
+
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
 <body>
 
-    <jsp:include page="/jsp/include/navbar.jsp"/>
+<jsp:include page="/jsp/include/navbar.jsp"/>
 
-    <div class="container">
-        <div class="radio-inputs">
-            <label class="radio">
-                <input type="radio" name="radio" checked="">
-                <span class="name">Friends</span>
-            </label>
+<div class="container" style="padding-top: 6rem;">
+    <div class="radio-inputs">
+        <label class="radio">
+            <input type="radio" name="radio" value="friends" checked="">
+            <span class="name">Friends</span>
+        </label>
 
-            <label class="radio">
-                <input type="radio" name="radio">
-                <span class="name">Remove Friends</span>
-            </label>
+        <label class="radio">
+            <input type="radio" name="radio" value="changeCredentials">
+            <span class="name">Change Credentials</span>
+        </label>
+    </div>
 
-            <label class="radio">
-                <input type="radio" name="radio">
-                <span class="name">Change Credentials</span>
-            </label>
+    <div class="box" id="contentBox">
+        <div id="friendsPage">
+            <jsp:include page="../friend/friend.jsp"/>
+        </div>
+        <div id="changeCredentialsPage" style="display: none;">
+            <jsp:include page="updateCredential.jsp"/>
         </div>
     </div>
+
+</div>
+
+<script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
+<script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 </body>
 </html>
