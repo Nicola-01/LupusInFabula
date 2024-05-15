@@ -12,10 +12,15 @@ function fillPlayersStatus(req) {
             } else {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
+                var loggedUser = localStorage.getItem('playerName');
 
                 for (let i = 0; i < list.length; i++) {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    // console.log(playsAsIn)
+                    console.log(playsAsIn)
+
+                    if(playsAsIn.username === loggedUser)
+                        console.log("Role: "+playsAsIn.role);
+
                     playerRole.push(playsAsIn)
                 }
                 if (playerRole.length <= maxPlayersforSircularButtons)

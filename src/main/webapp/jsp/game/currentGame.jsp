@@ -47,7 +47,7 @@
             <jsp:include page="gameActions.jsp"/>
         </c:when>
         <c:otherwise>
-            <%-- <jsp:include page="game.....jsp"/> --%>
+            <jsp:include page="playerRole.jsp"/>
         </c:otherwise>
     </c:choose>
 
