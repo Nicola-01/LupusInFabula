@@ -805,6 +805,9 @@ function actionsResponse(req) {
                     if (actionResults.samTarget !== "")
                         phaseInfo += "<br>" + actionResults.samTarget + " was killed by sam:"
 
+                    if(actionResults.carpenterAbility)
+                        phaseInfo += "<br> the carpenter refused to give wood"
+
                     let deadPlayersList = actionResults['plaguePlayers'];
                     if (deadPlayersList.length !== 0) {
                         phaseInfo += "<br>Player(s) killed by the plague:<br>";

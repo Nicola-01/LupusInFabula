@@ -208,7 +208,8 @@ public class PossibleGameActions {
         if (!sam.isEmpty()) {
             List<String> targets = new ArrayList<>(players);
             final String finalSam = sam;
-            targets.removeIf(player -> Objects.equals(finalSam, player));
+            // remove himself and the dead players from the list
+            targets.removeIf(player -> Objects.equals(finalSam, player) || deadPlayers.get(player));
             actionTargets.add(new ActionTarget(GameRoleAction.SAM.getName(), sam, GameRoleAction.SAM.getAction(), targets));
         }
         if (!plagueSpreader.isEmpty()) {
