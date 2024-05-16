@@ -13,16 +13,35 @@ function fillPlayersStatus(req) {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
                 var loggedUser = localStorage.getItem('playerName');
+                var isPlayertheMaster = true;
 
-                for (let i = 0; i < list.length; i++) {
+                for (let i = 0; i < list.length; i++)
+                {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    console.log(playsAsIn)
 
+                    // when receiving the logged in users' role
                     if(playsAsIn.username === loggedUser)
-                        console.log("Role: "+playsAsIn.role);
+                    {
+                        var playerRoleElement = document.getElementById("playerRole");
+                        playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
+                        var playerImageElement = document.getElementById("playerImage");
+                        playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
+                        playerImageElement.alt = playsAsIn.role + "'s card";
+                        isPlayertheMaster = false;
+                    }
 
                     playerRole.push(playsAsIn)
                 }
+
+                if(isPlayertheMaster && !endsWithMaster)
+                {
+                    var playerRoleElement = document.getElementById("playerRole");
+                    playerRoleElement.innerHTML = "Your are the <b>master</b>";
+                    var button = document.getElementById("masterButton");
+                    button.style.display = "inline-block";
+                    button.href = window.location.href + "/master";
+                }
+
                 if (playerRole.length <= maxPlayersforSircularButtons)
                     createCircularButtons()
                 else
