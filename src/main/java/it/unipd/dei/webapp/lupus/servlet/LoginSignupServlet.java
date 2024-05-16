@@ -1,9 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
-import it.unipd.dei.webapp.lupus.dao.SearchPlayerByEmailDAO;
-import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.dao.SignupPlayerDAO;
-import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
@@ -237,7 +235,11 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     // adds the user to the session
                     HttpSession session = request.getSession();
-                    session.setAttribute("user", signupPlayer);
+                    session.setAttribute(UserFilter.USER_ATTRIBUTE, signupPlayer);
+                    int gameID = new GetGameIdByPlayerUsernameDAO(getConnection(), signupPlayer.getUsername()).access().getOutputParam();
+                    String publicGameID = new PlayerInGameDAO(getConnection(), signupPlayer.getUsername()).access().getOutputParam();
+                    new GetMasterFromIdGameDAO(getConnection(), gameID).access().getOutputParam();
+                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);
                     LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
 
                     LogContext.removeIPAddress();
@@ -316,7 +318,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
                     response.setStatus(HttpServletResponse.SC_CREATED);
-                    session.setAttribute("user", p);
+                    session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
 
                     response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
