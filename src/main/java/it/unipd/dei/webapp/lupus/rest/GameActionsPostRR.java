@@ -103,8 +103,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @param ds     The data source.
      * @throws SQLException If an SQL error occurs.
      */
-    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException
-    {
+    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.POST_GAME_ACTIONS_ACTION, req, res, ds);
         this.gameID = gameID;
 
@@ -386,6 +385,7 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
+
     private List<Map.Entry<String, Integer>> handleBallot(List<GameAction> votes, List<String> ballotPlayers){
 
         Map<String, Integer> ballotMap = getBallotMap(ballotPlayers);
@@ -591,6 +591,7 @@ public class GameActionsPostRR extends AbstractRR {
         }
     }
 
+
     private boolean correctnessOfBallotVotes(List<GameAction> ballotVotes, List<String> ballotPlayer) throws SQLException, IOException {
 
         try {
@@ -659,6 +660,7 @@ public class GameActionsPostRR extends AbstractRR {
             return false;
         }
     }
+
 
     private boolean correctnessOfExtraAction(List<GameAction> extraActions) throws SQLException, IOException {
 
@@ -929,14 +931,14 @@ public class GameActionsPostRR extends AbstractRR {
                         assert player_role != null;
                         if (player_role.getRoleType().getType() == 1 || player_role.getRoleType().getType() == 2) {
 
-                            LOGGER.info("The target " + target + " has been killed by the sheriff during the night");
+                            LOGGER.info("The target " + target + " has been killed by the sheriff " + sheriff + " during the night");
                             insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target));
                             //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
                             updatePlayersDeath.add(updatePlayerDeath(target));
 
                         } else {
 
-                            LOGGER.info("The sheriff " + sheriff + " has killed himself during the night");
+                            LOGGER.info("The sheriff " + sheriff + " has killed himself during the night (he has shoot " + target + ")");
                             insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff));
                             //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
                             updatePlayersDeath.add(updatePlayerDeath(sheriff));
@@ -954,7 +956,12 @@ public class GameActionsPostRR extends AbstractRR {
 
                         String wolf = "";
                         for (GameAction gameAction : gameActions)
-                            if (gameAction.getTarget().equals(target))
+                            if (gameAction.getTarget().equals(target)
+                                    && (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
+                                    || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                                    || gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
+                                    || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
+                                            && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())))
                                 wolf = gameAction.getPlayer();
 
                         LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
@@ -1316,8 +1323,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @throws IOException  if an I/O exception occurs
      * @throws SQLException if a SQL exception occurs
      */
-    private Map<String, Map<String, Boolean>> getActionsMap
-    (List<GameAction> gameActions, Map<String, String> playerRole) throws IOException, SQLException {
+    private Map<String, Map<String, Boolean>> getActionsMap (List<GameAction> gameActions, Map<String, String> playerRole) throws IOException, SQLException {
 
         // first String: playerUsername , second String: action , boolean: if playerUsername is the target of action
         Map<String, Map<String, Boolean>> actions = new HashMap<>();
@@ -1462,8 +1468,6 @@ public class GameActionsPostRR extends AbstractRR {
 
         return ballotMap;
     }
-
-
 
     /**
      * Updates the information about a player's death in the game.
