@@ -10,7 +10,7 @@
 <%--    <h1>Lupus in Fabula</h1>--%>
 <%--</header>--%>
 
-<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light sticky-top">
+<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light sticky-top" style="margin-bottom: 2em;">
 
     <a class="d-flex w-25 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
         <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="height:40px;">
