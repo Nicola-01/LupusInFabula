@@ -13,7 +13,7 @@ function fillPlayersStatus(req) {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
                 var loggedUser = localStorage.getItem('playerName');
-                var isPlayertheMaster = true;
+                var isPlayerinGame = false;
 
                 for (let i = 0; i < list.length; i++)
                 {
@@ -27,19 +27,17 @@ function fillPlayersStatus(req) {
                         var playerImageElement = document.getElementById("playerImage");
                         playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
                         playerImageElement.alt = playsAsIn.role + "'s card";
-                        isPlayertheMaster = false;
+                        isPlayerinGame = true;
                     }
 
                     playerRole.push(playsAsIn)
                 }
 
-                if(isPlayertheMaster && !endsWithMaster)
+                // if the player doesn't participate and it's not the master
+                if(!isPlayerinGame && !endsWithMaster)
                 {
                     var playerRoleElement = document.getElementById("playerRole");
-                    playerRoleElement.innerHTML = "Your are the <b>master</b>";
-                    var button = document.getElementById("masterButton");
-                    button.style.display = "inline-block";
-                    button.href = window.location.href + "/master";
+                    playerRoleElement.innerHTML = "Your are <b>spectating</b>";
                 }
 
                 if (playerRole.length <= maxPlayersforSircularButtons)

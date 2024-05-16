@@ -11,7 +11,6 @@
     <div class="col-sm-12 col-md-10 col-lg-8 p-2" style="margin: auto">
         <div id="playerRole"></div>
         <img id="playerImage" class="img-fluid" >
-        <a id="masterButton" href="#" class="btn btn-primary" style="display:none;">Manage the match!</a>
     </div>
 </div>
 
