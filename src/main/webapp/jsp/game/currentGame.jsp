@@ -63,6 +63,7 @@
 <script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/playersStatus.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/gameLog.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/infoMessage.js"></script>
 

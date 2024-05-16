@@ -1,6 +1,5 @@
 logs = []
 divLogs = null
-handleLogResize()
 
 document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
@@ -127,13 +126,4 @@ function createTable(data)
 
 
     divLogs.innerHTML = createCont(bs, ca)
-}
-
-// change max height
-
-window.addEventListener('resize', handleLogResize);
-
-function handleLogResize() {
-    document.getElementById("gameLog").style.maxHeight =
-        document.getElementById("gameLog").getBoundingClientRect().width + "px"
 }

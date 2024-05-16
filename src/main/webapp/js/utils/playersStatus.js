@@ -34,13 +34,6 @@ function fillPlayersStatus(req) {
     }
 }
 
-window.addEventListener('resize', handleResize);
-
-function handleResize() {
-    if (playerRole.length <= maxPlayersforSircularButtons)
-        createCircularButtons()
-}
-
 // Function to create buttons and position them in a circle around the square div
 function createCircularButtons() {
     const epsilon = 0;
@@ -72,7 +65,7 @@ function createCircularButtons() {
 
         // console.log(playerRole[i].username)
 
-        button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
+        button.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
         if (playerRole[i].isDead) {
             button.innerHTML += " (dead)";
             button.style.filter = `saturate(25%)`;
@@ -104,7 +97,7 @@ function createGridButtons() {
         playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-1")
 
         const button = document.createElement('button');
-        button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
+        button.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
         if (playerRole[i].isDead) {
             button.innerHTML += " (dead)";
             button.style.filter = `saturate(25%)`;
