@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.filter;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
+import it.unipd.dei.webapp.lupus.dao.PlayerInGameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
@@ -128,6 +129,7 @@ public class GameMasterFilter implements Filter {
 
                     LOGGER.info("Public GameId found on URL: " + publicGame);
                     int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
+                    String publicGameID = new PlayerInGameDAO(ds.getConnection(), publicGame).access().getOutputParam();
 
                     final Object gmAttribute = session.getAttribute(GAMEMASTER_ATTRIBUTE);
 
@@ -167,11 +169,11 @@ public class GameMasterFilter implements Filter {
                             return;
                         } else {
                             // the player is the master in the game
-                            session.setAttribute(GAMEMASTER_ATTRIBUTE, gameID);
+                            session.setAttribute(GAMEMASTER_ATTRIBUTE, publicGameID);
                         }
 
                     } else {
-                        int sessionGameID = (int) gmAttribute;
+                        int sessionGameID =  new GetGameIdFormPublicGameIdDAO(ds.getConnection(), (String)gmAttribute).access().getOutputParam();
                         // check if it's the same game
                         if (sessionGameID != gameID) {
                             LOGGER.warn("Different gameID");
