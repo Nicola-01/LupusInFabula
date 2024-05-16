@@ -206,7 +206,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
 
                     // add a session attribute to the user corresponding to the private game ID
-                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
+                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
 
                     // Assign a random role to each player
 
