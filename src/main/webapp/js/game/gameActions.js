@@ -161,14 +161,15 @@ function enableButton() {
             }
         }
 
-        if (document.querySelector(".samDiv") != null)
+        if (document.querySelector(".samDiv") != null) {
             document.querySelector(".samDiv").style.display = samDivDisplay;
 
-        // if the player to voted out is sam, check if his input is not null
-        if (samDivDisplay === "block")
-            disable = (document.getElementById("sam_SB").value === "");
-        else // reset the default value
-            document.getElementById("sam_SB").querySelector('option[value=""]').selected = true;
+            // if the player to voted out is sam, check if his input is not null
+            if (samDivDisplay === "block")
+                disable = (document.getElementById("sam_SB").value === "");
+            else // reset the default value
+                document.getElementById("sam_SB").querySelector('option[value=""]').selected = true;
+        }
 
     }
     document.getElementById("sendActions").disabled = disable;

@@ -10,7 +10,7 @@
 <%--    <h1>Lupus in Fabula</h1>--%>
 <%--</header>--%>
 
-<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 bg-light sticky-top" style="margin-bottom: 2em;">
+<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 sticky-top">
 
     <a class="d-flex w-25 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
         <img src="${pageContext.request.contextPath}/media/logo.png" alt="logo" style="height:40px;">
@@ -24,7 +24,7 @@
         <div class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">
-<%--                    <i class="fa-solid fa-house"></i>--%>
+                    <%--                    <i class="fa-solid fa-house"></i>--%>
                     Home
                 </a>
             <li class="nav-item">
@@ -47,7 +47,8 @@
             </li>
             <div class="d-flex d-md-none pb-2 text-center nav-item">
                 <span class="navigation__group">
-                    <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Joe Doe Picture">
+                    <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico"
+                         alt="Joe Doe Picture">
                 </span>
             </div>
         </div>
@@ -73,14 +74,27 @@
                         My Profile</a>
                     </li>
                     <li>
-                        <img src="${pageContext.request.contextPath}/media/navbar/settings.svg" alt="Settings">
-                        Settings
+                        <img src="/lupus/media/navbar/settings.svg" alt="Settings">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                               aria-expanded="false">
+                                Theme
+                            </a>
+                            <ul class="dropdown-menu" id="theme">
+                                <li><a class="dropdown-item active" theme="light">Light</a></li>
+                                <li><a class="dropdown-item" theme="dark">Dark</a></li>
+                                <li><a class="dropdown-item" theme="auto">Auto</a></li>
+                                <li><a class="dropdown-item" theme="dynamic">Dynamic</a></li>
+                            </ul>
+                        </div>
+
                     </li>
                 </ul>
                 <hr class="divider">
                 <ul>
                     <li style="color: #E3452F;">
-                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a href="/lupus/logout">Log
+                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a
+                            href="/lupus/logout">Log
                         out</a>
                     </li>
                 </ul>

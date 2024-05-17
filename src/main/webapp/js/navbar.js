@@ -19,3 +19,37 @@ document.addEventListener("click", (event) => {
         dropdown.classList.add('dropdown__wrapper--fade-in');
     }
 });
+
+loadTheme();
+
+function loadTheme() {
+    const theme = getCookie("theme");
+    document.body.setAttribute("data-bs-theme", theme)
+
+
+    const elements = document.querySelectorAll("#theme .dropdown-item")
+    for (let i = 0; i < elements.length; i++) {
+        if(elements[i].getAttribute("theme") === theme)
+            elements[i].classList.add("active")
+        else
+            elements[i].classList.remove("active")
+    }
+}
+
+// Get all li elements within the ul with id "theam"
+const liElements = document.querySelectorAll("#theme a");
+
+// Add click event listener to each li element
+liElements.forEach(function(a) {
+    a.addEventListener("click", function() {
+        // Remove "active" class from all li elements
+        liElements.forEach(function(item) {
+            item.classList.remove("active");
+        });
+
+        // Add "active" class to the clicked li element
+        a.classList.add("active");
+        document.cookie = "theme=" + a.getAttribute("theme")
+        loadTheme()
+    });
+});

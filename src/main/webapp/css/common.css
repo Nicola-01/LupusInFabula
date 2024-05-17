@@ -47,17 +47,21 @@ footer {
 }
 
 .goodRoles {
-    background-color: #caecca; /*#c8f3c8;*/
+    background-color: var(--bs-success-bg-subtle);
+    /*background-color: #caecca; !*#c8f3c8;*!*/
 }
 
 .evilRoles {
-    background-color: #ecbabc; /*#efb3b6;*/
+    background-color: var(--bs-danger-bg-subtle);
+    /*background-color: #ecbabc; !*#efb3b6;*!*/
 }
 
 .victoryStealerRoles {
-    background-color: #fbebab; /*#e6d58f;*/
+    background-color: var(--bs-warning-bg-subtle);
+    /*background-color: #fbebab; !*#e6d58f;*!*/
 }
 
 .neutralRoles {
-    background-color: #b7b7b7; /*#e6d58f;*/
+    background-color: var(--bs-dark-bg-subtle);
+    /*background-color: #b7b7b7; !*#e6d58f;*!*/
 }

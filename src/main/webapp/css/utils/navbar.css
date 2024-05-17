@@ -5,6 +5,11 @@
     box-shadow: none;
 }
 
+.navbar {
+    margin-bottom: 2em;
+    background-color: var(--bs-purple);
+}
+
 .nav-link {
     margin: 0 0.8em;
 }
@@ -245,7 +250,7 @@
     gap: 4px;
     animation: fadeOutAnimation ease-in-out 0.3s forwards;
     z-index: 2;
-    background: white;
+    background-color: var(--bs-body-bg);
 }
 
 .dropdown__wrapper--fade-in {

@@ -21,10 +21,7 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 thead {
-    position: sticky;
-    top: 0;
-    background: darkgray;
-    z-index: 1;
+    z-index: 1 !important;
 }
 
 /*create game button*/
@@ -157,7 +154,8 @@ thead {
 
 .arrow-up, .arrow-down {
     border: 1px solid #ccc;
-    background-color: #fff;
+    background-color: var(--bd-teal-rgb);
+    /*background-color: #fff;*/
     padding: 0 1.5em;
     font-size: 0.7em;
     cursor: pointer;
@@ -205,7 +203,8 @@ thead {
     left: 5px;
     width: 20px;
     height: 20px;
-    background-color: #fff;
+    background-color: var(--bs-border-color);
+    /*background-color: #fff;*/
     border-radius: 50%;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease-in-out;
@@ -218,24 +217,29 @@ thead {
     right: -35px;
     font-size: 12px;
     font-weight: bold;
-    color: #aaa;
+    color: var(--bs-tertiary-color);
+    /*color: #aaa;*/
     text-shadow: 1px 1px #fff;
     transition: color 0.3s ease-in-out;
 }
 
 .toggle-switch input[type="checkbox"]:checked + .toggle-switch-handle {
     transform: translateX(45px);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 0 3px #05c46b;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 0 3px var(--bs-info-border-subtle);
+    /*box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2), 0 0 0 3px #05c46b;*/
 }
 
 .toggle-switch input[type="checkbox"]:checked + .toggle-switch-background {
-    background-color: #05c46b;
-    box-shadow: inset 0 0 0 2px #04b360;
+    background-color: var(--bs-info-bg-subtle);
+    box-shadow: inset 0 0 0 2px var(--bs-info-border-subtle);
+    /*background-color: #05c46b;*/
+    /*box-shadow: inset 0 0 0 2px #04b360; */
 }
 
 .toggle-switch input[type="checkbox"]:checked + .toggle-switch:before {
     content: "On";
-    color: #05c46b;
+    background-color: var(--bs-info-bg-subtle)
+    /*color: #05c46b;*/
     right: -15px;
 }
 

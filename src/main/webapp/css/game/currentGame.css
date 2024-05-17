@@ -10,10 +10,9 @@
 
 #playersStatus {
     position: relative;
-    margin: 0;
 }
 
-#gameLog{
+#playersStatus, #gameLog {
     margin: 0;
     overflow-y: auto;
 }

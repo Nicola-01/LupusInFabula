@@ -1,5 +1,5 @@
 <div id="addFriend" class="row justify-content-center">
-    <div  class="col-9">
+    <div  class="col-9" style="position: relative;">
         <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
     </div>
 </div>
