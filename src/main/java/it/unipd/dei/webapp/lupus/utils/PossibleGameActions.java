@@ -216,6 +216,8 @@ public class PossibleGameActions {
             String plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
 
             List<String> targets = new ArrayList<>(players);
+            // remove dead players
+            targets.removeIf(player -> deadPlayers.get(player));
             // the first player is the one with the plague
             targets.add(0, plaguedPlayer);
             actionTargets.add(new ActionTarget(GameRoleAction.PLAGUE_SPREADER.getName(), plagueSpreader, GameRoleAction.PLAGUE_SPREADER.getAction(), targets));

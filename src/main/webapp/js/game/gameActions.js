@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
 
     // extract gameID
-    var startIndex = url.lastIndexOf("/gtmp/") + 6;
+    var startIndex = url.lastIndexOf("/village/") + 9;
     var endIndex = url.indexOf("/", startIndex);
     // if url doesn't end with /
     if (endIndex === -1) {
@@ -50,7 +50,7 @@ function gameStatus(req) {
             if (game.who_win !== -1) {
                 // todo -> the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
-                var s = game.who_win < 2? "" : "s";
+                var s = game.who_win < 2 ? "" : "s";
                 var msg = "The " + factions[game.who_win] + " win" + s + "!";
                 populateInfoMessage("THE GAME IS OVER", msg);
             } else {
@@ -309,14 +309,14 @@ function changeDesignatedWolf() {
 function fillNightActions(list) {
     let gameActions = document.getElementById("gameActions");
 
-    let goodDiv = document.createElement("div");
     let evilDiv = document.createElement("div");
     let neutralDiv = document.createElement("div");
+    let goodDiv = document.createElement("div");
     let vicStealDiv = document.createElement("div");
 
-    goodDiv.classList.add("goodRoles");
     evilDiv.classList.add("evilRoles");
     neutralDiv.classList.add("neutralRoles");
+    goodDiv.classList.add("goodRoles");
     vicStealDiv.classList.add("victoryStealerRoles");
 
     let designatedWolfDiv = document.createElement("div");
@@ -410,8 +410,8 @@ function fillNightActions(list) {
     designatedWolfDiv.appendChild(actionWrapperWolf);
 
     if (evilDiv.innerHTML !== "") gameActions.appendChild(evilDiv);
-    if (goodDiv.innerHTML !== "") gameActions.appendChild(goodDiv);
     if (neutralDiv.innerHTML !== "") gameActions.appendChild(neutralDiv);
+    if (goodDiv.innerHTML !== "") gameActions.appendChild(goodDiv);
     if (vicStealDiv.innerHTML !== "") gameActions.appendChild(vicStealDiv);
 
     changeDesignatedWolf()
@@ -474,14 +474,18 @@ function fillDayActions(list) {
             case "plague": // is Plague spreader
                 plagueSpreaderPlayer = list[i]['actionTarget'].player;
 
-                gameActions.appendChild(plagueDiv);
                 let tmpList = list[i]['actionTarget']['possibleTargets'];
                 for (let j = 0; j < tmpList.length; j++)
                     playersOrder.push(tmpList[j].player)
                 let plaguedPlayer = playersOrder[0];
+
+                // the plagueSpreader did not infect anyone
+                if (plaguedPlayer == null) break
+
                 // remove the first player, is the one with the plagued
                 playersOrder.splice(0, 1);
 
+                gameActions.appendChild(plagueDiv);
                 plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true))
                 break;
             default:
@@ -805,7 +809,7 @@ function actionsResponse(req) {
                     if (actionResults.samTarget !== "")
                         phaseInfo += "<br>" + actionResults.samTarget + " was killed by sam:"
 
-                    if(actionResults.carpenterAbility)
+                    if (actionResults.carpenterAbility)
                         phaseInfo += "<br> the carpenter refused to give wood"
 
                     let deadPlayersList = actionResults['plaguePlayers'];

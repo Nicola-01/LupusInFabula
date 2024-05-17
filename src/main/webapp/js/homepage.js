@@ -18,7 +18,7 @@ function setHomeMessage(req)
             var colorClass = (game.who_win !== -1) ? "alert-info" : "alert-success";
 
             messageDiv.classList.add("alert", colorClass);
-            messageDiv.innerHTML = isPlaying + " <a href='/lupus/gtmp/" + game.public_ID + "'>" + game.public_ID + "</a>";
+            messageDiv.innerHTML = isPlaying + " <a href='/lupus/village/" + game.public_ID + "'>" + game.public_ID + "</a>";
         }
         // game doesn't exists
         else

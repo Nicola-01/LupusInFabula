@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
 
     // extract gameID
-    var startIndex = url.lastIndexOf("/gtmp/") + 6;
+    var startIndex = url.lastIndexOf("/village/") + 9;
     var endIndex = url.indexOf("/", startIndex);
     // if url doesn't end with /
     if (endIndex === -1) {

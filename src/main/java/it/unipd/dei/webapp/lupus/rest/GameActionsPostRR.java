@@ -170,19 +170,19 @@ public class GameActionsPostRR extends AbstractRR {
                     InputStream stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
 
                     List<GameAction> votes_0 = GameAction.fromJSON(stream, "votes_0");
-                    LOGGER.info("Votes_0 letto");
+                    LOGGER.info("Votes_0 done");
 
                     stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
                     List<GameAction> votes_1 = GameAction.fromJSON(stream, "votes_1");
-                    LOGGER.info("Votes_1 letto");
+                    LOGGER.info("Votes_1 done");
 
                     stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
                     List<GameAction> votes_2 = GameAction.fromJSON(stream, "votes_2");
-                    LOGGER.info("Votes_2 letto");
+                    LOGGER.info("Votes_2 done");
 
                     stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
                     List<GameAction> extraActions = GameAction.fromJSON(stream, "extraActions");
-                    LOGGER.info("Extra action letto");
+                    LOGGER.info("Extra action done");
 
 
                     if (!correctnessOfFirstVote(votes_0))

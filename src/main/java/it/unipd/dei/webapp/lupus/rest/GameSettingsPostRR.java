@@ -175,7 +175,6 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Invalid roles cardinality, totalPlayers: " + totalPlayers + "; totalRoles: " + totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if number of players it's equal to number of roles
                 else if (totalPlayers != totalRoles) {
@@ -186,7 +185,6 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 //
                 else {
