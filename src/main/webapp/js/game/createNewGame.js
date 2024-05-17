@@ -256,6 +256,7 @@ function gameCreation(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_CREATED) {
             let game = JSON.parse(req.responseText)['game'];
+            window.location.replace(contextPath + "village/" + game.public_ID);
         } else {
             let message = getMessage(req)
             if (message != null)

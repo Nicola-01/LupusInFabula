@@ -160,7 +160,9 @@ function enableButton() {
                 break;
             }
         }
-        document.querySelector(".samDiv").style.display = samDivDisplay;
+
+        if (document.querySelector(".samDiv") != null)
+            document.querySelector(".samDiv").style.display = samDivDisplay;
 
         // if the player to voted out is sam, check if his input is not null
         if (samDivDisplay === "block")
