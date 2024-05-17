@@ -13,14 +13,12 @@
     <title>Game</title>
     <c:import url="/jsp/include/head.jsp"/>
 
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css'>
-    <script src='https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js'></script>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/infoMessage.css">
-  </head>
+</head>
 
 <body>
 

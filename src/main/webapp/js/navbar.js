@@ -24,12 +24,28 @@ loadTheme();
 
 function loadTheme() {
     const theme = getCookie("theme");
-    document.body.setAttribute("data-bs-theme", theme)
 
+    if (theme === "light" || theme === "dark")
+        document.body.setAttribute("data-bs-theme", theme)
+    else {
+        if (window.matchMedia("(prefers-color-scheme: dark)").matches)
+            document.body.setAttribute("data-bs-theme", "dark")
+        else
+            document.body.setAttribute("data-bs-theme", "light")
+    }
+
+    // dynamic -> automatically change the color based on the game phase (night/day)
+    // on other pages, it functions like auto mode
+    if (theme === "dynamic" && window.location.href.includes("/lupus/village/")) {
+        if (document.getElementById("gameStatus").textContent.toLocaleLowerCase().includes("night"))
+            document.body.setAttribute("data-bs-theme", "dark")
+        else
+            document.body.setAttribute("data-bs-theme", "light")
+    }
 
     const elements = document.querySelectorAll("#theme .dropdown-item")
     for (let i = 0; i < elements.length; i++) {
-        if(elements[i].getAttribute("theme") === theme)
+        if (elements[i].getAttribute("theme") === theme)
             elements[i].classList.add("active")
         else
             elements[i].classList.remove("active")
@@ -40,10 +56,10 @@ function loadTheme() {
 const liElements = document.querySelectorAll("#theme a");
 
 // Add click event listener to each li element
-liElements.forEach(function(a) {
-    a.addEventListener("click", function() {
+liElements.forEach(function (a) {
+    a.addEventListener("click", function () {
         // Remove "active" class from all li elements
-        liElements.forEach(function(item) {
+        liElements.forEach(function (item) {
             item.classList.remove("active");
         });
 

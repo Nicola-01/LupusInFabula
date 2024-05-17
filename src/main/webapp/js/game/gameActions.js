@@ -66,6 +66,8 @@ function gameStatus(req) {
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
 
+                loadTheme();
+
                 // if url ends with master/, update actions
                 if (endsWithMaster) {
                     document.getElementById("sendActions").style.display = "flex";
