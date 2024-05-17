@@ -66,9 +66,8 @@ function fillFriends(req) {
                     // Fill cells with data
                     usernameCell.textContent = friend.username;
                     addButtonCell.innerHTML = HTML_add_button(friend.username);
-
-                    sendAvailabilityRequest()
                 }
+                sendAvailabilityRequest()
             }
         } else
             isLoggedUser(req);
@@ -106,7 +105,7 @@ function updateAvailability(req) {
 
             rows = document.getElementById("friends_tb").querySelector("tbody").rows;
             for (let i = 0; i < rows.length; i++)
-                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
+                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
 
         }
     }
@@ -307,13 +306,10 @@ function addPlayer() {
     }
 
     let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
-    checkboxes.forEach(function (checkbox) {
-        if (checkbox.parentElement.previousElementSibling.textContent === username) {
-            checkbox.checked = true;
-        }
-    });
-
-    sendAvailabilityRequest();
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].parentElement.parentElement.childNodes[0].textContent === username)
+            checkboxes[i].checked = true;
+    }
 }
 
 // Function to add username to players_tb table
@@ -349,6 +345,15 @@ function addToPlayersTable(username) {
         removeRow(this);
     });
     removeCell.appendChild(removeButton);
+
+    let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
+    checkboxes.forEach(function (checkbox) {
+        if (checkbox.parentElement.previousElementSibling.textContent === username) {
+            checkbox.checked = true;
+        }
+    });
+
+    sendAvailabilityRequest();
 }
 
 function moveUp(btn) {
@@ -365,14 +370,11 @@ function moveDown(btn) {
 
 // Function to remove username from players_tb table
 function removeFromPlayersTable(username) {
-
-    // remove the player from the list
-    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
-
     let rows = document.getElementById("players_tb").rows;
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[1].textContent === username) {
             document.getElementById("players_tb").deleteRow(i);
+            playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
             break;
         }
     }
@@ -384,12 +386,15 @@ function removeRow(button) {
     let username = row.cells[1].textContent; // Get the username from the row
     row.parentNode.removeChild(row);
 
+    // remove the player from the list
+    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
+
     // Uncheck the corresponding checkbox in the "friends" table
     let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
-    checkboxes.forEach(function (checkbox) {
-        if (checkbox.parentElement.previousElementSibling.textContent === username)
-            checkbox.checked = false;
-    });
+    for (let i = 0; i < checkboxes.length; i++) {
+        if (checkboxes[i].parentElement.parentElement.childNodes[0].textContent === username)
+            checkboxes[i].checked = false;
+    }
 }
 
 // Select the table you want to observe

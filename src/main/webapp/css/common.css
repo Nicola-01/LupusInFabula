@@ -18,9 +18,10 @@ table {
 
 th, td {
     border: 1px solid #ddd !important;
-    padding: 8px;
+    padding: 3px !important;
     text-align: center;
-    height: 55px;
+    vertical-align: middle;
+    height: 46px;
 }
 
 tr:nth-child(even) {
