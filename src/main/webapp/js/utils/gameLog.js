@@ -25,7 +25,6 @@ function logElementsReload()
     divLogs = document.getElementById("gameLog")
     divLogs.innerHTML = ""
 
-
     divLogs.disabled = true;
     var masterlog = endsWithMaster? "/master" : "";
     genericGETRequest(contextPath + "game/logs/" + gameID + masterlog, fillGameLog);
@@ -58,12 +57,13 @@ function createActionBlock(phase, subphase, typeOfAction, user, target)
 {
     return  '<li class="d-flex flex-column flex-md-row py-4">' +
                 '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
-                    phase + // ', subphase '+ subphase +//day or night'+j+'
+                    phase + (phase==="day" ? "    " : "")+
                 '</span>' +
                 '<div class="flex-grow-1 ps-4 border-start border-3">' +
                     '<h4>'+typeOfAction+'</h4>'+// type action
                     ' <p class="mb-0">'+
-                        'the user '+user+' make the action '+typeOfAction+' on '+ target + //user , typeaction, target
+                        (target === null ? 'the user '+user+' is dead' :
+                        'the user '+user+' make the action '+typeOfAction+' on '+ target )+ //user , typeaction, target
                     '</p>'+
                 '</div>'+
             '</li>'
@@ -112,7 +112,7 @@ function createTable(data)
         bs = bs.concat(createContActionButton(j, ""))
 
 
-    divLogs.innerHTML = createContt(bs)
+    divLogs.innerHTML = createCont(bs)
 
     for (let r = 1; r<=roundMax; r++)
     {
@@ -128,7 +128,6 @@ function createTable(data)
 
                 while (j < data.length)
                 {
-                    console.log(data[j].Action)
                     if (data[j][i[0]][key[1]] === r)
                         as = as.concat(createActionBlock(data[j][i[0]][key[2]], data[j][i[0]][key[3]], data[j][i[0]][key[4]], data[j][i[0]][key[0]], data[j][i[0]][key[5]]))
 
