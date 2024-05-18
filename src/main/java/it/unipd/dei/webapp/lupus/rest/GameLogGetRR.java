@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetActionByIdGameDAO;
+import it.unipd.dei.webapp.lupus.dao.GetDeadPlayersInformationByGameIdDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
@@ -108,9 +109,13 @@ public class GameLogGetRR extends AbstractRR
     private ArrayList<Action> getLog() throws SQLException
     {
         ArrayList<Action> r = new GetActionByIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
+        ArrayList<Action> d = new GetDeadPlayersInformationByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
         if(!this.isMaster && !r.isEmpty())
             r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
+
+        r.addAll(d);
+        r.sort(Action::compareTo);
 
         return r;
     }

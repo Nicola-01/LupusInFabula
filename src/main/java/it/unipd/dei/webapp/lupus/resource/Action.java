@@ -16,7 +16,7 @@ import java.sql.SQLException;
  * @version 1.0
  * @since 1.0
  */
-public class Action extends AbstractResource
+public class Action extends AbstractResource implements Comparable
 {
     /**
      * Represents a JSON file name.
@@ -85,6 +85,7 @@ public class Action extends AbstractResource
         this.typeAction = typeAction;
         this.target = target;
     }
+    public Action(int gameId, String player, int round, int phase, String typeAction) {this(gameId, player, round, phase, 0, typeAction, null);}
 
     /**
      * Constructs an Action object using the result set of a database query.
@@ -170,12 +171,29 @@ public class Action extends AbstractResource
         for(Field i : this.getClass().getDeclaredFields())
             if(!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
                 if(i.getName().equals("phase"))
-                    jg.writeObjectField(i.getName(), GamePhase.getById(i.getInt(this)).getName());
+                    jg.writeObjectField(i.getName(), i.getInt(this) == GamePhase.NIGHT.getId() ? GamePhase.NIGHT.getName() : GamePhase.DAY.getName());
                 else
                     jg.writeObjectField(i.getName(), i.get(this));
 
         jg.writeEndObject();
         jg.writeEndObject();
         jg.flush();
+    }
+
+    @Override
+    public int compareTo(Object o)
+    {
+        Action i = (Action)o;
+        int r = Integer.compare(this.getRound(), i.getRound());
+        int p = Integer.compare(this.getPhase(), i.getPhase());
+        int sp = Integer.compare(this.getSubphase(), i.getSubphase());
+
+        return r!=0 ? r : p!=0 ? p : sp;
+    }
+
+    @Override
+    public String toString()
+    {
+        return this.player + ":" + this.round + ":" + this.phase + ":" + this.subphase + ":" + this.typeAction + ":" + this.target;
     }
 }
