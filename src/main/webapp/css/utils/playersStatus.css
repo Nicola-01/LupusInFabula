@@ -1,14 +1,7 @@
-
-#playersStatus {
-    position: relative;
-    margin: 0;
-}
-
 #circle {
     border-radius: 50%;
     border: 2px solid #000;
     margin: 10%;
-    padding-top: 80%;
     position: relative;
     flex-shrink: unset;
 }

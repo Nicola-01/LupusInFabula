@@ -10,6 +10,7 @@
 <div class="row">
     <div class="col-sm-12 col-md-10 col-lg-8 p-2" style="margin: auto">
         <div id="playerRole"></div>
+        <img id="playerImage" class="img-fluid" >
     </div>
 </div>
 

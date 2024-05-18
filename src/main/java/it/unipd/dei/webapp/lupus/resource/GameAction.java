@@ -123,9 +123,12 @@ public class GameAction extends AbstractResource {
             while (jp.getCurrentToken() != JsonToken.FIELD_NAME || !jsonName.equals(jp.getCurrentName())) {
 
                 // there are no more events
-                if (jp.nextToken() == null) {
-                    LOGGER.error("No GameAction object found in the stream.");
-                    throw new EOFException("Unable to parse JSON: no GameAction object found.");
+                if (jp.nextToken() == null ) {
+                    LOGGER.error("No " + jsonName + " object found in the stream.");
+                    if ((jsonName.equals("extraActions") || jsonName.equals("votes_2")))
+                        return gameActions;
+                    else
+                        throw new EOFException("Unable to parse JSON: no " + jsonName + " object found.");
                 }
             }
 

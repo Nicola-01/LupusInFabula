@@ -142,7 +142,6 @@ function genericPOSTRequest(url, json, callback) {
 function genericPUTRequest() {
 
 
-
 }
 
 function isLoggedUser(req) {
@@ -188,4 +187,14 @@ function getMessage(req) {
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+function getCookie(name) {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.indexOf(name + '=') === 0)
+            return cookie.substring(name.length + 1);
+    }
+    return null;
 }

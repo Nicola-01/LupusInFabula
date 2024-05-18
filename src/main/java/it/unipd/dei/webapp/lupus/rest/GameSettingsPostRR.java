@@ -175,7 +175,6 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Invalid roles cardinality, totalPlayers: " + totalPlayers + "; totalRoles: " + totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if number of players it's equal to number of roles
                 else if (totalPlayers != totalRoles) {
@@ -186,7 +185,6 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 //
                 else {
@@ -206,15 +204,18 @@ public class GameSettingsPostRR extends AbstractRR {
                     new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
 
                     // add a session attribute to the user corresponding to the private game ID
-                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
+                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
 
                     // Assign a random role to each player
 
                     selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
 
+                    // generate the random generator only one time
+                    Random rand = new Random();
+
                     for (int i = 0; i < totalPlayers; i++) {
                         // Select a random role for the player
-                        String selectedRole = randomRole(selectedRoles);
+                        String selectedRole = randomRole(selectedRoles, rand);
 
                         // Get the ID of the selected role from the database
 //                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
@@ -312,16 +313,14 @@ public class GameSettingsPostRR extends AbstractRR {
      * @param roles A map containing available roles and their counts.
      * @return A randomly selected role.
      */
-    private String randomRole(Map<String, Integer> roles) {
-        Random rand = new Random();
-        rand.setSeed(System.currentTimeMillis());
+    private String randomRole(Map<String, Integer> roles, Random rand) {
 
         // Get an array of available roles
-        String[] availableRoles = roles.keySet().toArray(new String[0]);
+        List<String> availableRoles = new ArrayList<>(roles.keySet());
         String role;
 
         // Select a random role, ensuring it has a non-zero count
-        role = availableRoles[rand.nextInt(availableRoles.length)];
+        role = availableRoles.get(rand.nextInt(availableRoles.size()));
 
         // Decrement the count of the selected role, and remove if count becomes zero
         roles.put(role, roles.get(role) - 1);

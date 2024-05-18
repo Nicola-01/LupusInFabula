@@ -29,6 +29,13 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
             "(plays_as_in.game_id = a.game_id AND plays_as_in.player_username = a.target) " +
             "WHERE plays_as_in.game_id = ? and type_of_action = ?";
 
+
+    /**
+     * SQL statement to check if a role was killed by Plague Spreader.
+     */
+    private static final String STATEMENT_ROLE_KILLED_BY_PLAGUE_SPREADER = "SELECT role FROM plays_as_in JOIN public.action a on " +
+            "(plays_as_in.game_id = a.game_id AND plays_as_in.player_username = a.target) " +
+            "WHERE plays_as_in.game_id = ? and type_of_action = ?";
     /**
      * To connect to the database
      */
@@ -82,8 +89,20 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
 
                 if(rs.next())
                     this.outputParam = !rs.getString("role").equals(GameRoleAction.JESTER.getName());
-                else
-                    this.outputParam = true;
+                else {
+                    pstmt = ds.getConnection().prepareStatement(STATEMENT_ROLE_KILLED_BY_PLAGUE_SPREADER);
+
+                    pstmt.setInt(1, gameID);
+                    pstmt.setString(2, GameRoleAction.PLAGUE_SPREADER.getAction());
+
+                    rs = pstmt.executeQuery();
+
+                    if (rs.next())
+                        this.outputParam = !rs.getString("role").equals(GameRoleAction.JESTER.getName());
+                    else
+                        this.outputParam = true;
+                }
+
             }
         } finally {
             if (rs != null) {

@@ -26,8 +26,8 @@
         <div id="players" class="column col-sm-12 col-md-6 p-2 pb-5">
             <h2>PLAYERS IN GAME</h2>
             <div class="playersTableContainer">
-                <table id="players_tb">
-                    <thead>
+                <table id="players_tb" class="table table-striped mb-0">
+                    <thead class="sticky-top top-0">
                     <tr>
                         <th style="width:10%">Order</th>
                         <th style="width:60%">Username</th>
@@ -40,11 +40,11 @@
                 </table>
             </div>
         </div>
-        <div id="friends" class="column col-sm-12 col-md-6 p-2 pb-5">
+        <div id="friends" class="column col-sm-12 col-md-6 p-2 pb-5" style="position: relative;">
             <h2>YOUR FRIENDS</h2>
             <div class="friendsTableContainer">
-                <table id="friends_tb">
-                    <thead>
+                <table id="friends_tb" class="table table-striped mb-0">
+                    <thead class="sticky-top top-0">
                     <tr>
                         <th style="width:60%">Username</th>
                         <th style="width:20%">Available</th>

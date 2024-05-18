@@ -56,7 +56,7 @@
 
     <servlet-mapping>
         <servlet-name>CurrentGameServlet</servlet-name>
-        <url-pattern>/gtmp/*</url-pattern>
+        <url-pattern>/village/*</url-pattern>
     </servlet-mapping>
 
 

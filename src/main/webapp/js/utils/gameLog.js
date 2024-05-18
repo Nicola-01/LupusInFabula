@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function (event)
     let url = window.location.href;
 
     // extract gameID
-    var startIndex = url.lastIndexOf("/gtmp/") + 6;
+    var startIndex = url.lastIndexOf("/village/") + 9;
     var endIndex = url.indexOf("/", startIndex);
     // if url doesn't end with /
     if (endIndex === -1) endIndex = url.length;
@@ -58,7 +58,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, target)
 {
     return  '<li class="d-flex flex-column flex-md-row py-4">' +
                 '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
-                    phase + ', subphase '+ subphase +//day or night'+j+'
+                    phase + // ', subphase '+ subphase +//day or night'+j+'
                 '</span>' +
                 '<div class="flex-grow-1 ps-4 border-start border-3">' +
                     '<h4>'+typeOfAction+'</h4>'+// type action

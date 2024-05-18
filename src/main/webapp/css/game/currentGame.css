@@ -7,3 +7,12 @@
 /*    left: 0;*/
 /*    z-index: -1;*/
 /*}*/
+
+#playersStatus {
+    position: relative;
+}
+
+#playersStatus, #gameLog {
+    margin: 0;
+    overflow-y: auto;
+}

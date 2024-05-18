@@ -54,7 +54,7 @@ public class PlayerInGameDAO extends AbstractDAO<String> {
 
             if (rs.next()) {
                 gameId = rs.getString("public_id");
-                LOGGER.info("Player " + username + " found in a gameID: " + gameId);
+//                LOGGER.info("Player " + username + " found in a gameID: " + gameId);
             }
 
         } finally {

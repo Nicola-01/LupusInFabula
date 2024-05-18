@@ -13,16 +13,33 @@ function fillPlayersStatus(req) {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
                 var loggedUser = localStorage.getItem('playerName');
+                var isPlayerinGame = false;
 
-                for (let i = 0; i < list.length; i++) {
+                for (let i = 0; i < list.length; i++)
+                {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    console.log(playsAsIn)
 
+                    // when receiving the logged in users' role
                     if(playsAsIn.username === loggedUser)
-                        console.log("Role: "+playsAsIn.role);
+                    {
+                        var playerRoleElement = document.getElementById("playerRole");
+                        playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
+                        var playerImageElement = document.getElementById("playerImage");
+                        playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
+                        playerImageElement.alt = playsAsIn.role + "'s card";
+                        isPlayerinGame = true;
+                    }
 
                     playerRole.push(playsAsIn)
                 }
+
+                // if the player doesn't participate and it's not the master
+                if(!isPlayerinGame && !endsWithMaster)
+                {
+                    var playerRoleElement = document.getElementById("playerRole");
+                    playerRoleElement.innerHTML = "Your are <b>spectating</b>";
+                }
+
                 if (playerRole.length <= maxPlayersforSircularButtons)
                     createCircularButtons()
                 else
@@ -32,13 +49,6 @@ function fillPlayersStatus(req) {
             // alert("Not logged in");
         }
     }
-}
-
-window.addEventListener('resize', handleResize);
-
-function handleResize() {
-    if (playerRole.length <= maxPlayersforSircularButtons)
-        createCircularButtons()
 }
 
 // Function to create buttons and position them in a circle around the square div
@@ -72,7 +82,7 @@ function createCircularButtons() {
 
         // console.log(playerRole[i].username)
 
-        button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
+        button.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
         if (playerRole[i].isDead) {
             button.innerHTML += " (dead)";
             button.style.filter = `saturate(25%)`;
@@ -104,7 +114,7 @@ function createGridButtons() {
         playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-1")
 
         const button = document.createElement('button');
-        button.innerHTML = playerRole[i].username + "<br>" + playerRole[i].role;
+        button.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
         if (playerRole[i].isDead) {
             button.innerHTML += " (dead)";
             button.style.filter = `saturate(25%)`;
