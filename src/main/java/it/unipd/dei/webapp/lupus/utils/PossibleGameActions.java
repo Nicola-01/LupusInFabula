@@ -172,7 +172,7 @@ public class PossibleGameActions {
      */
     private void handleDayPhase() throws IOException, SQLException {
 
-//        LOGGER.info("Handling day phase. Second ballot: " + secondBallot);
+        LOGGER.info("Handling day phase");
 
         // Get the players in order of insert
         List<String> players = new GetPlayersByGameDAO(ds.getConnection(), gameID).access().getOutputParam();
@@ -214,13 +214,16 @@ public class PossibleGameActions {
         }
         if (!plagueSpreader.isEmpty()) {
             String plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
-
             List<String> targets = new ArrayList<>(players);
             // remove dead players
             targets.removeIf(player -> deadPlayers.get(player));
             // the first player is the one with the plague
             targets.add(0, plaguedPlayer);
             actionTargets.add(new ActionTarget(GameRoleAction.PLAGUE_SPREADER.getName(), plagueSpreader, GameRoleAction.PLAGUE_SPREADER.getAction(), targets));
+        }
+
+        for (ActionTarget actionTarget : actionTargets) {
+            LOGGER.info(actionTarget.getTargets());
         }
 
         LOGGER.info("Returning the actions of day phase.");
@@ -388,7 +391,7 @@ public class PossibleGameActions {
      * @param action The game action to be validated.
      * @return True if the action is valid, otherwise false.
      */
-    public boolean isValidAction(GameAction action) {
+    public boolean isValidAction(GameAction action, Boolean extra) {
         String player = action.getPlayer();
         String role = action.getRole();
         String target = action.getTarget();
@@ -417,6 +420,14 @@ public class PossibleGameActions {
                 return false;
 
             // Check if the target is valid for the specified role
+            if(extra){
+                if(action.getRole().equals(GameRoleAction.SAM.getName())){
+                    index = actionTargets.size() - 2;
+                }
+                if(action.getRole().equals(GameRoleAction.PLAGUE_SPREADER.getName())){
+                    index = actionTargets.size() - 1;
+                }
+            }
             if (!actionTargets.get(index).getTargets().contains(target))
                 return false;
 

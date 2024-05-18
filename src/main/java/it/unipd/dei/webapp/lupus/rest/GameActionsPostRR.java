@@ -256,7 +256,7 @@ public class GameActionsPostRR extends AbstractRR {
             Message m = null;
 
 
-            // First votation with all the players, also the dead player vote in this phase
+            // First vote with all the players, also the dead player vote in this phase
             List<Map.Entry<String, Integer>> votesList = handleVotation(votes_0);
             List<String> ballotPlayers = votationResult(votesList, false);
             currentSubPhase++;
@@ -297,6 +297,10 @@ public class GameActionsPostRR extends AbstractRR {
             if(!correctnessOfExtraAction(extraActions))
                 return false;
 
+            Boolean plaguedPlayerDeath = true;
+            int counterPlagueAction = 0;
+            String plaguedPlayer = "";
+
             for(GameAction gameAction: extraActions){
 
                 String player = gameAction.getPlayer();
@@ -312,7 +316,18 @@ public class GameActionsPostRR extends AbstractRR {
                     updatePlayersDeath.add(updatePlayerDeath(target));
 
                 } else if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
-                    //todo check if the action of the plague spreader is correct
+
+                    counterPlagueAction++;
+
+                    if(counterPlagueAction == 1) {
+                        plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
+                        plaguedPlayerDeath = false;
+                    }
+
+                    if(gameAction.getTarget().equals(plaguedPlayer)){
+                        plaguedPlayerDeath = true;
+                    }
+
                     Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
                     insertActions.add(plagueAction);
                     LOGGER.info("Plague spreader killed " + target);
@@ -328,6 +343,15 @@ public class GameActionsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
+            }
+
+            if(!plaguedPlayerDeath){
+                LOGGER.error("ERROR: not valid action, plague spreader action not correct");
+                ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                m = new Message("ERROR: not valid action, plague spreader action not correct", ec.getErrorCode(), ec.getErrorMessage());
+                res.setStatus(ec.getHTTPCode());
+                m.toJSON(res.getOutputStream());
+                return false;
             }
 
 
@@ -429,7 +453,7 @@ public class GameActionsPostRR extends AbstractRR {
             LOGGER.info("First votation");
             ballotPlayers.add(votesList.get(1).getKey());
             nVote = votesList.get(1).getValue();
-            logger = logger + votesList.get(1).getKey();
+            logger = logger + " " + votesList.get(1).getKey();
         }else{
             LOGGER.info("ballot");
             if(nVote == votesList.get(1).getValue()){
@@ -557,7 +581,7 @@ public class GameActionsPostRR extends AbstractRR {
             votes_0.sort(Comparator.comparing(GameAction::getPlayer));
             for (GameAction vote: votes_0){
 
-                if(!correctnessOfAction(vote, possibleGameActions))
+                if(!correctnessOfAction(vote, false))
                     return false;
 
                 if (!(vote.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
@@ -604,7 +628,7 @@ public class GameActionsPostRR extends AbstractRR {
             ballotVotes.sort(Comparator.comparing(GameAction::getPlayer));
             for (GameAction vote : ballotVotes) {
 
-                if (!correctnessOfAction(vote, possibleGameActions))
+                if (!correctnessOfAction(vote, false))
                     return false;
 
                 if (deadPlayers.get(vote.getPlayer())) {
@@ -669,7 +693,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             for (GameAction gameAction : extraActions) {
 
-                if (!correctnessOfAction(gameAction, possibleGameActions))
+                if (!correctnessOfAction(gameAction, true))
                     return false;
 
                 if (!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))) {
@@ -701,11 +725,11 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
 
-    private boolean correctnessOfAction(GameAction gameAction, PossibleGameActions possibleGameActions) throws SQLException, IOException{
+    private boolean correctnessOfAction(GameAction gameAction, Boolean extra) throws SQLException, IOException{
 
         Message m = null;
 
-        if (!possibleGameActions.isValidAction(gameAction)){
+        if (!possibleGameActions.isValidAction(gameAction, extra)){
 
             LOGGER.error("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid");
             ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
@@ -771,7 +795,7 @@ public class GameActionsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
-                if (!possibleGameActions.isValidAction(gameAction))
+                if (!possibleGameActions.isValidAction(gameAction, false))
                     return false;
             }
 
@@ -1134,7 +1158,7 @@ public class GameActionsPostRR extends AbstractRR {
                 m.toJSON(res.getOutputStream());
                 return false;
             }
-            if (!possibleGameActions.isValidAction(gameAction)) {
+            if (!possibleGameActions.isValidAction(gameAction, false)) {
 
                 LOGGER.error("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid");
                 ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
