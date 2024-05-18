@@ -1,53 +1,21 @@
-document.addEventListener('DOMContentLoaded', function (event) {
-    let url = window.location.href;
-
-    // extract gameID
-    var startIndex = url.lastIndexOf("/village/") + 9;
-    var endIndex = url.indexOf("/", startIndex);
-    // if url doesn't end with /
-    if (endIndex === -1) {
-        endIndex = url.length;
-    }
-    gameID = url.substring(startIndex, endIndex);
-    console.log(gameID);
-
-    var lastSegment = url.substring(url.lastIndexOf("/") + 1);
-    endsWithMaster = lastSegment === "master" || lastSegment === "master/";
-
-    if (document.getElementById("sendActions") !== null) {
-        document.getElementById("sendActions").style.display = "none"
-        document.getElementById("sendActions").addEventListener("click", sendActions);
-    }
-
-    elementsReload();
-});
-
-function elementsReload() {
-    // reset of variables and state
-    wolfPack = []
-    if (document.getElementById("sendActions") !== null) {
-        document.getElementById("sendActions").disabled = true;
-    }
-
-    // recover the data
-    var master = endsWithMaster ? "/master" : "";
-    genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
-    genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
-}
-
-let endsWithMaster; // whether the url ends with /master
-let gameID;
 let wolfPack = []
 let gameRound
 let gamePhase
 let gameOver = false
 
+/**
+ * Handles the response from the game status GET request.
+ * Updates the game status on the page, determines if the game is over,
+ * and updates the display accordingly.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response data.
+ */
 function gameStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
             wait = true
-            if (game.who_win !== -1) {
+            if (game.who_win !== -1) { // the game is over
                 // todo -> the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
                 var s = game.who_win < 2 ? "" : "s";
@@ -66,6 +34,7 @@ function gameStatus(req) {
                     bt_gameStatus.textContent = "DAY  " + gameRound;
                 }
 
+                // if the theme is dynamic -> change the theme
                 loadTheme();
 
                 // if url ends with master/, update actions
@@ -78,31 +47,45 @@ function gameStatus(req) {
     }
 }
 
+/**
+ * Handles the response from the game actions GET request.
+ * Updates the game actions on the page based on the current game phase (Night/Day).
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response data.
+ */
 function fillGameActions(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
+            // Parse the response to get the list of actions
             let list = JSON.parse(req.responseText)[JSON_resource_list];
 
+            // Clear the current game actions display
             document.getElementById("gameActions").innerHTML = "";
 
             if (list == null) {
                 alert("No game settings available");
             } else {
+                // Fill actions based on the current game phase
                 if (gamePhase === GamePhase.NIGHT)
-                    fillNightActions(list)
+                    fillNightActions(list);
                 else
-                    fillDayActions(list)
+                    fillDayActions(list);
             }
         } else {
-            document.getElementById("sendActions").style.display = "none"
+            // Hide the "sendActions" button and check if the user is logged in
+            document.getElementById("sendActions").style.display = "none";
             isLoggedUser(req);
         }
     }
 }
 
 let currentVoteSection = 0;
-
-function enableButton() {
+/**
+ * Enables or disables the "sendActions" button based on the current game phase
+ * and the selections made by the player. Ensures that all required inputs are
+ * filled out before enabling the button.
+ */
+function enableButtons() {
     let disable = false;
 
     if (gamePhase === GamePhase.NIGHT) { // night
@@ -177,43 +160,65 @@ function enableButton() {
     document.getElementById("sendActions").disabled = disable;
 }
 
+/**
+ * Changes the current sub-phase of the voting process.
+ * Handles the creation of new sub-phase elements or display an existing ones.
+ *
+ * @param {HTMLElement} radioBT - The radio button element that triggers the sub-phase change.
+ */
 function changeSubPhase(radioBT) {
     let subPhase = Number(radioBT.getAttribute("subPhase"));
 
-    // go in a new empty subphase
+    // If the sub-phase is the same as the current, do nothing
     if (subPhase === currentVoteSection)
         return;
+
+    // Moving to a new sub-phase
     if (subPhase > currentVoteSection) {
         let gameActions = document.getElementById("gameActions");
 
+        // Create a new div element for the new sub-phase
         let voteDiv = document.createElement("div");
-
         voteDiv.classList.add("votes");
-        voteDiv.id = "votes_" + (subPhase);
-        // insert the element after the radio buttons
+        voteDiv.id = "votes_" + subPhase;
+
+        // Insert the new element after the radio buttons
         gameActions.insertBefore(voteDiv, gameActions.childNodes[1]);
 
+        // Hide previous sub-phases
         let index = subPhase - 1;
         while (document.getElementById("votes_" + index) !== null) {
-            document.getElementById("votes_" + index).style.display = "none"
+            document.getElementById("votes_" + index).style.display = "none";
             index--;
         }
+
+        // Request to get players for the new sub-phase
         genericGETRequest(contextPath + "game/players/" + gameID + "/master", fillVotes);
 
-    } else {
-        // if the game master go to a previous subPhase, all subPhase after will be reset
-        document.getElementById("votes_" + subPhase).style.display = "block"
+    } else { // Moving to a previous sub-phase
+        // Display the selected sub-phase
+        document.getElementById("votes_" + subPhase).style.display = "block";
+
+        // Remove all sub-phases after the selected one
         let index = subPhase + 1;
         while (document.getElementById("votes_" + index) !== null) {
-            document.getElementById("votes_" + index).remove()
-            document.getElementById("voteRadio_" + index).disabled = true
+            document.getElementById("votes_" + index).remove();
+            document.getElementById("voteRadio_" + index).disabled = true;
             index++;
         }
-        enableButton()
+
+        enableButtons();
     }
+
+    // Update the current vote section
     currentVoteSection = subPhase;
 }
 
+/**
+ * Fills the votes section with living players who can vote, excluding those who are dead or already voted out.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response data.
+ */
 function fillVotes(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -221,24 +226,24 @@ function fillVotes(req) {
             if (list == null) {
                 alert("No game settings available");
             } else {
-
-                let currentSection = document.querySelector('input[name="radio"]:checked').getAttribute("subphase")
+                // Get the current sub-phase section from the checked radio button
+                let currentSection = document.querySelector('input[name="radio"]:checked').getAttribute("subphase");
                 let votesDiv = document.getElementById("votes_" + currentSection);
                 let votedPlayers = getMostVotedPlayers(currentSection - 1);
                 playerRole = [];
 
-                // populate the vote only for the living players
+                // Populate the vote only for the living players
                 for (let i = 0; i < list.length; i++) {
-                    let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
-                    // If the player is not dead or not in the ballot.
+                    let playsAsIn = list[i]['playsAsIn'];
+                    // If the player is not dead or not in the ballot
                     if (!playsAsIn.isDead && !votedPlayers.some(item => item.player === playsAsIn.username)) {
                         let text = "Who <u>" + playsAsIn.username + "</u> voted out?";
                         let actionTarget = {
                             "player": playsAsIn.username,
                             "role": playsAsIn.role,
                             "possibleTargets": votedPlayers
-                        }
-                        votesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY))
+                        };
+                        votesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.DAY));
                     }
                 }
             }
@@ -246,44 +251,58 @@ function fillVotes(req) {
     }
 }
 
-function getMostVotedPlayers(currentSection = Number(document.querySelector('input[name="radio"]:checked').getAttribute)) {
+/**
+ * Retrieves the players with the most votes in the current voting section.
+ *
+ * @param {number} [currentSection] - The current voting section. Defaults to the section of the checked radio button.
+ * @returns {Array<Object>} An array of objects representing the players with the most votes.
+ */
+function getMostVotedPlayers(currentSection = Number(document.querySelector('input[name="radio"]:checked').getAttribute("subPhase"))) {
+    // Select all vote target elements in the current voting section
     const role_targets = document.querySelectorAll('#votes_' + currentSection + ' [id*="_targets"]');
 
-    let voteResults = new Map()
+    // Map to store vote results
+    let voteResults = new Map();
 
-    // get the votes of the players
+    // Collect votes from all role target elements
     for (let i = 0; i < role_targets.length; i++) {
         let target = role_targets[i].value;
 
-        // get the votes of the current player, 0 if is not yet present
+        // Increment the vote count for the target player
         let votesOfPlayer = voteResults.has(target) ? voteResults.get(target) + 1 : 1;
-
-        voteResults.set(target, votesOfPlayer)
+        voteResults.set(target, votesOfPlayer);
     }
 
+    // Sort the vote results in descending order
     const mapSort = new Map([...voteResults.entries()].sort((a, b) => b[1] - a[1]));
 
-    // get the players with the highest number of vote, at lest 2 player
-    let previousValue = Array.from(mapSort.values())[0]
+    // Identify the players with the highest number of votes, at least two players
+    let previousValue = Array.from(mapSort.values())[0];
     let selected = 0;
     for (let [key, value] of mapSort) {
         if (previousValue === value)
             selected++;
-        // if is the first ballot, will take only the players with the sam max number of votes
         else if (selected < 2 && currentSection === 0) {
             previousValue = value;
             if (value === 0)
                 break;
-            selected++
+            selected++;
         } else break;
     }
 
-    let votedPlayers = []
+    // Collect the players with the most votes
+    let votedPlayers = [];
     for (let i = 0; i < selected; i++)
-        votedPlayers.push({"player": Array.from(mapSort.keys())[i]})
+        votedPlayers.push({"player": Array.from(mapSort.keys())[i]});
     return votedPlayers;
 }
 
+/**
+ * Checks if a given role exists in the wolfPack array.
+ *
+ * @param {string} role - The role to check for in the wolfPack array.
+ * @returns {boolean} True if the role exists in the wolfPack array; otherwise, false.
+ */
 function wolfPackContainRole(role) {
     for (const wp of wolfPack)
         if (wp.role === role)
@@ -383,7 +402,7 @@ function fillNightActions(list) {
     designatedWolf.id = "designatedWolf";
     designatedWolf.setAttribute("required", "required");
     designatedWolf.classList.add("roleTargets");
-    designatedWolf.addEventListener('change', enableButton);
+    designatedWolf.addEventListener('change', enableButtons);
 
     // Create default option
     let defaultOption = document.createElement("option");
@@ -542,7 +561,7 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
     actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
     actionWrapper.appendChild(actionText);
 
-    roleTargetsElem.addEventListener('change', enableButton);
+    roleTargetsElem.addEventListener('change', enableButtons);
 
     // Add roleTargetsElem to the wrapper
     insertSelectionBox(actionWrapper, roleTargetsElem);
