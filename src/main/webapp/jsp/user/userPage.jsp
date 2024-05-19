@@ -14,47 +14,20 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
-    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/firefly.css">
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/updateCredentials.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
+
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
-<body style="background-image: url('${pageContext.request.contextPath}/media/forest_background.jpeg');
-        background-position: center;
-        background-size: cover;">
+<body>
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container card">
-
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
-    <div class="firefly"></div>
 
     <div class="radio-inputs">
         <label class="radio">
@@ -72,7 +45,7 @@
         <div id="friendsPage">
             <jsp:include page="../friend/friend.jsp"/>
         </div>
-        <div id="changeCredentialsPage" style="display: none;">
+        <div class="row" id="changeCredentialsPage" style="display: none;">
             <jsp:include page="updateCredential.jsp"/>
         </div>
     </div>

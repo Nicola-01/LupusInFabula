@@ -139,9 +139,21 @@ function genericPOSTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
-function genericPUTRequest() {
+function genericPUTRequest(url, json, callback) {
+    var httpRequest = new XMLHttpRequest();
 
+    if (!httpRequest) {
+        alert('Cannot create an XMLHTTP instance');
+        return false;
+    }
 
+    httpRequest.onload = function () {
+        callback(httpRequest)
+    };
+
+    httpRequest.open('PUT', url);
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
+    httpRequest.send(json);
 }
 
 function isLoggedUser(req) {

@@ -58,12 +58,12 @@ body {
     margin: 0 auto;
 }
 
-a {
+.forgot-password {
     color: #573b8a;
     text-decoration: none;
 }
 
-a:hover {
+.forgot-password:hover {
     text-decoration: underline;
 }
 

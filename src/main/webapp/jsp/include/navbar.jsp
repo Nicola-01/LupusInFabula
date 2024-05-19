@@ -64,6 +64,9 @@
                     <div class="user-name">${sessionScope.user.getUsername()}</div>
                     <div class="email">${sessionScope.user.getEmail()}</div>
                 </c:if>
+                <c:if test="${empty sessionScope.user}">
+                    <div class="user-name">Not Logged In</div>
+                </c:if>
             </div>
             <hr class="divider">
             <nav class="profile_nav">
@@ -93,9 +96,14 @@
                 <hr class="divider">
                 <ul>
                     <li style="color: #E3452F;">
-                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a
-                            href="/lupus/logout">Log
-                        out</a>
+                        <c:if test="${not empty sessionScope.user}">
+                            <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a href="/lupus/logout">Log
+                            out</a>
+                        </c:if>
+                        <c:if test="${empty sessionScope.user}">
+                            <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="Log Out"><a href="/lupus/login">Log
+                            In</a>
+                        </c:if>
                     </li>
                 </ul>
             </nav>
