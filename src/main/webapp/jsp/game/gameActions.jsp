@@ -3,7 +3,7 @@
 
 
 <div class="row">
-    <div class="col-sm-12 col-md-10 col-lg-8 p-2" style="margin: auto">
+    <div class="col-lg-10 col-xl-8 p-2 m-auto">
         <div id="gameActions"></div>
     </div>
 </div>

@@ -43,7 +43,7 @@ function loadTheme() {
     }
 
     // Dynamically change the theme based on game phase if theme is "dynamic" and page is in village section
-    if (theme === "dynamic" && window.location.href.includes("/lupus/village/")) {
+    if (theme === "dynamic" && window.location.href.includes("/lupus/village/") && document.getElementById("gameStatus") !== null) {
         if (document.getElementById("gameStatus").textContent.toLocaleLowerCase().includes("night"))
             document.body.setAttribute("data-bs-theme", "dark");
         else

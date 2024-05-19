@@ -93,37 +93,59 @@ function enableButtons() {
         const role_targets = document.querySelectorAll('[id*="_targets"]');
 
         const designatedWolfSB = document.getElementById("designatedWolf");
-        const designatedPlayer = designatedWolfSB.value
-        const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+        const designatedWolfPlayer = designatedWolfSB.value
+        const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
         for (let i = 0; i < role_targets.length; i++) {
             let role = role_targets[i].getAttribute("role");
             if (role === "illusionist") {
                 const illusionistTarget = role_targets[i].value
+
+                // remove previus target
                 for (let j = 0; j < role_targets.length; j++) {
                     const defaultOption = role_targets[j].querySelector('option[value=""]');
-                    if (role_targets[j].getAttribute("player") === illusionistTarget) {
-                        defaultOption.textContent = "BLOCKED";
-                        defaultOption.selected = true;
-                        // send the first element as default if the user is blocked
-                        // the back end discard that action since the user is blocked
-                        const firstTarget = role_targets[i].options[1].textContent;
-                        role_targets[j].setAttribute("blocked", firstTarget)
-                        role_targets[j].style.backgroundColor = ""
-                        role_targets[j].disabled = true;
-                    } else if (role_targets[j].hasAttribute("blocked")) {
+                    if (role_targets[j].hasAttribute("blocked")) {
                         role_targets[j].disabled = false;
                         role_targets[j].removeAttribute("blocked");
                         defaultOption.textContent = "Select a target";
                         defaultOption.selected = true;
                     }
                 }
+
+                if (wolfPackContainPlayer(illusionistTarget)) {
+                    let targetRole = playerWolfPackRole(illusionistTarget);
+                    let targetElem = document.getElementById(targetRole + "_targets")
+                    const defaultOption = targetElem.querySelector('option[value=""]');
+                    if (designatedWolfPlayer === illusionistTarget) {
+                        defaultOption.textContent = "BLOCKED";
+                        defaultOption.selected = true;
+                        const firstTarget = targetElem.options[1].textContent;
+                        targetElem.setAttribute("blocked", firstTarget)
+                        targetElem.style.backgroundColor = ""
+                        targetElem.disabled = true;
+                    }
+                } else {
+                    for (let j = 0; j < role_targets.length; j++) {
+                        const defaultOption = role_targets[j].querySelector('option[value=""]');
+                        if (role_targets[j].getAttribute("player") === illusionistTarget) {
+                            defaultOption.textContent = "BLOCKED";
+                            defaultOption.selected = true;
+                            // send the first element as default if the user is blocked
+                            // the back end discard that action since the user is blocked
+                            const firstTarget = role_targets[j].options[1].textContent;
+                            role_targets[j].setAttribute("blocked", firstTarget)
+                            role_targets[j].style.backgroundColor = ""
+                            role_targets[j].disabled = true;
+                        }
+                    }
+                }
             } else if (role === "seer" || role === "medium") {
                 // they cannot use their ability
                 if (role_targets[i].hasAttribute("blocked"))
-                    break;
-
+                    continue;
                 const target = role_targets[i].value;
+                if (target === "")
+                    continue;
                 if (isPlayerSeesAsEvil(target))
                     role_targets[i].style.backgroundColor = rolesColors.get("wolf")
                 else
@@ -131,20 +153,20 @@ function enableButtons() {
             }
         }
 
-        if (designatedPlayer === "")
+        if (designatedWolfPlayer === "")
             disable = true
         for (let i = 0; i < role_targets.length && !disable; i++) {
             let role = role_targets[i].getAttribute("role");
             if (wolfPackContainRole(role)) {
-                if (designatedRole === role)
+                if (role_targets[i].hasAttribute("blocked"))
+                    continue;
+                else if (designatedRole === role)
                     disable = (role_targets[i].value === "")
-                else if (role_targets[i].hasAttribute("blocked"))
-                    disable = false;
                 else
                     disable = (role_targets[i].value !== "")
             } else {
                 if (role_targets[i].hasAttribute("blocked"))
-                    disable = false;
+                    continue;
                 else
                     disable = (role_targets[i].value === "")
             }
@@ -210,7 +232,8 @@ function isPlayerSeesAsEvil(player) {
     if (wolfPackContainPlayer(player))
         role = playerWolfPackRole(player)
     else
-        role = document.getElementById(player + "_status").innerHTML.split("<br>")[1].toLowerCase()
+        // Split the string by <br> tags or spaces
+        role = document.getElementById(player + "_status").innerHTML.split(/<br\s*\/?>|\s+/)[1].toLowerCase()
     return RolesSeeAsEvil.includes(role)
 }
 
@@ -392,7 +415,7 @@ function playerWolfPackRole(player) {
 
 function changeDesignatedWolf() {
     let designatedWolfSB = document.getElementById("designatedWolf");
-    let designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+    let designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
     // for each select box associate to a role
     const designatedWolves = document.querySelectorAll('#designatedWolves [id$="_targets"]');
@@ -408,6 +431,7 @@ function changeDesignatedWolf() {
             defaultOption.selected = true;
         }
     }
+    enableButtons()
 }
 
 function fillNightActions(list) {
@@ -495,7 +519,7 @@ function fillNightActions(list) {
     for (let i = 0; i < wolfPack.length; i++) {
         let option = document.createElement("option");
         option.text = wolfPack[i].player; // Assuming 'player' is the property containing the player name
-        option.classList.add(wolfPack[i].role)
+        option.setAttribute("role", wolfPack[i].role)
         designatedWolf.add(option);
     }
 
@@ -766,24 +790,26 @@ function sendActions() {
     if (gamePhase === GamePhase.NIGHT) {
         let designatedWolfSB = document.getElementById("designatedWolf");
         designatedPlayer = designatedWolfSB.value
-        designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
+        designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
         let gameAction = [];
 
         for (let i = 0; i < role_targets.length; i++) {
             const role_target = role_targets[i];
-            if (role_target.hasAttribute("blocked"))
-                player = role_target.getAttribute("blocked")
-            else
-                player = role_target.getAttribute("player");
+            player = role_target.getAttribute("player");
             role = role_target.getAttribute('role');
-            target = role_target.value;
 
-            if (role_target.getAttribute("memberOfWolfPack") === "true")
-                if (designatedRole === role_target.getAttribute("role")) {
+            if (role_target.hasAttribute("blocked"))
+                target = role_target.getAttribute("blocked")
+            else
+                target = role_target.value;
+
+            if (role_target.getAttribute("memberOfWolfPack") === "true") {
+                if (designatedRole === role_target.getAttribute("role"))
                     player = designatedPlayer;
-                } else
+                else
                     continue;
+            }
 
             if ((role === "sheriff" && target.toLowerCase() === "no shot")
                 || (role === "berserker" && target.toLowerCase() === "no rage"))

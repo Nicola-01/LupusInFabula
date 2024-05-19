@@ -87,3 +87,16 @@ function handleResize() {
         createCircularButtons();
     }
 }
+
+/**
+ * Copies the current page URL to the clipboard after removing the '/master' or '/master/' suffix if present.
+ */
+function copyGameLink() {
+    let URL = window.location.href;
+    URL = URL.replace(/\/master\/?$/, ''); // This will replace both '/master' and '/master/' at the end of the URL
+    navigator.clipboard.writeText(URL).then(function() {
+        console.log('URL copied to clipboard: ' + URL);
+    }).catch(function(err) {
+        console.error('Could not copy text: ', err);
+    });
+}

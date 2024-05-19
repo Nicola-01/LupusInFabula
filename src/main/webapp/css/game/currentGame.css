@@ -16,3 +16,67 @@
     margin: 0;
     overflow-y: auto;
 }
+
+#copyLink {
+    background-color: #F2F7FA;
+    width: 160px !important;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    overflow: hidden;
+    transition-duration: 700ms;
+}
+
+#copyLink span:first-child {
+    color: #0E418F;
+    position: absolute;
+    transform: translate(-50%, -50%)
+}
+
+#copyLink span:last-child {
+    position: absolute;
+    color: #B5CCF3;
+    opacity: 0;
+    transform: translateY(100%) translateX(-50%);
+    height: 14px;
+    line-height: 13px;
+}
+
+#copyLink:focus {
+    background-color: #0E418F;
+    width: 120px;
+    height: 40px;
+    transition-delay: 100ms;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus span:first-child {
+    color: #B5CCF3;
+    transform: translateX(-50%) translateY(-150%);
+    opacity: 0;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus span:last-child {
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+    transition-delay: 300ms;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus:end {
+    background-color: #FFFFFF;
+    width: 120px;
+    height: 40px;
+    transition-duration: 900ms;
+}
+
+.centralize {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
