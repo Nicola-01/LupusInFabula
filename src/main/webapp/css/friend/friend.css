@@ -45,6 +45,7 @@
 
 #listFriend{
     padding-top: 40px;
+    margin: auto;
 }
 
 #friendsTable{
@@ -55,4 +56,14 @@
 .playerStatus{
     display: none;
     margin-left: auto;
+}
+
+.friend-link {
+    color: black;
+    text-decoration: none;
+}
+
+.friend-link:hover {
+    color: #4e99e9;
+    font-weight: bold;
 }

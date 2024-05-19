@@ -36,7 +36,11 @@ function fillFriendsList(req){
                     let deleteCell = row.insertCell(2);
 
                     // Fill cells with data
-                    usernameCell.textContent = friend.username;
+                    let link = document.createElement("a");
+                    link.href = contextPath + "/jsp/user/userPage.jsp"; //todo change URL to navigate to
+                    link.textContent = friend.username;
+                    link.classList.add("friend-link");
+                    usernameCell.appendChild(link);
                     dateCell.textContent = friend.friendship_date;
 
                     let deleteButton = document.createElement("button");
