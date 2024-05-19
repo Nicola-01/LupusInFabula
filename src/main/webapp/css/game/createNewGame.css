@@ -13,6 +13,7 @@ h2:not(#players h2):not(#friends h2) {
 /*tables*/
 #players_tb, #friends_tb {
     overflow-y: auto;
+    background-color: var(--bs-tertiary-bg);
 }
 
 .playersTableContainer, .friendsTableContainer {
@@ -82,25 +83,23 @@ thead {
 
 /*remove player*/
 .removePlayer {
-    display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 0.3em;
-    border: 0px solid transparent;
+    border: 0 solid transparent;
     background-color: rgba(100, 77, 237, 0.08);
     border-radius: 0.7em;
     transition: all 0.2s linear;
-
     position: relative;
     display: inline-block;
 }
 
 .removePlayer:hover {
-    box-shadow: 3.4px 2.5px 4.9px rgba(0, 0, 0, 0.025),
-    8.6px 6.3px 12.4px rgba(0, 0, 0, 0.035),
-    17.5px 12.8px 25.3px rgba(0, 0, 0, 0.045),
-    36.1px 26.3px 52.2px rgba(0, 0, 0, 0.055),
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.025),
+    9px 6px 12px rgba(0, 0, 0, 0.035),
+    18px 13px 25px rgba(0, 0, 0, 0.045),
+    36px 26px 52px rgba(0, 0, 0, 0.055),
     99px 72px 143px rgba(0, 0, 0, 0.08);
 }
 

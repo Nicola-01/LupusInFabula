@@ -7,8 +7,6 @@
 /* Global Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
     line-height: 1.6;
 }
 
@@ -28,7 +26,7 @@ main {
 .box {
     width: 300px;
     height: 250px;
-    background-color: #fff;
+    background-color: var(--bg-second-color);
     border: 1px solid #333;
     margin: 20px;
     padding: 20px;
@@ -40,8 +38,8 @@ main {
     width: 200px;
     margin: 10px auto;
     padding: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--nabbar-inverted-bg);
+    color: var(--bg-first-color);
     border: none;
     border-radius: 5px;
     cursor: pointer;

@@ -1,0 +1,50 @@
+:root {
+    --neutral-color-1: #F2F7FA;
+    --neutral-color-2: #c6c6c6;
+    --neutral-color-3: #0E418F;
+    --neutral_inverted-color: #0c0d10
+}
+
+[data-bs-theme="light"] {
+    --good-roles: #c8f3c8;
+    --evil-roles: #efb3b6;
+    --victory-stealer-roles: #e6d58f;
+    --neutral-roles: #b7b7b7;
+
+    --votes: #C1D4DF;
+    --plague-spreader: #bfbfbf;
+    --sam: #c2d7c7;
+
+    --designated-wolves: #e18888;
+
+    --nabbar-bg: #4BA3C3;
+    --nabbar-inverted-bg: #0D324D;
+    --bg-first-color: #EAF0F2;
+    --bg-second-color: #c8dbdf;
+    --bg-inverted-first-color: #0E1115;
+    --bg-inverted-second-color: #1a2127;
+
+    --text-color: #0B121A;
+}
+
+[data-bs-theme="dark"] {
+    --good-roles: #1a2f22;
+    --evil-roles: #301c1c;
+    --victory-stealer-roles: #50441d;
+    --neutral-roles: #343639;
+
+    --votes: #082637;
+    --plague-spreader: #373737;
+    --sam: #1a3120;
+
+    --designated-wolves: #442323;
+
+    --nabbar-bg: #0D324D;
+    --nabbar-inverted-bg: #4BA3C3;
+    --bg-first-color: #0E1115;
+    --bg-second-color: #1a2127;
+    --bg-inverted-first-color: #EAF0F2;
+    --bg-inverted-second-color: #c8dbdf;
+
+    --text-color: #EAF0F2
+}

@@ -11,9 +11,7 @@
     <title>Lupus in Fabula - Login</title>
 </head>
 
-<body style="background-image: url('${pageContext.request.contextPath}/media/forest_background.jpeg');
-        background-position: center;
-        background-size: cover;">
+<body>
 <div class="container">
 
     <div class="firefly"></div>
@@ -73,9 +71,9 @@
                         <input type="password" id="login_password" class="custom-input" name="password"
                                placeholder="Password"
                                required="">
-                        <div class="additional-options">
-                            <a href="#" class="forgot-password">Forgot password?</a>
-                        </div>
+<%--                        <div class="additional-options">--%>
+<%--                            <a href="#" class="forgot-password">Forgot password?</a>--%>
+<%--                        </div>--%>
                         <input type="submit" id="login_submit" value="Login">
                     </form>
                 </div>

@@ -7,7 +7,8 @@
 
 .navbar {
     margin-bottom: 2em;
-    background-color: var(--bs-purple);
+    background-color: var(--nabbar-bg);
+    color: var(--text-color);
 }
 
 .nav-link {

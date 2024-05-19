@@ -6,13 +6,15 @@ body {
     align-items: center;
     min-height: 100vh;
     font-family: 'Jost', sans-serif;
-    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+    background-image: url('../media/forest_background.jpeg');
+    background-position: center;
+    background-size: cover;
 }
 
 .main {
     height: 500px;
     overflow: hidden;
-    background-color: #252057;
+    background-color: #0D324D;
     border-radius: 10px;
     box-shadow: 5px 20px 50px #000;
 }
@@ -70,14 +72,13 @@ body {
 input[type="submit"] {
     width: 60%;
     height: 40px;
-    margin: 10px auto;
     justify-content: center;
     display: block;
     color: #fff;
-    background: #573b8a;
+    background: #0D324D;
     font-size: 1em;
     font-weight: bold;
-    margin-top: 20px;
+    margin: 20px auto 10px;
     outline: none;
     border: none;
     border-radius: 5px;
@@ -86,13 +87,17 @@ input[type="submit"] {
 }
 
 input[type="submit"]:hover {
-    background: #6d44b8;
+    background: #134569;
 }
 
 input[type="submit"]:disabled {
-    background: #cfbef7;
-    color: #573b8a;
+    background: #ade4f8;
+    color: #0D324D;
     cursor: not-allowed;
+}
+
+#login_submit{
+    margin-top: 50px;
 }
 
 .login {
@@ -104,7 +109,7 @@ input[type="submit"]:disabled {
 }
 
 .lb_login {
-    color: #573b8a;
+    color: #0D324D;
     transform: scale(.6);
 }
 

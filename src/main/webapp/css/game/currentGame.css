@@ -18,7 +18,7 @@
 }
 
 #copyLink {
-    background-color: #F2F7FA;
+    background-color: var(--neutral-color-1);
     width: 160px !important;
     height: 40px;
     border: none;
@@ -29,14 +29,14 @@
 }
 
 #copyLink span:first-child {
-    color: #0E418F;
+    color: var(--neutral-color-3);
     position: absolute;
     transform: translate(-50%, -50%)
 }
 
 #copyLink span:last-child {
     position: absolute;
-    color: #B5CCF3;
+    color: var(--neutral-color-1);
     opacity: 0;
     transform: translateY(100%) translateX(-50%);
     height: 14px;
@@ -44,7 +44,7 @@
 }
 
 #copyLink:focus {
-    background-color: #0E418F;
+    background-color: var(--neutral-color-3);
     width: 120px;
     height: 40px;
     transition-delay: 100ms;
