@@ -88,6 +88,7 @@ function createCircularButtons() {
             button.style.filter = `saturate(25%)`;
         }
         button.className = "circular-button";
+        button.id = playerRole[i].username + "_status"
         button.style.backgroundColor = rolesColors.get(playerRole[i].role);
         button.style.position = 'absolute';
 
@@ -119,6 +120,7 @@ function createGridButtons() {
             button.innerHTML += " (dead)";
             button.style.filter = `saturate(25%)`;
         }
+        button.id = playerRole[i].username + "_status"
         button.className = "grid-button";
         button.style.backgroundColor = rolesColors.get(playerRole[i].role);
 

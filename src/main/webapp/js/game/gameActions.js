@@ -80,6 +80,7 @@ function fillGameActions(req) {
 }
 
 let currentVoteSection = 0;
+
 /**
  * Enables or disables the "sendActions" button based on the current game phase
  * and the selections made by the player. Ensures that all required inputs are
@@ -95,6 +96,41 @@ function enableButtons() {
         const designatedPlayer = designatedWolfSB.value
         const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].classList[0];
 
+        for (let i = 0; i < role_targets.length; i++) {
+            let role = role_targets[i].getAttribute("role");
+            if (role === "illusionist") {
+                const illusionistTarget = role_targets[i].value
+                for (let j = 0; j < role_targets.length; j++) {
+                    const defaultOption = role_targets[j].querySelector('option[value=""]');
+                    if (role_targets[j].getAttribute("player") === illusionistTarget) {
+                        defaultOption.textContent = "BLOCKED";
+                        defaultOption.selected = true;
+                        // send the first element as default if the user is blocked
+                        // the back end discard that action since the user is blocked
+                        const firstTarget = role_targets[i].options[1].textContent;
+                        role_targets[j].setAttribute("blocked", firstTarget)
+                        role_targets[j].style.backgroundColor = ""
+                        role_targets[j].disabled = true;
+                    } else if (role_targets[j].hasAttribute("blocked")) {
+                        role_targets[j].disabled = false;
+                        role_targets[j].removeAttribute("blocked");
+                        defaultOption.textContent = "Select a target";
+                        defaultOption.selected = true;
+                    }
+                }
+            } else if (role === "seer" || role === "medium") {
+                // they cannot use their ability
+                if (role_targets[i].hasAttribute("blocked"))
+                    break;
+
+                const target = role_targets[i].value;
+                if (isPlayerSeesAsEvil(target))
+                    role_targets[i].style.backgroundColor = rolesColors.get("wolf")
+                else
+                    role_targets[i].style.backgroundColor = rolesColors.get("farmer")
+            }
+        }
+
         if (designatedPlayer === "")
             disable = true
         for (let i = 0; i < role_targets.length && !disable; i++) {
@@ -102,10 +138,16 @@ function enableButtons() {
             if (wolfPackContainRole(role)) {
                 if (designatedRole === role)
                     disable = (role_targets[i].value === "")
+                else if (role_targets[i].hasAttribute("blocked"))
+                    disable = false;
                 else
                     disable = (role_targets[i].value !== "")
-            } else
-                disable = (role_targets[i].value === "")
+            } else {
+                if (role_targets[i].hasAttribute("blocked"))
+                    disable = false;
+                else
+                    disable = (role_targets[i].value === "")
+            }
         }
     } else { // day
 
@@ -158,6 +200,18 @@ function enableButtons() {
 
     }
     document.getElementById("sendActions").disabled = disable;
+}
+
+// todo -> to define
+const RolesSeeAsEvil = evilRoles
+
+function isPlayerSeesAsEvil(player) {
+    let role;
+    if (wolfPackContainPlayer(player))
+        role = playerWolfPackRole(player)
+    else
+        role = document.getElementById(player + "_status").innerHTML.split("<br>")[1].toLowerCase()
+    return RolesSeeAsEvil.includes(role)
 }
 
 /**
@@ -308,6 +362,32 @@ function wolfPackContainRole(role) {
         if (wp.role === role)
             return true;
     return false;
+}
+
+/**
+ * Checks if a given player exists in the wolfPack array.
+ *
+ * @param {string} player - The player to check for in the wolfPack array.
+ * @returns {boolean} True if the role exists in the wolfPack array; otherwise, false.
+ */
+function wolfPackContainPlayer(player) {
+    for (const wp of wolfPack)
+        if (wp.player === player)
+            return true;
+    return false;
+}
+
+/**
+ * Return a role of given player of wolf pack.
+ *
+ * @param {string} player - The player to get the role.
+ * @returns {boolean|null} True if the role exists in the wolfPack array; otherwise, false.
+ */
+function playerWolfPackRole(player) {
+    for (const wp of wolfPack)
+        if (wp.player === player)
+            return wp.role;
+    return null;
 }
 
 function changeDesignatedWolf() {
@@ -692,7 +772,10 @@ function sendActions() {
 
         for (let i = 0; i < role_targets.length; i++) {
             const role_target = role_targets[i];
-            player = role_target.getAttribute("player");
+            if (role_target.hasAttribute("blocked"))
+                player = role_target.getAttribute("blocked")
+            else
+                player = role_target.getAttribute("player");
             role = role_target.getAttribute('role');
             target = role_target.value;
 
