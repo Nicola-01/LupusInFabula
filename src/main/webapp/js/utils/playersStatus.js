@@ -2,6 +2,16 @@ let playerRole = [];
 
 const maxPlayersforSircularButtons = 12;
 
+// used when a player wants to hide his/her role
+function toggleCensor()
+{
+    var playerRole = document.getElementById("playerRole");
+    var playerImage = document.getElementById("playerImage");
+
+    playerRole.classList.toggle("blurred");
+    playerImage.classList.toggle("blurred");
+}
+
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -27,17 +37,21 @@ function fillPlayersStatus(req) {
                         var playerImageElement = document.getElementById("playerImage");
                         playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
                         playerImageElement.alt = playsAsIn.role + "'s card";
+
+                        var toggleButton = document.getElementById("toggleButton");
+                        toggleButton.style.display = "inline-block";
+
                         isPlayerinGame = true;
                     }
 
-                    playerRole.push(playsAsIn)
+                    playerRole.push(playsAsIn);
                 }
 
                 // if the player doesn't participate and it's not the master
                 if(!isPlayerinGame && !endsWithMaster)
                 {
                     var playerRoleElement = document.getElementById("playerRole");
-                    playerRoleElement.innerHTML = "Your are <b>spectating</b>";
+                    playerRoleElement.innerHTML = "You are <b>spectating</b>";
                 }
 
                 if (playerRole.length <= maxPlayersforSircularButtons)

@@ -10,7 +10,7 @@
 <div class="row justify-content-center align-items-center">
     <div class="col-sm-12 col-md-10 col-lg-8 p-2 mx-auto text-center" style="margin: auto">
         <div id="playerRole" class="justify-content-center align-items-center w-100 mb-4"></div>
-        <img id="playerImage" class="img-fluid d-block mx-auto" alt="Role image">
+        <img id="playerImage" class="img-fluid d-block mx-auto"> <!-- Don't set "alt". It'll be set in a js function -->
     </div>
 </div>
 

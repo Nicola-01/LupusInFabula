@@ -33,10 +33,13 @@
 
     <div class="row">
         <div class="col-lg-10 col-xl-8 p-2 m-auto row">
-            <div class="col-6 p-0">
-                <h1 id="gameStatus"></h1>
+            <div class="col-4 p-0">
+                <h2 id="gameStatus"></h2>
             </div>
-            <div class="col-6 p-0">
+            <div class="col-4 p-0">
+                <button id="toggleButton" style="display: none;" onclick="toggleCensor()">Hide role</button>
+            </div>
+            <div class="col-4 p-0">
                 <div class="d-flex justify-content-end">
                     <button id="copyLink" onclick="copyGameLink()">
                     <span style="width: 150px;">
