@@ -52,6 +52,10 @@ function fillPlayersStatus(req) {
                 // if the player doesn't participate and it's not the master
                 if(!isPlayerinGame && !endsWithMaster)
                 {
+                    var cardContainer = document.getElementById("cardContainer");
+                    if (cardContainer) {
+                        cardContainer.style.display = "none";
+                    }
                     var playerRoleElement = document.getElementById("playerRole");
                     playerRoleElement.innerHTML = "You are <b>spectating</b>";
                 }
