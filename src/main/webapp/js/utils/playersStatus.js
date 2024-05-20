@@ -3,14 +3,14 @@ let playerRole = [];
 const maxPlayersforSircularButtons = 12;
 
 // used when a player wants to hide his/her role
-function toggleCensor()
+function toggleCard()
 {
+    var card = document.getElementById("card");
+    card.classList.toggle("is-flipped");
     var playerRole = document.getElementById("playerRole");
-    var playerImage = document.getElementById("playerImage");
-
     playerRole.classList.toggle("blurred");
-    playerImage.classList.toggle("blurred");
 }
+
 
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
@@ -34,9 +34,11 @@ function fillPlayersStatus(req) {
                     {
                         var playerRoleElement = document.getElementById("playerRole");
                         playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
-                        var playerImageElement = document.getElementById("playerImage");
-                        playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
-                        playerImageElement.alt = playsAsIn.role + "'s card";
+                        var frontCard = document.querySelector(".card-front");
+                        frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
+                        //var playerImageElement = document.getElementById("playerImage");
+                        //playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
+                        //playerImageElement.alt = playsAsIn.role + "'s card";
 
                         var toggleButton = document.getElementById("toggleButton");
                         toggleButton.style.display = "inline-block";

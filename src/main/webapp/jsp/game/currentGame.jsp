@@ -37,7 +37,7 @@
                 <h2 id="gameStatus"></h2>
             </div>
             <div class="col-4 p-0">
-                <button id="toggleButton" style="display: none;" onclick="toggleCensor()">Hide role</button>
+                <button id="toggleButton" style="display: none;" onclick="toggleCard()">Hide role</button>
             </div>
             <div class="col-4 p-0">
                 <div class="d-flex justify-content-end">
