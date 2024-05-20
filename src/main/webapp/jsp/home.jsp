@@ -11,12 +11,13 @@
 </head>
 <body>
 
-<iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/background.html" class="background-iframe" frameborder="0"></iframe>
+<iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/homeBackground.html" class="background-iframe"
+        frameborder="0"></iframe>
 
 <jsp:include page="include/navbar.jsp"/>
 <main>
     <p class="my-2">
-        <span>Welcome, </span>
+        <span>Welcome back, </span>
         <c:if test="${not empty sessionScope.user}">
             <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
         </c:if>
@@ -30,38 +31,33 @@
 
     <div id="messageDiv"></div>
 
-    <section class="centered-box">
-        <div class="box">
-            <h2>Player</h2>
-            <!-- if logged in -->
-            <c:if test="${not empty sessionScope.user}">
-                <a href="<c:url value="/logout"/>">
-                    <button>Logout</button>
-                </a>
-            </c:if>
-            <!-- if NOT logged in -->
-            <c:if test="${empty sessionScope.user}">
-                <a href="<c:url value="/login"/>">
-                    <button>Login</button>
-                </a>
-            </c:if>
-            <button>Personal Area</button>
-            <button>Statistics</button>
+    <section class="centered-box row">
+        <div class="box col-sm-12 col-md-5 m-md-auto mb-3 p-4">
+            <h2>Habitant</h2>
+            <a>
+                <button>Personal Area</button>
+            </a>
+            <a>
+                <button>Statistics & Logs</button>
+            </a>
+            <a href="<c:url value="/logout"/>">
+                <button>Logout</button>
+            </a>
         </div>
-        <div class="box">
-            <h2>Game</h2>
+        <div class="box col-sm-12 col-md-5 m-md-auto p-4">
+            <h2>Village</h2>
             <a href="<c:url value="/rules"/>">
-                <button>Game Rules</button>
+                <button>Rules</button>
             </a>
             <a href="<c:url value="/jsp/game/createNewGame.jsp"/>">
-                <button>Create a Game</button>
+                <button>Create a village</button>
             </a>
-            <button>Join a Game</button>
+            <a>
+                <button>Join a village</button>
+            </a>
         </div>
     </section>
-<%--    <section class="show-message">--%>
-<%--        <c:import url="/jsp/include/show-message.jsp"/>--%>
-<%--    </section>--%>
+
 </main>
 
 <c:import url="/jsp/include/footer.jsp"/>
