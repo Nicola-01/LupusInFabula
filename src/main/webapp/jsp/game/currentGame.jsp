@@ -21,9 +21,6 @@
 </head>
 
 <body>
-
-<%--<iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/background.html" frameborder="0"></iframe>--%>
-
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container">

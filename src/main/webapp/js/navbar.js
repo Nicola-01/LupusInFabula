@@ -31,23 +31,36 @@ function loadTheme() {
     // Get the theme from the cookie
     const theme = getCookie("theme");
 
+    let themeToSet
+
     // Set the theme based on the cookie value or system preference
     if (theme === "light" || theme === "dark")
-        document.body.setAttribute("data-bs-theme", theme);
+        themeToSet = theme;
     else {
         // If theme is "dynamic" or invalid, set theme based on system preference
         if (window.matchMedia("(prefers-color-scheme: dark)").matches)
-            document.body.setAttribute("data-bs-theme", "dark");
+            themeToSet = "dark";
         else
-            document.body.setAttribute("data-bs-theme", "light");
+            themeToSet = "light";
     }
 
     // Dynamically change the theme based on game phase if theme is "dynamic" and page is in village section
     if (theme === "dynamic" && window.location.href.includes("/lupus/village/") && document.getElementById("gameStatus") !== null) {
         if (document.getElementById("gameStatus").textContent.toLocaleLowerCase().includes("night"))
-            document.body.setAttribute("data-bs-theme", "dark");
+            themeToSet = "dark";
         else
-            document.body.setAttribute("data-bs-theme", "light");
+            themeToSet = "light";
+    }
+
+    document.body.setAttribute("data-bs-theme", themeToSet);
+
+    const iframe = document.getElementById('background');
+    console.log(iframe)
+    console.log(themeToSet)
+
+    if (iframe !== null) {
+        const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+        innerDoc.body.setAttribute("data-bs-theme", themeToSet);
     }
 
     // Set the "active" class for the selected theme in the theme dropdown menu

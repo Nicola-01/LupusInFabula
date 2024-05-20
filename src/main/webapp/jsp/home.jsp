@@ -10,6 +10,9 @@
     <c:import url="/jsp/include/head.jsp"/>
 </head>
 <body>
+
+<iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/background.html" class="background-iframe" frameborder="0"></iframe>
+
 <jsp:include page="include/navbar.jsp"/>
 <main>
     <p class="my-2">

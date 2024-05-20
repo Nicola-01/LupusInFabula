@@ -10,10 +10,13 @@ h2:not(#players h2):not(#friends h2) {
     margin-bottom: 20px;
 }
 
+#players, #friends{
+    background-color: var(--bs-tertiary-bg);
+}
+
 /*tables*/
 #players_tb, #friends_tb {
     overflow-y: auto;
-    background-color: var(--bs-tertiary-bg);
 }
 
 .playersTableContainer, .friendsTableContainer {
