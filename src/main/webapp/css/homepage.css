@@ -22,7 +22,7 @@ body, html {
     border: none;
 }
 
-main{
+main {
     position: relative;
     z-index: 1; /* Ensure it is above the background */
 }
@@ -97,4 +97,10 @@ main {
     background-color: #f8f8f8;
     border-radius: 8px;
     padding: 20px;
+}
+
+footer {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
 }

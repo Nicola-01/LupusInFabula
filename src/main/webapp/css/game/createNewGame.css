@@ -12,6 +12,9 @@ h2:not(#players h2):not(#friends h2) {
 
 #players, #friends{
     background-color: var(--bs-tertiary-bg);
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
 }
 
 /*tables*/

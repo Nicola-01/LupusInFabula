@@ -32,11 +32,11 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-10 col-xl-8 p-2 p-2 m-auto row">
-            <div class="col-6">
-                <h2 id="gameStatus"></h2>
+        <div class="col-lg-10 col-xl-8 p-2 m-auto row">
+            <div class="col-6 p-0">
+                <h1 id="gameStatus"></h1>
             </div>
-            <div class="col-6">
+            <div class="col-6 p-0">
                 <div class="d-flex justify-content-end">
                     <button id="copyLink" onclick="copyGameLink()">
                     <span style="width: 150px;">
@@ -66,8 +66,14 @@
     </c:choose>
 
     <div class="row">
-        <div id="playersStatus" class="column row col-md-6 p-2"></div>
-        <div id="gameLog" class="column col-md-6 p-2"></div>
+        <div id="playersStatusExternal" class="col-md-6 p-1">
+            <h2 style="height: 35px;">HABITANTS STATUS</h2>
+            <div id="playersStatus" class="row p-2"></div>
+        </div>
+        <div id="gameLogExternal" class="col-md-6 p-1">
+            <h2 style="height: 35px;">VILLAGE LOG</h2>
+            <div id="gameLog" class="row p-2"></div>
+        </div>
     </div>
 
 </div>

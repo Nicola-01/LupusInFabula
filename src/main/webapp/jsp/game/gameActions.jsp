@@ -4,6 +4,7 @@
 
 <div class="row">
     <div class="col-lg-10 col-xl-8 p-2 m-auto">
+        <h2>HABITANTS ACTIONS</h2>
         <div id="gameActions"></div>
     </div>
 </div>

@@ -442,10 +442,10 @@ function fillNightActions(list) {
     let goodDiv = document.createElement("div");
     let vicStealDiv = document.createElement("div");
 
-    evilDiv.classList.add("evilRoles");
-    neutralDiv.classList.add("neutralRoles");
-    goodDiv.classList.add("goodRoles");
-    vicStealDiv.classList.add("victoryStealerRoles");
+    evilDiv.classList.add("evilRoles", "mt-0");
+    neutralDiv.classList.add("neutralRoles", "mt-0");
+    goodDiv.classList.add("goodRoles", "mt-0");
+    vicStealDiv.classList.add("victoryStealerRoles", "mt-0");
 
     let designatedWolfDiv = document.createElement("div");
     designatedWolfDiv.id = "designatedWolfDiv";

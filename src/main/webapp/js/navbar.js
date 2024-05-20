@@ -55,15 +55,15 @@ function loadTheme() {
     document.body.setAttribute("data-bs-theme", themeToSet);
 
     const iframe = document.getElementById('background');
-    if(iframe){
+    if (iframe) {
         const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
         innerDoc.body.setAttribute("data-bs-theme", themeToSet);
-    }
 
-    iframe.onload = function () {
-        const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
-        if (innerDoc) innerDoc.body.setAttribute("data-bs-theme", themeToSet);
-    };
+        iframe.onload = function () {
+            const innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+            if (innerDoc) innerDoc.body.setAttribute("data-bs-theme", themeToSet);
+        };
+    }
 
     // Set the "active" class for the selected theme in the theme dropdown menu
     const elements = document.querySelectorAll("#theme .dropdown-item");

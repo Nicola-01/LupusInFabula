@@ -139,7 +139,7 @@ select:disabled, select:disabled ~ label {
 .goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles,
 .votes, .samDiv, .plagueDiv {
     padding: 1em;
-    margin: 1em 0;
+    margin: 0 0 1em 0;
 }
 
 .votes {

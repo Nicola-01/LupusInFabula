@@ -74,13 +74,13 @@ window.addEventListener('resize', handleResize);
  */
 function handleResize() {
     // Calculate the maximum height based on the width of the game log element
-    let maxHeight = document.getElementById("gameLog").getBoundingClientRect().width + "px";
+    let maxHeight = (document.getElementById("gameLog").getBoundingClientRect().width + 35 + 8) + "px"; // plus the h2 text and margin
 
     // Set the height of the players status element to match the maximum height
-    document.getElementById("playersStatus").style.height = maxHeight;
+    document.getElementById("playersStatusExternal").style.height = maxHeight;
 
     // Set the maximum height of the game log element
-    document.getElementById("gameLog").style.maxHeight = maxHeight;
+    document.getElementById("gameLogExternal").style.height = maxHeight;
 
     // Fix circle buttons if the number of player roles is within the threshold
     if (playerRole.length <= maxPlayersforSircularButtons) {

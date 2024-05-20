@@ -6,7 +6,6 @@
 }
 
 .navbar {
-    margin-bottom: 2em;
     background-color: var(--nabbar-bg);
     color: var(--text-color);
 }

@@ -10,7 +10,7 @@
 <%--    <h1>Lupus in Fabula</h1>--%>
 <%--</header>--%>
 
-<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 sticky-top">
+<nav class="navbar navbar-expand-md shadow p-0 px-lg-3 py-lg-2 sticky-top mb-4">
 
     <a class="d-flex w-25 order px-3 py-2 p-lg-0 navbar-brand" href="<c:url value="/jsp/home.jsp"/>">
         <svg xmlns="http://www.w3.org/2000/svg" width="43" height="40" viewBox="0 0 42 40">

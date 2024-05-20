@@ -22,45 +22,50 @@
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div class="container">
+    <h1>SELECT THE HABITANTS</h1>
     <div class="row">
-        <div id="players" class="column col-sm-12 col-md-6 p-2 pb-5">
-            <h2>PLAYERS IN GAME</h2>
-            <div class="playersTableContainer">
-                <table id="players_tb" class="table table-striped mb-0">
-                    <thead class="sticky-top top-0">
-                    <tr>
-                        <th style="width:10%">Order</th>
-                        <th style="width:60%">Username</th>
-                        <th style="width:15%">Available</th>
-                        <th style="width:15%">Remove</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <div class="col-sm-12 col-md-6 p-1">
+            <div id="players" class="p-2 mb-5">
+                <h3 class="text-center my-2">HABITANTS IN GAME</h3>
+                <div class="playersTableContainer">
+                    <table id="players_tb" class="table table-striped mb-0">
+                        <thead class="sticky-top top-0">
+                        <tr>
+                            <th style="width:10%">Order</th>
+                            <th style="width:60%">Username</th>
+                            <th style="width:15%">Available</th>
+                            <th style="width:15%">Remove</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <div id="friends" class="column col-sm-12 col-md-6 p-2 pb-5" style="position: relative;">
-            <h2>YOUR FRIENDS</h2>
-            <div class="friendsTableContainer">
-                <table id="friends_tb" class="table table-striped mb-0">
-                    <thead class="sticky-top top-0">
-                    <tr>
-                        <th style="width:60%">Username</th>
-                        <th style="width:20%">Available</th>
-                        <th>Add</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+        <div class="col-sm-12 col-md-6 p-1 position-relative">
+            <div id="friends" class="p-2 mb-5">
+                <h3 class="text-center my-2">YOUR FRIENDS</h3>
+                <div class="friendsTableContainer">
+                    <table id="friends_tb" class="table table-striped mb-0">
+                        <thead class="sticky-top top-0">
+                        <tr>
+                            <th style="width:60%">Username</th>
+                            <th style="width:20%">Available</th>
+                            <th>Add</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <br>
+                <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
             </div>
-            <br>
-            <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
         </div>
 
     </div>
-    <br>
+    <h1 class="mt-4">SELECT THE ROLES</h1>
     <div class="row">
         <div class="col-sm-12 col-md-6 col-lg-3 p-1">
             <div id="goodRoles" class="goodRoles p-3">

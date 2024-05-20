@@ -7,11 +7,6 @@ body {
     /*transition: color 0.3s ease, background-color 0.3s ease;*/
 }
 
-.column {
-    border: 1px solid #ccc;
-}
-
-
 /*TABLE*/
 
 table {
@@ -20,7 +15,6 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd !important;
     padding: 3px !important;
     text-align: center;
     vertical-align: middle;
