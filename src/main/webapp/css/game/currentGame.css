@@ -80,3 +80,28 @@
     align-items: center;
     text-align: center;
 }
+
+#playerRole
+{
+    font-size: 2em;
+    text-align: center;
+}
+
+#playerImage
+{
+    width: 100%;
+}
+
+@media (min-width: 768px)
+{
+    #playerImage {
+        width: 75%;
+    }
+}
+
+@media (min-width: 992px)
+{
+    #playerImage {
+        width: 50%;
+    }
+}
