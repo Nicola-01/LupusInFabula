@@ -171,6 +171,7 @@ function enableButtons() {
                     disable = (role_targets[i].value === "")
             }
         }
+
     } else { // day
 
         let samDivDisplay = "none";
@@ -198,8 +199,10 @@ function enableButtons() {
                     disable = false
                     break;
                 } else {
-                    if (i + 1 < maxPhase)
+                    if (i + 1 < maxPhase){
                         document.getElementById("voteRadio_" + (i + 1)).disabled = false
+                        populateWarningMessage("Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
+                    }
                     disable = true
                 }
             } else {
@@ -918,7 +921,7 @@ function actionsResponse(req) {
                     if (deadPlayersList.length === 0)
                         deadPlayers = "No deaths during the night."
                     else {
-                        deadPlayers = "Deaths of the night:<br>";
+                        deadPlayers = "Deaths of the night: ";
                         for (let i = 0; i < deadPlayersList.length; i++)
                             deadPlayers += deadPlayersList[i].player + ", ";
                         deadPlayers = deadPlayers.substring(0, deadPlayers.length - 2);
@@ -955,7 +958,7 @@ function actionsResponse(req) {
                 }
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(actionResults)
-                populateInfoMessage("Results of the " + phase, deadPlayers + phaseInfo)
+                populateInfoMessage("Results of the " + phase + "!", deadPlayers + phaseInfo)
                 // location.reload()
                 elementsReload()
             }

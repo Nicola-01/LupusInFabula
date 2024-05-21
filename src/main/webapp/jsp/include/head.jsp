@@ -18,8 +18,7 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
-<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/infoMessage.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/message.css">
 
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/lupusColors.css">
@@ -29,3 +28,4 @@
 
 <!-- Utils JS -->
 <script src="${pageContext.request.contextPath}/js/utils.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/message.js"></script>

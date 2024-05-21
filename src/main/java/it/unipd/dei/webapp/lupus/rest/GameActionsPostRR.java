@@ -223,7 +223,11 @@ public class GameActionsPostRR extends AbstractRR {
             }
 
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Unable to serve the REST request.", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            Message m = new Message("Unable to serve the REST request.", ec.getErrorCode(), e.getMessage());
+            m.toJSON(res.getOutputStream());
         } finally {
             LogContext.removeIPAddress();
             LogContext.removeUser();

@@ -8,6 +8,7 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.postgresql.shaded.com.ongres.scram.common.message.ServerFinalMessage;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -55,8 +56,16 @@ public class GameStatusRR extends AbstractRR {
         try {
             LOGGER.info("Get status of game " + gameID);
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-            res.setStatus(HttpServletResponse.SC_OK);
-            game.toJSON(res.getOutputStream());
+            if (game != null) {
+                res.setStatus(HttpServletResponse.SC_OK);
+                game.toJSON(res.getOutputStream());
+            }
+            else{
+                ErrorCode ec = ErrorCode.GAME_NOT_FOUND;
+                Message m = new Message("Invalid game", ec.getErrorCode(),"The game doesn't exists.");
+                res.setStatus(ec.getHTTPCode());
+                m.toJSON(res.getOutputStream());
+            }
 
         } catch (SQLException ex) {
             LOGGER.error("Cannot return game info: unexpected database error.", ex);

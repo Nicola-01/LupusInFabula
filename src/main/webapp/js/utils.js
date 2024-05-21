@@ -189,7 +189,7 @@ function getMessage(req) {
         let message = {}
         let jsonMSG = jsonResponse['message']
         message.message = jsonMSG.message;
-        if (message.hasOwnProperty('error-code')) {
+        if (jsonMSG.hasOwnProperty('error-code')) {
             message.errorCode = jsonMSG['error-code'];
             message.errorDetails = jsonMSG['error-details'];
         }

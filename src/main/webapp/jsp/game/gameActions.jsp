@@ -9,6 +9,7 @@
     </div>
 </div>
 
+<c:import url="/jsp/utils/warningMessage.jsp"/>
 <c:import url="/jsp/utils/errorMessage.jsp"/>
 <div class="button-container">
     <button id="sendActions">

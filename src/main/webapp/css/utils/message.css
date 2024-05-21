@@ -1,0 +1,96 @@
+.message {
+    border-radius: 20px;
+    border-width: 1px;
+    border-style: solid;
+    width: 70%;
+    margin: 1em auto;
+    padding: 15px;
+}
+
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.closebtn:hover {
+    color: #444444;
+}
+
+/*.messageDetails{}*/
+
+.showMore {
+    font-family: Helvetica, "sans-serif";
+    cursor: pointer;
+    font-weight: 700;
+    transition: all .2s;
+    padding: 5px 10px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    display: flex;
+    align-items: center;
+    font-size: 15px;
+    margin-bottom: 1em;
+    width: 105px;
+}
+
+.showMore:active {
+    transform: scale(0.95);
+}
+
+.moreDetails {
+    margin: 0;
+}
+
+/*ERROR MESSAGE POPUP*/
+
+#errorMessage{
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
+    border-color: var(--bs-danger-border-subtle);
+}
+
+#errorShowMore {
+    background: var(--bs-danger-border-subtle);
+}
+
+/*INFO MESSAGE POPUP*/
+
+#infoMessage {
+    background: var(--bs-info-bg-subtle);
+    color: var(--bs-info-text-emphasis);
+    border-color: var(--bs-info-border-subtle);
+}
+
+#infoShowMore {
+    background: var(--bs-info-border-subtle);
+}
+
+/*WARNING MESSAGE POPUP*/
+
+#warningMessage {
+    background: var(--bs-warning-bg-subtle);
+    color: var(--bs-warning-text-emphasis);
+    border-color: var(--bs-warning-border-subtle);
+}
+
+#warningShowMore {
+    background: var(--bs-warning-border-subtle);
+}
+
+/*SUCCESS POPUP*/
+
+#successMessage {
+    background: var(--bs-success-bg-subtle);
+    color: var(--bs-success-text-emphasis);
+    border-color: var(--bs-success-border-subtle);
+}
+
+#successShowMore {
+    background: var(--bs-success-border-subtle);
+}
