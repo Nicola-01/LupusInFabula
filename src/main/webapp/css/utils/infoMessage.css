@@ -1,10 +1,10 @@
 #info{
-    background: #07a0f4;
-    color: white;
+    background: var(--bs-info-bg-subtle);
+    color: var(--bs-info-text-emphasis);
     border-radius: 20px;
     border-width: 2px;
     border-style: solid;
-    border-color: #005267;
+    border-color: var(--bs-info-border-subtle);
     width: 70%;
     margin: 1em auto;
     padding: 15px;
@@ -32,16 +32,12 @@
     transition: all .2s;
     padding: 5px 10px;;
     border-radius: 100px;
-    background: #cfef00;
+    background: var(--bs-info-border-subtle);
     border: 1px solid transparent;
     display: flex;
     align-items: center;
     font-size: 15px;
     margin-bottom: 1em;
-}
-
-#infoShowMore:hover {
-    background: #c4e201;
 }
 
 #infoShowMore > svg {

@@ -560,7 +560,7 @@ function fillDayActions(list) {
     let samDiv = document.createElement("div");
     let plagueDiv = document.createElement("div");
 
-    sectionChange.classList.add("sections", "radio-inputs");
+    sectionChange.classList.add("sections", "radio-inputs", "mb-2");
     sectionChange.innerHTML =
         "  <label class='radio' for='voteRadio_0'>" +
         "    <input type='radio' name='radio' id='voteRadio_0' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +

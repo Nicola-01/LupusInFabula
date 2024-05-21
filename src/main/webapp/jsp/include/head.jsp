@@ -18,6 +18,9 @@
 
 <!-- Custom CSS -->
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/infoMessage.css">
+
 
 <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/lupusColors.css">
 

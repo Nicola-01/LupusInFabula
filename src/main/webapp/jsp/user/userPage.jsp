@@ -20,7 +20,6 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/errorMessage.css">
 </head>
 
 <body>
@@ -55,7 +54,6 @@
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
-<script src="${pageContext.request.contextPath}/js/utils/errorMessage.js"></script>
 
 </body>
 </html>

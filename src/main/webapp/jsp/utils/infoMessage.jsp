@@ -2,7 +2,7 @@
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
     <strong id="infoTitle"></strong>
     <p id="infoDetails"></p>
-    <button id="infoShowMore" onclick="showMoreInfo()">
+    <button id="infoShowMore" class="mb-0" onclick="showMoreInfo()">
         <span id="infoShowMoreText">Show more</span>
 <%--        <svg width="34" height="34" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">--%>
 <%--            <circle cx="37" cy="37" r="35.5" stroke="black" stroke-width="3"></circle>--%>
@@ -12,3 +12,4 @@
     </button>
     <p id="infoMoreDetails" style="display: none"></p>
 </div>
+<script src="${pageContext.request.contextPath}/js/utils/infoMessage.js"></script>

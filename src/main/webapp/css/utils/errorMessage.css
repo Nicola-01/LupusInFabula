@@ -1,10 +1,10 @@
 #message{
-    background: #f44336;
-    color: white;
+    background: var(--bs-danger-bg-subtle);
+    color: var(--bs-danger-text-emphasis);
     border-radius: 20px;
     border-width: 2px;
     border-style: solid;
-    border-color: #470909;
+    border-color: var(--bs-danger-border-subtle);
     width: 70%;
     margin: 1em auto;
     padding: 15px;
@@ -32,16 +32,12 @@
     transition: all .2s;
     padding: 5px 10px;;
     border-radius: 100px;
-    background: #cfef00;
+    background: var(--bs-danger-border-subtle);
     border: 1px solid transparent;
     display: flex;
     align-items: center;
     font-size: 15px;
     margin-bottom: 1em;
-}
-
-#showMore:hover {
-    background: #c4e201;
 }
 
 #showMore > svg {
