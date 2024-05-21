@@ -189,12 +189,13 @@ function getMessage(req) {
         let message = {}
         let jsonMSG = jsonResponse['message']
         message.message = jsonMSG.message;
-        message.errorCode = jsonMSG['error-code'];
-        message.errorDetails = jsonMSG['error-details'];
+        if (message.hasOwnProperty('error-code')) {
+            message.errorCode = jsonMSG['error-code'];
+            message.errorDetails = jsonMSG['error-details'];
+        }
         return message;
     }
     return null;
-
 }
 
 function capitalizeFirstLetter(string) {

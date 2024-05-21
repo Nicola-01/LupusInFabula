@@ -3,6 +3,8 @@
 
 <c:if test="${not empty sessionScope.user}">
 
+    <c:import url="/jsp/utils/infoMessage.jsp"/>
+
     <form id="updateForm">
         <div class="form-group">
             <label class="control-label">Username</label>
@@ -17,8 +19,7 @@
         <div class="form-group">
             <label class="control-label">Current E-mail</label>
             <div class="form-input">
-                <input id="currentEmail" type="text" name="CurrentEmail" class="form-control" placeholder="Current E-mail"
-                       value="${sessionScope.user.getEmail()}">
+                <input id="currentEmail" type="text" name="CurrentEmail" class="form-control" placeholder="Current E-mail">
                     <%--        <span class="small-error email-too-short none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo breve.</span>--%>
                     <%--        <span class="small-error email-too-long none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo lunga.</span>--%>
             </div>
@@ -65,7 +66,7 @@
         <div class="form-group">
             <label class="control-label">Repeat New Password</label>
             <div class="form-input">
-                <input type="password" name="confirmPassword" id="confirm-password" class="form-control"
+                <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control"
                        placeholder="Repeat New Password">
                     <%--            <span class="small-error password-not-equal none" style="position: relative;top: 5px;color: red;">Le password inserite non corrispondono.</span>--%>
                     <%--            <p class="help-block">Inserisci nuovamente la password se vuoi modificarla.</p>--%>
@@ -75,7 +76,7 @@
         </div>
         <br>
 
-        <button class="cssbuttons-io" id="updateButton">
+        <button type="button" class="cssbuttons-io" id="updateButton">
             <span>Update Credentials</span>
         </button>
     </form>

@@ -278,21 +278,6 @@ function gameCreation(req) {
                     // remove ", " from errorCodes and "<br>" form errorDetails
                     populateErrorMessage(msgs, errorCodes.substring(2), errorDetails.substring(4));
                 }
-
-            }
-
-            // console.log(message.message);
-            // console.log(message.errorCode);
-            // console.log(message.errorDetails);
-
-            if (req.status === HTTP_STATUS_CONFLICT) {
-
-            } else if (req.status === HTTP_STATUS_NOT_FOUND) {
-
-            } else if (req.status === HTTP_STATUS_BAD_REQUEST) {
-
-            } else if (req.status === HTTP_STATUS_INTERNAL_SERVER_ERROR) {
-
             }
         }
     }
