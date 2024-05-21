@@ -9,6 +9,19 @@ function toggleCard()
     card.classList.toggle("is-flipped");
     var playerRole = document.getElementById("playerRole");
     playerRole.classList.toggle("blurred");
+
+    var eyeIcon = document.getElementById("eyeIcon");
+
+    if (!eyeIcon.classList.contains("fa-eye"))
+    {
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+    }
+    else
+    {
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+    }
 }
 
 
@@ -34,6 +47,7 @@ function fillPlayersStatus(req) {
                     {
                         var playerRoleElement = document.getElementById("playerRole");
                         playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
+
                         var frontCard = document.querySelector(".card-front");
                         frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
                         //var playerImageElement = document.getElementById("playerImage");

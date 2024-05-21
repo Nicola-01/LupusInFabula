@@ -36,8 +36,10 @@
             <div class="col-4 p-0">
                 <h2 id="gameStatus"></h2>
             </div>
-            <div class="col-4 p-0">
-                <button id="toggleButton" style="display: none;" onclick="toggleCard()">Hide role</button>
+            <div class="col-4 p-0 d-flex justify-content-center">
+                <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;" onclick="toggleCard()">
+                    <i id="eyeIcon" class="fas fa-eye"></i>
+                </button>
             </div>
             <div class="col-4 p-0">
                 <div class="d-flex justify-content-end">

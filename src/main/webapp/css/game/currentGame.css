@@ -141,7 +141,7 @@
 .card-back {
     background-size: cover;
     background-position: center;
-    background-image: url('../../media/cards/card_backing.png');
+    background-image: url('../../media/cards/card_back/fantasy1.png');
     transform: rotateY(180deg);
 }
 
