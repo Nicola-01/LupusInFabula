@@ -888,9 +888,10 @@ public class GameActionsPostRR extends AbstractRR {
                         for (GameAction gameAction : gameActions) {
                             if (gameAction.getTarget().equals(target)
                                     && (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
-                                    || gameAction.getRole().equals(GameRoleAction.DORKY.getName())
-                                    || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
-                                    || gameAction.getRole().equals(GameRoleAction.PUPPY.getName()))) {
+                                            || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
+                                                    && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+                                            || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                                            || gameAction.getRole().equals(GameRoleAction.PUPPY.getName()))) {
                                 wolf = gameAction.getPlayer();
                             }
                         }
@@ -899,7 +900,7 @@ public class GameActionsPostRR extends AbstractRR {
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())) {
 
-                            LOGGER.info("The target " + target + " has been killed by the wolves during the night");
+                            LOGGER.info("The target " + target + " has been killed by the wolves (" + wolf + ") during the night");
                             //LOGGER.info("-------------------------> Wolf: " + wolf + " " + "Target: " + target);
                             insertActions.add(new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target));
                             //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
@@ -923,7 +924,7 @@ public class GameActionsPostRR extends AbstractRR {
 
                             String dorky = getPlayerByRole(gameActions, GameRoleAction.DORKY.getName()).getPlayer();
                             //add the action point to action table since the dorky is not a wolf
-                            LOGGER.info("The target " + target + " has been pointed by the dorky");
+                            LOGGER.info("The target " + target + " has been pointed by the dorky " + dorky);
                             insertActions.add(new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target));
                             //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
                         }
@@ -982,10 +983,10 @@ public class GameActionsPostRR extends AbstractRR {
                         for (GameAction gameAction : gameActions)
                             if (gameAction.getTarget().equals(target)
                                     && (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
-                                    || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
-                                    || gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
-                                    || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
-                                            && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())))
+                                            || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                                            || gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
+                                            || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
+                                                    && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())))
                                 wolf = gameAction.getPlayer();
 
                         LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
