@@ -104,8 +104,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
  * A generic GET XMLHTTPRequest.
  *
  * @param url the url of the request.
- * @param callback the function to invoke when the servlet answer.
- * @returns {boolean} false if the request did not created.
+ * @param callback the function to invoke when the servlet answers.
+ * @returns {boolean} false if the request was not created.
  */
 function genericGETRequest(url, callback) {
     var httpRequest = new XMLHttpRequest();

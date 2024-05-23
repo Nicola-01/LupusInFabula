@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     var username = document.getElementById('username').innerText;
-   // var name = request.getAttribute("player");
-    console.log(username);
+
+
+    // console.log(username);
     loadLogs(username);
     loadStatics(username);
 });
@@ -12,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
  */
 function loadLogs(username) {
     genericGETRequest(contextPath + "user/" + username + "/logs", getLogs)
-
-//    genericGETRequest(contextPath + "user/log_player/logs", getLogs)
 }
 
 function loadStatics(username) {
@@ -23,6 +22,7 @@ function loadStatics(username) {
 
 function getLogs(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
 
             var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
@@ -98,16 +98,56 @@ function getLogs(req) {
                 cell6.innerHTML = '<a href="' + link + '" target="_blank">View logs</a>';
                 //cell6.innerHTML = "Not working now";
             }
+
+            if (list.length === 0) {
+                row = tbody.insertRow();
+                row.classList.add("item");
+
+                var cell = row.insertCell(0);
+                cell.colSpan = 7;
+                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+            }
         }
     }
 }
 
+function hasError(req) {
+    return req.status !== HTTP_STATUS_OK;
+}
+
+function handleError(req) {
+
+    const errorMessageContainer = document.getElementById('error-message');
+
+    if (req.status === HTTP_STATUS_NOT_FOUND) {
+        errorMessageContainer.innerHTML = '<h1 class="not_found">User Not Existing</h1>';
+        alert("User Not Existing");
+    } else if (req.status === HTTP_STATUS_FORBIDDEN) {
+        errorMessageContainer.innerHTML = '<h1 class="not_logged">Please login to check the statistics</h1>';
+        alert("Not logged");
+    } else {
+        errorMessageContainer.innerHTML = '<h1 class="unexpected_error">An unexpected error occurred. Please try again later.</h1>';
+        alert("Unexpected error");
+    }
+    errorMessageContainer.style.display = 'block';
+}
+
+function handleHttpStatus(req){
+    if (req.status === HTTP_STATUS_OK){
+        const back_con = document.getElementById('back_container');
+        back_con.style.display = 'block';
+    }
+    else{
+        handleError(req);
+    }
+}
 
 function getStatsRole(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var list = JSON.parse(req.responseText)["resource-list"];
-
+            console.log(list);
             if (list == null)
                 alert("User Not Existing");
 
@@ -169,9 +209,12 @@ function getStatsRole(req) {
 
             if (list.length !== 0) {
                 completePieChart(pairs);
-            }
-            else{
-
+            } else {
+                row = tbody.insertRow();
+                row.classList.add("item");
+                var cell = row.insertCell(0);
+                cell.colSpan = 5;
+                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
             }
         }
     }
@@ -180,8 +223,13 @@ function getStatsRole(req) {
 function completePieChart(pairs) {
 
     const ctx = document.getElementById('myChart');
-    const names = pairs.map(pair => pair[0]);
-    const rates = pairs.map(pair => pair[1]);
+    let names = pairs.map(pair => pair[0]);
+    let rates = pairs.map(pair => pair[1]);
+
+    if(pairs.length === 0){
+        names = ["Not played"];
+        rates = [0];
+    }
 
 
     new Chart(ctx, {
@@ -200,6 +248,7 @@ function completePieChart(pairs) {
 
 function getGeneralStats(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var table = document.getElementById("general_stats");
             //var par = document.getElementById("gen_stats");

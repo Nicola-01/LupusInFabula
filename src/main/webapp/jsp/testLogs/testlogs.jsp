@@ -26,88 +26,98 @@
 <div id="username" style="display: none;"><%= request.getAttribute("player")%>
 </div>
 
-<c:choose>
-    <c:when test="${empty sessionScope.user}">
-        <h1 class="not_logged">Please login to check the statistics</h1>
-    </c:when>
+<div id="error-message" style="display: none;"></div>
 
-    <c:otherwise>
+<%--<c:choose>--%>
+<%--    <c:when test="${empty sessionScope.user}">--%>
+<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
+<%--    </c:when>--%>
 
-        <h1>Statistics and history of
-            <b>
-                    <%--                <%= request.getAttribute("player") %>--%>
-                <%= request.getAttribute("player") %>
+<%--    <c:when test="">--%>
+<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
+<%--    </c:when>--%>
 
-            </b>
-        </h1>
+<%--    <c:otherwise>--%>
+
+
+<%--</c:otherwise>--%>
+
+<%--</c:choose>--%>
+
+<div class="background_container" id="back_container" style="display: none">
+    <h1>Statistics and history of
+        <b>
+            <%--                <%= request.getAttribute("player") %>--%>
+            <%= request.getAttribute("player") %>
+
+        </b>
+    </h1>
+
+    <div class="container">
+
+        <h1>Statistics</h1>
 
         <div class="container">
+            <div class="row">
+                <%--        General statistics--%>
+                <div class="col-12 col-md-12 col-lg-4">
+                    <%--            <p id=gen_stats></p>--%>
+                    <table id="general_stats" class="general_statics">
+                        <%--                style="border-style: hidden;"--%>
+                    </table>
+                </div>
 
-            <h1>Statistics</h1>
+                <%--        Statistics for role--%>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <table class="sortable" id="roles_table">
+                        <tr>
+                            <th>Role</th>
+                            <th>Times</th>
+                            <th>Wins</th>
+                            <th>Loss</th>
+                            <th>Rate
+                                <a id="info_rate"
+                                   title="The percentage of games played as over the total played">&#9432</a>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
 
-            <div class="container">
-                <div class="row">
-                        <%--        General statistics--%>
-                    <div class="col-12 col-md-12 col-lg-4">
-                            <%--            <p id=gen_stats></p>--%>
-                        <table id="general_stats" class="general_statics">
-                                <%--                style="border-style: hidden;"--%>
-                        </table>
-                    </div>
-                        <%--        Statistics for role--%>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <table class="sortable" id="roles_table">
-                            <tr>
-                                <th>Role</th>
-                                <th>Times</th>
-                                <th>Wins</th>
-                                <th>Loss</th>
-                                <th>Rate
-                                    <a id="info_rate"
-                                       title="The percentage of games played as over the total played">&#9432</a>
-                                </th>
-                            </tr>
-                        </table>
-                    </div>
-
-                        <%--    Pie chart for roles--%>
-                    <div class="col-12 col-md-6 col-lg-4">
-                        <canvas id="myChart"></canvas>
-                    </div>
+                <%--    Pie chart for roles--%>
+                <div class="col-12 col-md-6 col-lg-4">
+                    <canvas id="myChart"></canvas>
                 </div>
             </div>
         </div>
+    </div>
 
-        <br>
+    <br>
+
+    <div class="container">
+        <h1>Game Logs</h1>
+
 
         <div class="container">
-            <h1>Game Logs</h1>
+
+            <table class="sortable" id="logs_table">
 
 
-            <div class="container">
+                <tr>
+                    <th>GameId</th>
+                    <th>Date and time</th>
+                    <th>Duration</th>
+                    <th>Number of rounds</th>
+                    <th>Role played</th>
+                    <th>Outcome</th>
+                    <th>View logs</th>
+                </tr>
 
-                <table class="sortable" id="logs_table">
+            </table>
 
-
-                    <tr>
-                        <th>GameId</th>
-                        <th>Date and time</th>
-                        <th>Duration</th>
-                        <th>Number of rounds</th>
-                        <th>Role played</th>
-                        <th>Outcome</th>
-                        <th>View logs</th>
-                    </tr>
-
-                </table>
-
-            </div>
         </div>
+    </div>
+</div>
 
-
-    </c:otherwise>
-
-</c:choose>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
