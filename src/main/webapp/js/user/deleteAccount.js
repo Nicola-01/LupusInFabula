@@ -1,23 +1,23 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("updateButton").addEventListener("click", sendUpdate);
+    document.getElementById("deleteButton").addEventListener("click", sendUpdate);
 });
 
 function sendUpdate() {
 
-    const form = document.getElementById('updateForm');
+    const form = document.getElementById('deleteForm');
     const formData = new FormData(form);
 
     const json = {
         "userUpdate": {
-            "oldEmail": formData.get('CurrentEmail'),
-            "newEmail": formData.get('NewEmail'),
-            "oldPassword": formData.get('CurrentPassword'),
-            "newPassword": formData.get('NewPassword'),
-            "repeatNewPassword": formData.get('ConfirmPassword')
+            "oldEmail": formData.get('email'),
+            "newEmail": '',
+            "oldPassword": formData.get('password'),
+            "newPassword": '',
+            "repeatNewPassword": ''
         }
     };
 
-    genericPUTRequest(contextPath + "user/me", JSON.stringify(json), updateStatus);
+    genericDELETERequest(contextPath + "user/me", JSON.stringify(json), updateStatus);
     form.reset();
 
 }
@@ -27,7 +27,7 @@ function updateStatus(req) {
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            populateInfoMessage("UPDATE DONE", message.message);
+            populateInfoMessage("DELETE DONE", message.message);
         } else {
             if (message != null)
                 populateErrorMessage(message.message, message.errorCode, message.errorDetails);
@@ -52,4 +52,5 @@ function updateStatus(req) {
             }
         }
     }
+
 }

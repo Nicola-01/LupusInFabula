@@ -15,6 +15,7 @@
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/updateCredentials.css">
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/deleteAccount.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
@@ -38,6 +39,11 @@
             <input type="radio" name="radio" value="changeCredentials">
             <span class="name">Change Credentials</span>
         </label>
+
+        <label class="radio">
+            <input type="radio" name="radio" value="deleteAccount">
+            <span class="name">Delete Account</span>
+        </label>
     </div>
 
     <div class="box" id="contentBox">
@@ -47,12 +53,16 @@
         <div class="row" id="changeCredentialsPage" style="display: none;">
             <jsp:include page="updateCredential.jsp"/>
         </div>
+        <div class="row" id="deleteAccountPage" style="display: none;">
+            <jsp:include page="deleteAccount.jsp"/>
+        </div>
     </div>
 
 </div>
 
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/updateCredentials.js"></script>
+<script src="${pageContext.request.contextPath}/js/user/deleteAccount.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 

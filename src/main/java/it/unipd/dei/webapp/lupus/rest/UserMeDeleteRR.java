@@ -81,7 +81,7 @@ public class UserMeDeleteRR extends AbstractRR {
                     LOGGER.info("User successfully deleted");
                     res.setStatus(HttpServletResponse.SC_OK);
                     m.toJSON(res.getOutputStream());
-                    //req.getRequestDispatcher("/jsp/...").forward(req, res);
+//                    res.sendRedirect(req.getContextPath() + "/logout");
 
                 } else {
 
@@ -91,7 +91,6 @@ public class UserMeDeleteRR extends AbstractRR {
                     m = new Message("User " + username + "not found", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
-                    //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
                 }
 
@@ -103,7 +102,6 @@ public class UserMeDeleteRR extends AbstractRR {
                 Message m = new Message("Password incorrect", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
-                //req.getRequestDispatcher("/jsp/...").forward(req, res);
 
             }
 

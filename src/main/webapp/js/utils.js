@@ -156,6 +156,23 @@ function genericPUTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
+function genericDELETERequest(url, json, callback){
+    var httpRequest = new XMLHttpRequest();
+
+    if (!httpRequest) {
+        alert('Cannot create an XMLHTTP instance');
+        return false;
+    }
+
+    httpRequest.onload = function () {
+        callback(httpRequest)
+    };
+
+    httpRequest.open('DELETE', url);
+    httpRequest.setRequestHeader('Content-Type', 'application/json');
+    httpRequest.send(json);
+}
+
 function isLoggedUser(req) {
     if (req.status === HTTP_STATUS_FORBIDDEN)
         window.location.replace(contextPath + "login")
