@@ -77,7 +77,7 @@
 
     <servlet-mapping>
         <servlet-name>UserpageServlet</servlet-name>
-        <url-pattern>/temp/logs</url-pattern>
+        <url-pattern>/player/*</url-pattern>
     </servlet-mapping>
 
 <!--    finish test area-->

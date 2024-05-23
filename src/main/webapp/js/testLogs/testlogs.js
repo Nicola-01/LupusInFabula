@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     var username = document.getElementById('username').innerText;
+   // var name = request.getAttribute("player");
     console.log(username);
     loadLogs(username);
     loadStatics(username);
@@ -40,7 +41,7 @@ function getLogs(req) {
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
 
-              //  var gameIdLength = log.game_id.toString().length;
+                //  var gameIdLength = log.game_id.toString().length;
 
                 // if (gameIdLength > sizeid) {
                 //     sizeid = gameIdLength;
@@ -86,13 +87,14 @@ function getLogs(req) {
                     else {
                         cell5.innerHTML = "Defeat";
                     }
-                }
-                else{
+                } else {
                     cell5.innerHTML = "-";
                 }
 
                 var cell6 = row.insertCell(6);
-                const link = contextPath + "game/logs/" + log.public_id;
+
+                //http://localhost:8080/lupus/village/{game_id}
+                const link = contextPath + "village/" + log.public_id;
                 cell6.innerHTML = '<a href="' + link + '" target="_blank">View logs</a>';
                 //cell6.innerHTML = "Not working now";
             }
@@ -165,7 +167,12 @@ function getStatsRole(req) {
                 }
             }
 
-            completePieChart(pairs);
+            if (list.length !== 0) {
+                completePieChart(pairs);
+            }
+            else{
+
+            }
         }
     }
 }
@@ -242,7 +249,7 @@ function getGeneralStats(req) {
                 cell0.innerHTML = '<b>' + couple[i][0] + '</b>';
 
                 if (couple[i][0] === "Ratio") {
-                    cell0.innerHTML += '<div id="info_ratio" title="The percentage of games won over the total played">&#9432</div>';
+                    cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
                 }
 
                 var cell1 = row.insertCell(1);

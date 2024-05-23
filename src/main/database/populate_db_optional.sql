@@ -131,7 +131,8 @@ VALUES ('allRoleMaster', 3, 'master', 0, null, null, null),
 
 INSERT INTO Player
 VALUES ('log_player', LOWER('log_player@test.com'), md5('ciao'), CURRENT_DATE),
-       ('log_player2', LOWER('log_player2@test.com'), md5('ciao'), CURRENT_DATE);
+       ('log_player2', LOWER('log_player2@test.com'), md5('ciao'), CURRENT_DATE),
+       ('log_master', LOWER('log_master@test.com'),md5('ciao'), CURRENT_DATE);
 
 INSERT INTO public.game
 VALUES (100, 'log_game_1', now(), '00:10:07', 0),
@@ -148,14 +149,25 @@ VALUES (100, 'log_game_1', now(), '00:10:07', 0),
        (111, 'log_game_12', now(), '00:17:12', 0);
 
 INSERT INTO plays_as_in
-VALUES ('log_player', 101, 'wolf', 1, 0, null, '00:12:00'),
-       ('log_player', 102, 'wolf', 1, 5, null, '00:05:00'),
-       ('log_player', 103, 'farmer', 1, 7, null, '00:07:00'),
-       ('log_player', 104, 'farmer', 1, 9, null, '00:09:00'),
-       ('log_player', 105, 'knight', 1, 1, null, '00:01:00'),
-       ('log_player', 106, 'knight', 1, 1, null, '00:01:00'),
-       ('log_player', 107, 'wolf', 1, 23, null, '00:23:00'),
-       ('log_player', 108, 'seer', 1, 12, null, '00:12:00'),
-       ('log_player', 109, 'master', 0, 1, null, '00:01:00'),
-       ('log_player', 110, 'wolf', 1, 0, null, '00:00:00'),
-       ('log_player', 111, 'farmer', 1, 1, null, '00:01:00');
+VALUES ('log_player', 101, 'wolf', 1, 0, 0, '00:12:00'),
+       ('log_player', 102, 'wolf', 1, 5, 0, '00:05:00'),
+       ('log_player', 103, 'farmer', 1, 7, 0, '00:07:00'),
+       ('log_player', 104, 'farmer', 1, 9, 0, '00:09:00'),
+       ('log_player', 105, 'knight', 1, 1, 0, '00:01:00'),
+       ('log_player', 106, 'knight', 1, 1, 0, '00:01:00'),
+       ('log_player', 107, 'wolf', 1, 23, 0, '00:23:00'),
+       ('log_player', 108, 'seer', 1, 12, 0, '00:12:00'),
+       ('log_player', 109, 'master', 0, 1, 0, '00:01:00'),
+       ('log_player', 110, 'wolf', 1, 0, 0, '00:00:00'),
+       ('log_player', 111, 'farmer', 1, 1, 0, '00:01:00'),
+       ('log_master', 101, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 102, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 103, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 104, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 105, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 106, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 107, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 108, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 110, 'master', 1, 1, 0, '00:01:00'),
+       ('log_master', 111, 'master', 1, 1, 0, '00:01:00');
+
