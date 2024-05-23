@@ -30,7 +30,7 @@
     <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
         <div class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="<c:url value="/home"/>">
+                <a class="nav-link" aria-current="page" href="<c:url value="/home"/>">
                     <%--                    <i class="fa-solid fa-house"></i>--%>
                     Home
                 </a>
