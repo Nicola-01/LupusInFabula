@@ -30,7 +30,7 @@
     <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
         <div class="navbar-nav">
             <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">
+                <a class="nav-link" aria-current="page" href="<c:url value="/jsp/home.jsp"/>">
                     <%--                    <i class="fa-solid fa-house"></i>--%>
                     Home
                 </a>
@@ -55,7 +55,7 @@
             <div class="d-flex d-md-none pb-2 text-center nav-item">
                 <span class="navigation__group">
                     <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico"
-                         alt="Joe Doe Picture">
+                         alt="Profile Picture">
                 </span>
             </div>
         </div>
@@ -97,7 +97,6 @@
                                 <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>
                             </ul>
                         </div>
-
                     </li>
                 </ul>
                 <hr class="divider">

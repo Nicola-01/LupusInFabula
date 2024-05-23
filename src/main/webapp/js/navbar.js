@@ -1,3 +1,34 @@
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to remove 'active' class from all nav-links and add to the clicked one
+    function setActiveNavItem(event) {
+        // Remove 'active' class from all nav-links
+        document.querySelectorAll('.nav-link').forEach(navLink => {
+            navLink.classList.remove('active');
+        });
+
+        // Add 'active' class to the clicked nav-link
+        event.target.classList.add('active');
+    }
+
+    // Attach event listeners to all nav-links
+    document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
+        navLink.addEventListener('click', setActiveNavItem);
+    });
+
+    // Add active class based on current URL
+    const currentPath = window.location.pathname;
+    // Check for Game section paths
+    const gamePaths = ["/rules", "/jsp/game/createNewGame.jsp"];
+    document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
+        if (navLink.getAttribute('href') === currentPath) {
+            navLink.classList.add('active');
+        } else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1])) {
+            document.querySelector('.dropdown-toggle').classList.add('active')
+        }
+    });
+});
+
+
 const profile = document.querySelectorAll('.profile');
 const dropdown = document.querySelector('.dropdown__wrapper');
 
