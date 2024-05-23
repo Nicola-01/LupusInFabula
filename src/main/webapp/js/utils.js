@@ -108,7 +108,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
  * @returns {boolean} false if the request did not created.
  */
 function genericGETRequest(url, callback) {
-    var httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
 
     if (!httpRequest) {
         alert('Cannot create an XMLHTTP instance');
@@ -123,7 +123,7 @@ function genericGETRequest(url, callback) {
 }
 
 function genericPOSTRequest(url, json, callback) {
-    var httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
 
     if (!httpRequest) {
         alert('Cannot create an XMLHTTP instance');
@@ -140,7 +140,7 @@ function genericPOSTRequest(url, json, callback) {
 }
 
 function genericPUTRequest(url, json, callback) {
-    var httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
 
     if (!httpRequest) {
         alert('Cannot create an XMLHTTP instance');

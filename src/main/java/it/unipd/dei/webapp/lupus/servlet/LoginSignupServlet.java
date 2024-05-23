@@ -243,7 +243,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     LogContext.removeUser();
 
                     // after sign up, redirects all to the homepage
-                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/home");
 
                 }
             }
@@ -333,7 +333,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                         session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
 
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
-                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/home");
                 }
             }
             if (m != null) {
