@@ -44,9 +44,11 @@
         </div>
         <br>
 
-        <button type="button" class="cssbuttons-io" id="deleteButton">
-            <span>Delete Account</span>
-        </button>
+        <div class="button-container mb-0">
+            <button type="button" class="gradientButton" id="deleteButton">
+                <span>Delete Account</span>
+            </button>
+        </div>
     </form>
 
 </c:if>

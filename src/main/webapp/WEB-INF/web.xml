@@ -37,11 +37,14 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserDispatcherServlet</servlet-class>
     </servlet>
 
-
-<!--    test area-->
     <servlet>
         <servlet-name>NewGameServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.NewGameServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>HomePageServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomePageServlet</servlet-class>
     </servlet>
 
     <servlet>
@@ -51,12 +54,18 @@
 
     <servlet-mapping>
         <servlet-name>NewGameServlet</servlet-name>
-        <url-pattern>/newGame</url-pattern>
+        <url-pattern>/newVillage</url-pattern>
+        <url-pattern>/newvillage</url-pattern> <!-- case-insensitive -->
     </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>CurrentGameServlet</servlet-name>
         <url-pattern>/village/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>HomePageServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
     </servlet-mapping>
 
 

@@ -19,7 +19,8 @@
         <div class="form-group">
             <label class="control-label">Current E-mail</label>
             <div class="form-input">
-                <input id="currentEmail" type="text" name="CurrentEmail" class="form-control" placeholder="Current E-mail">
+                <input id="currentEmail" type="text" name="CurrentEmail" class="form-control"
+                       placeholder="Current E-mail">
                     <%--        <span class="small-error email-too-short none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo breve.</span>--%>
                     <%--        <span class="small-error email-too-long none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo lunga.</span>--%>
             </div>
@@ -75,10 +76,11 @@
             </div>
         </div>
         <br>
-
-        <button type="button" class="cssbuttons-io" id="updateButton">
-            <span>Update Credentials</span>
-        </button>
+        <div class="button-container mb-0">
+            <button type="button" class="gradientButton" id="updateButton">
+                <span>Update Credentials</span>
+            </button>
+        </div>
     </form>
 
 </c:if>

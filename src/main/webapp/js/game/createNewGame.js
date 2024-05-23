@@ -283,7 +283,7 @@ function gameCreation(req) {
     }
 }
 
-function addPlayer() {
+function addPlayerToTable() {
     const username = document.getElementById("playerUsername").value;
     if (username !== "") {
         addToPlayersTable(username);

@@ -10,7 +10,6 @@ const addPlayerBT = document.getElementById("addPlayer");
 const playerList = document.getElementById('playerList');
 const playerListItems = playerList.getElementsByTagName('li');
 let selectedItem;
-document.getElementById("addPlayer").addEventListener("click", addPlayer);
 
 let keyDownTimer = null;
 playerUsername.addEventListener("keyup", handleKeyDown);
@@ -19,6 +18,10 @@ let startedText = "";
 
 // list of players to be ignored by search player element
 let playersToIgnore = []
+
+document.addEventListener('DOMContentLoaded', function (event) {
+    document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
+});
 
 function handleKeyDown(event) {
     selectedItem = document.querySelector('li.selected');
@@ -54,7 +57,7 @@ function handleKeyDown(event) {
             break;
         case "Enter":
             searchUserContain = null;
-            addPlayer();
+            addPlayerToTable();
             hidePlayerListPopup();
             break;
         default:
@@ -140,7 +143,7 @@ function populatePlayerList(players, contains) {
         li.addEventListener("mousedown", function () {
             playerUsername.value = player.username;
             searchUserContain = null;
-            addPlayer();
+            addPlayerToTable();
             hidePlayerListPopup();
         });
         playerList.appendChild(li);

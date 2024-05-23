@@ -12,7 +12,7 @@
 <c:import url="/jsp/utils/warningMessage.jsp"/>
 <c:import url="/jsp/utils/errorMessage.jsp"/>
 <div class="button-container">
-    <button id="sendActions">
+    <button id="sendActions" class="gradientButton">
         <span class="text" id="textActionsBt"></span>
     </button>
 </div>

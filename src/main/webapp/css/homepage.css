@@ -65,6 +65,15 @@ main {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: 300ms;
+}
+
+.box button:hover {
+    background-color: var(--nabbar-inverted-second-bg);
+}
+
+.box a {
+    text-decoration: none;
 }
 
 .intro {

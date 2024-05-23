@@ -90,8 +90,8 @@
     <br>
     <c:import url="/jsp/utils/errorMessage.jsp"/>
     <div class="button-container">
-        <button id="sendSettings">
-            <span class="text">Create new game!</span>
+        <button id="sendSettings" class="gradientButton">
+            <span class="text">Create new village!</span>
         </button>
     </div>
 </div>

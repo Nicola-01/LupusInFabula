@@ -567,17 +567,17 @@ function fillDayActions(list) {
     sectionChange.innerHTML =
         "  <label class='radio' for='voteRadio_0'>" +
         "    <input type='radio' name='radio' id='voteRadio_0' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +
-        "    <span class='name'>VOTE</span>" +
+        "    <span>VOTE</span>" +
         "  </label>"
     sectionChange.innerHTML +=
         "  <label class='radio' for='voteRadio_1'>" +
         "    <input type='radio' name='radio' id='voteRadio_1' onclick='changeSubPhase(this)' subPhase='1' disabled=''>" +
-        "    <span class='name'>1 BALLOT</span>" +
+        "    <span>1 BALLOT</span>" +
         "  </label>"
     sectionChange.innerHTML +=
         "  <label class='radio' for='voteRadio_2'>" +
         "    <input type='radio' name='radio' id='voteRadio_2' onclick='changeSubPhase(this)' subPhase='2' disabled=''>" +
-        "    <span class='name'>2 BALLOT</span>" +
+        "    <span>2 BALLOT</span>" +
         "  </label>"
     gameActions.appendChild(sectionChange);
 

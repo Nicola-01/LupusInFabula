@@ -32,17 +32,17 @@
     <div class="radio-inputs">
         <label class="radio">
             <input type="radio" name="radio" value="friends" checked="">
-            <span class="name">Friends</span>
+            <span>Friends</span>
         </label>
 
         <label class="radio">
             <input type="radio" name="radio" value="changeCredentials">
-            <span class="name">Change Credentials</span>
+            <span >Change Credentials</span>
         </label>
 
         <label class="radio">
             <input type="radio" name="radio" value="deleteAccount">
-            <span class="name">Delete Account</span>
+            <span>Delete Account</span>
         </label>
     </div>
 
@@ -60,11 +60,11 @@
 
 </div>
 
+<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/updateCredentials.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/deleteAccount.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
-<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 
 </body>
 </html>
