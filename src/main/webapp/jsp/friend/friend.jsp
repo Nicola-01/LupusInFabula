@@ -7,8 +7,8 @@
 <div id="listFriend" class="row justify-content-center">
     <h2>Your Friends</h2>
     <div id="friendsTable">
-        <table id="my_friends">
-            <thead>
+        <table id="my_friends" class="table table-striped mb-0">
+            <thead class="sticky-top top-0" style="z-index: 1 !important;">
             <tr>
                 <th>Username</th>
                 <th>Date</th>

@@ -9,13 +9,13 @@
 
 #my_friends th,
 #my_friends td {
-    border: 1px solid #ddd;
+    /*border: 1px solid #ddd;*/
     padding: 8px;
     text-align: left;
 }
 
 #my_friends th {
-    background-color: #f2f2f2;
+    /*background-color: #f2f2f2;*/
 }
 
 #listFriend h2 {

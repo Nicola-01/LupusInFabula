@@ -27,7 +27,7 @@
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container card">
+<div class="container">
 
     <div class="radio-inputs">
         <label class="radio">
@@ -46,7 +46,7 @@
         </label>
     </div>
 
-    <div class="box" id="contentBox">
+    <div id="contentBox" class="box mt-3 px-2">
         <div id="friendsPage">
             <jsp:include page="../friend/friend.jsp"/>
         </div>

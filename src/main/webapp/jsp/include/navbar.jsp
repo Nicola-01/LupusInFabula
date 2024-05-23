@@ -32,7 +32,7 @@
             <li class="nav-item">
                 <a class="nav-link" aria-current="page" href="<c:url value="/home"/>">
                     <%--                    <i class="fa-solid fa-house"></i>--%>
-                    Home
+                        Home
                 </a>
             <li class="nav-item">
                 <a class="nav-link" href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">Statistics</a>

@@ -18,11 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add active class based on current URL
     const currentPath = window.location.pathname;
     // Check for Game section paths
-    const gamePaths = ["/rules", "/jsp/game/createNewGame.jsp"];
+    const gamePaths = ["/rules", "/newVillage", "/village"];
     document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
         if (navLink.getAttribute('href') === currentPath) {
             navLink.classList.add('active');
-        } else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1])) {
+        } else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1]) || currentPath.includes(gamePaths[2])) {
             document.querySelector('.dropdown-toggle').classList.add('active')
         }
     });
