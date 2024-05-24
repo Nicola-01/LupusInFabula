@@ -34,7 +34,7 @@
     <section class="centered-box row">
         <div class="box col-sm-12 col-md-5 m-md-auto mb-3 p-4">
             <h2>Habitant</h2>
-            <a href="<c:url value="/jsp/user/userPage.jsp"/>">
+            <a href="<c:url value="/habitant/me"/>">
                 <button>Personal Area</button>
             </a>
             <a href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">
