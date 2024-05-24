@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
@@ -11,23 +12,29 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class UserpageServlet extends AbstractDatabaseServlet {
+public class UserPageServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         Message m = null;
         String uri = req.getRequestURI();
-        String username = uri.substring(uri.lastIndexOf("/lupus/player") + 14);
+
+        if (uri.endsWith("/me"))
+            req.getRequestDispatcher("/jsp/user/userPage.jsp").forward(req, resp);
+
+        String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
 
         try {
+            if(username.isEmpty()){
+                username= ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                resp.sendRedirect(req.getContextPath() + "/habitant/" + username);
+                return;
+            }
+
             Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
             if(player_user == null) {
-                ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
-                resp.setStatus(ec.getHTTPCode());
-                LOGGER.info("Username not exists");
-                m = new Message("Username not exists", ec.getErrorCode(), ec.getErrorMessage());
-                req.setAttribute("message", m);
+                req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
+                return;
             }
 
         } catch (SQLException e) {
@@ -38,8 +45,5 @@ public class UserpageServlet extends AbstractDatabaseServlet {
 
         req.setAttribute("player", username);
         req.getRequestDispatcher("/jsp/testLogs/testlogs.jsp").forward(req, resp);
-
     }
-
-
 }

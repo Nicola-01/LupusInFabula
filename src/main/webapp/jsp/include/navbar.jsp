@@ -35,7 +35,7 @@
                         Home
                 </a>
             <li class="nav-item">
-                <a class="nav-link" href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">Statistics</a>
+                <a class="nav-link" href="<c:url value="/habitant/"/>">Statistics</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
@@ -80,7 +80,7 @@
                 <ul>
                     <li>
                         <img src="${pageContext.request.contextPath}/media/navbar/profile.svg" alt="Profile"><a
-                            href="${pageContext.request.contextPath}/jsp/user/userPage.jsp">
+                            href="${pageContext.request.contextPath}/habitant/me">
                         My Profile</a>
                     </li>
                     <li>

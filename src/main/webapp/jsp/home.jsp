@@ -37,7 +37,7 @@
             <a href="<c:url value="/habitant/me"/>">
                 <button>Personal Area</button>
             </a>
-            <a href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">
+            <a href="<c:url value="/habitant/"/>">
                 <button>Statistics & Logs</button>
             </a>
             <a href="<c:url value="/logout"/>">

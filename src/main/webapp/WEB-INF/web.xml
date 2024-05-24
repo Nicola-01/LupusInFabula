@@ -38,11 +38,6 @@
     </servlet>
 
     <servlet>
-        <servlet-name>MyProfileServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.MyProfileServlet</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>NewGameServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.NewGameServlet</servlet-class>
     </servlet>
@@ -73,12 +68,6 @@
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>MyProfileServlet</servlet-name>
-        <url-pattern>/habitant/*</url-pattern>
-    </servlet-mapping>
-
-
     <servlet>
         <servlet-name>FriendPageServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendPageServlet</servlet-class>
@@ -90,13 +79,13 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>UserpageServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserpageServlet</servlet-class>
+        <servlet-name>UserPageServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserPageServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>UserpageServlet</servlet-name>
-        <url-pattern>/player/*</url-pattern>
+        <servlet-name>UserPageServlet</servlet-name>
+        <url-pattern>/habitant/*</url-pattern>
     </servlet-mapping>
 
 <!--    finish test area-->

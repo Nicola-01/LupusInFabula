@@ -6,35 +6,30 @@
     flex-shrink: unset;
 }
 
-.circular-button {
-    background-color: orange;
+.circular-player, .grid-player {
     border: none;
     border-radius: 15px;
-    position: absolute;
-    display: flex;
     justify-content: center;
     align-items: center;
+    display: flex;
     font-size: 14px;
     color: white;
-    cursor: pointer;
+    text-align: center;
+}
+
+.circular-player {
+    position: absolute;
     transition: z-index 0.3s;
     width: 8em;
     height: 4.5em;
+    transform: translateX(-50%) translateY(-50%);
 }
 
-.grid-button {
-    background-color: orange;
-    border: none;
-    border-radius: 15px;
-    justify-content: center;
-    align-items: center;
-    font-size: 14px;
-    color: white;
-    cursor: pointer;
+.grid-player {
     width: 100%;
     height: 4.5em;
 }
 
-.circular-button:hover {
+.circular-player:hover {
     z-index: 1; /* Bring button to the forefront on hover */
 }
