@@ -28,23 +28,9 @@
 
 <div id="error-message" style="display: none;"></div>
 
-<%--<c:choose>--%>
-<%--    <c:when test="${empty sessionScope.user}">--%>
-<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
-<%--    </c:when>--%>
-
-<%--    <c:when test="">--%>
-<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
-<%--    </c:when>--%>
-
-<%--    <c:otherwise>--%>
 
 
-<%--</c:otherwise>--%>
-
-<%--</c:choose>--%>
-
-<div class="background_container" id="back_container" style="display: none">
+<div class="container" id="background_container" style="display: none">
     <h1>Statistics and history of
         <b>
             <%--                <%= request.getAttribute("player") %>--%>
@@ -53,7 +39,7 @@
         </b>
     </h1>
 
-    <div class="container">
+    <div class="container" id="block_container">
 
         <h1>Statistics</h1>
 
@@ -93,13 +79,14 @@
 
     <br>
 
-    <div class="container">
-        <h1>Game Logs</h1>
+    <div class="container" id="block_container2">
+        <h1>Game Logs <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
+        </h1>
 
 
         <div class="container">
 
-            <table class="sortable" id="logs_table">
+            <table class="sortable" id="logs_table" align="center">
 
 
                 <tr>
@@ -132,6 +119,22 @@
 </body>
 </html>
 
+
+<%--<c:choose>--%>
+<%--    <c:when test="${empty sessionScope.user}">--%>
+<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
+<%--    </c:when>--%>
+
+<%--    <c:when test="">--%>
+<%--        <h1 class="not_logged">Please login to check the statistics</h1>--%>
+<%--    </c:when>--%>
+
+<%--    <c:otherwise>--%>
+
+
+<%--</c:otherwise>--%>
+
+<%--</c:choose>--%>
 
 <%--<p>Statistics and history--%>
 <%--    <c:if test="${not empty sessionScope.user}">--%>
