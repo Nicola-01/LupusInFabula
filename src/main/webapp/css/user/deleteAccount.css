@@ -21,3 +21,7 @@
     flex-direction: column;
     gap: 20px;
 }
+
+#deleteForm input {
+    background-color: var(--inputs-bg-color);
+}

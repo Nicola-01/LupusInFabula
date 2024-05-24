@@ -21,12 +21,15 @@
     --nabbar-second-bg: #387B99;
     --nabbar-inverted-bg: #0D324D;
     --nabbar-inverted-second-bg: #245270;
+
     --bg-first-color: #EAF0F2;
-    --bg-second-color: #f9fcfd;
+    --bg-second-color: #c8dbdf;
     --bg-inverted-first-color: #0E1115;
     --bg-inverted-second-color: #1a2127;
 
     --text-color: #0B121A;
+    --text-color-inverted: #EAF0F2;
+    --inputs-bg-color: #e5e9ea;
 }
 
 [data-bs-theme="dark"] {
@@ -44,10 +47,13 @@
     --nabbar-second-bg: #245270;
     --nabbar-inverted-bg: #4BA3C3;
     --nabbar-inverted-second-bg: #387B99;
+
     --bg-first-color: #0E1115;
     --bg-second-color: #1a2127;
     --bg-inverted-first-color: #EAF0F2;
     --bg-inverted-second-color: #c8dbdf;
 
-    --text-color: #EAF0F2
+    --text-color: #EAF0F2;
+    --text-color-inverted: #0B121A;
+    --inputs-bg-color: #20272d;
 }

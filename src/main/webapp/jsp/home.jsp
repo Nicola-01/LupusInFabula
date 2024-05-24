@@ -9,14 +9,14 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
     <c:import url="/jsp/include/head.jsp"/>
 </head>
-<body>
+<body class="d-flex flex-column">
 
 <iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/homeBackground.html" class="background-iframe"
         frameborder="0"></iframe>
 
 <jsp:include page="include/navbar.jsp"/>
-<main>
-    <h2 class="mt-2 mb-4">
+<main class="flex-grow-1 w-100 mt-5 pt-md-3">
+    <h2 class="mb-4">
         <span>Welcome back, </span>
         <c:if test="${not empty sessionScope.user}">
             <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
@@ -29,9 +29,9 @@
     </h2>
 
 
-    <div id="messageDiv"></div>
+    <div id="messageDiv" class="mb-5"></div>
 
-    <section class="centered-box row">
+    <section class="centered-box row pt-3">
         <div class="box col-sm-12 col-md-5 m-md-auto mb-3 p-4">
             <h2>Habitant</h2>
             <a href="<c:url value="/habitant/me"/>">
@@ -47,7 +47,7 @@
         <div class="box col-sm-12 col-md-5 m-md-auto p-4">
             <h2>Village</h2>
             <a href="<c:url value="/rules"/>">
-                <button>Rules</button>
+                <button>Rulebook</button>
             </a>
             <a href="<c:url value="/newVillage"/>">
                 <button>Create a village</button>

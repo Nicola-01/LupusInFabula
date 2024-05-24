@@ -4,14 +4,6 @@
     box-sizing: border-box;
 }
 
-body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
 .background-iframe {
     position: fixed;
     top: 0;
@@ -43,7 +35,6 @@ main {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 45vh;
 }
 
 .box {
@@ -57,7 +48,8 @@ main {
 
 .box button {
     display: block;
-    width: 200px;
+    width: 100%;
+    max-width: 200px;
     margin: 10px auto;
     padding: 10px;
     background-color: var(--nabbar-inverted-bg);
@@ -105,10 +97,4 @@ main {
     background-color: #f8f8f8;
     border-radius: 8px;
     padding: 20px;
-}
-
-footer {
-    position: absolute;
-    width: 100%;
-    bottom: 0;
 }

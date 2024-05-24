@@ -1,30 +1,16 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Function to remove 'active' class from all nav-links and add to the clicked one
-    function setActiveNavItem(event) {
-        // Remove 'active' class from all nav-links
-        document.querySelectorAll('.nav-link').forEach(navLink => {
-            navLink.classList.remove('active');
-        });
-
-        // Add 'active' class to the clicked nav-link
-        event.target.classList.add('active');
-    }
-
-    // Attach event listeners to all nav-links
-    document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
-        navLink.addEventListener('click', setActiveNavItem);
-    });
-
+document.addEventListener('DOMContentLoaded', function () {
     // Add active class based on current URL
     const currentPath = window.location.pathname;
+
     // Check for Game section paths
+    if (currentPath === "lupus/habitant/me")
+        return; // nothing to set active
     const gamePaths = ["/rules", "/newVillage", "/village"];
     document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
-        if (navLink.getAttribute('href') === currentPath) {
+        if (currentPath.includes(navLink.getAttribute('href')))
             navLink.classList.add('active');
-        } else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1]) || currentPath.includes(gamePaths[2])) {
+        else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1]) || currentPath.includes(gamePaths[2]))
             document.querySelector('.dropdown-toggle').classList.add('active')
-        }
     });
 });
 

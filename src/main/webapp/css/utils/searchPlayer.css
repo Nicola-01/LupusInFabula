@@ -17,14 +17,13 @@
 }
 
 .searchUser {
-    background-color: #4e99e9;
+    background-color: var(--nabbar-inverted-bg);
     border: none;
     color: #fff;
     height: 40px;
     cursor: pointer;
     padding: 5px 20px;
     border-radius: 20px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: absolute;
     top: 0;
     right: 0;
@@ -36,7 +35,7 @@
 .searchUser:hover {
     transform: scale(1.05);
     color: rgb(255, 255, 255);
-    background-color: #6d6dff;
+    background-color: var(--nabbar-inverted-second-bg);
 }
 
 .popup {
@@ -89,7 +88,7 @@
 
 #playerUsername {
     outline: none;
-    background-color: var(--bg-second-color);
+    background-color: var(--inputs-bg-color);
 }
 
 .focus{
