@@ -310,6 +310,12 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     LOGGER.info("Credentials are wrong");
                     m = new Message("Credentials are wrong", ec.getErrorCode(), ec.getErrorMessage());
+                } else if (p.getUsername().equals(p.getEmail())) {
+                    ErrorCode ec = ErrorCode.ACCOUNT_DELETED;
+                    response.setStatus(ec.getHTTPCode());
+
+                    LOGGER.info("Account is deleted");
+                    m = new Message("The account '" + p.getUsername() + "' is deleted", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
@@ -328,7 +334,6 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                             session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);
                         else
                             session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
-
                     } else
                         session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
 

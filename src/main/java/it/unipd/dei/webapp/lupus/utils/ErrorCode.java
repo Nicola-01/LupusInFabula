@@ -31,6 +31,7 @@ public enum ErrorCode {
     USERNAME_ALREADY_USED("EUSR6", HttpServletResponse.SC_CONFLICT, "Username already used"),
     EMAIL_ALREADY_USED("EUSR7", HttpServletResponse.SC_CONFLICT, "Email already used"),
     WRONG_CREDENTIALS("EUSR8", HttpServletResponse.SC_BAD_REQUEST, "Submitted credentials are wrong"),
+    ACCOUNT_DELETED("EUSR9", HttpServletResponse.SC_NOT_FOUND, "This account has been deleted"),
 
     //user
     USER_NOT_FOUND("EUSR9", HttpServletResponse.SC_NOT_FOUND, "User not found"),

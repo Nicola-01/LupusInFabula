@@ -16,7 +16,7 @@
 
 <jsp:include page="include/navbar.jsp"/>
 <main>
-    <p class="my-2">
+    <h2 class="mt-2 mb-4">
         <span>Welcome back, </span>
         <c:if test="${not empty sessionScope.user}">
             <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
@@ -26,7 +26,7 @@
                 window.location.href = window.location.origin + "/lupus/login";
             </script>
         </c:if>
-    </p>
+    </h2>
 
 
     <div id="messageDiv"></div>

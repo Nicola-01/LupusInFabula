@@ -214,6 +214,11 @@ public class PossibleGameActions {
         }
         if (!plagueSpreader.isEmpty()) {
             String plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
+
+            // if the target is dead no one is plagued
+            if(deadPlayers.get(plaguedPlayer))
+                return;
+
             List<String> targets = new ArrayList<>(players);
             // remove dead players
             targets.removeIf(player -> deadPlayers.get(player));
@@ -227,8 +232,6 @@ public class PossibleGameActions {
         }
 
         LOGGER.info("Returning the actions of day phase.");
-//        res.setStatus(HttpServletResponse.SC_OK);
-//        new ResourceList<>(actionTargets).toJSON(res.getOutputStream());
     }
 
     /**

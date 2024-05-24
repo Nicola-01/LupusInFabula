@@ -111,7 +111,7 @@
 }
 
 .blurred {
-    filter: blur(5px);
+    filter: blur(10px);
 }
 
 .card-container {
@@ -120,10 +120,11 @@
 
 .card {
     width: 200px;
-    height: 300px;
+    height: 280px;
     position: relative;
     transform-style: preserve-3d;
     transition: transform 1s;
+    border: none;
 }
 
 .card-face {

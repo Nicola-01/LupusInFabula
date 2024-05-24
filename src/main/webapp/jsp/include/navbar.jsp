@@ -84,7 +84,7 @@
                         My Profile</a>
                     </li>
                     <li>
-                        <img src="/lupus/media/navbar/settings.svg" alt="Settings">
+                        <img src="/lupus/media/navbar/theme.svg" alt="Settings">
                         <div class="dropdown">
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false">
