@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     var username = document.getElementById('username').innerText;
-    console.log(username);
+
+
+    // console.log(username);
     loadLogs(username);
     loadStatics(username);
 });
@@ -11,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
  */
 function loadLogs(username) {
     genericGETRequest(contextPath + "user/" + username + "/logs", getLogs)
-
-//    genericGETRequest(contextPath + "user/log_player/logs", getLogs)
 }
 
 function loadStatics(username) {
@@ -22,6 +22,7 @@ function loadStatics(username) {
 
 function getLogs(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
 
             var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
@@ -40,7 +41,7 @@ function getLogs(req) {
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
 
-              //  var gameIdLength = log.game_id.toString().length;
+                //  var gameIdLength = log.game_id.toString().length;
 
                 // if (gameIdLength > sizeid) {
                 //     sizeid = gameIdLength;
@@ -86,26 +87,67 @@ function getLogs(req) {
                     else {
                         cell5.innerHTML = "Defeat";
                     }
-                }
-                else{
+                } else {
                     cell5.innerHTML = "-";
                 }
 
                 var cell6 = row.insertCell(6);
-                const link = contextPath + "game/logs/" + log.public_id;
+
+                //http://localhost:8080/lupus/village/{game_id}
+                const link = contextPath + "village/" + log.public_id;
                 cell6.innerHTML = '<a href="' + link + '" target="_blank">View logs</a>';
                 //cell6.innerHTML = "Not working now";
+            }
+
+            if (list.length === 0) {
+                row = tbody.insertRow();
+                row.classList.add("item");
+
+                var cell = row.insertCell(0);
+                cell.colSpan = 7;
+                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
             }
         }
     }
 }
 
+function hasError(req) {
+    return req.status !== HTTP_STATUS_OK;
+}
+
+function handleError(req) {
+
+    const errorMessageContainer = document.getElementById('error-message');
+
+    if (req.status === HTTP_STATUS_NOT_FOUND) {
+        errorMessageContainer.innerHTML = '<h1 class="not_found">User Not Existing</h1>';
+        alert("User Not Existing");
+    } else if (req.status === HTTP_STATUS_FORBIDDEN) {
+        errorMessageContainer.innerHTML = '<h1 class="not_logged">Please login to check the statistics</h1>';
+        alert("Not logged");
+    } else {
+        errorMessageContainer.innerHTML = '<h1 class="unexpected_error">An unexpected error occurred. Please try again later.</h1>';
+        alert("Unexpected error");
+    }
+    errorMessageContainer.style.display = 'block';
+}
+
+function handleHttpStatus(req){
+    if (req.status === HTTP_STATUS_OK){
+        const back_con = document.getElementById('back_container');
+        back_con.style.display = 'block';
+    }
+    else{
+        handleError(req);
+    }
+}
 
 function getStatsRole(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var list = JSON.parse(req.responseText)["resource-list"];
-
+            console.log(list);
             if (list == null)
                 alert("User Not Existing");
 
@@ -165,7 +207,15 @@ function getStatsRole(req) {
                 }
             }
 
-            completePieChart(pairs);
+            if (list.length !== 0) {
+                completePieChart(pairs);
+            } else {
+                row = tbody.insertRow();
+                row.classList.add("item");
+                var cell = row.insertCell(0);
+                cell.colSpan = 5;
+                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+            }
         }
     }
 }
@@ -173,8 +223,13 @@ function getStatsRole(req) {
 function completePieChart(pairs) {
 
     const ctx = document.getElementById('myChart');
-    const names = pairs.map(pair => pair[0]);
-    const rates = pairs.map(pair => pair[1]);
+    let names = pairs.map(pair => pair[0]);
+    let rates = pairs.map(pair => pair[1]);
+
+    if(pairs.length === 0){
+        names = ["Not played"];
+        rates = [0];
+    }
 
 
     new Chart(ctx, {
@@ -193,6 +248,7 @@ function completePieChart(pairs) {
 
 function getGeneralStats(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
+        handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var table = document.getElementById("general_stats");
             //var par = document.getElementById("gen_stats");
@@ -242,7 +298,7 @@ function getGeneralStats(req) {
                 cell0.innerHTML = '<b>' + couple[i][0] + '</b>';
 
                 if (couple[i][0] === "Ratio") {
-                    cell0.innerHTML += '<div id="info_ratio" title="The percentage of games won over the total played">&#9432</div>';
+                    cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
                 }
 
                 var cell1 = row.insertCell(1);
