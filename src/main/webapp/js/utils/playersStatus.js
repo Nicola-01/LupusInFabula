@@ -75,9 +75,9 @@ function fillPlayersStatus(req) {
                 }
 
                 if (playerRole.length <= maxPlayersforSircularButtons)
-                    createCircularButtons()
+                    circularPlayersStatus()
                 else
-                    createGridButtons()
+                    gridPlayersStatus()
             }
         } else {
             // alert("Not logged in");
@@ -86,36 +86,18 @@ function fillPlayersStatus(req) {
 }
 
 // Function to create buttons and position them in a circle around the square div
-function createCircularButtons() {
-    const epsilon = 0;
+function circularPlayersStatus() {
+    const epsilon = 0.05
     const numButtons = playerRole.length;
 
-    // remove old buttons
-    const bts = document.getElementsByClassName("circular-player");
-    while (bts.length > 0) {
-        bts[0].parentNode.removeChild(bts[0]);
-    }
-
-    let circleDiv = document.getElementById('circle');
-    if (circleDiv == null) {
-        circleDiv = document.createElement("div");
-        circleDiv.id = 'circle';
-        circleDiv.classList.add("p-0")
-        document.getElementById("playersStatus").appendChild(circleDiv);
-    }
-
-    const div_size = circleDiv.offsetWidth;
-    const center = div_size / 2;
-
-    // console.log(numButtons)
+    let circleDiv = document.createElement("div");
+    circleDiv.id = 'circle';
+    circleDiv.classList.add("p-0")
+    document.getElementById("playersStatus").appendChild(circleDiv);
 
     for (let i = 0; i < numButtons; i++) {
         const angle = (Math.PI * 2 / numButtons) * i;
         const player = document.createElement('div');
-
-        // console.log("angle: " + angle);
-
-        // console.log(playerRole[i].username)
 
         player.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
         if (playerRole[i].isDead) {
@@ -129,17 +111,22 @@ function createCircularButtons() {
 
         circleDiv.appendChild(player); // Append player to the circle div
 
-        const epsilon_angle = (Math.PI / 2 + angle) * epsilon;
+        let modX = Math.abs(Math.sin(angle))
+        let modY = Math.abs(Math.cos(angle))
 
-        // console.log("epsilon_angle: " + epsilon_angle)
-        // console.log("setted angle: " + (angle - epsilon_angle))
+        let epsilon_angle = 0;
+        if (!(modX === 0 || modX === 1 || modY === 0 || modY === 1)) {
+            if (angle < Math.PI / 2 || (angle > Math.PI && angle < (3 / 2) * Math.PI))
+                epsilon_angle = (-Math.PI) * epsilon;
+            else
+                epsilon_angle = (Math.PI) * epsilon;
+        }
 
-        player.style.left = (center + Math.sin(angle - epsilon_angle) * center) + 'px'; // X position of the player
-        player.style.top = (center + -Math.cos(angle - epsilon_angle) * center) + 'px'; // Y position of the player
+        player.style.left = (Math.sin(angle - epsilon_angle) * 50 + 50) + '%'; // X position of the player
+        player.style.top = (-Math.cos(angle - epsilon_angle) * 50 + 50) + '%'; // Y position of the player
     }
 }
-
-function createGridButtons() {
+function gridPlayersStatus() {
     let playersStatusDiv = document.getElementById("playersStatus");
 
     for (let i = 0; i < playerRole.length; i++) {

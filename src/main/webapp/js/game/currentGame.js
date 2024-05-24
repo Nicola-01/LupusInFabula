@@ -81,11 +81,6 @@ function handleResize() {
 
     // Set the maximum height of the game log element
     document.getElementById("gameLogExternal").style.height = maxHeight;
-
-    // Fix circle buttons if the number of player roles is within the threshold
-    if (playerRole.length <= maxPlayersforSircularButtons) {
-        createCircularButtons();
-    }
 }
 
 /**
