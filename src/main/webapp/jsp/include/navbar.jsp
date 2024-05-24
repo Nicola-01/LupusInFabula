@@ -85,12 +85,12 @@
                     </li>
                     <li>
                         <img src="/lupus/media/navbar/theme.svg" alt="Settings">
-                        <div class="dropdown">
+                        <div class="dropup">
                             <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
                                aria-expanded="false">
                                 Theme
                             </a>
-                            <ul class="dropdown-menu" id="theme">
+                            <ul class="dropdown-menu" id="theme" style="font-size: 0.95rem; padding: 0;">
                                 <li><a class="dropdown-item" theme="light">Light</a></li>
                                 <li><a class="dropdown-item" theme="dark">Dark</a></li>
                                 <li><a class="dropdown-item" theme="auto">Auto</a></li>

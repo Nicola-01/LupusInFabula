@@ -34,10 +34,10 @@
     <section class="centered-box row">
         <div class="box col-sm-12 col-md-5 m-md-auto mb-3 p-4">
             <h2>Habitant</h2>
-            <a>
+            <a href="<c:url value="/jsp/user/userPage.jsp"/>">
                 <button>Personal Area</button>
             </a>
-            <a>
+            <a href="<c:url value="/jsp/testLogs/testlogs.jsp"/>">
                 <button>Statistics & Logs</button>
             </a>
             <a href="<c:url value="/logout"/>">
