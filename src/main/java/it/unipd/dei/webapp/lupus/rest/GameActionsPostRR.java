@@ -261,8 +261,8 @@ public class GameActionsPostRR extends AbstractRR {
 
 
             // First vote with all the players, also the dead player vote in this phase
-            List<Map.Entry<String, Integer>> votesList = handleVotation(votes_0);
-            List<String> ballotPlayers = votationResult(votesList, false);
+            List<Map.Entry<String, Integer>> votesList = handleVotes(votes_0);
+            List<String> ballotPlayers = votesResult(votesList, false);
             currentSubPhase++;
 
             if(ballotPlayers.size() == 1){
@@ -273,7 +273,7 @@ public class GameActionsPostRR extends AbstractRR {
                 if(!correctnessOfBallotVotes(votes_1, ballotPlayers))
                     return false;
                 List<Map.Entry<String, Integer>> ballotList_1 = handleBallot(votes_1, ballotPlayers);
-                List<String> ballotPlayers_1 = votationResult(ballotList_1, true);
+                List<String> ballotPlayers_1 = votesResult(ballotList_1, true);
                 currentSubPhase++;
 
                 if(ballotPlayers_1.size() == 1){
@@ -283,8 +283,8 @@ public class GameActionsPostRR extends AbstractRR {
                     //Second ballot if needed
                     if(!correctnessOfBallotVotes(votes_2, ballotPlayers_1))
                         return false;
-                    List<Map.Entry<String, Integer>> ballotList_2 = handleBallot(votes_2, ballotPlayers);
-                    List<String> ballotPlayers_2 = votationResult(ballotList_2, true);
+                    List<Map.Entry<String, Integer>> ballotList_2 = handleBallot(votes_2, ballotPlayers_1);
+                    List<String> ballotPlayers_2 = votesResult(ballotList_2, true);
                     currentSubPhase++;
 
                     if(ballotPlayers_2.size() == 1){
@@ -391,8 +391,14 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
-    private List<Map.Entry<String, Integer>> handleVotation(List<GameAction> votes){
+    /**
+     * Handles the voting process by counting votes for each player.
+     *
+     *
+     * @param votes a list of GameAction objects representing the votes cast by players.
+     * @return a list of objects representing the updated vote counts for each player.
+     */
+    private List<Map.Entry<String, Integer>> handleVotes(List<GameAction> votes){
 
         Map<String, Integer> votesMap = getVotesMap(votes);
 
@@ -413,7 +419,14 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
+    /**
+     * Handles the ballot voting process by counting votes for each player.
+     *
+     *
+     * @param votes a list of GameAction objects representing the votes cast by players.
+     * @param ballotPlayers a list of username
+     * @return a list objects representing the updated vote counts for each player.
+     */
     private List<Map.Entry<String, Integer>> handleBallot(List<GameAction> votes, List<String> ballotPlayers){
 
         Map<String, Integer> ballotMap = getBallotMap(ballotPlayers);
@@ -435,8 +448,18 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
-    private static List<String> votationResult(List<Map.Entry<String, Integer>> votesList, Boolean ballot){
+    /**
+     * Determines the players involved in a ballot or the result of a vote.
+     *
+     * <p>This method sorts a list of players with their respective votes and determines the players
+     * who either proceed to a ballot or win based on the votes. If the ballot flag is false, it returns
+     * the top two players. If the ballot flag is true, it checks for ties and includes all tied players.
+     *
+     * @param votesList a list representing the players and their votes
+     * @param ballot a boolean value indicating whether it's the first vote (false) or a ballot (true)
+     * @return a username list of players who either proceed to a ballot or win the vote
+     */
+    private static List<String> votesResult(List<Map.Entry<String, Integer>> votesList, Boolean ballot){
 
         List<String> ballotPlayers= new ArrayList<>();
         Integer nVote;
@@ -483,7 +506,20 @@ public class GameActionsPostRR extends AbstractRR {
         return ballotPlayers;
     }
 
-
+    /**
+     * Updates the result of the day based on the player voted out.
+     *
+     * <p>This method determines if the player voted out is a carpenter by calling the
+     * {@link #carpenterCheck(String)} method. If the player is a carpenter, it logs the event
+     * and sets the carpenter's ability as used in the {@link DayActionsResults} instance.
+     * If the player is not a carpenter, it logs the voted-out player, updates the
+     * {@link DayActionsResults} with the voted-out player's name, and adds the result of the
+     * {@link #updatePlayerDeath(String)} method to the {@link #updatePlayersDeath} list.
+     *
+     * @param playerVoted the name of the player who was voted out.
+     * @throws SQLException if a database access error occurs.
+     * @throws IOException if an I/O error occurs.
+     */
     private void updateDayResult (String playerVoted) throws SQLException, IOException {
 
         if (carpenterCheck(playerVoted)) {
@@ -498,25 +534,6 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
 
-    /**
-     * Counts the number of dead players in the game.
-     * <p>
-     * This method calculates the number of players who are marked as dead in the provided
-     * map of player names and their corresponding status of being dead or alive.
-     *
-     * @param deadPlayers A map where the keys are player names and the values indicate whether the player is dead (true) or alive (false).
-     * @return The number of dead players in the game.
-     */
-    private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
-        int numDeadPlayers = 0;
-
-        for (Boolean isDead : deadPlayers.values()) {
-            if (isDead) {
-                numDeadPlayers++;
-            }
-        }
-        return numDeadPlayers;
-    }
 
     /**
      * Checks the ability of a player with the role "carpenter" during a game round.
@@ -554,7 +571,7 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
-     * Checks the correctness of the actions performed during a game day.
+     * Checks the correctness of the actions performed during first vote of the day.
      * <p>
      * This method verifies the correctness of the actions performed by players during a game day.
      * It checks various conditions such as whether players and targets are in the game,
@@ -620,6 +637,19 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
 
+    /**
+     * Checks the correctness of the actions performed during ballot vote of the day.
+     * <p>
+     * This method verifies the correctness of the actions performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param ballotVotes A list of GameAction objects representing the votes performed during ballot of day phase.
+     * @param ballotPlayer A list of String objects that contains the username of the player in the ballot
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
     private boolean correctnessOfBallotVotes(List<GameAction> ballotVotes, List<String> ballotPlayer) throws SQLException, IOException {
 
         try {
@@ -689,7 +719,18 @@ public class GameActionsPostRR extends AbstractRR {
         }
     }
 
-
+    /**
+     * Checks the correctness of the extra actions performed during the game day.
+     * <p>
+     * This method verifies the correctness of the actions performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param extraActions A list of GameAction objects representing extra actions of the day phase.
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
     private boolean correctnessOfExtraAction(List<GameAction> extraActions) throws SQLException, IOException {
 
         try {
@@ -728,7 +769,19 @@ public class GameActionsPostRR extends AbstractRR {
         }
     }
 
-
+    /**
+     * Checks the correctness of the action performed during a game day.
+     * <p>
+     * This method verifies the correctness of the action performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param gameAction A GameAction object representing an action of the day phase.
+     * @param extra A boolean value that indicate if an action is extra or a normal action of the day
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
     private boolean correctnessOfAction(GameAction gameAction, Boolean extra) throws SQLException, IOException{
 
         Message m = null;
