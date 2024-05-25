@@ -134,7 +134,7 @@ function handleError(req) {
 
 function handleHttpStatus(req){
     if (req.status === HTTP_STATUS_OK){
-        const back_con = document.getElementById('back_container');
+        const back_con = document.getElementById('background_container');
         back_con.style.display = 'block';
     }
     else{
