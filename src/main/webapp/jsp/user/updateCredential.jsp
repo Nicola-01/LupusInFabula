@@ -3,7 +3,7 @@
 
 <c:if test="${not empty sessionScope.user}">
 
-    <c:import url="/jsp/utils/infoMessage.jsp"/>
+<%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
     <form id="updateForm">
         <div class="form-group">
@@ -21,8 +21,6 @@
             <div class="form-input">
                 <input id="currentEmail" type="text" name="CurrentEmail" class="form-control"
                        placeholder="Current E-mail">
-                    <%--        <span class="small-error email-too-short none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo breve.</span>--%>
-                    <%--        <span class="small-error email-too-long none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo lunga.</span>--%>
             </div>
         </div>
         <br>
@@ -31,8 +29,6 @@
             <label class="control-label">New E-mail</label>
             <div class="form-input">
                 <input id="newEmail" type="text" name="NewEmail" class="form-control" placeholder="New E-mail">
-                    <%--        <span class="small-error email-too-short none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo breve.</span>--%>
-                    <%--        <span class="small-error email-too-long none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo lunga.</span>--%>
             </div>
         </div>
         <br>
@@ -43,10 +39,6 @@
             <div class="form-input">
                 <input type="password" name="CurrentPassword" id="oldPassword" class="form-control"
                        placeholder="Current Password">
-                    <%--            <span class="small-error password-not-equal none" style="position: relative;top: 5px;color: red;">Incorrect old password</span>--%>
-                    <%--            <p class="help-block">Insert your current password</p>--%>
-                    <%--            <div data-lastpass-icon-root=""--%>
-                    <%--                 style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"></div>--%>
             </div>
         </div>
         <br>
@@ -56,10 +48,6 @@
             <div class="form-input">
                 <input type="password" name="NewPassword" id="newPassword" class="form-control"
                        placeholder="New Password">
-                    <%--            <span class="small-error password-not-equal none" style="position: relative;top: 5px;color: red;">Le password inserite non corrispondono.</span>--%>
-                    <%--            <p class="help-block">Inserisci una nuova password se vuoi modificarla.</p>--%>
-                    <%--            <div data-lastpass-icon-root=""--%>
-                    <%--                 style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"></div>--%>
             </div>
         </div>
         <br>
@@ -69,10 +57,6 @@
             <div class="form-input">
                 <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control"
                        placeholder="Repeat New Password">
-                    <%--            <span class="small-error password-not-equal none" style="position: relative;top: 5px;color: red;">Le password inserite non corrispondono.</span>--%>
-                    <%--            <p class="help-block">Inserisci nuovamente la password se vuoi modificarla.</p>--%>
-                    <%--            <div data-lastpass-icon-root=""--%>
-                    <%--                 style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"></div>--%>
             </div>
         </div>
         <br>

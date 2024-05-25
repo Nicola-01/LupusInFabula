@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("deleteButton").addEventListener("click", sendUpdate);
+    document.getElementById("deleteButton").addEventListener("click", sendDeleteUpdate);
 });
 
-function sendUpdate() {
+function sendDeleteUpdate() {
 
     const form = document.getElementById('deleteForm');
     const formData = new FormData(form);
@@ -17,12 +17,12 @@ function sendUpdate() {
         }
     };
 
-    genericDELETERequest(contextPath + "user/me", JSON.stringify(json), updateStatus);
+    genericDELETERequest(contextPath + "user/me", JSON.stringify(json), updateDeleteStatus);
     form.reset();
 
 }
 
-function updateStatus(req) {
+function updateDeleteStatus(req) {
 
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {

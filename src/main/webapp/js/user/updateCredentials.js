@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("updateButton").addEventListener("click", sendUpdate);
+    document.getElementById("updateButton").addEventListener("click", sendPutUpdate);
 });
 
-function sendUpdate() {
+function sendPutUpdate() {
 
     const form = document.getElementById('updateForm');
     const formData = new FormData(form);
@@ -17,12 +17,12 @@ function sendUpdate() {
         }
     };
 
-    genericPUTRequest(contextPath + "user/me", JSON.stringify(json), updateStatus);
+    genericPUTRequest(contextPath + "user/me", JSON.stringify(json), updatePutStatus);
     form.reset();
 
 }
 
-function updateStatus(req) {
+function updatePutStatus(req) {
 
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {

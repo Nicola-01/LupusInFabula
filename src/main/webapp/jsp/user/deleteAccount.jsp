@@ -10,6 +10,8 @@
 
 <c:if test="${not empty sessionScope.user}">
 
+<%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
+
     <form id="deleteForm">
         <div class="form-group">
             <label class="control-label">Username</label>
@@ -25,8 +27,6 @@
             <label class="control-label">E-mail</label>
             <div class="form-input">
                 <input id="email" type="text" name="email" class="form-control" placeholder="E-mail">
-                    <%--        <span class="small-error email-too-short none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo breve.</span>--%>
-                    <%--        <span class="small-error email-too-long none" style="position: relative;top: 5px;color: red;">L'e-mail è troppo lunga.</span>--%>
             </div>
         </div>
         <br>
@@ -36,10 +36,6 @@
             <div class="form-input">
                 <input type="password" name="password" id="password" class="form-control"
                        placeholder="Password">
-                    <%--            <span class="small-error password-not-equal none" style="position: relative;top: 5px;color: red;">Incorrect old password</span>--%>
-                    <%--            <p class="help-block">Insert your current password</p>--%>
-                    <%--            <div data-lastpass-icon-root=""--%>
-                    <%--                 style="position: relative !important; height: 0px !important; width: 0px !important; float: left !important;"></div>--%>
             </div>
         </div>
         <br>
