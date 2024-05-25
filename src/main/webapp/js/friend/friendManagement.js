@@ -1,11 +1,6 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("addPlayer").addEventListener("click", addFriend);
-    document.getElementById("playerUsername").addEventListener("keyup", function (event) {
-        if (event.key === "Enter") {
-            addFriend();
-            hidePlayerListPopup();
-        }
-    });
+    document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
+
     loadFriendList();
     playersToIgnore.push(localStorage.getItem("playerName").toLowerCase())
 });
@@ -37,7 +32,7 @@ function fillFriendsList(req){
 
                     // Fill cells with data
                     let link = document.createElement("a");
-                    link.href = contextPath + "/jsp/user/userPage.jsp"; //todo change URL to navigate to
+                    link.href = contextPath + "habitant/" + friend.username;
                     link.textContent = friend.username;
                     link.classList.add("friend-link");
                     usernameCell.appendChild(link);
@@ -100,7 +95,7 @@ function removeFromFriendsTable(username) {
     }
 }
 
-function addFriend() {
+function addPlayerToTable() {
     var username = document.getElementById("playerUsername").value;
     if (username.trim() !== "") {
         var url = contextPath + "user/me/friend"; // Endpoint for adding friend
@@ -145,7 +140,11 @@ function addToFriendsTable(username, friendshipDate) {
     let deleteCell = row.insertCell(2);
 
     // Fill cells with data
-    usernameCell.textContent = username;
+    let link = document.createElement("a");
+    link.href = contextPath + "habitant/" + username;
+    link.textContent = username;
+    link.classList.add("friend-link");
+    usernameCell.appendChild(link);
     dateCell.textContent = friendshipDate;
 
     // Create delete button
