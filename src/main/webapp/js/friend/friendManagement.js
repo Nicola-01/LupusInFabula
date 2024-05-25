@@ -27,8 +27,9 @@ function fillFriendsList(req){
                     // Create a new row
                     let row = tbody.insertRow();
                     let usernameCell = row.insertCell(0);
-                    let dateCell = row.insertCell(1);
-                    let deleteCell = row.insertCell(2);
+                    row.insertCell(1);
+                    let dateCell = row.insertCell(2);
+                    let deleteCell = row.insertCell(3);
 
                     // Fill cells with data
                     let link = document.createElement("a");
@@ -46,8 +47,11 @@ function fillFriendsList(req){
                     });
                     deleteCell.appendChild(deleteButton);
 
+
                     playersToIgnore.push(friend.username.toLowerCase())
                 }
+
+                sendFriendAvailabilityRequest()
             }
         }
     }
@@ -136,8 +140,9 @@ function addToFriendsTable(username, friendshipDate) {
     // Create a new row
     let row = tbody.insertRow();
     let usernameCell = row.insertCell(0);
-    let dateCell = row.insertCell(1);
-    let deleteCell = row.insertCell(2);
+    row.insertCell(1);
+    let dateCell = row.insertCell(2);
+    let deleteCell = row.insertCell(3);
 
     // Fill cells with data
     let link = document.createElement("a");
@@ -158,6 +163,49 @@ function addToFriendsTable(username, friendshipDate) {
     // Append delete button to delete cell
     deleteCell.appendChild(deleteButton);
 
+    sendFriendAvailabilityRequest();
     playersToIgnore.push(username.toLowerCase());
     clearSearchBar();
+}
+
+// Set interval to send request every 30 seconds
+setInterval(sendFriendAvailabilityRequest, 30000);
+
+function sendFriendAvailabilityRequest() {
+    genericGETRequest(contextPath + "user/search/", updateFriendAvailability)
+}
+
+function updateFriendAvailability(req) {
+
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+
+            let players = new Map();
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
+            if (list != null) {
+                for (let i = 0; i < list.length; i++) {
+                    players.set(list[i]['player']['username'].toLowerCase(), list[i]['player']['gameId']);
+                }
+            }
+
+            let rows = document.getElementById("my_friends").querySelector("tbody").rows;
+            for (let i = 0; i < rows.length; i++) {
+                if (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) {
+                    rows[i].cells[1].innerHTML = "";
+                    let link = document.createElement("a");
+                    link.href = contextPath + "newVillage";
+                    link.innerHTML = "&#128994; free";
+                    link.classList.add("newGame-link");
+                    rows[i].cells[1].appendChild(link);
+                }else{
+                    rows[i].cells[1].innerHTML = "";
+                    let link = document.createElement("a");
+                    link.href = contextPath + "village/" + players.get(rows[i].cells[0].textContent.toLowerCase());
+                    link.innerHTML = "&#128308; in game";
+                    link.classList.add("game-link");
+                    rows[i].cells[1].appendChild(link);
+                }
+            }
+        }
+    }
 }

@@ -31,7 +31,6 @@
     padding: 6px 10px;
     border-radius: 20px;
     cursor: pointer;
-    margin: 0 auto;
 }
 
 #my_friends .deleteFriendButton:hover {
@@ -65,5 +64,25 @@
 
 .friend-link:hover {
     color: #4e99e9;
+    font-weight: bold;
+}
+
+.newGame-link{
+    text-decoration: none;
+    color: rgba(0, 200, 0, 1);
+}
+
+.newGame-link:hover {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.game-link{
+    text-decoration: none;
+    color: rgba(200, 0, 0, 1);
+}
+
+.game-link:hover {
+    font-size: larger;
     font-weight: bold;
 }
