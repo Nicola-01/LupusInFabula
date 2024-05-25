@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentPath = window.location.pathname;
 
     // Check for Game section paths
-    if (currentPath === "lupus/habitant/me")
+    if (currentPath === "/lupus/habitant/me") {
         return; // nothing to set active
+    }
     const gamePaths = ["/rules", "/newVillage", "/village"];
     document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
         if (currentPath.includes(navLink.getAttribute('href')))

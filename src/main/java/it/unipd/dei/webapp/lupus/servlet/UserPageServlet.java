@@ -19,31 +19,34 @@ public class UserPageServlet extends AbstractDatabaseServlet {
         Message m = null;
         String uri = req.getRequestURI();
 
-        if (uri.endsWith("/me"))
-            req.getRequestDispatcher("/jsp/user/userPage.jsp").forward(req, resp);
-
-        String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
-
         try {
-            if(username.isEmpty()){
-                username= ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-                resp.sendRedirect(req.getContextPath() + "/habitant/" + username);
-                return;
-            }
+            if (uri.endsWith("/me"))
+                req.getRequestDispatcher("/jsp/user/userPage.jsp").forward(req, resp);
+            else {
 
-            Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
-            if(player_user == null) {
-                req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
-                return;
-            }
+                String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
 
+
+                if (username.isEmpty()) {
+                    username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                    resp.sendRedirect(req.getContextPath() + "/habitant/" + username);
+                    return;
+                }
+
+                Player player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
+                if (player_user == null) {
+                    req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
+                    return;
+                }
+
+                req.setAttribute("player", username);
+                req.getRequestDispatcher("/jsp/testLogs/testlogs.jsp").forward(req, resp);
+
+            }
         } catch (SQLException e) {
             ErrorCode er = ErrorCode.INTERNAL_ERROR;
             resp.setStatus(er.getHTTPCode());
             LOGGER.error("stacktrace:", e);
         }
-
-        req.setAttribute("player", username);
-        req.getRequestDispatcher("/jsp/testLogs/testlogs.jsp").forward(req, resp);
     }
 }

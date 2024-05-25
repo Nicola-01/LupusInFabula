@@ -28,7 +28,6 @@
         </c:if>
     </h2>
 
-
     <div id="messageDiv" class="mb-5"></div>
 
     <section class="centered-box row pt-3">
