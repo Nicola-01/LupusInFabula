@@ -1,8 +1,14 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <div id="addFriend" class="row justify-content-center">
     <div  class="col-9" style="position: relative;">
         <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
     </div>
 </div>
+
+<c:import url="/jsp/utils/successMessage.jsp"/>
+<c:import url="/jsp/utils/infoMessage.jsp"/>
+<c:import url="/jsp/utils/errorMessage.jsp"/>
 
 <div id="listFriend" class="row justify-content-center mt-3">
     <h2>Your Friends</h2>

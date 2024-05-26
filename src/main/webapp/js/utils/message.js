@@ -15,7 +15,7 @@ function populateWarningMessage(infoTitle, messageDetails, moreDetails = "") {
 
 // SUCCESS POPUP
 function populateSuccessMessage(infoTitle, messageDetails, moreDetails = "") {
-    populateMessage("warningMessage", infoTitle, messageDetails, moreDetails)
+    populateMessage("successMessage", infoTitle, messageDetails, moreDetails)
 }
 
 // COMMON

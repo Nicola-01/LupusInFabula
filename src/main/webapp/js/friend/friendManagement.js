@@ -11,6 +11,7 @@ function loadFriendList(){
     genericGETRequest(url, fillFriendsList);
 }
 
+
 function fillFriendsList(req){
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -68,6 +69,8 @@ function deleteFriend(username){
             if (xhr.status === HTTP_STATUS_OK) {
                 // Friend successfully deleted
                 removeFromFriendsTable(username);
+                var msg = username + " removed from your friends"
+                populateInfoMessage("Friend deleted", msg)
             } else {
                 // Handle error case
                 console.error("Error deleting friend:", xhr.status);
@@ -100,6 +103,7 @@ function removeFromFriendsTable(username) {
 }
 
 function addPlayerToTable() {
+
     var username = document.getElementById("playerUsername").value;
     if (username.trim() !== "") {
         var url = contextPath + "user/me/friend"; // Endpoint for adding friend
@@ -111,9 +115,13 @@ function addPlayerToTable() {
                 if (xhr.status === HTTP_STATUS_CREATED) {
                     let friend = JSON.parse(xhr.responseText)['friend'];
                     addToFriendsTable(friend.username, friend.friendship_date);
+                    var msg = friend.username + " added to your friends";
+                    populateSuccessMessage("Friend added", msg)
                 } else {
                     // Handle error case
+                    var msg = getMessage(xhr);
                     console.error("Error adding friend:", xhr.status);
+                    populateErrorMessage(msg.message, msg.errorCode, msg.errorDetails);
                 }
             }
         };
