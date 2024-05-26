@@ -15,8 +15,8 @@
         frameborder="0"></iframe>
 
 <jsp:include page="include/navbar.jsp"/>
-<main class="flex-grow-1 w-100 mt-5 pt-md-3">
-    <h2 class="mb-4">
+<main class="flex-grow-1 w-100 mt-sm-0 mt-md-5 pt-md-3">
+    <h1 class="mb-4">
         <span>Welcome back, </span>
         <c:if test="${not empty sessionScope.user}">
             <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
@@ -26,9 +26,9 @@
                 window.location.href = window.location.origin + "/lupus/login";
             </script>
         </c:if>
-    </h2>
+    </h1>
 
-    <div id="messageDiv" class="mb-5"></div>
+    <div id="messageDiv" class="mb-2 mb-md-5"></div>
 
     <section class="centered-box row pt-3">
         <div class="box col-sm-12 col-md-5 m-md-auto mb-3 p-4">
@@ -52,7 +52,7 @@
                 <button>Create a village</button>
             </a>
             <a>
-                <button>Join a village</button>
+                <button>Join your village</button>
             </a>
         </div>
     </section>

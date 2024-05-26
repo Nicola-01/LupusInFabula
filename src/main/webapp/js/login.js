@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function() {
     enableLogin();
 
     function enableSignup() {
-        singSubmit.disabled = !(singUsername.value.trim() !== '' && singEmail.value.trim() !== '' && singPassword.value.trim() !== '' && singPasswordRp.value.trim() !== '' && singPassword.value === singPasswordRp.value);
+        singSubmit.disabled = !(singUsername.value.trim() !== '' && singEmail.value.trim() !== '' && singPassword.value.trim() !== '' && singPasswordRp.value.trim() !== '');
     }
 
     function enableLogin() {

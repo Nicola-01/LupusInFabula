@@ -19,7 +19,7 @@
 </head>
 
 
-<body>
+<body class="d-flex flex-column">
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 
@@ -28,67 +28,61 @@
 
 <div id="error-message" style="display: none;"></div>
 
+<main class="container flex-grow-1">
+    <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
+    <div class="internal-container p-3" id="background_container" style="display: none">
 
 
-<div class="container" id="background_container" style="display: none">
-    <h1>Statistics and history of
-        <b>
-            <%--                <%= request.getAttribute("player") %>--%>
-            <%= request.getAttribute("player") %>
+        <div id="block_container">
 
-        </b>
-    </h1>
+            <h2>Statistics</h2>
 
-    <div class="container" id="block_container">
+            <div>
+                <div class="row">
+                    <%--        General statistics--%>
+                    <div class="col-12 col-md-12 col-lg-4 p-2">
+                        <%--            <p id=gen_stats></p>--%>
+                        <table id="general_stats" class="general_statics">
+                            <%--                style="border-style: hidden;"--%>
+                        </table>
+                    </div>
 
-        <h1>Statistics</h1>
+                    <%--        Statistics for role--%>
+                    <div class="col-12 col-md-6 col-lg-4 p-2">
+                        <table class="sortable table table-striped w-100" id="roles_table">
+                            <%--                            <thead class="sticky-top top-0">--%>
+                            <tr>
+                                <th>Role</th>
+                                <th>Times</th>
+                                <th>Wins</th>
+                                <th>Loss</th>
+                                <th>Rate
+                                    <a id="info_rate"
+                                       title="The percentage of games played as over the total played">&#9432</a>
+                                </th>
+                            </tr>
+                            <%--                            </thead>--%>
+                        </table>
+                    </div>
 
-        <div class="container">
-            <div class="row">
-                <%--        General statistics--%>
-                <div class="col-12 col-md-12 col-lg-4">
-                    <%--            <p id=gen_stats></p>--%>
-                    <table id="general_stats" class="general_statics">
-                        <%--                style="border-style: hidden;"--%>
-                    </table>
-                </div>
-
-                <%--        Statistics for role--%>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <table class="sortable" id="roles_table">
-                        <tr>
-                            <th>Role</th>
-                            <th>Times</th>
-                            <th>Wins</th>
-                            <th>Loss</th>
-                            <th>Rate
-                                <a id="info_rate"
-                                   title="The percentage of games played as over the total played">&#9432</a>
-                            </th>
-                        </tr>
-                    </table>
-                </div>
-
-                <%--    Pie chart for roles--%>
-                <div class="col-12 col-md-6 col-lg-4">
-                    <canvas id="myChart"></canvas>
+                    <%--    Pie chart for roles--%>
+                    <div class="col-12 col-md-6 col-lg-4 p-2">
+                        <canvas id="myChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <br>
+        <br>
 
-    <div class="container" id="block_container2">
-        <h1>Game Logs <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
-        </h1>
-
-
-        <div class="container">
-
-            <table class="sortable" id="logs_table" align="center">
+        <div id="block_container2">
+            <h2>Game Logs <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
+            </h2>
 
 
+            <table class="sortable table table-striped mb-0" id="logs_table" align="center">
+
+                <%--                <thead class="sticky-top top-0">--%>
                 <tr>
                     <th>GameId</th>
                     <th>Date and time</th>
@@ -98,12 +92,12 @@
                     <th>Outcome</th>
                     <th>View logs</th>
                 </tr>
+                <%--                </thead>--%>
 
             </table>
-
         </div>
     </div>
-</div>
+</main>
 
 
 <c:import url="/jsp/include/footer.jsp"/>

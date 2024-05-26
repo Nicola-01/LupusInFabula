@@ -20,12 +20,12 @@
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container">
+<main class="container">
     <h1>SELECT THE HABITANTS</h1>
     <div class="row">
         <div class="col-sm-12 col-md-6 p-1">
             <div id="players" class="p-2 mb-5">
-                <h3 class="text-center my-2">HABITANTS IN GAME</h3>
+                <h2 class="text-center my-2">HABITANTS IN GAME</h2>
                 <div class="playersTableContainer">
                     <table id="players_tb" class="table table-striped mb-0">
                         <thead class="sticky-top top-0">
@@ -44,7 +44,7 @@
         </div>
         <div class="col-sm-12 col-md-6 p-1 position-relative">
             <div id="friends" class="p-2 mb-5">
-                <h3 class="text-center my-2">YOUR FRIENDS</h3>
+                <h2 class="text-center my-2">YOUR FRIENDS</h2>
                 <div class="friendsTableContainer">
                     <table id="friends_tb" class="table table-striped mb-0">
                         <thead class="sticky-top top-0">
@@ -94,7 +94,7 @@
             <span class="text">Create new village!</span>
         </button>
     </div>
-</div>
+</main>
 
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/createNewGame.js"></script>

@@ -39,11 +39,10 @@
 }
 
 #addFriend{
-    height: 100px;
+    height: 70px;
 }
 
 #listFriend{
-    padding-top: 40px;
     margin: auto;
 }
 

@@ -23,9 +23,9 @@
     --nabbar-inverted-second-bg: #245270;
 
     --bg-first-color: #EAF0F2;
-    --bg-second-color: #c8dbdf;
+    --bg-second-color: #DEE6E8; /*#c8dbdf;*/
     --bg-inverted-first-color: #0E1115;
-    --bg-inverted-second-color: #1a2127;
+    --bg-inverted-second-color: #12171C; /*#1a2127;*/
 
     --text-color: #0B121A;
     --text-color-inverted: #EAF0F2;
@@ -49,9 +49,9 @@
     --nabbar-inverted-second-bg: #387B99;
 
     --bg-first-color: #0E1115;
-    --bg-second-color: #1a2127;
+    --bg-second-color: #12171C; /*#1a2127;*/
     --bg-inverted-first-color: #EAF0F2;
-    --bg-inverted-second-color: #c8dbdf;
+    --bg-inverted-second-color: #DEE6E8; /*#c8dbdf;*/
 
     --text-color: #EAF0F2;
     --text-color-inverted: #0B121A;

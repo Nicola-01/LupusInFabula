@@ -95,6 +95,7 @@ a {
     line-height: normal;
     position: absolute;
     bottom: 0;
+    margin-bottom: 0;
 }
 
 .winsWith {
@@ -228,14 +229,13 @@ p {
     background: linear-gradient(to right, var(--c1) var(--stop), var(--c2) var(--stop));
 }
 
-h3 {
+.list h2 {
     display: flex;
     align-items: baseline;
     margin: 0 0 1rem;
-    color: var(--bs-secondary-color);
 }
 
-h3::before {
+.list h2::before {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -256,12 +256,12 @@ h3::before {
         padding: 3rem 2rem 2rem;
     }
 
-    h3 {
+    .list h2 {
         font-size: 2.25rem;
         margin: 0 0 2rem;
     }
 
-    h3::before {
+    .list h2::before {
         margin-right: 1.5rem;
     }
 }

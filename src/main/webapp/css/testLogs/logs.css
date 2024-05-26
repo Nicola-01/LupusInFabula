@@ -10,11 +10,6 @@
 /*    !*transform: translate(-50%, -50%);*!*/
 /*}*/
 
-.container {
-    background-color: #2b3035;
-    border-radius: 15px;
-}
-
 table.general_statics {
     border: white;
     border-width: medium;
@@ -23,9 +18,24 @@ table.general_statics {
 }
 
 table.general_statics tr {
-    background-color: lightseagreen;
     border-radius: 25px;
     /*border: none;*/
+}
+
+.general_statics tbody {
+    background-color: var(--nabbar-second-bg);
+    color: var(--text-color);
+}
+
+#general_stats{
+    width: 85%;
+    margin: auto;
+}
+
+@media (max-width: 768px) {
+    #general_stats {
+        width: 100%;
+    }
 }
 
 

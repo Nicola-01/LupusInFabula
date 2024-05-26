@@ -7,6 +7,27 @@ body {
     /*transition: color 0.3s ease, background-color 0.3s ease;*/
 }
 
+/**HEADING*/
+h1 {
+    font-size: calc(1.25rem + 1vw) !important;
+}
+
+h2 {
+    font-size: calc(1.3rem + .6vw) !important;
+}
+
+h3 {
+    font-size: calc(1.3rem + .6vw) !important;
+}
+
+h4 {
+    font-size: 1.25rem;
+}
+
+h5 {
+    font-size: 1rem;
+}
+
 /*BUTTONS*/
 
 .gradientButton {
@@ -132,7 +153,16 @@ th, td {
     height: 46px;
 }
 
+thead {
+    z-index: 1 !important;
+}
+
 /*OTHER*/
+
+.internal-container {
+    background-color: var(--bg-second-color);
+    border-radius: .6rem;
+}
 
 footer {
     background-color: var(--nabbar-bg);

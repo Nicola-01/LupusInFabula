@@ -17,7 +17,7 @@
     overflow-y: auto;
     width: 100%;
     height: calc(100% - 35px);
-    background-color: var(--bs-tertiary-bg);
+    background-color: var(--bg-second-color);
     border-radius: .5rem;
 }
 

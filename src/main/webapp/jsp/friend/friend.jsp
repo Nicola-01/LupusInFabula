@@ -4,11 +4,11 @@
     </div>
 </div>
 
-<div id="listFriend" class="row justify-content-center">
+<div id="listFriend" class="row justify-content-center mt-3">
     <h2>Your Friends</h2>
-    <div id="friendsTable">
+    <div id="friendsTable" class="p-0">
         <table id="my_friends" class="table table-striped mb-0">
-            <thead class="sticky-top top-0" style="z-index: 1 !important;">
+            <thead class="sticky-top top-0">
             <tr>
                 <th style="width:40%">Username</th>
                 <th style="width:15%">Available</th>

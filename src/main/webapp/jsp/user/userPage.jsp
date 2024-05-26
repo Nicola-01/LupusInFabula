@@ -14,8 +14,6 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
-    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/updateCredentials.css">
-    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/deleteAccount.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
@@ -23,13 +21,13 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">
 </head>
 
-<body>
+<body class="d-flex flex-column">
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container">
-
-    <div class="radio-inputs">
+<main class="container flex-grow-1">
+    <h1>Your personal area</h1>
+    <div class="radio-inputs mb-2">
         <label class="radio">
             <input type="radio" name="radio" value="friends" checked="">
             <span>Friends</span>
@@ -37,7 +35,7 @@
 
         <label class="radio">
             <input type="radio" name="radio" value="changeCredentials">
-            <span >Change Credentials</span>
+            <span>Change Credentials</span>
         </label>
 
         <label class="radio">
@@ -45,20 +43,23 @@
             <span>Delete Account</span>
         </label>
     </div>
-
-    <div id="contentBox" class="box mt-3 px-2">
-        <div id="friendsPage">
-            <jsp:include page="../friend/friend.jsp"/>
-        </div>
-        <div class="row" id="changeCredentialsPage" style="display: none;">
-            <jsp:include page="updateCredential.jsp"/>
-        </div>
-        <div class="row" id="deleteAccountPage" style="display: none;">
-            <jsp:include page="deleteAccount.jsp"/>
+    <div class="internal-container p-3">
+                <div id="contentBox">
+            <div id="friendsPage">
+                <jsp:include page="/jsp/friend/friend.jsp"/>
+            </div>
+            <div class="row" id="changeCredentialsPage" style="display: none;">
+                <jsp:include page="updateCredential.jsp"/>
+            </div>
+            <div class="row" id="deleteAccountPage" style="display: none;">
+                <jsp:include page="deleteAccount.jsp"/>
+            </div>
         </div>
     </div>
+</main>
 
-</div>
+<c:import url="/jsp/include/footer.jsp"/>
+<c:import url="/jsp/include/foot.jsp"/>
 
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>

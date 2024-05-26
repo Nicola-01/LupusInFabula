@@ -24,26 +24,26 @@
     <h1>RULES</h1>
     <ol class="list" style="--length: 7" role="list">
         <li class="rules" style="--i: 0">
-            <h3><strong>Introduction to Lupus</strong></h3>
+            <h2><strong>Introduction to Lupus</strong></h2>
             <p>In the remote village of Fabula, some people become werewolves at night. They attack an innocent person
                 to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the
                 discussion, they lynch one of them. Who will survive the massacre?</p>
         </li>
 
         <li class="rules" style="--i: 1">
-            <h3><strong>Aim of the game</strong></h3>
+            <h2><strong>Aim of the game</strong></h2>
             <p>There are two factions in the game: the Werewolves and the Villagers. The aim of the Werewolf faction is
                 to eliminate all villagers. Conversely, the aim of the Villagers faction is to lynch all the
                 Werewolves.</p>
         </li>
         <li class="rules" style="--i: 2">
-            <h3><strong>Preparation</strong></h3>
+            <h2><strong>Preparation</strong></h2>
             <p>Before the game starts, one player is chosen to be the master/moderator. He doesn’t belong to any
                 faction, and he will only manage the game tracking everything that will happen. The other players will
                 play the role given to them by their card and look at their own card secretly.</p>
         </li>
         <li class="rules" style="--i: 3">
-            <h3><strong>Game</strong></h3>
+            <h2><strong>Game</strong></h2>
             <p>The game is divided into two phases: night and day. At night each role with an effect that resolves
                 during this phase will be called by the master to perform the respective action described in the role
                 card.
@@ -52,7 +52,7 @@
                 faction.</p>
             <ol class="sublist" role="list">
                 <li class="subrules" style="--i: 4">
-                    <h3><strong>Night</strong></h3>
+                    <h2><strong>Night</strong></h2>
                     <p>The moderator declares the beginning of the night (”it is night, everyone close your eyes”). All
                         players
                         then close their eyes, trying not to make any kind of noise for all the duration of this phase.
@@ -74,7 +74,7 @@
                     to others. Once the master has called all roles with night effect, the night is over.</p>
                 </li>
                 <li class="subrules" style="--i: 5">
-                    <h3><strong>Day</strong></h3>
+                    <h2><strong>Day</strong></h2>
                     <p>The master now declares the start of the day (”it’s day, everybody open your eyes”). The master
                         then gives a recap of what happened during the past night, listing who died (if anyone died),
                         who was anointed, etc. without giving explicit information about what happened (e.g. recap:
@@ -83,7 +83,7 @@
                         lie freely but under no circumstances may you show your card to others.</p>
                 </li>
                 <li class="subrules" style="--i: 6">
-                    <h3><strong>Voting</strong></h3>
+                    <h2><strong>Voting</strong></h2>
                     <p>After a maximum of three minutes of discussion, the master stops the discussion and asks each
                         player, starting with the one to the left of the one who died first and proceeding clockwise,
                         who he thinks should be lynched. All players, including ghosts (i.e., those who died), in their
@@ -104,7 +104,7 @@
             </ol>
         </li>
         <li class="rules" style="--i: 7">
-            <h3><strong>Victory Condition</strong></h3>
+            <h2><strong>Victory Condition</strong></h2>
             <p>The master declares the game over with a villagers victory if the villagers lynch all the werewolves.
                 Werewolves, on the other hand, are declared winners if at any point in time they are equal in number to
                 the still-living villagers (e.g., 2 werewolves and 2 villagers, or 1 and 1): in that case the werewolves
@@ -136,15 +136,15 @@
                                          alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
-                                    <h5 class="roleName">
+                                    <h4 class="roleName">
                                         <c:out value="${fn:toUpperCase(role.name)}"/>
-                                    </h5>
+                                    </h4>
                                     <p>
                                         <c:out value="${role.description}"/>
                                     </p>
-                                    <div class="wins">
+                                    <h5 class="wins">
                                         WINS WITH: <strong class="winsWith">VILLAGERS</strong>
-                                    </div>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -177,15 +177,15 @@
                                          alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
-                                    <h5 class="roleName">
+                                    <h4 class="roleName">
                                         <c:out value="${fn:toUpperCase(role.name)}"/>
-                                    </h5>
+                                    </h4>
                                     <p>
                                         <c:out value="${role.description}"/>
                                     </p>
-                                    <div class="wins">
+                                    <h5 class="wins">
                                         WINS WITH: <strong class="winsWith">WOLF PACK</strong>
-                                    </div>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -218,15 +218,15 @@
                                          alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
-                                    <h5 class="roleName">
+                                    <h4 class="roleName">
                                         <c:out value="${fn:toUpperCase(role.name)}"/>
-                                    </h5>
+                                    </h4>
                                     <p>
                                         <c:out value="${role.description}"/>
                                     </p>
-                                    <div class="wins">
+                                    <h5 class="wins">
                                         WINS WITH: <strong class="winsWith">ALONE</strong>
-                                    </div>
+                                    </h5>
                                 </div>
                             </div>
                         </div>
@@ -259,13 +259,13 @@
                                          alt="<c:out value="${role.name}"/>'s card">
                                 </div>
                                 <div class="col-md-7 roleDescription">
-                                    <h5 class="roleName">
+                                    <h4 class="roleName">
                                         <c:out value="${fn:toUpperCase(role.name)}"/>
-                                    </h5>
+                                    </h4>
                                     <p>
                                         <c:out value="${role.description}"/>
                                     </p>
-                                    <div class="wins">
+                                    <h5 class="wins">
                                         WINS WITH: <strong class="winsWith">
                                         <c:if test="${role.name eq 'plague spreader'}">
                                             VILLAGERS
@@ -274,7 +274,7 @@
                                             WOLF PACK
                                         </c:if>
                                     </strong>
-                                    </div>
+                                    </h5>
 
                                 </div>
                             </div>

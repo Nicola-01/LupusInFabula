@@ -45,7 +45,7 @@
                     <li><a class="dropdown-item" href="<c:url value="/rules"/>">Rulebook</a></li>
                     <hr class="dropdown-divider">
                     <li><a class="dropdown-item" href="<c:url value="/newVillage"/>">Create a village</a></li>
-                    <li><a class="dropdown-item" href="<c:url value="/"/>">Join a village</a></li>
+                    <li><a class="dropdown-item" href="<c:url value="/"/>">Join your village</a></li>
                 </ul>
             </li>
             <div class="d-flex d-md-none pb-2 text-center nav-item m-2">

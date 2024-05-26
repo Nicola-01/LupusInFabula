@@ -21,7 +21,7 @@
 <body>
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container">
+<main class="container">
 
     <c:import url="/jsp/utils/infoMessage.jsp"/>
 
@@ -30,9 +30,9 @@
     </div>
 
     <div class="row">
-        <div class="col-lg-10 col-xl-8 p-2 m-auto row">
+        <div class="col-lg-11 col-xl-10 p-2 m-auto row">
             <div class="col-4 p-0">
-                <h2 id="gameStatus"></h2>
+                <h1 id="gameStatus"></h1>
             </div>
             <div class="col-4 p-0 d-flex justify-content-center">
                 <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;" onclick="toggleCard()">
@@ -74,12 +74,12 @@
             <div id="playersStatus" class="row p-2"></div>
         </div>
         <div id="gameLogExternal" class="col-md-6 p-1">
-            <h2 style="height: 35px;">VILLAGE LOG</h2>
+            <h2 style="height: 35px;">VILLAGE LOGS</h2>
             <div id="gameLog" class="row p-2"></div>
         </div>
     </div>
 
-</div>
+</main>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
