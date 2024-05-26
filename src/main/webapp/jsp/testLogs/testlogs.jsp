@@ -76,7 +76,7 @@
         <br>
 
         <div id="block_container2">
-            <h2>Game Logs <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
+            <h2>History<a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
             </h2>
 
 

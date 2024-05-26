@@ -1,0 +1,7 @@
+#gameLog button {
+    background-color: var(--nabbar-bg);
+}
+
+#gameLog button:hover  {
+    background-color: var(--nabbar-second-bg);
+}

@@ -34,7 +34,7 @@
     width: 100%;
     border: 0;
     border-radius: 5px;
-    background: var(--bs-tertiary-bg);
+    background: var(--inputs-bg-color);
     cursor: pointer;
     font-family: inherit;
     font-size: 16px;

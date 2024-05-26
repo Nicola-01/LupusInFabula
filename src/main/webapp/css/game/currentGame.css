@@ -23,7 +23,7 @@
 
 #copyLink {
     background-color: var(--neutral-color-1);
-    width: 160px !important;
+    width: 110px !important;
     height: 40px;
     border: none;
     border-radius: 10px;
@@ -32,8 +32,12 @@
     transition-duration: 700ms;
 }
 
+#copyLink:hover {
+    background-color: var(--neutral-color-6);
+}
+
 #copyLink span:first-child {
-    color: var(--neutral-color-3);
+    color: var(--neutral-color-4);
     position: absolute;
     transform: translate(-50%, -50%)
 }
@@ -48,7 +52,7 @@
 }
 
 #copyLink:focus {
-    background-color: var(--neutral-color-3);
+    background-color: var(--neutral-color-4);
     width: 120px;
     height: 40px;
     transition-delay: 100ms;
@@ -108,6 +112,18 @@
     #playerImage {
         width: 50%;
     }
+}
+
+#toggleButton {
+    width: 45px;
+    height: 45px;
+    background-color: var(--nabbar-inverted-bg);
+    border: none;
+    transition: .3s all;
+}
+
+#toggleButton:hover {
+    background-color: var(--nabbar-inverted-second-bg);
 }
 
 .blurred {

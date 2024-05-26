@@ -34,7 +34,7 @@
                     Home
                 </a>
             <li class="nav-item">
-                <a class="nav-link mx-3" href="<c:url value="/habitant/"/>">Stats&Logs</a>
+                <a class="nav-link mx-3" href="<c:url value="/habitant/"/>">Stats&History</a>
             </li>
             <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle mx-3" href="#" role="button" data-bs-toggle="dropdown"
@@ -61,60 +61,60 @@
         <span class="navigation__group">
             <img class="profile" src="${pageContext.request.contextPath}/media/favicon.ico" alt="Lupus logo">
         </span>
-        <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
-            <div class="dropdown__group">
-                <c:if test="${not empty sessionScope.user}">
-                    <div class="user-name">${sessionScope.user.getUsername()}</div>
-                    <div class="email">${sessionScope.user.getEmail()}</div>
-                </c:if>
-                <c:if test="${empty sessionScope.user}">
-                    <div class="user-name">Not Logged In</div>
-                </c:if>
-            </div>
-            <hr class="divider">
-            <nav class="profile_nav">
-                <ul>
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--nabbar-inverted-bg)"
-                             viewBox="0 0 448 512">
-                            <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/>
-                        </svg>
-                        <a href="${pageContext.request.contextPath}/habitant/me"> My Profile</a>
-                    </li>
-                    <li>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--nabbar-inverted-bg)"
-                             viewBox="0 0 512 512">
-                            <path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>
-                        </svg>
-                        <div class="dropup">
-                            <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
-                               aria-expanded="false">
-                                Theme
-                            </a>
-                            <ul class="dropdown-menu" id="theme" style="font-size: 0.95rem; padding: 0;">
-                                <li><a class="dropdown-item" theme="light">Light</a></li>
-                                <li><a class="dropdown-item" theme="dark">Dark</a></li>
-                                <li><a class="dropdown-item" theme="auto">Auto</a></li>
-                                <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>
-                            </ul>
-                        </div>
-                    </li>
-                </ul>
-                <hr class="divider">
-                <ul>
-                    <li style="color: #E3452F;">
-                        <c:if test="${not empty sessionScope.user}">
-                            <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogOut"><a
-                                href="/lupus/logout">Logout</a>
-                        </c:if>
-                        <c:if test="${empty sessionScope.user}">
-                            <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogIn"><a
-                                href="/lupus/login">Login</a>
-                        </c:if>
-                    </li>
-                </ul>
-            </nav>
+    </div>
+    <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">
+        <div class="dropdown__group">
+            <c:if test="${not empty sessionScope.user}">
+                <div class="user-name">${sessionScope.user.getUsername()}</div>
+                <div class="email">${sessionScope.user.getEmail()}</div>
+            </c:if>
+            <c:if test="${empty sessionScope.user}">
+                <div class="user-name">Not Logged In</div>
+            </c:if>
         </div>
+        <hr class="divider">
+        <nav class="profile_nav">
+            <ul>
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--nabbar-inverted-bg)"
+                         viewBox="0 0 448 512">
+                        <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/>
+                    </svg>
+                    <a href="${pageContext.request.contextPath}/habitant/me"> My Profile</a>
+                </li>
+                <li>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--nabbar-inverted-bg)"
+                         viewBox="0 0 512 512">
+                        <path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>
+                    </svg>
+                    <div class="dropup">
+                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                           aria-expanded="false">
+                            Theme
+                        </a>
+                        <ul class="dropdown-menu" id="theme" style="font-size: 0.95rem; padding: 0;">
+                            <li><a class="dropdown-item" theme="light">Light</a></li>
+                            <li><a class="dropdown-item" theme="dark">Dark</a></li>
+                            <li><a class="dropdown-item" theme="auto">Auto</a></li>
+                            <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <hr class="divider">
+            <ul>
+                <li style="color: #E3452F;">
+                    <c:if test="${not empty sessionScope.user}">
+                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogOut"><a
+                            href="/lupus/logout">Logout</a>
+                    </c:if>
+                    <c:if test="${empty sessionScope.user}">
+                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogIn"><a
+                            href="/lupus/login">Login</a>
+                    </c:if>
+                </li>
+            </ul>
+        </nav>
     </div>
 
 </nav>

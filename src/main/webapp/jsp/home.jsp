@@ -37,7 +37,7 @@
                 <button>Personal Area</button>
             </a>
             <a href="<c:url value="/habitant/"/>">
-                <button>Statistics & Logs</button>
+                <button>Statistics and History</button>
             </a>
             <a href="<c:url value="/logout"/>">
                 <button>Logout</button>

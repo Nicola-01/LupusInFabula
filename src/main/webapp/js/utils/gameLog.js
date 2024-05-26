@@ -108,6 +108,8 @@ function createCont(ContAction)
 function createTable(data)
 {
     let bs = ''
+    let key = ["player", "round", "phase", "subphase", "typeAction", "target"]
+    let i = data.length > 0 ? Object.keys(data[0]) : [0]
     let roundMax = data.length-1 >= 0 ? data[data.length-1][i[0]][key[1]] : 0
 
 
@@ -122,8 +124,6 @@ function createTable(data)
 
         b.addEventListener("click", function ()
         {
-            let key = ["player", "round", "phase", "subphase", "typeAction", "target"]
-            let i = data.length > 0 ? Object.keys(data[0]) : [0]
             let ul = document.getElementById('round-'+r+'-ul')
             let dStmp = false
             let nStmp = dStmp

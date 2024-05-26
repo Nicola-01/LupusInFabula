@@ -217,18 +217,29 @@
 
 .dropdown__wrapper {
     width: 240px;
-    top: 75px;
+    top: 72px;
     right: 15px;
     position: absolute;
     border-radius: 8px;
-    border: 1px solid var(--text-gray);
+    border: 1px solid var(--neutral-color-3);
     display: flex;
     flex-direction: column;
     gap: 4px;
     animation: fadeOutAnimation ease-in-out 0.3s forwards;
     z-index: 2;
-    background-color: var(--bs-body-bg);
+    background-color: var(--bg-second-color);
     overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .dropdown__wrapper {
+        top: 55px;
+        right: 0;
+    }
+}
+
+.dropdown-menu.show {
+    background-color: var(--bg-second-color);
 }
 
 .dropdown__wrapper--fade-in {

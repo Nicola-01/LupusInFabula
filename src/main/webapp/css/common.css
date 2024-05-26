@@ -125,6 +125,7 @@ h5 {
     transition: all .3s ease-in-out;
     background-color: var(--nabbar-second-bg);
     color: var(--text-color);
+    height: 100%;
 }
 
 .radio-inputs .radio input:hover + span {
@@ -139,7 +140,7 @@ h5 {
 }
 
 .radio input[type="radio"]:disabled + span {
-    color: #5a667f;
+    color: var(--neutral-color-3);
     cursor: not-allowed;
     background-color: transparent;
 }
