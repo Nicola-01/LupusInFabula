@@ -12,6 +12,8 @@
 
 <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
+    <div id="liveAlertPlaceholderDelete"></div>
+
     <form id="deleteForm">
         <div class="form-group">
             <label class="control-label">Username</label>

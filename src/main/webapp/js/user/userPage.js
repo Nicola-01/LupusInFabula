@@ -23,3 +23,21 @@ radioInputs.forEach(input => {
         }
     });
 });
+
+const alertPlaceholderDelete = document.getElementById('liveAlertPlaceholderDelete');
+const alertPlaceholderPut= document.getElementById('liveAlertPlaceholderPut');
+
+const appendAlert = (message, type, action) => {
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = [
+        `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+        `   <div>${message}</div>`,
+        '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+        '</div>'
+    ].join('');
+
+    if (action === 'DELETE')
+        alertPlaceholderDelete.append(wrapper);
+    else if (action === 'PUT')
+        alertPlaceholderPut.append(wrapper);
+}

@@ -27,10 +27,10 @@ function updateDeleteStatus(req) {
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            populateInfoMessage("DELETE DONE", message.message);
+            appendAlert("DELETE DONE: " + message.message, 'success', 'DELETE');
         } else {
             if (message != null)
-                populateErrorMessage(message.message, message.errorCode, message.errorDetails);
+                appendAlert(message.message, 'danger', 'DELETE');
             else {
                 let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
                 let msgs = ""
@@ -46,11 +46,9 @@ function updateDeleteStatus(req) {
                         if (!errorDetails.includes(message['error-details']))
                             errorDetails += "<br>" + message['error-details'];
                     }
-                    // remove ", " from errorCodes and "<br>" form errorDetails
-                    populateErrorMessage(msgs, errorCodes.substring(2), errorDetails.substring(4));
+                    appendAlert(msgs, 'danger', 'DELETE');
                 }
             }
         }
     }
-
 }

@@ -6,6 +6,9 @@
 <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
     <form id="updateForm">
+
+        <div id="liveAlertPlaceholderPut"></div>
+
         <div class="form-group">
             <label class="control-label">Username</label>
             <div class="form-input">
