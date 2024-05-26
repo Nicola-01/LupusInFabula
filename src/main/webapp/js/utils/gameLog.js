@@ -25,10 +25,8 @@ function logElementsReload()
     divLogs = document.getElementById("gameLog")
     divLogs.innerHTML = ""
 
-    divLogs.disabled = true;
     var masterlog = endsWithMaster? "/master" : "";
     genericGETRequest(contextPath + "game/logs/" + gameID + masterlog, fillGameLog);
-    document.getElementById("gameLog").disabled = false;
 }
 
 function fillGameLog(req)
@@ -60,7 +58,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, target)
                     phase + (phase==="day" ? "    " : "")+
                 '</span>' +
                 '<div class="flex-grow-1 ps-4 border-start border-3">' +
-                    '<h4>'+typeOfAction+'</h4>'+// type action
+                    '<h4>'+typeOfAction.charAt(0).toUpperCase() + typeOfAction.slice(1)+'</h4>'+// type action
                     ' <p class="mb-0">'+
                         (target === null ? 'the user '+user+' is dead' :
                         'the user '+user+' make the action '+typeOfAction+' on '+ target )+ //user , typeaction, target
@@ -71,15 +69,14 @@ function createActionBlock(phase, subphase, typeOfAction, user, target)
 function createRowBlock(phase)
 {
     return  '<li class="d-flex flex-column flex-md-row py-4">' +
-        '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
-            phase + (phase==="day" ? "    " : "")+
-            '</span>' +
+                '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
+                    phase + (phase==="day" ? "    " : "")+
+                '</span>' +
                 '<div class="flex-grow-1 ps-4 border-start border-3">' +
-                    '<h4></h4>'+// type action
+                    '<hr  class="my-4">'+
                 '</div>'+
             '</li>'
 }
-
 
 
 function createContActionButton(round)
@@ -97,21 +94,19 @@ function createContActionButton(round)
 function createCont(ContAction)
 {
     return  ' <div class="container py-5 py-lg-5 position-relative z-index-1">' +
-        '    <div class="row">' +
-        '           <div class="row">' +
-        '            <div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
-                        ContAction + ''+
-        '            </div>' +
-        '           </div>' +
-        '           </div>' +
-        '    </div>'
+                '<div class="row">' +
+                    '<div class="row">' +
+                        '<div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
+                            ContAction +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>'
 }
 
 
 function createTable(data)
 {
-    let key = ["player", "round", "phase", "subphase", "typeAction", "target"]
-    let i = data.length > 0 ? Object.keys(data[0]) : [0]
     let bs = ''
     let roundMax = data.length-1 >= 0 ? data[data.length-1][i[0]][key[1]] : 0
 
@@ -127,45 +122,59 @@ function createTable(data)
 
         b.addEventListener("click", function ()
         {
+            let key = ["player", "round", "phase", "subphase", "typeAction", "target"]
+            let i = data.length > 0 ? Object.keys(data[0]) : [0]
             let ul = document.getElementById('round-'+r+'-ul')
             let dStmp = false
             let nStmp = dStmp
             let phase = ""
+            let j = 0
+            let as = ''
 
             if(ul.innerHTML==="")
             {
-                let j = 0
-                let as = ''
-
                 while (j < data.length && data[j][i[0]][key[1]]<=r)
                 {
-                    if (data[j][i[0]][key[1]] === r) {
+                    if (data[j][i[0]][key[1]] === r)
+                    {
                         phase = data[j][i[0]][key[2]]
-                        if (phase === "day" && !dStmp) {
-                            as = as.concat(createRowBlock("Day"))
-                            dStmp = true
-                        } else if (phase === "night" && !nStmp) {
-                            as = as.concat(createRowBlock("Night"))
-                            nStmp = true
-                        }
-                        switch (data[j][i[0]][key[3]]) {
-                            case 0:
-                                phase = "Vote"
-                                break;
-                            case 1:
-                                phase = "1° ballot"
-                                break;
-                            case 2:
-                                phase = "2° ballot"
-                                break;
-                            case 3:
-                                phase = "Special action"
-                                break;
-                        }
+                        if (phase === "day")
+                        {
+                            switch (data[j][i[0]][key[3]])
+                            {
+                                case 0:
+                                    phase = "Vote"
+                                    break;
+                                case 1:
+                                    phase = "1° ballot"
+                                    break;
+                                case 2:
+                                    phase = "2° ballot"
+                                    break;
+                                case 3:
+                                    phase = "Special action"
+                                    break;
+                            }
 
+                            if (!dStmp)
+                            {
+                                as = as.concat(createRowBlock("Day"))
+                                dStmp = true
+                            }
+
+                        }
+                        else if (phase === "night")
+                        {
+                            phase=""
+
+                            if (!nStmp)
+                            {
+                                as = as.concat(createRowBlock("Night"))
+                                nStmp = true
+                            }
+                        }
                         as = as.concat(createActionBlock(phase, data[j][i[0]][key[3]], data[j][i[0]][key[4]], data[j][i[0]][key[0]], data[j][i[0]][key[5]]))
                     }
-
                     j++
                 }
                 ul.innerHTML = as

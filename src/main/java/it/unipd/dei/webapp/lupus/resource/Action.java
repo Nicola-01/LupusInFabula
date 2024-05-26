@@ -180,20 +180,22 @@ public class Action extends AbstractResource implements Comparable
         jg.flush();
     }
 
+    /**
+     * permit to compare 2 action
+     * @param o another object to compile
+     * */
     @Override
     public int compareTo(Object o)
     {
-        Action i = (Action)o;
-        int r = Integer.compare(this.getRound(), i.getRound());
-        int p = Integer.compare(this.getPhase(), i.getPhase())*(-1);
-        int sp = Integer.compare(this.getSubphase(), i.getSubphase());
+        if(o instanceof Action)
+        {
+            Action i = (Action) o;
+            int r = Integer.compare(this.getRound(), i.getRound());
+            int p = Integer.compare(this.getPhase(), i.getPhase()) * (-1);
+            int sp = Integer.compare(this.getSubphase(), i.getSubphase());
 
-        return r!=0 ? r : p!=0 ? p : sp;
-    }
-
-    @Override
-    public String toString()
-    {
-        return this.player + ":" + this.round + ":" + this.phase + ":" + this.subphase + ":" + this.typeAction + ":" + this.target;
+            return r != 0 ? r : p != 0 ? p : sp;
+        }
+        else return -1;
     }
 }
