@@ -12,7 +12,7 @@
         <div class="form-group">
             <label class="control-label">Username</label>
             <div class="form-input">
-                <input id="name" type="text" name="name" class="form-control" placeholder="Username"
+                <input id="namePut" type="text" name="name" class="form-control" placeholder="Username"
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
