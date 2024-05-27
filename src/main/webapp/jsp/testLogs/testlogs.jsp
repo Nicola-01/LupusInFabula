@@ -23,19 +23,23 @@
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 
-<div id="username" style="display: none;"><%= request.getAttribute("player")%>
+<div id="username_requested" style="display: none;"><%= request.getAttribute("player")%>
+</div>
+
+<div id="username_logged" style="display: none;">${sessionScope.user.getUsername()}
 </div>
 
 <div id="error-message" style="display: none;"></div>
 
-<main class="container flex-grow-1">
+<main class="container flex-grow-1" id="main_class" style="display: none">
     <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
-    <div class="internal-container p-3" id="background_container" style="display: none">
+    <div class="internal-container p-3" id="background_container">
+<%--         style="display: none">--%>
 
 
         <div id="block_container">
 
-            <h2>Statistics</h2>
+            <h2>Statistics <a title="You can sort the table clicking on the name of the column">&#9432</a> </h2>
 
             <div>
                 <div class="row">
@@ -76,7 +80,7 @@
         <br>
 
         <div id="block_container2">
-            <h2>History<a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
+            <h2>History <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
             </h2>
 
 

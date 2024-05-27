@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    var username = document.getElementById('username').innerText;
+    var username = document.getElementById('username_requested').innerText;
 
 
     // console.log(username);
@@ -103,17 +103,28 @@ function getLogs(req) {
                 row = tbody.insertRow();
                 row.classList.add("item");
 
+                var user_logged = document.getElementById("username_logged").innerText;
+                var user_requested = document.getElementById("username_requested").innerText;
+
                 var cell = row.insertCell(0);
                 cell.colSpan = 7;
-                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+                // cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+
+
+                if (user_requested === user_logged) {
+                    cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+                } else {
+                    cell.innerHTML = user_requested + 'haven\'t taken part in any games yet, invite him now!';
+                }
             }
         }
     }
+
 }
 
-function hasError(req) {
-    return req.status !== HTTP_STATUS_OK;
-}
+// function hasError(req) {
+//     return req.status !== HTTP_STATUS_OK;
+// }
 
 function handleError(req) {
 
@@ -132,12 +143,11 @@ function handleError(req) {
     errorMessageContainer.style.display = 'block';
 }
 
-function handleHttpStatus(req){
-    if (req.status === HTTP_STATUS_OK){
-        const back_con = document.getElementById('background_container');
+function handleHttpStatus(req) {
+    if (req.status === HTTP_STATUS_OK) {
+        const back_con = document.getElementById('main_class');
         back_con.style.display = 'block';
-    }
-    else{
+    } else {
         handleError(req);
     }
 }
@@ -214,7 +224,14 @@ function getStatsRole(req) {
                 row.classList.add("item");
                 var cell = row.insertCell(0);
                 cell.colSpan = 5;
-                cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+
+                var user_logged = document.getElementById("username_logged").innerText;
+                var user_requested = document.getElementById("username_requested").innerText;
+                if (user_requested === user_logged) {
+                    cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
+                } else {
+                    cell.innerHTML = user_requested + 'haven\'t taken part in any games yet, invite him now!';
+                }
             }
         }
     }
@@ -226,7 +243,7 @@ function completePieChart(pairs) {
     let names = pairs.map(pair => pair[0]);
     let rates = pairs.map(pair => pair[1]);
 
-    if(pairs.length === 0){
+    if (pairs.length === 0) {
         names = ["Not played"];
         rates = [0];
     }
