@@ -64,7 +64,7 @@
         </div>
         <br>
         <div class="button-container mb-0">
-            <button type="button" class="gradientButton" id="updateButton">
+            <button type="button" class="gradientButton" id="updateButton" disabled>
                 <span>Update Credentials</span>
             </button>
         </div>
