@@ -51,17 +51,18 @@ function createButtonRound(round)
             '</button>'
 }
 
-function createActionBlock(phase, subphase, typeOfAction, user, target)
+function createActionBlock(phase, subphase, typeOfAction, user, target, color)
 {
-    return  '<li class="d-flex flex-column flex-md-row py-4">' +
+    return  '<div class="py-2"></div>' +
+            '<li class="d-flex flex-column flex-md-row py-2 grid-player" style="background-color: '+ color + ' ">' +
                 '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
-                    phase + (phase==="day" ? "    " : "")+
+                    'ㅤㅤ'+ phase + (phase==="day" ? "    " : "")+
                 '</span>' +
                 '<div class="flex-grow-1 ps-4 border-start border-3">' +
-                    '<h4>'+typeOfAction.charAt(0).toUpperCase() + typeOfAction.slice(1)+'</h4>'+// type action
+                    //'<h4>'+typeOfAction.charAt(0).toUpperCase() + typeOfAction.slice(1)+'</h4>'+// type action
                     ' <p class="mb-0">'+
                         (target === null ? 'the user '+user+' is dead' :
-                        'the user '+user+' make the action '+typeOfAction+' on '+ target )+ //user , typeaction, target
+                        'The user '+user+' make the action '+typeOfAction+' on '+ target )+ //user , typeaction, target
                     '</p>'+
                 '</div>'+
             '</li>'
@@ -93,7 +94,7 @@ function createContActionButton(round)
 
 function createCont(ContAction)
 {
-    return  ' <div class="container py-5 py-lg-5 position-relative z-index-1">' +
+    return  ' <div class="container py-1 py-lg-5 position-relative z-index-1">' +
                 '<div class="row">' +
                     '<div class="row">' +
                         '<div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
@@ -102,6 +103,20 @@ function createCont(ContAction)
                     '</div>' +
                 '</div>' +
             '</div>'
+}
+
+function getRole(nm)
+{
+    let i =0
+
+    while(i< playerRole.length)
+    {
+        if(playerRole[i].username===nm)
+            return playerRole[i].role
+        i++
+    }
+
+    return ""
 }
 
 
@@ -130,6 +145,7 @@ function createTable(data)
             let phase = ""
             let j = 0
             let as = ''
+            let col = null
 
             if(ul.innerHTML==="")
             {
@@ -148,12 +164,10 @@ function createTable(data)
                                 case 1:
                                     phase = "1° ballot"
                                     break;
-                                case 2:
-                                    phase = "2° ballot"
+                                default:
+                                    phase =  data[j][i[0]][key[4]]==="vote" ? "2° ballot" : "Special action break"
                                     break;
-                                case 3:
-                                    phase = "Special action"
-                                    break;
+
                             }
 
                             if (!dStmp)
@@ -173,7 +187,15 @@ function createTable(data)
                                 nStmp = true
                             }
                         }
-                        as = as.concat(createActionBlock(phase, data[j][i[0]][key[3]], data[j][i[0]][key[4]], data[j][i[0]][key[0]], data[j][i[0]][key[5]]))
+
+                        if(data[j][i[0]][key[4]]!=="vote" && (data[j][i[0]][key[4]]==="dead" || getRoleType(getRole(data[j][i[0]][key[0]]))==="evil"))
+                            col = rolesColors.get("bad")
+                        else if (data[j][i[0]][key[4]]==="vote")
+                            col = rolesColors.get("vote")
+                        else
+                            col = rolesColors.get("good")
+
+                        as = as.concat(createActionBlock(phase, data[j][i[0]][key[3]], data[j][i[0]][key[4]], data[j][i[0]][key[0]], data[j][i[0]][key[5]], col))
                     }
                     j++
                 }

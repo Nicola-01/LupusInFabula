@@ -90,6 +90,12 @@ rolesColors.set('plague spreader', '#595959');
 
 rolesColors.set('', '#9f9f9f')
 
+//logs
+rolesColors.set('good', '#389449')
+rolesColors.set('bad', '#C42504')
+rolesColors.set('vote', '#9f9f9f')
+
+
 const GamePhase = {
     NIGHT: 0,
     DAY: 1
