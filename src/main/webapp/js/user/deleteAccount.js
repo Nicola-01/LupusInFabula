@@ -1,5 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("deleteButton").addEventListener("click", sendDeleteUpdate);
+
+    document.getElementById('email').addEventListener('input', checkFormCompletionDelete);
+    document.getElementById('password').addEventListener('input', checkFormCompletionDelete);
 });
 
 function sendDeleteUpdate() {
@@ -51,4 +54,15 @@ function updateDeleteStatus(req) {
             }
         }
     }
+}
+
+function checkFormCompletionDelete() {
+
+    const deleteButton = document.getElementById('deleteButton');
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+
+    deleteButton.disabled = !(email.trim() !== '' && password.trim() !== '');
+
 }

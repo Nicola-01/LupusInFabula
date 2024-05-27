@@ -1,5 +1,12 @@
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("updateButton").addEventListener("click", sendPutUpdate);
+
+    document.getElementById('currentEmail').addEventListener('input', checkFormCompletionPut);
+    document.getElementById('newEmail').addEventListener('input', checkFormCompletionPut);
+    document.getElementById('oldPassword').addEventListener('input', checkFormCompletionPut);
+    document.getElementById('newPassword').addEventListener('input', checkFormCompletionPut);
+    document.getElementById('confirm-password').addEventListener('input', checkFormCompletionPut);
+
 });
 
 function sendPutUpdate() {
@@ -51,4 +58,36 @@ function updatePutStatus(req) {
             }
         }
     }
+}
+
+function checkFormCompletionPut() {
+
+    const updateButton = document.getElementById('updateButton');
+
+    const currentEmail = document.getElementById('currentEmail').value;
+    const newEmail = document.getElementById('newEmail').value;
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+
+    // all email inputs are filled, while all password inputs are not
+    if ((currentEmail.trim() !== '' && newEmail.trim() !== '')
+        && (oldPassword.trim() === '' && newPassword.trim() === '' && confirmPassword.trim() === '')) {
+        updateButton.disabled = false;
+    }
+    // all password inputs are filled, while all email inputs are not
+    else if ((oldPassword.trim() !== '' && newPassword.trim() !== '' && confirmPassword.trim() !== '')
+        && (currentEmail.trim() === '' && newEmail.trim() === '')) {
+        updateButton.disabled = false;
+    }
+    // all inputs are filled
+    else if (oldPassword.trim() !== '' && newPassword.trim() !== '' && confirmPassword.trim() !== ''
+        && currentEmail.trim() !== '' && newEmail.trim() !== '') {
+        updateButton.disabled = false;
+    }
+    // the other cases
+    else {
+        updateButton.disabled = true;
+    }
+
 }
