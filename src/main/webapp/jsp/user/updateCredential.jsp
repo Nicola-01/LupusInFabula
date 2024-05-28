@@ -3,66 +3,58 @@
 
 <c:if test="${not empty sessionScope.user}">
 
-<%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
+    <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
     <form id="updateForm">
 
         <div id="liveAlertPlaceholderPut"></div>
 
         <div class="form-group">
-            <label class="control-label">Username</label>
+            <label>Username</label>
             <div class="form-input">
-                <input id="namePut" type="text" name="name" class="form-control" placeholder="Username"
+                <input id="namePut" type="text" name="name" class="form-control" placeholder=""
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
         <br>
         <hr>
-
-        <div class="form-group">
-            <label class="control-label">Current E-mail</label>
-            <div class="form-input">
-                <input id="currentEmail" type="text" name="CurrentEmail" class="form-control"
-                       placeholder="Current E-mail">
-            </div>
-        </div>
         <br>
 
         <div class="form-group">
+            <input id="currentEmail" type="text" name="CurrentEmail" class="form-control" placeholder="">
+            <label class="control-label">Current E-mail</label>
+        </div>
+        <br>
+        <br>
+
+        <div class="form-group">
+            <input id="newEmail" type="text" name="NewEmail" class="form-control" placeholder="">
             <label class="control-label">New E-mail</label>
-            <div class="form-input">
-                <input id="newEmail" type="text" name="NewEmail" class="form-control" placeholder="New E-mail">
-            </div>
         </div>
         <br>
         <hr>
+        <br>
 
         <div class="form-group">
+            <input type="password" name="CurrentPassword" id="oldPassword" class="form-control" placeholder="">
             <label class="control-label">Current Password</label>
-            <div class="form-input">
-                <input type="password" name="CurrentPassword" id="oldPassword" class="form-control"
-                       placeholder="Current Password">
-            </div>
         </div>
+        <br>
         <br>
 
         <div class="form-group">
+            <input type="password" name="NewPassword" id="newPassword" class="form-control" placeholder="">
             <label class="control-label">New Password</label>
-            <div class="form-input">
-                <input type="password" name="NewPassword" id="newPassword" class="form-control"
-                       placeholder="New Password">
-            </div>
         </div>
+        <br>
         <br>
 
         <div class="form-group">
+            <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control" placeholder="">
             <label class="control-label">Repeat New Password</label>
-            <div class="form-input">
-                <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control"
-                       placeholder="Repeat New Password">
-            </div>
         </div>
         <br>
+
         <div class="button-container mb-0">
             <button type="button" class="gradientButton" id="updateButton" disabled>
                 <span>Update Credentials</span>

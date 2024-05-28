@@ -10,35 +10,32 @@
 
 <c:if test="${not empty sessionScope.user}">
 
-<%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
+    <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
     <div id="liveAlertPlaceholderDelete"></div>
 
     <form id="deleteForm">
         <div class="form-group">
-            <label class="control-label">Username</label>
+            <label>Username</label>
             <div class="form-input">
-                <input id="nameDelete" type="text" name="name" class="form-control" placeholder="Username"
+                <input id="nameDelete" type="text" name="name" class="form-control" placeholder=""
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
         <br>
         <hr>
-
-        <div class="form-group">
-            <label class="control-label">E-mail</label>
-            <div class="form-input">
-                <input id="email" type="text" name="email" class="form-control" placeholder="E-mail">
-            </div>
-        </div>
         <br>
 
         <div class="form-group">
+            <input id="email" type="text" name="email" class="form-control" placeholder="">
+            <label class="control-label">E-mail</label>
+        </div>
+        <br>
+        <br>
+
+        <div class="form-group">
+            <input type="password" name="password" id="password" class="form-control" placeholder="">
             <label class="control-label">Password</label>
-            <div class="form-input">
-                <input type="password" name="password" id="password" class="form-control"
-                       placeholder="Password">
-            </div>
         </div>
         <br>
 

@@ -4,7 +4,7 @@
 
 #deleteAccountPage, #changeCredentialsPage {
     background: linear-gradient(var(--bg-second-color), var(--bg-second-color)) padding-box,
-    linear-gradient(145deg,#e81cff, #40c9ff) border-box;
+    linear-gradient(145deg, #e81cff, #40c9ff) border-box;
     max-width: 700px;
     margin: auto;
     border: 2px solid transparent;
@@ -26,4 +26,48 @@
 
 #deleteForm input, #updateForm input {
     background-color: var(--inputs-bg-color);
+}
+
+/*************************************************/
+/*INPUTS' ANIMATION*/
+
+.form-group {
+    position: relative;
+}
+
+.form-control {
+    font-size: 18px;
+    padding: 0.5rem;
+    display: block;
+}
+
+.form-control:focus {
+    outline: none;
+}
+
+.control-label {
+    color: #999;
+    font-size: 18px;
+    font-weight: normal;
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 10px;
+    transition: 0.2s ease all;
+    -moz-transition: 0.2s ease all;
+    -webkit-transition: 0.2s ease all;
+}
+
+/* active state */
+.form-control:focus ~ .control-label,
+.form-control:not(:placeholder-shown) ~ .control-label {
+    top: -23px;
+    font-size: 16px;
+    color: var(--nabbar-inverted-bg);
+}
+
+/* active state */
+.form-control:focus ~ .bar:before,
+.form-control:focus ~ .bar:after {
+    width: 50%;
 }
