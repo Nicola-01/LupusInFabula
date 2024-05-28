@@ -7,4 +7,4 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
-<div id="gameOverMessage"></div>
+<div id="gameOverMessage" class="text-center"></div>

@@ -21,6 +21,7 @@ function gameStatus(req) {
             {
                 // the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
+                var factions_color = ["green", "red", "yellow", "yellow"]
                 var s = game.who_win < 2 ? "" : "s";
                 var msg = "The " + factions[game.who_win] + " win" + s + "!";
 
@@ -32,8 +33,16 @@ function gameStatus(req) {
                 // set game over message
                 var gameovermessage_div = document.getElementById("gameOverMessage");
                 if(gameovermessage_div !== null)
-                    gameovermessage_div.innerHTML = "THE GAME IS OVER <br> " + msg;
+                {
+                    gameovermessage_div.innerHTML = "<span class=''>THE GAME IS OVER</span><br> The ";
+                    const win_faction_div = document.createElement('span');
+                    win_faction_div.id = "winning_faction";
+                    win_faction_div.innerHTML = factions[game.who_win];
+                    win_faction_div.style.color = factions_color[game.who_win];
+                    gameovermessage_div.appendChild(win_faction_div);
 
+                    gameovermessage_div.innerHTML += " win"+s+"!";
+                }
             } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
