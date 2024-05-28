@@ -21,7 +21,7 @@ function gameStatus(req) {
             {
                 // the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
-                var factions_color = ["green", "red", "yellow", "yellow"]
+                var factions_color = ["green", "red", "#ffcc00", "#ffcc00"]
                 var s = game.who_win < 2 ? "" : "s";
                 var msg = "The " + factions[game.who_win] + " win" + s + "!";
 
