@@ -11,16 +11,29 @@ let gameOver = false
  * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response data.
  */
 function gameStatus(req) {
-    if (req.readyState === XMLHttpRequest.DONE) {
-        if (req.status === HTTP_STATUS_OK) {
+    if (req.readyState === XMLHttpRequest.DONE)
+    {
+        if (req.status === HTTP_STATUS_OK)
+        {
             let game = JSON.parse(req.responseText)['game'];
             wait = true
-            if (game.who_win !== -1) { // the game is over
-                // todo -> the game is over
+            if (game.who_win !== -1)
+            {
+                // the game is over
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
                 var s = game.who_win < 2 ? "" : "s";
                 var msg = "The " + factions[game.who_win] + " win" + s + "!";
-                populateInfoMessage("THE GAME IS OVER", msg);
+
+                // remove toggle button to hide or show roles
+                var toggleButton = document.getElementById("toggleButton");
+                if(toggleButton !== null)
+                    toggleButton.remove();
+
+                // set game over message
+                var gameovermessage_div = document.getElementById("gameOverMessage");
+                if(gameovermessage_div !== null)
+                    gameovermessage_div.innerHTML = "THE GAME IS OVER <br> " + msg;
+
             } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");

@@ -48,13 +48,17 @@ function toggleCard()
 
 
 function fillPlayersStatus(req) {
-    if (req.readyState === XMLHttpRequest.DONE) {
-        if (req.status === HTTP_STATUS_OK) {
+    if (req.readyState === XMLHttpRequest.DONE)
+    {
+        if (req.status === HTTP_STATUS_OK)
+        {
             const list = JSON.parse(req.responseText)[JSON_resource_list];
 
             if (list == null) {
                 alert("No game settings available");
-            } else {
+            }
+            else
+            {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
                 var loggedUser = localStorage.getItem('playerName');
@@ -68,16 +72,19 @@ function fillPlayersStatus(req) {
                     if(playsAsIn.username === loggedUser)
                     {
                         var playerRoleElement = document.getElementById("playerRole");
-                        playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
+                        if(playerRoleElement !== null)
+                            playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
 
                         var frontCard = document.querySelector(".card-front");
-                        frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
+                        if(frontCard !== null)
+                            frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
                         //var playerImageElement = document.getElementById("playerImage");
                         //playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
                         //playerImageElement.alt = playsAsIn.role + "'s card";
 
                         var toggleButton = document.getElementById("toggleButton");
-                        toggleButton.style.display = "inline-block";
+                        if(toggleButton !== null)
+                            toggleButton.style.display = "inline-block";
 
                         isPlayerinGame = true;
                     }
@@ -93,7 +100,8 @@ function fillPlayersStatus(req) {
                         cardContainer.style.display = "none";
                     }
                     var playerRoleElement = document.getElementById("playerRole");
-                    playerRoleElement.innerHTML = "You are <b>spectating</b>";
+                    if(playerRoleElement)
+                        playerRoleElement.innerHTML = "You are <b>spectating</b>";
                 }
 
                 if (playerRole.length <= maxPlayersforSircularButtons)

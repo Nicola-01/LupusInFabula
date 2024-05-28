@@ -61,11 +61,18 @@
     </div>
 
     <c:choose>
-        <c:when test="${isMaster}">
-            <jsp:include page="gameActions.jsp"/>
+        <c:when test="${gameOver>=0}">
+            <jsp:include page="gameOver.jsp"/>
         </c:when>
         <c:otherwise>
-            <jsp:include page="playerRole.jsp"/>
+            <c:choose>
+                <c:when test="${isMaster}">
+                    <jsp:include page="gameActions.jsp"/>
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="playerRole.jsp"/>
+                </c:otherwise>
+            </c:choose>
         </c:otherwise>
     </c:choose>
 

@@ -31,7 +31,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         endIndex = url.length;
 
     gameID = url.substring(startIndex, endIndex);
-    console.log(gameID);
 
     var lastSegment = url.substring(url.lastIndexOf("/") + 1);
     endsWithMaster = lastSegment === "master" || lastSegment === "master/";
