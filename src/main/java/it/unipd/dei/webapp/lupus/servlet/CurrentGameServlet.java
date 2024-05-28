@@ -14,7 +14,8 @@ import java.sql.SQLException;
 
 public class CurrentGameServlet extends AbstractDatabaseServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
+    {
         String gameMaster = (String) req.getSession().getAttribute("gamemaster");
         String[] urlParts = req.getRequestURI().split("/");
 
@@ -24,16 +25,20 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
         else
             gameId = urlParts[urlParts.length - 1];
 
-        try {
+        try
+        {
             int privateGameID = new GetGameIdFormPublicGameIdDAO(getConnection(), gameId).access().getOutputParam();
             Game game = new GetGameByGameIdDAO(getConnection(), privateGameID).access().getOutputParam();
-            if (game == null) {
+            if (game == null)
+            {
                 req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
                 return;
             }
             if (game.getWho_win() >= 0)
                 req.setAttribute("gameOver", game.getWho_win());
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             resp.setStatus(ec.getHTTPCode());
 
@@ -43,14 +48,14 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
         }
 
         // if the user is master and it's not requesting currentGame in master mode
-        if (!req.getRequestURI().endsWith("/master") && gameId.equals(gameMaster)) {
-//            LOGGER.info("1");
+        if (!req.getRequestURI().endsWith("/master") && gameId.equals(gameMaster))
+        {
             resp.sendRedirect(req.getRequestURI() + "/master");
             return;
         }
         // if the user is not master but request currentGame in master mode
-        if (req.getRequestURI().endsWith("/master") && !gameId.equals(gameMaster)) {
-//            LOGGER.info("2");
+        if (req.getRequestURI().endsWith("/master") && !gameId.equals(gameMaster))
+        {
             String newURL = req.getRequestURI().replace("/master", "");
             resp.sendRedirect(newURL);
             return;
