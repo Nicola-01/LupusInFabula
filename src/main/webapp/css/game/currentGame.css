@@ -126,8 +126,36 @@
     background-color: var(--nabbar-inverted-second-bg);
 }
 
+.blur-name {
+    filter: blur(10px);
+}
+
 .blurred {
     filter: blur(10px);
+    position: relative;
+}
+
+.blurred::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity: 1;
+    z-index: 1;
+    pointer-events: none; /* Allows clicks to pass through */
+}
+
+.hide-background {
+    background-color: rgb(159, 159, 159) !important;
+}
+
+.circular-player, .grid-player
+{
+    display: flex;
+    flex-direction: column;
 }
 
 .card-container {

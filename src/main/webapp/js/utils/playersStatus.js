@@ -8,7 +8,7 @@ function toggleCard()
     var card = document.getElementById("card");
     card.classList.toggle("is-flipped");
     var playerRole = document.getElementById("playerRole");
-    playerRole.classList.toggle("blurred");
+    playerRole.classList.toggle("blur-name");
 
     var eyeIcon = document.getElementById("eyeIcon");
 
@@ -22,6 +22,28 @@ function toggleCard()
         eyeIcon.classList.remove("fa-eye");
         eyeIcon.classList.add("fa-eye-slash");
     }
+
+    // hide the color of all the circular listed players
+    var players = document.querySelectorAll('.circular-player');
+    players.forEach(function(element) {
+        element.classList.toggle('hide-background');
+    });
+
+    // hide the color of all the grid listed players
+    var players = document.querySelectorAll('.grid-player');
+    players.forEach(function(element) {
+        element.classList.toggle('hide-background');
+    });
+
+    // hide the written role of all the players
+    var elements = document.querySelectorAll('#playerRole_internalDiv');
+    elements.forEach(function(element) {
+        if (element.style.display === 'none') {
+            element.style.display = '';
+        } else {
+            element.style.display = 'none';
+        }
+    });
 }
 
 
@@ -99,7 +121,7 @@ function circularPlayersStatus() {
         const angle = (Math.PI * 2 / numButtons) * i;
         const player = document.createElement('div');
 
-        player.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
+        player.innerHTML = playerRole[i].username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole[i].role)+"</div>";
         if (playerRole[i].isDead) {
             player.innerHTML += " (dead)";
             player.style.filter = `saturate(25%)`;
@@ -134,7 +156,7 @@ function gridPlayersStatus() {
         playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-1")
 
         const player = document.createElement('div');
-        player.innerHTML = playerRole[i].username + "<br>" + capitalizeFirstLetter(playerRole[i].role);
+        player.innerHTML = playerRole[i].username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole[i].role)+"</div>";
         if (playerRole[i].isDead) {
             player.innerHTML += " (dead)";
             player.style.filter = `saturate(25%)`;
