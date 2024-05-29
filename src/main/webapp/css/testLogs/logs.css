@@ -22,22 +22,11 @@ table.general_statics tr {
     /*border: none;*/
 }
 
-.general_statics tbody {
-    background-color: var(--nabbar-second-bg);
-    color: var(--text-color);
-}
-
 #general_stats{
-    width: 85%;
     margin: auto;
+    background-color: var(--nabbar-second-bg);
+    border-radius: .6em;
 }
-
-@media (max-width: 768px) {
-    #general_stats {
-        width: 100%;
-    }
-}
-
 
 .not_found, .not_logged, .unexpected_error {
 

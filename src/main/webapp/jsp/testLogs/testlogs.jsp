@@ -44,15 +44,15 @@
             <div>
                 <div class="row">
                     <%--        General statistics--%>
-                    <div class="col-12 col-md-12 col-lg-4 p-2">
+                    <div class="col-12 col-md-12 col-lg-4 p-2 px-md-4 px-xl-5">
                         <%--            <p id=gen_stats></p>--%>
-                        <table id="general_stats" class="general_statics">
+                        <table id="general_stats" class="general_statics w-100">
                             <%--                style="border-style: hidden;"--%>
                         </table>
                     </div>
 
                     <%--        Statistics for role--%>
-                    <div class="col-12 col-md-6 col-lg-4 p-2">
+                    <div class="col-12 col-md-6 col-lg-4 p-2 overflow-auto">
                         <table class="sortable table table-striped w-100" id="roles_table">
                             <%--                            <thead class="sticky-top top-0">--%>
                             <tr>
@@ -79,7 +79,7 @@
 
         <br>
 
-        <div id="block_container2">
+        <div id="block_container2" class="overflow-auto">
             <h2>History <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
             </h2>
 
