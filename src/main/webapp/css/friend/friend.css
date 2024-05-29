@@ -24,7 +24,7 @@
 
 #my_friends .deleteFriendButton {
     display: block;
-    background-color: var(--nabbar-second-bg);;
+    background-color: var(--navbar-second-bg);;
     color: #fff;
     border: none;
     padding: 6px 10px;
@@ -62,7 +62,7 @@
 }
 
 .friend-link:hover {
-    color: var(--nabbar-inverted-bg);
+    color: var(--navbar-inverted-bg);
     font-weight: bold;
 }
 

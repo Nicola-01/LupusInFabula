@@ -3,6 +3,10 @@
     align-items: center;
 }
 
+.action-wrapper u {
+    font-weight: bold;
+}
+
 .roleTargets {
     margin-left: auto;
 }
@@ -113,7 +117,7 @@ hr {
 }
 
 #designatedWolves {
-    background-color: var(--designated-wolves);
+    background-color: var(--roles-bg-designatedWolves);
     padding: 1em;
     border-radius: 0.6rem;
 }

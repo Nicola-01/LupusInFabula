@@ -9,20 +9,20 @@
 }
 
 [data-bs-theme="light"] {
-    --good-roles: #c8f3c8;
-    --evil-roles: #efb3b6;
-    --victory-stealer-roles: #e6d58f;
-    --neutral-roles: #b7b7b7;
-    --designated-wolves: #e18888;
+    --roles-bg-good: #c8f3c8;
+    --roles-bg-evil: #efb3b6;
+    --roles-db-victoryStealer-: #e6d58f;
+    --roles-bg-neutral: #cecece;
+    --roles-bg-designatedWolves: #e18888;
 
     --votes: #C1D4DF;
     --plague-spreader: #bfbfbf;
     --sam: #c2d7c7;
 
-    --nabbar-bg: #4BA3C3;
-    --nabbar-second-bg: #387B99;
-    --nabbar-inverted-bg: #0D324D;
-    --nabbar-inverted-second-bg: #245270;
+    --navbar-bg: #4BA3C3;
+    --navbar-second-bg: #387B99;
+    --navbar-inverted-bg: #0D324D;
+    --navbar-inverted-second-bg: #245270;
 
     --bg-first-color: #EAF0F2;
     --bg-second-color: #DEE6E8; /*#c8dbdf;*/
@@ -32,23 +32,57 @@
     --text-color: #0B121A;
     --text-color-inverted: #EAF0F2;
     --inputs-bg-color: #e5e9ea;
+
+    /*https://coolors.co/gradient-palette/0b2c24-247a4d?number=9*/
+    /*https://coolors.co/gradient-palette/023d02-1e741e?number=9*/
+    --role-color-farmer: #023D02;
+    --role-color-sheriff: #084708;
+    --role-color-seer: #0E510E;
+    --role-color-medium: #135B13;
+    --role-color-knight: #196519;
+    --role-color-kamikaze: #1F6F1F;
+    --role-color-sam: #257925;
+    --role-color-carpenter: #2A832A;
+    --role-color-hobbit: #308D30;
+
+    /*https://coolors.co/gradient-palette/6c0e0e-b30000?number=6*/
+    --role-color-berserker: #6C0E0E;
+    --role-color-dorky: #7A0B0B;
+    --role-color-explorer: #880808;
+    --role-color-wolf: #970000;
+    --role-color-giuda: #A50303;
+    --role-color-puppy: #C40000;
+
+    --role-color-hamster: #E08A19;
+    --role-color-jester: #CA6700;
+
+    --role-color-illusionist: #5B5B5B;
+    --role-color-plagueSpreader: #3E3E3E;
+
+    --role-color-null: #9f9f9f;
+
+    --role-color-good: #389449;
+    --role-color-evil: #C42504;
+    /*--role-color-neutral: #9f9f9f;*/
+    /*--role-color-victoryStealer: #9f9f9f;*/
+    --vote-color: #9f9f9f;
 }
 
 [data-bs-theme="dark"] {
-    --good-roles: #1a2f22;
-    --evil-roles: #341e1e;
-    --victory-stealer-roles: #50441d;
-    --neutral-roles: #343639;
-    --designated-wolves: #442323;
+    --roles-bg-good: #1a2f22;
+    --roles-bg-evil: #341e1e;
+    --roles-db-victoryStealer-: #50441d;
+    --roles-bg-neutral: #343639;
+    --roles-bg-designatedWolves: #442323;
 
     --votes: #082637;
     --plague-spreader: #373737;
     --sam: #1a3120;
 
-    --nabbar-bg: #0D324D;
-    --nabbar-second-bg: #245270;
-    --nabbar-inverted-bg: #4BA3C3;
-    --nabbar-inverted-second-bg: #387B99;
+    --navbar-bg: #0D324D;
+    --navbar-second-bg: #245270;
+    --navbar-inverted-bg: #4BA3C3;
+    --navbar-inverted-second-bg: #387B99;
 
     --bg-first-color: #0E1115;
     --bg-second-color: #12171C; /*#1a2127;*/
@@ -58,4 +92,37 @@
     --text-color: #EAF0F2;
     --text-color-inverted: #0B121A;
     --inputs-bg-color: #20272d;
+
+    /*https://coolors.co/gradient-palette/54ce54-b2e2b2?number=9*/
+    --role-color-farmer: #54CE54;
+    --role-color-sheriff: #60D160;
+    --role-color-seer: #6CD36C;
+    --role-color-medium: #77D677;
+    --role-color-knight: #83D883;
+    --role-color-kamikaze: #8FDB8F;
+    --role-color-sam: #9BDD9B;
+    --role-color-carpenter: #A6E0A6;
+    --role-color-hobbit: #B2E2B2;
+
+    /*https://coolors.co/gradient-palette/e86464-ec9ea2?number=6*/
+    --role-color-berserker: #E86464;
+    --role-color-dorky: #E97070;
+    --role-color-explorer: #EA7B7D;
+    --role-color-wolf: #EA8789;
+    --role-color-giuda: #EB9296;
+    --role-color-puppy: #EC9EA2;
+
+    --role-color-hamster: #f4da81;
+    --role-color-jester: #eac149;
+
+    --role-color-illusionist: #ACACAC;
+    --role-color-plagueSpreader: #8a8a8a    ;
+
+    --role-color-null: #9f9f9f;
+
+    --role-color-good: #389449;
+    --role-color-evil: #C42504;
+    /*--role-color-neutral: #9f9f9f;*/
+    /*--role-color-victoryStealer: #9f9f9f;*/
+    --vote-color: #9f9f9f;
 }

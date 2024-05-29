@@ -17,7 +17,7 @@
 }
 
 .searchUser {
-    background-color: var(--nabbar-inverted-bg);
+    background-color: var(--navbar-inverted-bg);
     border: none;
     color: #fff;
     height: 40px;
@@ -35,7 +35,7 @@
 .searchUser:hover {
     transform: scale(1.05);
     color: rgb(255, 255, 255);
-    background-color: var(--nabbar-inverted-second-bg);
+    background-color: var(--navbar-inverted-second-bg);
 }
 
 .popup {

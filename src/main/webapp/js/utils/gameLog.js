@@ -189,7 +189,7 @@ function createTable(data)
                         }
 
                         if(data[j][i[0]][key[4]]!=="vote" && (data[j][i[0]][key[4]]==="dead" || getRoleType(getRole(data[j][i[0]][key[0]]))==="evil"))
-                            col = rolesColors.get("bad")
+                            col = rolesColors.get("evil")
                         else if (data[j][i[0]][key[4]]==="vote")
                             col = rolesColors.get("vote")
                         else

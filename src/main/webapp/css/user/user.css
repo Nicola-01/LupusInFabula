@@ -63,7 +63,7 @@
 .form-control:not(:placeholder-shown) ~ .control-label {
     top: -23px;
     font-size: 16px;
-    color: var(--nabbar-inverted-bg);
+    color: var(--navbar-inverted-bg);
 }
 
 /* active state */

@@ -138,6 +138,8 @@ function circularPlayersStatus() {
         player.id = playerRole[i].username + "_status"
         player.style.backgroundColor = rolesColors.get(playerRole[i].role);
         player.style.position = 'absolute';
+        // use only light theme
+        player.setAttribute("data-bs-theme","light")
 
         circleDiv.appendChild(player); // Append player to the circle div
 
@@ -172,6 +174,8 @@ function gridPlayersStatus() {
         player.id = playerRole[i].username + "_status"
         player.className = "grid-player";
         player.style.backgroundColor = rolesColors.get(playerRole[i].role);
+        // use only light theme
+        player.setAttribute("data-bs-theme","light")
 
         playerRoleDiv.appendChild(player)
         playersStatusDiv.appendChild(playerRoleDiv);

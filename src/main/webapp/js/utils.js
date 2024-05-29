@@ -65,35 +65,35 @@ const ROLE_MASTER = "master";
  */
 const rolesColors = new Map();
 
-rolesColors.set('farmer', '#014701');
-rolesColors.set('carpenter', '#0F5A13');
-rolesColors.set('hobbit', '#1D6D25');
-rolesColors.set('kamikaze', '#2A8037');
-rolesColors.set('knight', '#389449');
-rolesColors.set('medium', '#46A75B');
-rolesColors.set('sam', '#54BA6D');
-rolesColors.set('seer', '#61CD7F');
-rolesColors.set('sheriff', '#6FE091');
+rolesColors.set('farmer', 'var(--role-color-farmer)');
+rolesColors.set('sheriff', 'var(--role-color-sheriff)');
+rolesColors.set('seer', 'var(--role-color-seer)');
+rolesColors.set('medium', 'var(--role-color-medium)');
+rolesColors.set('knight', 'var(--role-color-knight)');
+rolesColors.set('kamikaze', 'var(--role-color-kamikaze)');
+rolesColors.set('sam', 'var(--role-color-sam)');
+rolesColors.set('carpenter', 'var(--role-color-carpenter)');
+rolesColors.set('hobbit', 'var(--role-color-hobbit)');
 
-rolesColors.set('berserker', '#45002A');
-rolesColors.set('dorky', '#5E0022');
-rolesColors.set('explorer', '#780019');
-rolesColors.set('giuda', '#910011');
-rolesColors.set('wolf', '#970000');
-rolesColors.set('puppy', '#C40000');
+rolesColors.set('berserker', 'var(--role-color-berserker)');
+rolesColors.set('dorky', 'var(--role-color-dorky)');
+rolesColors.set('explorer', 'var(--role-color-explorer)');
+rolesColors.set('wolf', 'var(--role-color-wolf)');
+rolesColors.set('giuda', 'var(--role-color-giuda)');
+rolesColors.set('puppy', 'var(--role-color-puppy)');
 
-rolesColors.set('hamster', '#E08A19');
-rolesColors.set('jester', '#CA6700');
+rolesColors.set('hamster', 'var(--role-color-hamster)');
+rolesColors.set('jester', 'var(--role-color-jester)');
 
-rolesColors.set('illusionist', '#7A7A7A');
-rolesColors.set('plague spreader', '#595959');
+rolesColors.set('illusionist', 'var(--role-color-illusionist)');
+rolesColors.set('plague spreader', 'var(--role-color-plagueSpreader)');
 
-rolesColors.set('', '#9f9f9f')
+rolesColors.set('', 'var(--role-color-null)')
 
 //logs
-rolesColors.set('good', '#389449')
-rolesColors.set('bad', '#C42504')
-rolesColors.set('vote', '#9f9f9f')
+rolesColors.set('good', 'var(--role-color-good)')
+rolesColors.set('evil', 'var(--role-color-evil)')
+rolesColors.set('vote', 'var(--vote-color)')
 
 
 const GamePhase = {

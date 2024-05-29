@@ -117,13 +117,13 @@
 #toggleButton {
     width: 45px;
     height: 45px;
-    background-color: var(--nabbar-inverted-bg);
+    background-color: var(--navbar-inverted-bg);
     border: none;
     transition: .3s all;
 }
 
 #toggleButton:hover {
-    background-color: var(--nabbar-inverted-second-bg);
+    background-color: var(--navbar-inverted-second-bg);
 }
 
 .blur-name {

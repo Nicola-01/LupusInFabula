@@ -123,18 +123,18 @@ h5 {
     border: none;
     padding: .5rem 0;
     transition: all .3s ease-in-out;
-    background-color: var(--nabbar-second-bg);
+    background-color: var(--navbar-second-bg);
     color: var(--text-color);
     height: 100%;
 }
 
 .radio-inputs .radio input:hover + span {
-    background-color: var(--nabbar-inverted-second-bg);
+    background-color: var(--navbar-inverted-second-bg);
     color: var(--text-color-inverted);
 }
 
 .radio-inputs .radio input:checked + span {
-    background-color: var(--nabbar-inverted-bg);
+    background-color: var(--navbar-inverted-bg);
     color: var(--text-color-inverted);
     font-weight: 600;
 }
@@ -166,7 +166,7 @@ thead {
 }
 
 footer {
-    background-color: var(--nabbar-bg);
+    background-color: var(--navbar-bg);
     color: var(--text-color);
 }
 
@@ -176,17 +176,17 @@ footer {
 }
 
 .goodRoles {
-    background-color: var(--good-roles);
+    background-color: var(--roles-bg-good);
 }
 
 .evilRoles {
-    background-color: var(--evil-roles);
+    background-color: var(--roles-bg-evil);
 }
 
 .victoryStealerRoles {
-    background-color: var(--victory-stealer-roles);
+    background-color: var(--roles-db-victoryStealer-);
 }
 
 .neutralRoles {
-    background-color: var(--neutral-roles);
+    background-color: var(--roles-bg-neutral);
 }

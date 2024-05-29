@@ -146,7 +146,7 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 .toggle-switch input[type="checkbox"]:checked + .toggle-switch-background {
-    background-color: var(--nabbar-second-bg);
+    background-color: var(--navbar-second-bg);
 }
 
 .toggle-switch input[type="checkbox"]:checked + .toggle-switch:before {

@@ -43,7 +43,7 @@ main {
     max-width: 200px;
     margin: 10px auto;
     padding: 10px;
-    background-color: var(--nabbar-inverted-bg);
+    background-color: var(--navbar-inverted-bg);
     color: var(--bg-first-color);
     border: none;
     border-radius: 5px;
@@ -52,7 +52,7 @@ main {
 }
 
 .box button:hover {
-    background-color: var(--nabbar-inverted-second-bg);
+    background-color: var(--navbar-inverted-second-bg);
 }
 
 .box a {
