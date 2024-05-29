@@ -14,15 +14,16 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/gameActions.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/playersStatus.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/gameLog.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameActions.css">
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/css/game/currentGame/playersStatus.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameLog.css">
 </head>
 
-<body>
+<body class="d-flex flex-column">
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<main class="container">
+<main class="container flex-grow-1">
 
     <c:import url="/jsp/utils/infoMessage.jsp"/>
 
@@ -30,19 +31,26 @@
 
     </div>
 
-    <div class="row">
-        <div class="col-lg-11 col-xl-10 p-2 m-auto row">
-            <div class="col-4 p-0">
-                <h1 id="gameStatus"></h1>
-            </div>
-            <div class="col-4 p-0 d-flex justify-content-center">
-                <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;" onclick="toggleCard()">
-                    <i id="eyeIcon" class="fas fa-eye"></i>
-                </button>
-            </div>
-            <div class="col-4 p-0">
-                <div class="d-flex justify-content-end">
-                    <button id="copyLink" onclick="copyGameLink()">
+    <c:choose>
+        <c:when test="${gameOver>=0}">
+            <jsp:include page="currentGame/gameOver.jsp"/>
+        </c:when>
+        <c:otherwise>
+
+            <div class="row">
+                <div class="col-lg-11 col-xl-10 p-2 m-auto row">
+                    <div class="col-4 p-0">
+                        <h1 id="gameStatus"></h1>
+                    </div>
+                    <div class="col-4 p-0 d-flex justify-content-center">
+                        <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;"
+                                onclick="toggleCard()">
+                            <i id="eyeIcon" class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="col-4 p-0">
+                        <div class="d-flex justify-content-end">
+                            <button id="copyLink" onclick="copyGameLink()">
                     <span>
                         <svg viewBox="0 0 467 512.22" clip-rule="evenodd" fill-rule="evenodd"
                              image-rendering="optimizeQuality" text-rendering="geometricPrecision"
@@ -53,24 +61,19 @@
                             </path>
                         </svg> Copy link
                     </span>
-                        <span>Copied</span>
-                    </button>
+                                <span>Copied</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <c:choose>
-        <c:when test="${gameOver>=0}">
-            <jsp:include page="gameOver.jsp"/>
-        </c:when>
-        <c:otherwise>
             <c:choose>
                 <c:when test="${isMaster}">
-                    <jsp:include page="gameActions.jsp"/>
+                    <jsp:include page="currentGame/gameActions.jsp"/>
                 </c:when>
                 <c:otherwise>
-                    <jsp:include page="playerRole.jsp"/>
+                    <jsp:include page="currentGame/playerRole.jsp"/>
                 </c:otherwise>
             </c:choose>
         </c:otherwise>
@@ -91,9 +94,9 @@
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
-<script src="${pageContext.request.contextPath}/js/game/gameActions.js"></script>
-<script src="${pageContext.request.contextPath}/js/utils/playersStatus.js"></script>
-<script src="${pageContext.request.contextPath}/js/utils/gameLog.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame/gameActions.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame/playersStatus.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame/gameLog.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame.js"></script>
 
 </body>

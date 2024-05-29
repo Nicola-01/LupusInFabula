@@ -135,16 +135,16 @@ function circularPlayersStatus() {
             player.style.filter = `saturate(25%)`;
         }
         player.className = "circular-player";
-        player.id = playerRole[i].username + "_status"
+        player.id = playerRole[i].username + "_status";
         player.style.backgroundColor = rolesColors.get(playerRole[i].role);
         player.style.position = 'absolute';
         // use only light theme
-        player.setAttribute("data-bs-theme","light")
+        player.setAttribute("data-bs-theme","light");
 
         circleDiv.appendChild(player); // Append player to the circle div
 
-        let modX = Math.abs(Math.sin(angle))
-        let modY = Math.abs(Math.cos(angle))
+        let modX = Math.abs(Math.sin(angle));
+        let modY = Math.abs(Math.cos(angle));
 
         let epsilon_angle = 0;
         if (!(modX === 0 || modX === 1 || modY === 0 || modY === 1)) {
@@ -163,7 +163,7 @@ function gridPlayersStatus() {
 
     for (let i = 0; i < playerRole.length; i++) {
         let playerRoleDiv = document.createElement("div");
-        playerRoleDiv.classList.add("col-3", "col-sm-2", "col-md-4", "col-lg-3", "p-1")
+        playerRoleDiv.classList.add("col-3", "col-md-4", "col-lg-3", "p-1", "m-auto"); // , "col-sm-2"
 
         const player = document.createElement('div');
         player.innerHTML = playerRole[i].username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole[i].role)+"</div>";
@@ -171,13 +171,13 @@ function gridPlayersStatus() {
             player.innerHTML += " (dead)";
             player.style.filter = `saturate(25%)`;
         }
-        player.id = playerRole[i].username + "_status"
+        player.id = playerRole[i].username + "_status";
         player.className = "grid-player";
         player.style.backgroundColor = rolesColors.get(playerRole[i].role);
         // use only light theme
-        player.setAttribute("data-bs-theme","light")
+        player.setAttribute("data-bs-theme","light");
 
-        playerRoleDiv.appendChild(player)
+        playerRoleDiv.appendChild(player);
         playersStatusDiv.appendChild(playerRoleDiv);
     }
 }

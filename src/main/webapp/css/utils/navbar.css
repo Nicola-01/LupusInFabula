@@ -242,6 +242,10 @@
     background-color: var(--bg-second-color);
 }
 
+.dropdown-item.active {
+    background-color: var(--navbar-inverted-bg);
+}
+
 .dropdown__wrapper--fade-in {
     animation: fadeInAnimation ease-in-out 0.3s forwards;
 }

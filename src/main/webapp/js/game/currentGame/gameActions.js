@@ -16,33 +16,9 @@ function gameStatus(req) {
         if (req.status === HTTP_STATUS_OK)
         {
             let game = JSON.parse(req.responseText)['game'];
-            wait = true
             if (game.who_win !== -1)
-            {
-                // the game is over
-                var factions = ["farmers", "wolf pack", "hamster", "jester"];
-                var factions_color = ["green", "red", "#ffcc00", "#ffcc00"]
-                var s = game.who_win < 2 ? "" : "s";
-
-                // remove toggle button to hide or show roles
-                var toggleButton = document.getElementById("toggleButton");
-                if(toggleButton !== null)
-                    toggleButton.remove();
-
-                // set game over message
-                var win_faction_div = document.getElementById("winning_faction");
-                if(win_faction_div !== null)
-                {
-                    win_faction_div.innerHTML = "The ";
-                    const faction_div = document.createElement('span');
-                    faction_div.id = "faction_name";
-                    faction_div.innerHTML = factions[game.who_win];
-                    faction_div.style.color = factions_color[game.who_win];
-                    win_faction_div.appendChild(faction_div);
-
-                    win_faction_div.innerHTML += " win"+s+"!";
-                }
-            } else {
+                setGameOver(game)
+            else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
@@ -65,6 +41,48 @@ function gameStatus(req) {
                 }
             }
         }
+    }
+}
+
+const factions = ["farmers", "wolf pack", "hamster", "jester"];
+const factions_color = ["green", "red", "#ffcc00", "#ffcc00"];
+
+// the game is over
+function setGameOver(game){
+    const s = game.who_win < 2 ? "" : "s";
+
+    // // remove toggle button to hide or show roles
+    // const toggleButton = document.getElementById("toggleButton");
+    // if(toggleButton !== null)
+    //     toggleButton.remove();
+
+    // set game over message
+    const win_faction_div = document.getElementById("winning_faction");
+    const gameTime = document.getElementById("gameTime")
+
+    if(win_faction_div !== null && gameTime !== null)
+    {
+        win_faction_div.innerHTML = "The ";
+        const faction_div = document.createElement('span');
+        faction_div.id = "faction_name";
+        faction_div.innerHTML = factions[game.who_win];
+        faction_div.style.color = factions_color[game.who_win];
+        win_faction_div.appendChild(faction_div);
+
+        win_faction_div.innerHTML += " win"+s+"!";
+
+        gameTime.innerHTML = "The game started at " + game.start + ".<br>There was " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ", and lasted " + game.game_duration + ".";
+
+        // 2024-05-29 22:28:46.0
+        const gameStart = (((game.start).split(".")[0])).split(" ")
+        const gameDuration = (game.game_duration).split(":").map(Number)
+        gameTime.innerHTML = "The game started on " + gameStart[0] + " at " + gameStart[1] + " and lasted for " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ".<br>Total duration of "
+
+        let timeStamp = gameDuration[1] + " minutes, and " + gameDuration[2] + " seconds."
+        if (gameDuration[0] !== 0)
+            timeStamp = gameDuration[0] + " hours, " + timeStamp
+
+        gameTime.innerHTML += timeStamp
     }
 }
 
