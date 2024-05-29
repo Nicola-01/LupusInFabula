@@ -1,9 +1,12 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
+import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +21,27 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
     {
         String gameMaster = (String) req.getSession().getAttribute("gamemaster");
         String[] urlParts = req.getRequestURI().split("/");
+
+        // if the url is /lupus/village
+        // so there's no public game ID
+        // DOESN'T WORK AS FOR NOW
+        if(urlParts.length == 3)
+        {
+            String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+            try
+            {
+                int privateGameID = new GetGameIdByPlayerUsernameDAO(getConnection(), username).access().getOutputParam();
+            }
+            catch (SQLException e)
+            {
+                ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+                resp.setStatus(ec.getHTTPCode());
+
+                LOGGER.info("Internal error");
+                Message m = new Message("Internal error", ec.getErrorCode(), e.getMessage());
+                req.setAttribute("message", m);
+            }
+        }
 
         String gameId;
         if (req.getRequestURI().endsWith("/master"))
