@@ -23,7 +23,6 @@ function gameStatus(req) {
                 var factions = ["farmers", "wolf pack", "hamster", "jester"];
                 var factions_color = ["green", "red", "#ffcc00", "#ffcc00"]
                 var s = game.who_win < 2 ? "" : "s";
-                var msg = "The " + factions[game.who_win] + " win" + s + "!";
 
                 // remove toggle button to hide or show roles
                 var toggleButton = document.getElementById("toggleButton");
@@ -31,17 +30,17 @@ function gameStatus(req) {
                     toggleButton.remove();
 
                 // set game over message
-                var gameovermessage_div = document.getElementById("gameOverMessage");
-                if(gameovermessage_div !== null)
+                var win_faction_div = document.getElementById("winning_faction");
+                if(win_faction_div !== null)
                 {
-                    gameovermessage_div.innerHTML = "<span class=''>THE GAME IS OVER</span><br> The ";
-                    const win_faction_div = document.createElement('span');
-                    win_faction_div.id = "winning_faction";
-                    win_faction_div.innerHTML = factions[game.who_win];
-                    win_faction_div.style.color = factions_color[game.who_win];
-                    gameovermessage_div.appendChild(win_faction_div);
+                    win_faction_div.innerHTML = "The ";
+                    const faction_div = document.createElement('span');
+                    faction_div.id = "faction_name";
+                    faction_div.innerHTML = factions[game.who_win];
+                    faction_div.style.color = factions_color[game.who_win];
+                    win_faction_div.appendChild(faction_div);
 
-                    gameovermessage_div.innerHTML += " win"+s+"!";
+                    win_faction_div.innerHTML += " win"+s+"!";
                 }
             } else {
                 const bt_gameStatus = document.getElementById("gameStatus");
