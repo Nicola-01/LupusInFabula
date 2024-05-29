@@ -67,10 +67,10 @@
                     <form action="<c:url value="/login"/>" method="POST">
                         <label class="lb_login" for="chk" aria-hidden="true">Login</label>
                         <input type="text" id="login_user" class="custom-input" name="user" placeholder="Username/Email"
-                               required="" value="allRoleMaster">
+                               required="">
                         <input type="password" id="login_password" class="custom-input" name="password"
                                placeholder="Password"
-                               required="" value="allRole">
+                               required="">
 <%--                        <div class="additional-options">--%>
 <%--                            <a href="#" class="forgot-password">Forgot password?</a>--%>
 <%--                        </div>--%>
