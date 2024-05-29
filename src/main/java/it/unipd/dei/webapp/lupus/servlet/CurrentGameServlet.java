@@ -24,13 +24,23 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
 
         // if the url is /lupus/village
         // so there's no public game ID
-        // DOESN'T WORK AS FOR NOW
         if(urlParts.length == 3)
         {
             String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             try
             {
                 int privateGameID = new GetGameIdByPlayerUsernameDAO(getConnection(), username).access().getOutputParam();
+                Game game = new GetGameByGameIdDAO(getConnection(), privateGameID).access().getOutputParam();
+                if (game == null)
+                {
+                    resp.sendRedirect("/lupus/home");
+                    return;
+                }
+                else
+                {
+                    resp.sendRedirect("/lupus/village/"+ game.getPublic_ID());
+                    return;
+                }
             }
             catch (SQLException e)
             {

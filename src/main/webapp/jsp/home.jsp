@@ -51,7 +51,7 @@
             <a href="<c:url value="/newVillage"/>">
                 <button>Create a village</button>
             </a>
-            <a>
+            <a href="<c:url value="/village"/>">
                 <button>Join your village</button>
             </a>
         </div>
