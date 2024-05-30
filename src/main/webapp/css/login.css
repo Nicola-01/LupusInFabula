@@ -19,7 +19,7 @@ body {
     box-shadow: 5px 20px 50px #000;
 }
 
-#chk {
+#loginCB {
     display: none;
 }
 
@@ -41,23 +41,28 @@ body {
     transition: .5s ease-in-out;
 }
 
-.custom-input {
-    width: 60%;
-    height: 40px;
-    background: #e0dede;
-    justify-content: center;
-    display: flex;
-    margin: 20px auto;
-    padding: 10px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
+.signup .additional-options {
+    color: #e0dede;
+}
+
+.login .additional-options {
+    color: #052033;
 }
 
 .additional-options {
     width: 60%;
+    min-width: 18em;
     height: 20px;
     margin: 0 auto;
+}
+
+@media (max-width: 18em) {
+    .additional-options,
+    .custom-input,
+    input[type="submit"] {
+        width: 100% !important;
+        min-width: auto !important;
+    }
 }
 
 .forgot-password {
@@ -69,19 +74,30 @@ body {
     text-decoration: underline;
 }
 
-input[type="submit"] {
+.custom-input, input[type="submit"]{
     width: 60%;
+    min-width: 18em;
     height: 40px;
     justify-content: center;
-    display: block;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+.custom-input {
+    background: #e0dede;
+    display: flex;
+    margin: 1em auto;
+    padding: 10px;
+}
+
+input[type="submit"] {
     color: #fff;
-    background: #0D324D;
+    background: #1F6191;
+    display: block;
     font-size: 1em;
     font-weight: bold;
     margin: 20px auto 10px;
-    outline: none;
-    border: none;
-    border-radius: 5px;
     transition: .2s ease-in;
     cursor: pointer;
 }
@@ -94,10 +110,6 @@ input[type="submit"]:disabled {
     background: #ade4f8;
     color: #0D324D;
     cursor: not-allowed;
-}
-
-#login_submit{
-    margin-top: 50px;
 }
 
 .login {
@@ -122,14 +134,13 @@ input[type="submit"]:disabled {
     text-align: right;
 }
 
-#chk:checked ~ .login {
+#loginCB:checked ~ .login {
     transform: translateY(-480px);
 }
 
-#chk:checked ~ .login label {
+#loginCB:checked ~ .login label {
     transform: scale(1);
 }
 
-#chk:checked ~ .signup label {
-    transform: scale(.6);
-}
+#loginCB:checked ~ .signup label {
+    tra
