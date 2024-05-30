@@ -115,7 +115,7 @@
 
 
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-<script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
+<script src="${pageContext.request.contextPath}/js/user/userStatistics.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendActionButton.js"></script>
 <%--for pie chart--%>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
