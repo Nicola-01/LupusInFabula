@@ -19,7 +19,8 @@ function checkFriend(req){
             console.log("targetUsername: " + targetUsername);
             let isUserFound = list.some(friend => friend['friend'].username === targetUsername);
             console.log("isUserFound: " + isUserFound)
-            let button = document.getElementById('friendActionButton');
+            let button = document.createElement('button');
+            button.id = "friendActionButton";
             if (isUserFound){
                 button.textContent = 'Remove from friends';
                 button.addEventListener('click', function(){
@@ -31,6 +32,8 @@ function checkFriend(req){
                     addFriend(targetUsername)
                 });
             }
+            let container = document.getElementById('friendButtonContainer');
+            container.appendChild(button);
         }
         }
 }
@@ -44,6 +47,8 @@ function removeFriend(username){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === HTTP_STATUS_OK) {
                 // Friend successfully deleted
+                var button = document.getElementById("friendActionButton");
+                button.remove()
                 loadFriendList()
             } else {
                 // Handle error case
@@ -72,6 +77,8 @@ function addFriend(username){
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === HTTP_STATUS_CREATED) {
                 //Successfully added
+                var button = document.getElementById("friendActionButton");
+                button.remove()
                 loadFriendList()
             } else {
                 // Handle error case
