@@ -79,12 +79,12 @@ function getLogs(req) {
 
                 var cell4 = row.insertCell(4);
                 if (log.is_game_finished) {
-                    cell4.innerHTML = log.name;
+                    cell4.innerHTML = capitalizeFirstLetter(log.name);
                 } else {
                     cell4.innerHTML = "*****";
                 }
-                var cell5 = row.insertCell(5);
 
+                var cell5 = row.insertCell(5);
                 if (log.name !== "master" && log.is_game_finished) {
                     if (log.has_won)
                         cell5.innerHTML = "Victory";
@@ -207,7 +207,7 @@ function getStatsRole(req) {
                     row.classList.add("item");
 
                     var cell0 = row.insertCell(0);
-                    cell0.innerHTML = stats.name;
+                    cell0.innerHTML = capitalizeFirstLetter(stats.name);
 
                     var cell1 = row.insertCell(1);
                     cell1.innerHTML = String(stats.countName).padStart(sizeCountName, '0');
@@ -301,7 +301,7 @@ function getGeneralStats(req) {
             var totalGamesPlayed = list.length - totalGamesAsMaster - totalPendingGame;
             var ratio = (totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3);
 
-            let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed+totalPendingGame],
+            let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed + totalPendingGame],
                 ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed - totalGamesWon],
                 ["Ratio", ratio],
                 ["Games as master", totalGamesAsMaster]];
@@ -336,6 +336,12 @@ function getGeneralStats(req) {
             }
         }
     }
+}
+
+
+function capitalizeFirstLetter(string) {
+    if (string.length === 0) return string;
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 function sumTime(time1, time2) {
