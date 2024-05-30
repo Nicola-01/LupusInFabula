@@ -1,6 +1,6 @@
 package it.unipd.dei.webapp.lupus.rest;
 
-import it.unipd.dei.webapp.lupus.dao.GetStatsPerRoleDAO;
+import it.unipd.dei.webapp.lupus.dao.GetPlayerStatsPerRoleDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
@@ -11,7 +11,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  * Handles the GET request for retrieving statistics for a specific user.
@@ -51,7 +50,7 @@ public class UserStatisticGetRR extends AbstractRR {
 
              if(new SearchPlayerByUsernameDAO(ds.getConnection(), username).access().getOutputParam() != null)
              {
-                 stats = new GetStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
+                 stats = new GetPlayerStatsPerRoleDAO(ds.getConnection(), username).access().getOutputParam();
                  LOGGER.info("Stats successfully collected for user: %s", username);
 
                  res.setStatus(HttpServletResponse.SC_OK);

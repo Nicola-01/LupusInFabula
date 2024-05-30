@@ -1,8 +1,6 @@
 package it.unipd.dei.webapp.lupus.dao;
 
-import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.StatsRole;
-import org.apache.juli.logging.Log;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -20,18 +18,28 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public class GetStatsPerRoleDAO extends AbstractDAO<List<StatsRole>> {
+public class GetPlayerStatsPerRoleDAO extends AbstractDAO<List<StatsRole>> {
 
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT name, COUNT(*) AS games_played_as, " +
-            "COUNT(*) FILTER (WHERE with_who_wins = who_wins) AS wins " +
-            "FROM plays_as_in " +
-            "JOIN public.game g ON g.id = plays_as_in.game_id " +
-            "JOIN public.role r ON plays_as_in.role = r.name " +
-            "WHERE lower(player_username) = lower(?) " +
-            "GROUP BY name";
+    private static final String STATEMENT = "SELECT name," +
+            "       COUNT(*)                                         AS games_played_as," +
+            "       COUNT(*) FILTER (WHERE with_who_wins = who_wins) AS wins" +
+            "FROM plays_as_in" +
+            "         JOIN public.game g ON g.id = plays_as_in.game_id" +
+            "         JOIN public.role r ON plays_as_in.role = r.name" +
+            "WHERE (((lower(player_username) = lower('test_user_m'))" +
+//            "  AND (g.who_wins != -1)))" +
+            "GROUP BY name;";
+
+//            "SELECT name, COUNT(*) AS games_played_as, " +
+//            "COUNT(*) FILTER (WHERE with_who_wins = who_wins) AS wins " +
+//            "FROM plays_as_in " +
+//            "JOIN public.game g ON g.id = plays_as_in.game_id " +
+//            "JOIN public.role r ON plays_as_in.role = r.name " +
+//            "WHERE lower(player_username) = lower(?) AND who_wins != -1" +
+//            "GROUP BY name";
 
     /**
      * The username of the player whose statistics are to be retrieved.
@@ -44,7 +52,7 @@ public class GetStatsPerRoleDAO extends AbstractDAO<List<StatsRole>> {
      * @param con      the connection to the database.
      * @param username the username of the player.
      */
-    public GetStatsPerRoleDAO(final Connection con, final String username) {
+    public GetPlayerStatsPerRoleDAO(final Connection con, final String username) {
         super(con);
         this.username = username;
     }
