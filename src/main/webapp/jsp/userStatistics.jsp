@@ -29,7 +29,7 @@
 <div id="username_logged" style="display: none;">${sessionScope.user.getUsername()}
 </div>
 
-<div id="error-message" style="display: none;"></div>
+<div id="error_message" style="display: none;"></div>
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
     <div class="row">

@@ -27,6 +27,7 @@ function getLogs(req) {
 
             var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
 
+
             if (list == null)
                 alert("User Not Existing");
 
@@ -128,14 +129,16 @@ function getLogs(req) {
 
 function handleError(req) {
 
-    const errorMessageContainer = document.getElementById('error-message');
+    const errorMessageContainer = document.getElementById('error_message');
 
     if (req.status === HTTP_STATUS_NOT_FOUND) {
+
+        //todo gia' gestita da not found
         errorMessageContainer.innerHTML = '<h1 class="not_found">User Not Existing</h1>';
-        alert("User Not Existing");
+        //alert("User Not Existing");
     } else if (req.status === HTTP_STATUS_FORBIDDEN) {
         errorMessageContainer.innerHTML = '<h1 class="not_logged">Please login to check the statistics</h1>';
-        alert("Not logged");
+        //alert("Not logged");
     } else {
         errorMessageContainer.innerHTML = '<h1 class="unexpected_error">An unexpected error occurred. Please try again later.</h1>';
         alert("Unexpected error");
@@ -158,6 +161,7 @@ function getStatsRole(req) {
         if (req.status === HTTP_STATUS_OK) {
             var list = JSON.parse(req.responseText)["resource-list"];
             console.log(list);
+
             if (list == null)
                 alert("User Not Existing");
 

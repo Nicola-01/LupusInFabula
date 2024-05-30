@@ -27,5 +27,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <!-- Utils JS -->
-<script src="${pageContext.request.contextPath}/js/utils.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/utils.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/temporaryStorage.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/message.js"></script>
