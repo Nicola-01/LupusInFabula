@@ -41,7 +41,7 @@ table.general_statics tr {
     /*height: 100%;*/
 }
 
-#error-message {
+#error_message {
     position: relative;
     min-height: calc(100vh - 150px); /* Adjust based on the approximate height of navbar, footer, and foot */
 }

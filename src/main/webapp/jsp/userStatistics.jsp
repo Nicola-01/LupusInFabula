@@ -29,7 +29,7 @@
 <div id="username_logged" style="display: none;">${sessionScope.user.getUsername()}
 </div>
 
-<div id="error-message" style="display: none;"></div>
+<div id="error_message" style="display: none;"></div>
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
     <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
@@ -109,7 +109,7 @@
 
 
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
-<script src="${pageContext.request.contextPath}/js/testLogs/testlogs.js"></script>
+<script src="${pageContext.request.contextPath}/js/user/userStatistics.js"></script>
 <%--for pie chart--%>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
