@@ -94,13 +94,13 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
             LogContext.removeUser();
         }
-        // session invalidate for all cases
         request.getSession().invalidate();
-
         LogContext.removeIPAddress();
         LogContext.removeAction();
-
-        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+        if(op.startsWith("logout"))
+            response.sendRedirect(request.getContextPath() + "/login");
+        else
+            request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
     }
 
     /**

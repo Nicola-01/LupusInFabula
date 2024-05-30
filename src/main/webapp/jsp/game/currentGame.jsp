@@ -39,16 +39,15 @@
 
             <div class="row">
                 <div class="col-lg-11 col-xl-10 p-2 m-auto row">
-                    <div class="col-4 p-0">
-                        <h1 id="gameStatus"></h1>
+                    <div class="col-4 p-0 my-auto">
+                        <h1 id="gameStatus" class="m-0"></h1>
                     </div>
                     <div class="col-4 p-0 d-flex justify-content-center">
-                        <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;"
-                                onclick="toggleCard()">
+                        <button id="toggleButton" class="btn btn-primary rounded-circle" style="display: none;">
                             <i id="eyeIcon" class="fas fa-eye"></i>
                         </button>
                     </div>
-                    <div class="col-4 p-0">
+                    <div class="col-4 p-0 my-auto">
                         <div class="d-flex justify-content-end">
                             <button id="copyLink" onclick="copyGameLink()">
                     <span>

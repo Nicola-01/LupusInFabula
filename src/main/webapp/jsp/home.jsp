@@ -40,7 +40,7 @@
                 <button>Statistics and History</button>
             </a>
             <a href="<c:url value="/logout"/>">
-                <button>Logout</button>
+                <button id="logoutBT">Logout</button>
             </a>
         </div>
         <div class="box col-sm-12 col-md-5 m-md-auto p-4">

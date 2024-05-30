@@ -1,16 +1,19 @@
 let playerRole = [];
 
-const maxPlayersforSircularButtons = 12;
+const maxPlayersForCircularButtons = 12;
+
+document.getElementById("card").addEventListener("dblclick",toggleCard)
+document.getElementById("toggleButton").addEventListener("click",toggleCard)
 
 // used when a player wants to hide his/her role
 function toggleCard()
 {
-    var card = document.getElementById("card");
+    const card = document.getElementById("card");
     card.classList.toggle("is-flipped");
-    var playerRole = document.getElementById("playerRole");
+    const playerRole = document.getElementById("playerRole");
     playerRole.classList.toggle("blur-name");
 
-    var eyeIcon = document.getElementById("eyeIcon");
+    const eyeIcon = document.getElementById("eyeIcon");
 
     if (!eyeIcon.classList.contains("fa-eye"))
     {
@@ -24,19 +27,19 @@ function toggleCard()
     }
 
     // hide the color of all the circular listed players
-    var players = document.querySelectorAll('.circular-player');
+    let players = document.querySelectorAll('.circular-player');
     players.forEach(function(element) {
         element.classList.toggle('hide-background');
     });
 
     // hide the color of all the grid listed players
-    var players = document.querySelectorAll('.grid-player');
+    players = document.querySelectorAll('.grid-player');
     players.forEach(function(element) {
         element.classList.toggle('hide-background');
     });
 
     // hide the written role of all the players
-    var elements = document.querySelectorAll('#playerRole_internalDiv');
+    const elements = document.querySelectorAll('#playerRole_internalDiv');
     elements.forEach(function(element) {
         if (element.style.display === 'none') {
             element.style.display = '';
@@ -61,50 +64,50 @@ function fillPlayersStatus(req) {
             {
                 document.getElementById("playersStatus").innerHTML="";
                 playerRole = [];
-                var loggedUser = localStorage.getItem('playerName');
-                var isPlayerinGame = false;
+                const loggedUser = localStorage.getItem('playerName');
+                let isPlayerInGame = false;
 
                 for (let i = 0; i < list.length; i++)
                 {
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
 
-                    // when receiving the logged in users' role
+                    // when receiving the logged-in users' role
                     if(playsAsIn.username === loggedUser)
                     {
-                        var playerRoleElement = document.getElementById("playerRole");
+                        let playerRoleElement = document.getElementById("playerRole");
                         if(playerRoleElement !== null)
                             playerRoleElement.innerHTML = "Your role is <b>" + playsAsIn.role + "</b>";
 
-                        var frontCard = document.querySelector(".card-front");
+                        const frontCard = document.querySelector(".card-front");
                         if(frontCard !== null)
                             frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
                         //var playerImageElement = document.getElementById("playerImage");
                         //playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
                         //playerImageElement.alt = playsAsIn.role + "'s card";
 
-                        var toggleButton = document.getElementById("toggleButton");
+                        const toggleButton = document.getElementById("toggleButton");
                         if(toggleButton !== null)
                             toggleButton.style.display = "inline-block";
 
-                        isPlayerinGame = true;
+                        isPlayerInGame = true;
                     }
 
                     playerRole.push(playsAsIn);
                 }
 
                 // if the player doesn't participate and it's not the master
-                if(!isPlayerinGame && !endsWithMaster)
+                if(!isPlayerInGame && !endsWithMaster)
                 {
-                    var cardContainer = document.getElementById("cardContainer");
+                    const cardContainer = document.getElementById("cardContainer");
                     if (cardContainer) {
                         cardContainer.style.display = "none";
                     }
-                    var playerRoleElement = document.getElementById("playerRole");
+                    const playerRoleElement = document.getElementById("playerRole");
                     if(playerRoleElement)
                         playerRoleElement.innerHTML = "You are <b>spectating</b>";
                 }
 
-                if (playerRole.length <= maxPlayersforSircularButtons)
+                if (playerRole.length <= maxPlayersForCircularButtons)
                     circularPlayersStatus()
                 else
                     gridPlayersStatus()
@@ -113,6 +116,25 @@ function fillPlayersStatus(req) {
             // alert("Not logged in");
         }
     }
+}
+
+function createUserDiv(playerRole, className){
+    const player = document.createElement('div');
+
+    player.innerHTML = playerRole.username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole.role)+"</div>";
+    if (playerRole.isDead) {
+        player.innerHTML += " (dead)";
+        player.style.filter = `saturate(25%)`;
+    }
+    player.className = className;
+    player.id = playerRole.username + "_status";
+    player.style.backgroundColor = rolesColors.get(playerRole.role);
+    if(className === "circular-player")
+        player.style.position = 'absolute';
+    // use only light theme
+    player.setAttribute("data-bs-theme","light");
+
+    return player
 }
 
 // Function to create buttons and position them in a circle around the square div
@@ -127,20 +149,8 @@ function circularPlayersStatus() {
 
     for (let i = 0; i < numButtons; i++) {
         const angle = (Math.PI * 2 / numButtons) * i;
-        const player = document.createElement('div');
 
-        player.innerHTML = playerRole[i].username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole[i].role)+"</div>";
-        if (playerRole[i].isDead) {
-            player.innerHTML += " (dead)";
-            player.style.filter = `saturate(25%)`;
-        }
-        player.className = "circular-player";
-        player.id = playerRole[i].username + "_status";
-        player.style.backgroundColor = rolesColors.get(playerRole[i].role);
-        player.style.position = 'absolute';
-        // use only light theme
-        player.setAttribute("data-bs-theme","light");
-
+        const player= createUserDiv(playerRole[i], "circular-player")
         circleDiv.appendChild(player); // Append player to the circle div
 
         let modX = Math.abs(Math.sin(angle));
@@ -165,17 +175,7 @@ function gridPlayersStatus() {
         let playerRoleDiv = document.createElement("div");
         playerRoleDiv.classList.add("col-3", "col-md-4", "col-lg-3", "p-1", "m-auto"); // , "col-sm-2"
 
-        const player = document.createElement('div');
-        player.innerHTML = playerRole[i].username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole[i].role)+"</div>";
-        if (playerRole[i].isDead) {
-            player.innerHTML += " (dead)";
-            player.style.filter = `saturate(25%)`;
-        }
-        player.id = playerRole[i].username + "_status";
-        player.className = "grid-player";
-        player.style.backgroundColor = rolesColors.get(playerRole[i].role);
-        // use only light theme
-        player.setAttribute("data-bs-theme","light");
+        const player= createUserDiv(playerRole[i], "grid-player")
 
         playerRoleDiv.appendChild(player);
         playersStatusDiv.appendChild(playerRoleDiv);

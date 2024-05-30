@@ -59,6 +59,11 @@ main {
     text-decoration: none;
 }
 
+#logoutBT {
+    background-color: var(--navbar-second-bg);
+    color: var(--text-color);
+}
+
 .intro {
     background-color: #fff;
     border-radius: 8px;
