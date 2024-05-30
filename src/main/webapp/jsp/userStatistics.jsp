@@ -94,7 +94,7 @@
                     <th>Number of rounds</th>
                     <th>Role played</th>
                     <th>Outcome</th>
-                    <th>View logs</th>
+                    <th>Game history</th>
                 </tr>
                 <%--                </thead>--%>
 

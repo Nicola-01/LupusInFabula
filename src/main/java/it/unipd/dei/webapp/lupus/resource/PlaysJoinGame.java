@@ -52,6 +52,11 @@ public class PlaysJoinGame extends AbstractResource {
     private final boolean has_won;
 
     /**
+     * Indicates whether the game is finished.
+     */
+    private final boolean is_game_finished;
+
+    /**
      * Constructs a new PlaysJoinGame object with the specified parameters.
      *
      * @param game_id          The ID of the game.
@@ -71,6 +76,7 @@ public class PlaysJoinGame extends AbstractResource {
         this.number_of_rounds = number_of_rounds;
         this.name = name;
         this.has_won = with_who_wins == who_wins;
+        this.is_game_finished = who_wins != -1;
     }
 
     /**
@@ -137,6 +143,15 @@ public class PlaysJoinGame extends AbstractResource {
     }
 
     /**
+     * Indicates whether the is finished.
+     *
+     * @return true if the game is finished, false otherwise.
+     */
+    public boolean getIsGameFinished() {
+        return is_game_finished;
+    }
+
+    /**
      * Writes JSON representation of the object to the output stream.
      *
      * @param out The output stream to write JSON to.
@@ -156,6 +171,7 @@ public class PlaysJoinGame extends AbstractResource {
         jg.writeNumberField("number_of_rounds", number_of_rounds);
         jg.writeStringField("name", name);
         jg.writeBooleanField("has_won", has_won);
+        jg.writeBooleanField("is_game_finished", is_game_finished);
         jg.writeEndObject();
         jg.writeEndObject();
         jg.flush();

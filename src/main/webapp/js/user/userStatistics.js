@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
     loadStatics(username);
 });
 
-
 /**
  * Get logs.
  */
@@ -79,10 +78,14 @@ function getLogs(req) {
                 //cell3.classList.add("cell-with-zero");
 
                 var cell4 = row.insertCell(4);
-                cell4.innerHTML = log.name;
-
+                if (log.is_game_finished) {
+                    cell4.innerHTML = log.name;
+                } else {
+                    cell4.innerHTML = "*****";
+                }
                 var cell5 = row.insertCell(5);
-                if (log.name !== "master") {
+
+                if (log.name !== "master" && log.is_game_finished) {
                     if (log.has_won)
                         cell5.innerHTML = "Victory";
                     else {
@@ -96,7 +99,7 @@ function getLogs(req) {
 
                 //http://localhost:8080/lupus/village/{game_id}
                 const link = contextPath + "village/" + log.public_id;
-                cell6.innerHTML = '<a href="' + link + '" target="_blank">View logs</a>';
+                cell6.innerHTML = '<a href="' + link + '" target="_blank">View match</a>';
                 //cell6.innerHTML = "Not working now";
             }
 
@@ -281,21 +284,24 @@ function getGeneralStats(req) {
             var totalPlayTime = "00:00:00";
             var totalGamesAsMaster = 0;
             var totalGamesWon = 0;
+            var totalPendingGame = 0;
 
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
+                totalPendingGame += (log.is_game_finished) ? 0 : 1;
                 if (log.name !== "master") {
                     totalPlayTime = sumTime(totalPlayTime, log.game_duration);
-                    totalGamesWon += log.has_won ? 1 : 0;
+                    totalGamesWon += (log.has_won && log.is_game_finished) ? 1 : 0;
                 } else {
-                    totalGamesAsMaster++;
+//                    totalGamesAsMaster++;
+                    totalGamesAsMaster += (log.is_game_finished) ? 1 : 0;
                 }
             }
 
-            var totalGamesPlayed = list.length - totalGamesAsMaster;
+            var totalGamesPlayed = list.length - totalGamesAsMaster - totalPendingGame;
             var ratio = (totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3);
 
-            let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed],
+            let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed+totalPendingGame],
                 ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed - totalGamesWon],
                 ["Ratio", ratio],
                 ["Games as master", totalGamesAsMaster]];
@@ -320,6 +326,9 @@ function getGeneralStats(req) {
 
                 if (couple[i][0] === "Ratio") {
                     cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
+                }
+                if (couple[i][0] === "Games Played") {
+                    cell0.innerHTML += ' <a title="If the number is different from the sum of games won and loss it means that there are pending games">&#9432</a>';
                 }
 
                 var cell1 = row.insertCell(1);
