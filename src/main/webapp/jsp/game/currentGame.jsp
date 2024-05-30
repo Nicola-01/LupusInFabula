@@ -79,7 +79,7 @@
     </c:choose>
 
     <div class="row">
-        <div id="playersStatusExternal" class="col-md-6 p-1">
+        <div id="playersStatusExternal" class="col-md-6 mb-sm-4 mb-md-0 p-1">
             <h2 style="height: 35px;">HABITANTS STATUS</h2>
             <div id="playersStatus" class="row p-2"></div>
         </div>

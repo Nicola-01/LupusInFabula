@@ -18,6 +18,22 @@ function populateSuccessMessage(infoTitle, messageDetails, moreDetails = "") {
     populateMessage("successMessage", infoTitle, messageDetails, moreDetails)
 }
 
+function hideErrorPopup(){
+    removePopUp("errorMessage")
+}
+
+function hideInfoPopup(){
+    removePopUp("infoMessage")
+}
+
+function hideWarningPopup(){
+    removePopUp("warningMessage")
+}
+
+function hideSuccessPopup(){
+    removePopUp("successMessage")
+}
+
 // COMMON
 function populateMessage(messagePopup, title, details, moreDetails = "") {
     document.getElementById(messagePopup).style.display = "block";
@@ -44,4 +60,8 @@ function showMore(messagePopup) {
         showMoreText.innerText = "Show more";
         document.querySelector("#" + messagePopup + " .showMore").classList.add("mb-0")
     }
+}
+
+function removePopUp(popup){
+    document.getElementById(popup).style.display = "none"
 }

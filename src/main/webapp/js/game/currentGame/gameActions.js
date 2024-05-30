@@ -929,6 +929,7 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
+            hideWarningPopup(); // hide ballot popup
             let actionResults;
             let phase;
             let deadPlayers;
@@ -947,8 +948,9 @@ function actionsResponse(req) {
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(gameWin)
                 populateInfoMessage(message, phaseInfo)
-                // location.reload()
-                elementsReload()
+
+                location.reload()
+                // elementsReload()
 
             } else {
                 if (gamePhase === GamePhase.NIGHT) {

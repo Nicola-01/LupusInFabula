@@ -32,6 +32,10 @@
     transition-duration: 700ms;
 }
 
+#copyLink span {
+    width: 100px;
+}
+
 #copyLink:hover {
     background-color: var(--neutral-color-6);
 }
