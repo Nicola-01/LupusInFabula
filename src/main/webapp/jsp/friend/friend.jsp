@@ -17,8 +17,9 @@
             <thead class="sticky-top top-0">
             <tr>
                 <th style="width:35%">Username</th>
-                <th style="width:15%">Available</th>
-                <th style="width:30%">Date</th>
+                <th style="width:10%">Available</th>
+                <th style="width:10%">Game</th>
+                <th style="width:25%">Date</th>
                 <th style="width:15%"></th>
             </tr>
             </thead>
