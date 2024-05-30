@@ -100,10 +100,10 @@ window.onload = function () {
     // Check if the URL ends with '/login' and set the checkbox state accordingly
     document.getElementById("loginCB").checked = currentURL.endsWith("/login");
 
+    // load saved values
+    loadSavedValues()
+
     // call the functions to disable the button
     enableSignup();
     enableLogin();
-
-    // load saved values
-    loadSavedValues()
 };
