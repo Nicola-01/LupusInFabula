@@ -85,7 +85,7 @@ public class Action extends AbstractResource implements Comparable
         this.typeAction = typeAction;
         this.target = target;
     }
-    public Action(int gameId, String player, int round, int phase, String typeAction) {this(gameId, player, round, phase, 0, typeAction, null);}
+    public Action(int gameId, String player, int round, int phase, String typeAction) {this(gameId, player, round, phase, 3, typeAction, null);}
 
     /**
      * Constructs an Action object using the result set of a database query.

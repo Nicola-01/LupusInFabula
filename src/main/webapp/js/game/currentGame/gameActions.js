@@ -26,9 +26,11 @@ function gameStatus(req) {
                 if (gamePhase === GamePhase.NIGHT) {
                     if (bt_text !== null) bt_text.textContent = "NEW DAY!";
                     bt_gameStatus.textContent = "NIGHT " + gameRound;
+                    logElementsReload()
                 } else {
                     if (bt_text !== null) bt_text.textContent = "NEW NIGHT!";
                     bt_gameStatus.textContent = "DAY  " + gameRound;
+                    logElementsReload()
                 }
 
                 // if the theme is dynamic -> change the theme
