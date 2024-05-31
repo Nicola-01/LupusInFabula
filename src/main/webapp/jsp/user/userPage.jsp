@@ -15,6 +15,7 @@
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
+    <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/utils/passwordComplexHint.css">
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/friend/friend.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
@@ -65,6 +66,7 @@
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/updateCredentials.js"></script>
+<script src="${pageContext.request.contextPath}/js/passwordComplexHint.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/deleteAccount.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
 

@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById('newPassword').addEventListener('input', checkFormCompletionPut);
     document.getElementById('confirm-password').addEventListener('input', checkFormCompletionPut);
 
+    const newPasswordHint= document.getElementById('newPassword');
+    newPasswordHint.addEventListener('input', () => passwordComplexHint(newPasswordHint.value));
+    newPasswordHint.addEventListener('focus', () => showPasswordHint(true));
+    newPasswordHint.addEventListener('blur', () => showPasswordHint(false));
 });
 
 function sendPutUpdate() {
