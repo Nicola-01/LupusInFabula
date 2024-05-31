@@ -32,7 +32,13 @@
 <div id="error_message" style="display: none;"></div>
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
-    <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
+    <div class="row">
+        <div class="col-8">
+            <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
+        </div>
+        <div class="col-3" id="friendButtonContainer"></div>
+    </div>
+    
     <div class="internal-container p-3" id="background_container">
 <%--         style="display: none">--%>
 
@@ -110,6 +116,7 @@
 
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/userStatistics.js"></script>
+<script src="${pageContext.request.contextPath}/js/friend/friendActionButton.js"></script>
 <%--for pie chart--%>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

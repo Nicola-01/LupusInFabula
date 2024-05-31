@@ -10,6 +10,10 @@
 /*    !*transform: translate(-50%, -50%);*!*/
 /*}*/
 
+#main_class{
+    position: relative;
+}
+
 table.general_statics {
     border: white;
     border-width: medium;
@@ -44,4 +48,19 @@ table.general_statics tr {
 #error_message {
     position: relative;
     min-height: calc(100vh - 150px); /* Adjust based on the approximate height of navbar, footer, and foot */
+}
+
+#friendActionButton{
+    display: block;
+    background-color: var(--navbar-second-bg);;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+#friendActionButton:hover{
+    transform: scale(1.05);
 }

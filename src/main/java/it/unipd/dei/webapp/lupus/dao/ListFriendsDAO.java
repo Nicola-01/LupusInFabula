@@ -24,6 +24,11 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
     private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?)";
 
     /**
+     * The SQL statement to calculate the common game.
+     */
+    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id WHERE p1.player_username = ? AND p2.player_username = ? AND p1.player_username != p2.player_username";
+
+    /**
      * The username of the player
      */
     private final String user;
@@ -48,8 +53,12 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
     public final void doAccess() throws SQLException{
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        PreparedStatement pstmt1 = null;
+        ResultSet rs1 = null;
 
         final List<Friend> friendList = new ArrayList<>();
+        int commonGame;
+        String friend_username;
 
         try {
             pstmt = con.prepareStatement(STATEMENT);
@@ -57,8 +66,19 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                friendList.add(new Friend(rs.getString("friend_username"), rs.getDate("date")));
-                LOGGER.info("Friend found: " + rs.getString("friend_username") + " " + rs.getDate("date"));
+                friend_username = rs.getString("friend_username");
+                pstmt1 = con.prepareStatement(GAME_STATEMENT);
+                pstmt1.setString(1,user);
+                pstmt1.setString(2,friend_username);
+                rs1 = pstmt1.executeQuery();
+                if(rs1.next()) {
+                    commonGame = rs1.getInt("num_games");
+                }else{
+                    commonGame = -1;
+                    LOGGER.error("Error while calculating the number of common games");
+                }
+                friendList.add(new Friend(friend_username, commonGame, rs.getDate("date")));
+                LOGGER.info("Friend found: " + rs.getString("friend_username") + " " + commonGame + " " + rs.getDate("date"));
             }
             if (friendList.isEmpty()){
                 LOGGER.info("No friend found " + user);
@@ -70,6 +90,12 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
             }
             if (rs != null) {
                 rs.close();
+            }
+            if (pstmt1 != null) {
+                pstmt1.close();
+            }
+            if (rs1 != null) {
+                rs1.close();
             }
         }
         this.outputParam = friendList;

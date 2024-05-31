@@ -29,8 +29,9 @@ function fillFriendsList(req){
                     let row = tbody.insertRow();
                     let usernameCell = row.insertCell(0);
                     row.insertCell(1);
-                    let dateCell = row.insertCell(2);
-                    let deleteCell = row.insertCell(3);
+                    let gameCell = row.insertCell((2))
+                    let dateCell = row.insertCell(3);
+                    let deleteCell = row.insertCell(4);
 
                     // Fill cells with data
                     let link = document.createElement("a");
@@ -38,6 +39,7 @@ function fillFriendsList(req){
                     link.textContent = friend.username;
                     link.classList.add("friend-link");
                     usernameCell.appendChild(link);
+                    gameCell.textContent = friend.commonGame;
                     dateCell.textContent = friend.friendship_date;
 
                     let deleteButton = document.createElement("button");
@@ -91,8 +93,8 @@ function deleteFriend(username){
 // Function to remove username from players_tb table
 function removeFromFriendsTable(username) {
 
-    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
-
+    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase()), 1);
+    
     let rows = document.getElementById("my_friends").rows;
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[0].textContent === username) {
@@ -114,7 +116,7 @@ function addPlayerToTable() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === HTTP_STATUS_CREATED) {
                     let friend = JSON.parse(xhr.responseText)['friend'];
-                    addToFriendsTable(friend.username, friend.friendship_date);
+                    addToFriendsTable(friend.username, friend.commonGame, friend.friendship_date);
                     var msg = friend.username + " added to your friends";
                     populateSuccessMessage("Friend added", msg)
                 } else {
@@ -141,7 +143,7 @@ function addPlayerToTable() {
 
 }
 
-function addToFriendsTable(username, friendshipDate) {
+function addToFriendsTable(username, commonGame, friendshipDate) {
     // Get reference to the table body
     let tbody = document.getElementById("my_friends").querySelector("tbody");
 
@@ -149,8 +151,9 @@ function addToFriendsTable(username, friendshipDate) {
     let row = tbody.insertRow();
     let usernameCell = row.insertCell(0);
     row.insertCell(1);
-    let dateCell = row.insertCell(2);
-    let deleteCell = row.insertCell(3);
+    let gameCell = row.insertCell(2)
+    let dateCell = row.insertCell(3);
+    let deleteCell = row.insertCell(4);
 
     // Fill cells with data
     let link = document.createElement("a");
@@ -158,6 +161,7 @@ function addToFriendsTable(username, friendshipDate) {
     link.textContent = username;
     link.classList.add("friend-link");
     usernameCell.appendChild(link);
+    gameCell.textContent = commonGame;
     dateCell.textContent = friendshipDate;
 
     // Create delete button
