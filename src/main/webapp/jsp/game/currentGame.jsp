@@ -98,6 +98,7 @@
 <script src="${pageContext.request.contextPath}/js/game/currentGame/playersStatus.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/gameLog.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame/playerCardToggle.js" defer></script>
 
 </body>
 </html>
