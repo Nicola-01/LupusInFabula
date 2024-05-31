@@ -196,13 +196,14 @@ function getStatsRole(req) {
             size = (size === 0) ? 1 : size;
 
             const pairs = [];
+
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
 
                 if (stats.name !== "master") {
                     var row = tbody.insertRow();
 
-                    pairs.push([stats.name, stats.countName]);
+                    pairs.push([capitalizeFirstLetter(stats.name), stats.countName]);
 
                     row.classList.add("item");
 
@@ -290,7 +291,7 @@ function getGeneralStats(req) {
                 let log = list[i]['PlaysJoinGame'];
                 totalPendingGame += (log.is_game_finished) ? 0 : 1;
                 if (log.name !== "master") {
-                    totalPlayTime = sumTime(totalPlayTime, log.game_duration);
+                    totalPlayTime = sumTime(totalPlayTime, log.is_game_finished ? log.game_duration : "00:00:00");
                     totalGamesWon += (log.has_won && log.is_game_finished) ? 1 : 0;
                 } else {
 //                    totalGamesAsMaster++;
