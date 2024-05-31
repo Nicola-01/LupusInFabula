@@ -6,6 +6,7 @@
 <head>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
@@ -50,11 +51,17 @@
                 <form action="<c:url value="/signup"/>" method="POST">
                     <label class="lb_singup" for="loginCB" aria-hidden="true">Sign up</label>
                     <div class="inputs my-0 mx-auto px-2">
-                        <input type="text" id="sing_username" class="custom-input" name="username"
-                               placeholder="Username" minlength="3" maxlength="20"
-                               required="">
-                        <input type="email" id="sing_email" class="custom-input" name="email" placeholder="Email"
-                               required="">
+                        <div class="form-group">
+                            <input type="text" id="sing_username" class="custom-input form-control" name="username"
+                                   placeholder="" minlength="3" maxlength="20"
+                                   required="">
+                            <label class="control-label">Username</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" id="sing_email" class="custom-input form-control" name="email" placeholder=""
+                                   required="">
+                            <label class="control-label">Email</label>
+                        </div>
                         <div id="passwordComplex" class="w-100 p-2 px-3 d-none">
                             The password must contain:
                             <ul class="m-0">
@@ -65,12 +72,18 @@
                                 <li id="passwordSymbol" class="invalid">A symbol (!@#$%^&*)</li>
                             </ul>
                         </div>
-                        <input type="password" id="sing_password" class="custom-input" name="password"
-                               placeholder="Password" maxlength="20"
-                               required=""> <!-- TODO add in password input minlength="8" -->
-                        <input type="password" id="sing_password_rp" class="custom-input mb-1" name="password_rp"
-                               placeholder="Repeat password" maxlength="20"
-                               required="">
+                        <div class="form-group">
+                            <input type="password" id="sing_password" class="custom-input form-control" name="password"
+                                   placeholder="" maxlength="20"
+                                   required=""> <!-- TODO add in password input minlength="8" -->
+                            <label class="control-label">Password</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="sing_password_rp" class="custom-input mb-1 form-control" name="password_rp"
+                                   placeholder="" maxlength="20"
+                                   required="">
+                            <label class="control-label">Repeat password</label>
+                        </div>
                         <div class="additional-options">
                             <input type="checkbox" id="signupShowPassword">
                             <label for="signupShowPassword">Show Password</label>
@@ -84,12 +97,18 @@
                 <form action="<c:url value="/login"/>" method="POST">
                     <label class="lb_login" for="loginCB" aria-hidden="true">Login</label>
                     <div class="inputs my-0 mx-auto px-2">
-                        <input type="text" id="login_user" class="custom-input mt-5" name="user"
-                               placeholder="Username/Email"
-                               required="" minlength="3">
-                        <input type="password" id="login_password" class="custom-input mb-1" name="password"
-                               placeholder="Password" maxlength="20"
-                               required=""> <!-- TODO add in password input minlength="8" -->
+                        <div class="form-group">
+                            <input type="text" id="login_user" class="custom-input mt-5 form-control" name="user"
+                                   placeholder=""
+                                   required="" minlength="3">
+                            <label class="control-label">Username/Email</label>
+                        </div>
+                        <div class="form-group">
+                            <input type="password" id="login_password" class="custom-input mb-1 form-control" name="password"
+                                   placeholder="" maxlength="20"
+                                   required=""> <!-- TODO add in password input minlength="8" -->
+                            <label class="control-label">Password</label>
+                        </div>
                         <%--<div class="additional-options">--%>
                         <%--<a href="#" class="forgot-password">Forgot password?</a>--%>
                         <%--</div>--%>
