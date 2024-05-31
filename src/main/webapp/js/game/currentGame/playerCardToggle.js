@@ -1,5 +1,8 @@
-document.getElementById("card").addEventListener("dblclick",toggleCard)
-document.getElementById("toggleButton").addEventListener("click",toggleCard)
+if(document.getElementById("card"))
+    document.getElementById("card").addEventListener("dblclick",toggleCard)
+
+if(document.getElementById("toggleButton"))
+    document.getElementById("toggleButton").addEventListener("click",toggleCard)
 
 // used when a player wants to hide his/her role
 function toggleCard()
@@ -44,3 +47,10 @@ function toggleCard()
         }
     });
 }
+
+/*
+document.addEventListener('DOMContentLoaded', function (event) {
+    if(document.getElementById("toggleButton"))
+        toggleCard();
+});
+*/

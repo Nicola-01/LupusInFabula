@@ -18,5 +18,4 @@
     </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/game/currentGame/playerCardToggle.js"></script>
 <c:import url="/jsp/utils/errorMessage.jsp"/>
