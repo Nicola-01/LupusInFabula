@@ -32,7 +32,6 @@
 
     </div>
 
-<<<<<<< Updated upstream
     <c:choose>
         <c:when test="${gameOver>=0}">
             <jsp:include page="currentGame/gameOver.jsp"/>
