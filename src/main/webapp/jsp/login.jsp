@@ -7,9 +7,21 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/passwordComplexHint.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
+
+    <style>
+        .control-label {
+            top: 7px;
+        }
+
+        .form-control:focus ~ .control-label,
+        .form-control:not(:placeholder-shown) ~ .control-label {
+            color: #4BA3C3FF;
+        }
+    </style>
 </head>
 
 <body>
@@ -124,6 +136,7 @@
     </div>
 
     <c:import url="/jsp/include/foot.jsp"/>
+    <script src="${pageContext.request.contextPath}/js/passwordComplexHint.js"></script>
     <script src="${pageContext.request.contextPath}/js/login.js"></script>
 
 </body>

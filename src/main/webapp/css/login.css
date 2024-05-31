@@ -49,27 +49,6 @@ body {
     color: #052033;
 }
 
-.inputs, #passwordComplex {
-    width: 100%;
-    max-width: 350px;
-}
-
-#passwordComplex {
-    position: absolute;
-    background-color: #ade4f8;
-    color: #0D324D;
-    border-radius: .6em;
-    transform: translateY(-105%);
-}
-
-#passwordComplex .valid {
-    text-decoration: line-through;
-    color: green;
-}
-#passwordComplex .invalid {
-    color: red;
-}
-
 #loginSignup {
     width: 100%;
     max-width: 700px;
@@ -158,13 +137,4 @@ input[type="submit"]:disabled {
 
 #loginCB:checked ~ .signup label {
     transform: scale(.6);
-}
-
-.control-label {
-    top: 7px;
-}
-
-.form-control:focus ~ .control-label,
-.form-control:not(:placeholder-shown) ~ .control-label {
-    color: #4BA3C3FF;
 }

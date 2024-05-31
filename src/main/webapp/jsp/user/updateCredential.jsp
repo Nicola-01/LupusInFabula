@@ -42,6 +42,16 @@
         <br>
         <br>
 
+        <div id="passwordComplex" class="w-100 p-2 px-3 d-none">
+            The password must contain:
+            <ul class="m-0">
+                <li id="passwordLength" class="invalid">From 8 to 20 characters.</li>
+                <li id="passwordUppercase" class="invalid">An uppercase letter.</li>
+                <li id="passwordLowercase" class="invalid">A lowercase letter.</li>
+                <li id="passwordNumber" class="invalid">A number.</li>
+                <li id="passwordSymbol" class="invalid">A symbol (!@#$%^&*)</li>
+            </ul>
+        </div>
         <div class="form-group">
             <input type="password" name="NewPassword" id="newPassword" class="form-control" placeholder="">
             <label class="control-label">New Password</label>

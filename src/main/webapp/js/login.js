@@ -8,7 +8,7 @@ const singSubmit = document.getElementById("sing_submit");
 singUsername.addEventListener('input', enableSignup);
 singEmail.addEventListener('input', enableSignup);
 singPassword.addEventListener('input', enableSignup);
-singPassword.addEventListener('input', passwordComplexHint);
+singPassword.addEventListener('input', () => passwordComplexHint(singPassword.value));
 singPassword.addEventListener('focus', () => showPasswordHint(true));
 singPassword.addEventListener('blur', () => showPasswordHint(false));
 singPasswordRp.addEventListener('input', enableSignup);
@@ -93,37 +93,6 @@ function loadSavedValues() {
             singEmail.value = loginOBJ.email;
             singPassword.value = loginOBJ.password;
             singPasswordRp.value = loginOBJ.passwordRp;
-        }
-    }
-}
-
-function showPasswordHint(toShow){
-    const passwordComplex = document.getElementById("passwordComplex");
-    if (toShow)
-        passwordComplex.classList.remove("d-none");
-    else
-        passwordComplex.classList.add("d-none");
-}
-
-const criteria = {
-    passwordLength: /^.{8,20}$/,
-    passwordUppercase: /[A-Z]/,
-    passwordLowercase: /[a-z]/,
-    passwordNumber: /\d/,
-    passwordSymbol: /[!@#$%^&*]/
-};
-
-function passwordComplexHint() {
-    const password = singPassword.value;
-
-    for (let criterion in criteria) {
-        const element = document.getElementById(criterion);
-        if (criteria[criterion].test(password)) {
-            element.classList.remove('invalid');
-            element.classList.add('valid');
-        } else {
-            element.classList.remove('valid');
-            element.classList.add('invalid');
         }
     }
 }
