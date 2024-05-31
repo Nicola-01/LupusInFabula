@@ -53,6 +53,14 @@ function fillFriends(req) {
             } else {
                 let tbody = document.getElementById("friends_tb").querySelector("tbody");
 
+                if (list.length === 0) {
+                    let row = tbody.insertRow();
+                    row.setAttribute("noFriends", '')
+                    const tableData = row.insertCell(0)
+                    tableData.setAttribute("colspan", "3");
+                    tableData.innerText = "Here you can find your friends.";
+                }
+
                 // Loop through the list of friends
                 for (let i = 0; i < list.length; i++) {
                     let friend = list[i]['friend']; // Use let instead of let to create a new scope for friend
@@ -68,6 +76,7 @@ function fillFriends(req) {
                     addButtonCell.innerHTML = HTML_add_button(friend.username);
                 }
                 sendAvailabilityRequest()
+                addPlayerTableHint()
             }
         } else
             isLoggedUser(req);
@@ -93,20 +102,21 @@ function updateAvailability(req) {
                     players.set(list[i]['player']['username'].toLowerCase(), list[i]['player']['gameId']);
 
             let rows = document.getElementById("players_tb").querySelector("tbody").rows;
-            for (let i = 0; i < rows.length; i++) {
-                if (players.has(rows[i].cells[1].textContent.toLowerCase()))
-                    rows[i].cells[2].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
-                else {
-                    console.log("The player: " + players.has(rows[i].cells[1].textContent) + " not exists")
-                    rows[i].remove()
-                    i--; // go back of one position
+            if (rows.length > 0 && !rows[0].hasAttribute('noPlayers'))
+                for (let i = 0; i < rows.length; i++) {
+                    if (players.has(rows[i].cells[1].textContent.toLowerCase()))
+                        rows[i].cells[2].innerHTML = (players.get(rows[i].cells[1].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
+                    else {
+                        console.log("The player: " + players.has(rows[i].cells[1].textContent) + " not exists")
+                        removeFromPlayersTable(rows[i].cells[1].textContent)
+                        i--; // go back of one position
+                    }
                 }
-            }
 
             rows = document.getElementById("friends_tb").querySelector("tbody").rows;
-            for (let i = 0; i < rows.length; i++)
-                rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
-
+            if (!rows[0].hasAttribute('noFriends')) // if there are friends in the list
+                for (let i = 0; i < rows.length; i++)
+                    rows[i].cells[1].innerHTML = (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) ? "&#128994;" : "&#128308;"
         }
     }
 }
@@ -283,6 +293,27 @@ function gameCreation(req) {
     }
 }
 
+function addPlayerTableHint() {
+    const tbody = document.getElementById("players_tb").querySelector("tbody")
+    const rows = tbody.rows;
+    if (rows.length === 0) {
+        let row = tbody.insertRow();
+        row.setAttribute("noPlayers", '')
+        const tableData = row.insertCell(0)
+        tableData.setAttribute("colspan", "4");
+        tableData.innerHTML = "Here you will see the players who will be in the game. <br>Add at least 5!";
+    }
+}
+
+function removePlayersTableHint() {
+    const tbody = document.getElementById("players_tb").querySelector("tbody")
+    const rows = tbody.rows;
+    if(rows.length === 0)
+        return;
+    if (rows[0].hasAttribute('noPlayers'))
+        rows[0].remove()
+}
+
 function addPlayerToTable() {
     const username = document.getElementById("playerUsername").value;
     if (username !== "") {
@@ -299,6 +330,8 @@ function addPlayerToTable() {
 
 // Function to add username to players_tb table
 function addToPlayersTable(username) {
+    removePlayersTableHint();
+
     // no duplicate
     let tbody = document.getElementById("players_tb").querySelector("tbody");
     let rows = tbody.rows;
@@ -363,6 +396,8 @@ function removeFromPlayersTable(username) {
             break;
         }
     }
+
+    addPlayerTableHint()
 }
 
 // Function to remove row from players_tb table
@@ -380,6 +415,8 @@ function removeRow(button) {
         if (checkboxes[i].parentElement.parentElement.childNodes[0].textContent === username)
             checkboxes[i].checked = false;
     }
+
+    addPlayerTableHint()
 }
 
 // Select the table you want to observe

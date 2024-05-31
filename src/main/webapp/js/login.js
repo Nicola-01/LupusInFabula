@@ -64,7 +64,7 @@ function saveField() {
             user: loginUser.value,
             password: loginPassword.value
         };
-        storeData('loginOBJ', loginOBJ, 20000); // Store data for 20 seconds
+        storeData('loginOBJ', loginOBJ, 15); // Store data for 20 seconds
 
     } else { // is signup
         const loginOBJ = {
@@ -74,9 +74,9 @@ function saveField() {
             password: singPassword.value,
             passwordRp: singPasswordRp.value
         };
-        storeData('loginOBJ', loginOBJ, 15000); // Store data for 15 seconds
+        storeData('loginOBJ', loginOBJ, 15); // Store data for 15 seconds
     }
-}
+    }
 
 function loadSavedValues() {
     const loginOBJ = retrieveData('loginOBJ');
@@ -85,7 +85,7 @@ function loadSavedValues() {
             document.getElementById("loginCB").checked = true;
 
             loginUser.value = loginOBJ.user;
-            loginPassword.value = loginOBJ.user
+            loginPassword.value = loginOBJ.password
         } else {
             document.getElementById("loginCB").checked = false;
 

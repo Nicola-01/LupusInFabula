@@ -1,24 +1,18 @@
 // Function to store data with expiration time
-function storeData(key, value, duration) {
-    const expirationTime = Date.now() + duration;
-    const data = { value: value, expirationTime: expirationTime };
-
-    localStorage.setItem(key, JSON.stringify(data));
+function storeData(key, value, seconds) {
+    const date = new Date();
+    date.setTime(date.getTime() + (seconds * 1000));
+    document.cookie = key + "=" + JSON.stringify(value) + ";expires=" + date.toUTCString() + ";path=/";
 }
 
 // Function to retrieve data
 function retrieveData(key) {
-    const dataString = localStorage.getItem(key);
-
-    if (!dataString)
-        return null;
-
-    const data = JSON.parse(dataString);
-
-    if (Date.now() > data.expirationTime) {
-        localStorage.removeItem(key);
-        console.log(`Data with key "${key}" has expired and has been removed`);
-        return null;
+    const nameEQ = key + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i];
+        if (c.indexOf(nameEQ) === 0)
+            return JSON.parse(c.substring(nameEQ.length, c.length));
     }
-    return data.value;
+    return null;
 }

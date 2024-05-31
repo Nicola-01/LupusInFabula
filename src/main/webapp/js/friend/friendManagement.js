@@ -53,7 +53,7 @@ function fillFriendsList(req){
 
                     let deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
-                    deleteButton.classList.add("deleteFriendButton")
+                    deleteButton.classList.add("deleteFriendButton", "m-auto")
                     deleteButton.addEventListener("click", function() {
                         deleteFriend(friend.username);
                     });
@@ -176,7 +176,7 @@ function addToFriendsTable(username, commonGame, friendshipDate) {
     // Create delete button
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
-    deleteButton.classList.add("deleteFriendButton")
+    deleteButton.classList.add("deleteFriendButton", "m-auto")
     deleteButton.addEventListener("click", function() {
         deleteFriend(username);
     });

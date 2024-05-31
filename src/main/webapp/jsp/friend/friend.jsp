@@ -18,8 +18,8 @@
             <tr>
                 <th style="width:35%">Username</th>
                 <th style="width:10%">Available</th>
-                <th style="width:10%">Game</th>
-                <th style="width:25%">Date</th>
+                <th style="width:20%">Games together</th>
+                <th style="width:20%">Since</th>
                 <th style="width:15%"></th>
             </tr>
             </thead>
