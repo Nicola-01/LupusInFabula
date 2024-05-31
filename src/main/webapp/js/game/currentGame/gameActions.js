@@ -186,9 +186,9 @@ function enableButtons() {
                 if (target === "")
                     continue;
                 if (isPlayerSeesAsEvil(target))
-                    role_targets[i].style.backgroundColor = rolesColors.get("wolf")
+                    role_targets[i].style.backgroundColor = 'var(--target-color-evil)'
                 else
-                    role_targets[i].style.backgroundColor = rolesColors.get("farmer")
+                    role_targets[i].style.backgroundColor = 'var(--target-color-good)'
             }
         }
 
