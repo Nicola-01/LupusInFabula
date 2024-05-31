@@ -49,20 +49,35 @@ body {
     color: #052033;
 }
 
-.additional-options {
-    width: 60%;
-    min-width: 18em;
-    height: 20px;
-    margin: 0 auto;
+.inputs, #passwordComplex {
+    width: 100%;
+    max-width: 350px;
 }
 
-@media (max-width: 18em) {
-    .additional-options,
-    .custom-input,
-    input[type="submit"] {
-        width: 100% !important;
-        min-width: auto !important;
-    }
+#passwordComplex {
+    position: absolute;
+    background-color: #ade4f8;
+    color: #0D324D;
+    border-radius: .6em;
+    transform: translateY(-105%);
+}
+
+#passwordComplex .valid {
+    text-decoration: line-through;
+    color: green;
+}
+#passwordComplex .invalid {
+    color: red;
+}
+
+#loginSignup {
+    width: 100%;
+    max-width: 700px;
+}
+
+.additional-options {
+    height: 20px;
+    margin: 0 auto;
 }
 
 .forgot-password {
@@ -74,9 +89,8 @@ body {
     text-decoration: underline;
 }
 
-.custom-input, input[type="submit"]{
-    width: 60%;
-    min-width: 18em;
+.custom-input, input[type="submit"] {
+    width: 100%;
     height: 40px;
     justify-content: center;
     border: none;

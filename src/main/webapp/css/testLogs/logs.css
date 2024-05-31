@@ -28,6 +28,7 @@ table.general_statics tr {
 
 #general_stats{
     margin: auto;
+    color: var(--text-color-fixed);
     background-color: var(--navbar-second-bg);
     border-radius: .6em;
 }

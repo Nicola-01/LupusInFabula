@@ -238,8 +238,8 @@
     }
 }
 
-.dropdown-menu.show {
-    background-color: var(--bg-second-color);
+.nav-item .dropdown-menu.show {
+    background-color: var(--navbar-third-bg);
 }
 
 .dropdown-item.active {

@@ -49,7 +49,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
      * Passwords must be between 8 and 16 characters long and contain at least one uppercase letter,
      * one lowercase letter, one number, and one special character.
      */
-    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
+    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,20}$";
 
     /**
      * The compiled pattern for validating email addresses.

@@ -12,7 +12,7 @@
 </head>
 
 <body>
-<div class="container">
+<main class="container mb-5 p-0">
 
     <div class="fireflies">
         <div class="firefly"></div>
@@ -42,41 +42,54 @@
         <div class="firefly"></div>
     </div>
 
-    <div class="row">
-        <div class="col-sm-12 col-md-10 col-lg-8 col-xl-6 p-0" style="margin: auto">
-            <c:import url="/jsp/include/show-message.jsp"/>
-            <div class="main">
-                <input type="checkbox" id="loginCB" aria-hidden="true" checked>
-                <div class="signup">
-                    <form action="<c:url value="/signup"/>" method="POST">
-                        <label class="lb_singup" for="loginCB" aria-hidden="true">Sign up</label>
+    <div id="loginSignup" class="m-auto">
+        <c:import url="/jsp/include/show-message.jsp"/>
+        <div class="main">
+            <input type="checkbox" id="loginCB" aria-hidden="true" checked>
+            <div class="signup">
+                <form action="<c:url value="/signup"/>" method="POST">
+                    <label class="lb_singup" for="loginCB" aria-hidden="true">Sign up</label>
+                    <div class="inputs my-0 mx-auto px-2">
                         <input type="text" id="sing_username" class="custom-input" name="username"
-                               placeholder="Username"
+                               placeholder="Username" minlength="3" maxlength="20"
                                required="">
                         <input type="email" id="sing_email" class="custom-input" name="email" placeholder="Email"
                                required="">
+                        <div id="passwordComplex" class="w-100 p-2 px-3 d-none">
+                            The password must contain:
+                            <ul class="m-0">
+                                <li id="passwordLength" class="invalid">From 8 to 20 characters.</li>
+                                <li id="passwordUppercase" class="invalid">An uppercase letter.</li>
+                                <li id="passwordLowercase" class="invalid">A lowercase letter.</li>
+                                <li id="passwordNumber" class="invalid">A number.</li>
+                                <li id="passwordSymbol" class="invalid">A symbol (!@#$%^&*)</li>
+                            </ul>
+                        </div>
                         <input type="password" id="sing_password" class="custom-input" name="password"
-                               placeholder="Password"
-                               required="">
+                               placeholder="Password" maxlength="20"
+                               required=""> <!-- TODO add in password input minlength="8" -->
                         <input type="password" id="sing_password_rp" class="custom-input mb-1" name="password_rp"
-                               placeholder="Repeat password"
+                               placeholder="Repeat password" maxlength="20"
                                required="">
                         <div class="additional-options">
                             <input type="checkbox" id="signupShowPassword">
                             <label for="signupShowPassword">Show Password</label>
                         </div>
                         <input type="submit" id="sing_submit" class="mt-4" value="Sign up">
-                    </form>
-                </div>
+                    </div>
+                </form>
+            </div>
 
-                <div class="login">
-                    <form action="<c:url value="/login"/>" method="POST">
-                        <label class="lb_login" for="loginCB" aria-hidden="true">Login</label>
-                        <input type="text" id="login_user" class="custom-input mt-5" name="user" placeholder="Username/Email"
-                               required="">
+            <div class="login">
+                <form action="<c:url value="/login"/>" method="POST">
+                    <label class="lb_login" for="loginCB" aria-hidden="true">Login</label>
+                    <div class="inputs my-0 mx-auto px-2">
+                        <input type="text" id="login_user" class="custom-input mt-5" name="user"
+                               placeholder="Username/Email"
+                               required="" minlength="3">
                         <input type="password" id="login_password" class="custom-input mb-1" name="password"
-                               placeholder="Password"
-                               required="">
+                               placeholder="Password" maxlength="20"
+                               required=""> <!-- TODO add in password input minlength="8" -->
                         <%--<div class="additional-options">--%>
                         <%--<a href="#" class="forgot-password">Forgot password?</a>--%>
                         <%--</div>--%>
@@ -85,8 +98,8 @@
                             <label for="loginShowPassword">Show Password</label>
                         </div>
                         <input type="submit" id="login_submit" class="mt-4" value="Login">
-                    </form>
-                </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
