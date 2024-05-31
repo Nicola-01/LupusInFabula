@@ -930,7 +930,7 @@ public class GameActionsPostRR extends AbstractRR {
                         insertActions.add(new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target));
                         //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
 
-                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
+                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getName())) {
                             LOGGER.info("The knight has protected the hamster " + target);
                             updatePlayersDeath.add(updatePlayerDeath(target));
                         }
@@ -996,7 +996,7 @@ public class GameActionsPostRR extends AbstractRR {
                         insertActions.add(new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target));
                         //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
 
-                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
+                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getName())) {
                             LOGGER.info("The seer has seen the hamster " + target);
                             updatePlayersDeath.add(updatePlayerDeath(target));
                         }
