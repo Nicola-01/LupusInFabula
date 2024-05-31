@@ -67,10 +67,11 @@ function createActionBlock(phase, subphase, typeOfAction, user, target, color)
                     'ㅤ'+ phase + 'ㅤ'+
                 '</span>' +
                 '<div class="flex-grow-1 ps-4"' +
-                    //'<h4>'+typeOfAction.charAt(0).toUpperCase() + typeOfAction.slice(1)+'</h4>'+// type action
-                    ' <p class="mb-0">'+
+                    ' <p class="mb-0" style="border: 2px solid rgb(128,128,128); border-style: hidden hidden hidden solid;">'+
                         (target === null ? 'the user '+user+' <span style="color:'+ color + '"> is dead</span>' :
-                        'The user '+user+' <span style="color:'+ color + '">' +typeOfAction+'s </span> '+ target )+ //user , typeaction, target
+                            typeOfAction === "last chance" ?
+                                'the user '+user+' use <span style="color:'+ color + '">' +typeOfAction+'</span>'  :
+                                'The user '+user+' <span style="color:'+ color + '">' +typeOfAction+'s </span> '+ target )+ //user , typeaction, target
                     '</p>'+
                 '</div>'+
             '</li>'
@@ -83,7 +84,7 @@ function createRowBlock(phase, round, text)
                         '<h3 class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
                         'ㅤ'+phase.charAt(0).toUpperCase() + phase.slice(1)+
                         '</h3>' +
-                        '<div class="flex-grow-1 border-top"></div>ㅤ' +
+                        '<div class="flex-grow-1 border-top" style="border: 2px solid rgb(128,128,128)"></div>ㅤ' +
                         (phase==="day" ? createButtonRoundExpand(round, text):"")+
                     '</div>'+
                 '</div>'+
@@ -137,25 +138,31 @@ function getRole(nm)
 function makeData(data, firstDataKey, secondDataKey, r, ret)
 {
     let phase = ""
-    let j = 0
+    let action = ""
+    let subphase= ""
+    let nm = ""
+    let i = 0
     let col = null
     let s = ""
     ret.push({dayExt:"", daySum:"", night:""})
 
-    while (j < data.length && data[j][firstDataKey[0]][secondDataKey[1]]<=r)
+    while (i < data.length && data[i][firstDataKey[0]][secondDataKey[1]]<=r)
     {
-        if (data[j][firstDataKey[0]][secondDataKey[1]] === r)
+        if (data[i][firstDataKey[0]][secondDataKey[1]] === r)
         {
-            phase = data[j][firstDataKey[0]][secondDataKey[2]]
+            phase = data[i][firstDataKey[0]][secondDataKey[2]]
+            action = data[i][firstDataKey[0]][secondDataKey[4]]
+            subphase = data[i][firstDataKey[0]][secondDataKey[3]]
+            nm = data[i][firstDataKey[0]][secondDataKey[0]]
 
-            if(data[j][firstDataKey[0]][secondDataKey[4]]!=="vote" && (data[j][firstDataKey[0]][secondDataKey[4]]==="dead" || getRoleType(getRole(data[j][firstDataKey[0]][secondDataKey[0]]))==="evil"))
+            if(action!=="vote" && (action==="dead" || getRoleType(getRole(nm))==="evil"))
                 col = rolesColors.get("evil")
-            else if (data[j][firstDataKey[0]][secondDataKey[4]]==="vote")
+            else if (action==="vote")
                 col = rolesColors.get("vote")
             else
                 col = rolesColors.get("good")
 
-            switch (data[j][firstDataKey[0]][secondDataKey[3]])
+            switch (subphase)
             {
                 case 0:
                     phase = phase==="day" ? "Vote" : "Special action"
@@ -164,32 +171,30 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                     phase = "1° ballot"
                 break;
                 default:
-                    phase =  data[j][firstDataKey[0]][secondDataKey[4]]==="vote" ?
+                    phase =  action==="vote" ?
                                 "2° ballot" :
-                                data[j][firstDataKey[0]][secondDataKey[4]]==="dead" ? "Dead" :
+                                action==="dead" ? "Dead" :
                                     "Special action break"
                 break;
             }
-            s = createActionBlock(phase, data[j][firstDataKey[0]][secondDataKey[3]], data[j][firstDataKey[0]][secondDataKey[4]], data[j][firstDataKey[0]][secondDataKey[0]], data[j][firstDataKey[0]][secondDataKey[5]], col)
+            s = createActionBlock(phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
 
-
-            if (data[j][firstDataKey[0]][secondDataKey[2]] === "day")
+            if (data[i][firstDataKey[0]][secondDataKey[2]] === "day")
             {
-                if(data[j][firstDataKey[0]][secondDataKey[4]]!=="vote")
+                if(action!=="vote")
                     ret[r-1].daySum =  ret[r-1].daySum.concat(s)
                 ret[r-1].dayExt = ret[r-1].dayExt.concat(s)
             }
             else
-            {
-                phase=""
                 ret[r-1].night = ret[r-1].night.concat(s)
-            }
         }
-        j++
+        i++
     }
-
-    ret[r-1].daySum = createRowBlock("day", r, 'Expand').concat(ret[r-1].daySum)
-    ret[r-1].dayExt = createRowBlock("day", r, 'Reduce').concat(ret[r-1].dayExt)
+    if(ret[r-1].dayExt!=="")
+    {
+        ret[r-1].daySum = createRowBlock("day", r, 'Expand').concat(ret[r-1].daySum)
+        ret[r-1].dayExt = createRowBlock("day", r, 'Reduce').concat(ret[r-1].dayExt)
+    }
     ret[r-1].night  = createRowBlock("night", r, "").concat(ret[r-1].night)
 
     return ret
@@ -204,12 +209,16 @@ function createTable(data)
     let roundMax = data.length-1 >= 0 ? data[data.length-1][firstDataKey[0]][secondDataKey[1]] : 0
     let b
     let ulData = []
+    let sw = []
+    let swExp = []
 
 
     for (let r = 1; r<=roundMax; r++)
     {
         bs = bs.concat(createContActionButton(r))
         ulData = makeData(data, firstDataKey, secondDataKey, r, ulData)
+        swExp.push(true)
+        sw.push(true)
     }
 
     divLogs.innerHTML = createCont(bs)
@@ -223,33 +232,35 @@ function createTable(data)
             let d = document.getElementById('round-'+r+'-day')
             let n = document.getElementById('round-'+r+'-night')
             let b2
-            let sw = true
             let f = function ()
                 {
-                    if (sw)
+                    if (swExp[r-1])
                     {
                         d.innerHTML = ulData[r-1].dayExt
-                        sw = false
+                        swExp[r-1] = false
                     }
                     else
                     {
                         d.innerHTML = ulData[r-1].daySum
-                        sw = true
+                        swExp[r-1] = true
                     }
                     b2 = document.getElementById('round-' + r + '-expand')
                     b2.addEventListener("click", f)
                 }
 
-            if(d.innerHTML==="" ||  n.innerHTML==="")
+            if(sw[r-1])
             {
-                d.innerHTML=ulData[r-1].daySum
+                d.innerHTML=swExp[r-1] ? ulData[r-1].daySum : ulData[r-1].dayExt
                 n.innerHTML=ulData[r-1].night
 
                 b2 = document.getElementById('round-' + r + '-expand')
-                b2.addEventListener("click", f)
+                if(b2!==null)
+                    b2.addEventListener("click", f)
+                sw[r-1] = false
             }
             else
             {
+                sw[r-1] = true
                 d.innerHTML = ""
                 n.innerHTML = ""
             }
