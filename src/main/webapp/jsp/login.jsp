@@ -63,7 +63,7 @@
                                    required="">
                             <label class="control-label">Email</label>
                         </div>
-                        <div id="passwordComplex" class="w-100 p-2 px-3 d-none">
+                        <div id="passwordComplex" class="p-2 px-3 d-none">
                             The password must contain:
                             <ul class="m-0">
                                 <li id="passwordLength" class="invalid">From 8 to 20 characters.</li>

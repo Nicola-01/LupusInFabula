@@ -44,15 +44,16 @@ function fillGameLog(req)
 
 function createButtonRound(round)
 {
-    return '<button class="nav-link px-4 text-start mb-3 '+(round===1 ? 'active' : "")+'" id="round-' + round + '-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
+    return '<button class="nav-link px-4 text-start my-1 '+(round===1 ? 'active' : "")+'" id="round-' + round + '-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
                 '<span class="d-block fs-5 fw-bold">' +
                     'Round ' + round +
                 '</span>' +
             '</button>'
 }
+
 function createButtonRoundExpand(round, text)
 {
-    return  '<button class="btn btn-primary ml-2" id="round-' + round + '-expand" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
+    return  '<button class="btn btn-primary ms-2" id="round-' + round + '-expand" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
                 '<span class="d-block fs-5 fw-bold">' +
                     text +
                 '</span>' +
@@ -61,36 +62,35 @@ function createButtonRoundExpand(round, text)
 
 function createActionBlock(phase, subphase, typeOfAction, user, target, color)
 {
-    return  '<div class="py-2"></div>' +
-            '<li class="d-flex flex-column flex-md-row py-2"' +
+    return  '<li class="d-flex flex-column flex-md-row py-2"' +
                 '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
                     'ㅤ'+ phase + 'ㅤ'+
                 '</span>' +
                 '<div class="flex-grow-1 ps-4"' +
                     ' <p class="mb-0" style="border: 2px solid rgb(128,128,128); border-style: hidden hidden hidden solid;">'+
-                        (target === null ? 'the user '+user+' <span style="color:'+ color + '"> is dead</span>' :
+                        (target === null ? 'The user '+user+' <span style="color:'+ color + '"> is dead</span>' :
                             typeOfAction === "last chance" ?
-                                'the user '+user+' use <span style="color:'+ color + '">' +typeOfAction+'</span>'  :
+                                'The user '+user+' use <span style="color:'+ color + '">' +typeOfAction+'</span>'  :
                                 'The user '+user+' <span style="color:'+ color + '">' +typeOfAction+'s </span> '+ target )+ //user , typeaction, target
                     '</p>'+
                 '</div>'+
             '</li>'
 }
+
 function createRowBlock(phase, round, text)
 {
-    return  '<li class="d-flex flex-column flex-md-row py-4">' +
-                '<div class="container mt-4">' +
+    return  '<li class="d-flex flex-column flex-md-row">' +
+                '<div class="container p-0">' +
                     '<div class="d-flex align-items-center">' +
-                        '<h3 class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
-                        'ㅤ'+phase.charAt(0).toUpperCase() + phase.slice(1)+
+                        '<h3 class="m-0 me-2">' +
+                        'ㅤ'+ capitalizeFirstLetter(phase) +
                         '</h3>' +
-                        '<div class="flex-grow-1 border-top" style="border: 2px solid rgb(128,128,128)"></div>ㅤ' +
+                        '<div class="flex-grow-1 border-top m-0" style="border: 2px solid rgb(128,128,128)"></div>ㅤ' +
                         (phase==="day" ? createButtonRoundExpand(round, text):"")+
                     '</div>'+
                 '</div>'+
             '</li>'
 }
-
 
 function createContActionButton(round)
 {
@@ -98,9 +98,9 @@ function createContActionButton(round)
                 createButtonRound(round) +
                 '<div class="tab-pane fade active show" id="round-'+round+'" role="tabpanel">' +
                     '<ul class="pt-1 list-unstyled mb-0" id="round-'+round+'-ul">' +
-                        '<span id="round-'+round+'-day">' +
-                        '</span>' +
                         '<span id="round-'+round+'-night">' +
+                        '</span>' +
+                        '<span id="round-'+round+'-day">' +
                         '</span>' +
                     '</ul>' +
                 '</div>' +
@@ -110,13 +110,9 @@ function createContActionButton(round)
 
 function createCont(ContAction)
 {
-    return  ' <div class="container py-1 py-lg-5 position-relative z-index-1">' +
-                '<div class="row">' +
-                    '<div class="row">' +
-                        '<div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
-                            ContAction +
-                        '</div>' +
-                    '</div>' +
+    return  ' <div class="container position-relative p-0">' +
+                '<div class="nav nav-pills flex-column aos-init aos-animate" id="tab" role="tablist" data-aos="fade-up">' +
+                    ContAction +
                 '</div>' +
             '</div>'
 }
@@ -200,7 +196,6 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
     return ret
 }
 
-
 function createTable(data)
 {
     let bs = ''
@@ -229,19 +224,19 @@ function createTable(data)
 
         b.addEventListener("click", function ()
         {
-            let d = document.getElementById('round-'+r+'-day')
-            let n = document.getElementById('round-'+r+'-night')
+            let nightContent = document.getElementById('round-'+r+'-night')
+            let dayContent = document.getElementById('round-'+r+'-day')
             let b2
             let f = function ()
                 {
                     if (swExp[r-1])
                     {
-                        d.innerHTML = ulData[r-1].dayExt
+                        dayContent.innerHTML = ulData[r-1].dayExt
                         swExp[r-1] = false
                     }
                     else
                     {
-                        d.innerHTML = ulData[r-1].daySum
+                        dayContent.innerHTML = ulData[r-1].daySum
                         swExp[r-1] = true
                     }
                     b2 = document.getElementById('round-' + r + '-expand')
@@ -250,8 +245,8 @@ function createTable(data)
 
             if(sw[r-1])
             {
-                d.innerHTML=swExp[r-1] ? ulData[r-1].daySum : ulData[r-1].dayExt
-                n.innerHTML=ulData[r-1].night
+                nightContent.innerHTML=ulData[r-1].night
+                dayContent.innerHTML=swExp[r-1] ? ulData[r-1].daySum : ulData[r-1].dayExt
 
                 b2 = document.getElementById('round-' + r + '-expand')
                 if(b2!==null)
@@ -261,8 +256,8 @@ function createTable(data)
             else
             {
                 sw[r-1] = true
-                d.innerHTML = ""
-                n.innerHTML = ""
+                nightContent.innerHTML = ""
+                dayContent.innerHTML = ""
             }
         })
     }

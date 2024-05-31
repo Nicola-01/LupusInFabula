@@ -11,10 +11,8 @@ let gameOver = false
  * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response data.
  */
 function gameStatus(req) {
-    if (req.readyState === XMLHttpRequest.DONE)
-    {
-        if (req.status === HTTP_STATUS_OK)
-        {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
             if (game.who_win !== -1)
                 setGameOver(game)
@@ -240,7 +238,7 @@ function enableButtons() {
                     disable = false
                     break;
                 } else {
-                    if (i + 1 < maxPhase){
+                    if (i + 1 < maxPhase) {
                         document.getElementById("voteRadio_" + (i + 1)).disabled = false
                         populateWarningMessage("Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
                     }
@@ -518,8 +516,8 @@ function fillNightActions(list) {
         // get the wolves that can do ad action for kill someone
         if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
             let wolfPlayers = actionTarget['players'];
-            for (let j = 0; j < wolfPlayers.length; j++){
-                if(!wolfPack.some(p => p.player === wolfPlayers[j].player))
+            for (let j = 0; j < wolfPlayers.length; j++) {
+                if (!wolfPack.some(p => p.player === wolfPlayers[j].player))
                     wolfPack.push({
                         player: wolfPlayers[j].player,
                         role: actionTarget.role
@@ -609,20 +607,26 @@ function fillDayActions(list) {
     sectionChange.classList.add("sections", "radio-inputs", "mb-2");
     sectionChange.innerHTML =
         "  <label class='radio' for='voteRadio_0'>" +
-        "    <input type='radio' name='radio' id='voteRadio_0' onclick='changeSubPhase(this)' checked='' subPhase='0'>" +
+        "    <input type='radio' name='radio' id='voteRadio_0' checked='' subPhase='0'>" +
         "    <span>VOTE</span>" +
         "  </label>"
     sectionChange.innerHTML +=
         "  <label class='radio' for='voteRadio_1'>" +
-        "    <input type='radio' name='radio' id='voteRadio_1' onclick='changeSubPhase(this)' subPhase='1' disabled=''>" +
+        "    <input type='radio' name='radio' id='voteRadio_1' subPhase='1' disabled=''>" +
         "    <span>1 BALLOT</span>" +
         "  </label>"
     sectionChange.innerHTML +=
         "  <label class='radio' for='voteRadio_2'>" +
-        "    <input type='radio' name='radio' id='voteRadio_2' onclick='changeSubPhase(this)' subPhase='2' disabled=''>" +
+        "    <input type='radio' name='radio' id='voteRadio_2' subPhase='2' disabled=''>" +
         "    <span>2 BALLOT</span>" +
         "  </label>"
     gameActions.appendChild(sectionChange);
+
+    const voteRadio = document.querySelectorAll('[id*="voteRadio_"]');
+    for (let i = 0; i < voteRadio.length; i++)
+        voteRadio[i].addEventListener('click', function() {
+            changeSubPhase(voteRadio[i]);
+        });
 
     voteDiv.classList.add("votes");
     voteDiv.id = "votes_0";
