@@ -2,7 +2,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
 
     loadFriendList();
-    playersToIgnore.push(localStorage.getItem("playerName").toLowerCase())
+    playersToIgnore.push(localStorage.getItem("playerName").toLowerCase());
+
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            loadFriendList();
+        }
+    });
+
 });
 
 
@@ -22,6 +29,8 @@ function fillFriendsList(req){
             }else{
                 let tbody = document.getElementById("my_friends").querySelector("tbody");
 
+                tbody.innerHTML = "";
+                playersToIgnore = [];
                 for(var i=0; i < list.length;i++) {
                     let friend = list[i]['friend'];
 
