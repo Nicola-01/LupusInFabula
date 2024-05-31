@@ -197,3 +197,4 @@ CREATE ROLE lupus_sql LOGIN PASSWORD 'wolf';
 GRANT SELECT, INSERT, UPDATE ON action, game, player, plays_as_in TO lupus_sql;
 GRANT SELECT, INSERT, UPDATE, DELETE ON is_friend_with TO lupus_sql;
 GRANT SELECT ON role TO lupus_sql;
+GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;

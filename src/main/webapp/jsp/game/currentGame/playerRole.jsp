@@ -1,9 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: Michele
-  Date: 15/05/2024
-  Time: 19:01
---%>
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
@@ -24,4 +18,5 @@
     </div>
 </div>
 
+<script src="${pageContext.request.contextPath}/js/game/currentGame/playerCardToggle.js"></script>
 <c:import url="/jsp/utils/errorMessage.jsp"/>

@@ -188,9 +188,9 @@ function enableButtons() {
                 if (target === "")
                     continue;
                 if (isPlayerSeesAsEvil(target))
-                    role_targets[i].style.backgroundColor = rolesColors.get("wolf")
+                    role_targets[i].style.backgroundColor = 'var(--target-color-evil)'
                 else
-                    role_targets[i].style.backgroundColor = rolesColors.get("farmer")
+                    role_targets[i].style.backgroundColor = 'var(--target-color-good)'
             }
         }
 
@@ -518,11 +518,13 @@ function fillNightActions(list) {
         // get the wolves that can do ad action for kill someone
         if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
             let wolfPlayers = actionTarget['players'];
-            for (let j = 0; j < wolfPlayers.length && !berserkAlreadyInsert; j++)
-                wolfPack.push({
-                    player: wolfPlayers[j].player,
-                    role: actionTarget.role
-                });
+            for (let j = 0; j < wolfPlayers.length; j++){
+                if(!wolfPack.some(p => p.player === wolfPlayers[j].player))
+                    wolfPack.push({
+                        player: wolfPlayers[j].player,
+                        role: actionTarget.role
+                    });
+            }
 
             if (berserkAlreadyInsert) {
                 text = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?"
@@ -931,6 +933,7 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
+            hideWarningPopup(); // hide ballot popup
             let actionResults;
             let phase;
             let deadPlayers;
@@ -949,8 +952,9 @@ function actionsResponse(req) {
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(gameWin)
                 populateInfoMessage(message, phaseInfo)
-                // location.reload()
-                elementsReload()
+
+                location.reload()
+                // elementsReload()
 
             } else {
                 if (gamePhase === GamePhase.NIGHT) {

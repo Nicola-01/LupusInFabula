@@ -17,7 +17,8 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 .playersTableContainer, .friendsTableContainer {
-    max-height: 25em;
+    /*max-height: 25em;*/
+    height: 25em;
     overflow: auto;
 }
 
@@ -186,7 +187,7 @@ input[type=number] {
     width: 60px;
     height: 2em;
     border-radius: 2em;
-    border: 1px solid #ccc;
+    border: 1px solid #bbb;
     justify-content: center;
     align-items: center;
     min-width: 60px;

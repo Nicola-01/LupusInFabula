@@ -63,7 +63,7 @@ public class DeleteFriendDAO extends AbstractDAO<Friend> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                f = new Friend(rs.getString("friend_username"), rs.getDate("date"));
+                f = new Friend(rs.getString("friend_username"), 0, rs.getDate("date"));
                 LOGGER.info("Delete friend %s", f.getUsername());
             } else {
                 LOGGER.info("No friend found", friend_username);

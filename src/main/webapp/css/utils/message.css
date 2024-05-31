@@ -1,8 +1,14 @@
+@media (min-width: 992px) {
+    .message {
+        width: 70% !important;
+    }
+}
+
 .message {
     border-radius: 20px;
     border-width: 1px;
     border-style: solid;
-    width: 70%;
+    width: 100%;
     margin: 1em auto;
     padding: 15px;
 }

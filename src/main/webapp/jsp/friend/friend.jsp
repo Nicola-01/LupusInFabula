@@ -13,12 +13,13 @@
 <div id="listFriend" class="row justify-content-center mt-3">
     <h2>Your Friends</h2>
     <div id="friendsTable" class="p-0">
-        <table id="my_friends" class="table table-striped mb-0">
+        <table id="my_friends" class="sortable table table-striped mb-0">
             <thead class="sticky-top top-0">
             <tr>
                 <th style="width:35%">Username</th>
-                <th style="width:15%">Available</th>
-                <th style="width:30%">Date</th>
+                <th style="width:10%">Available</th>
+                <th style="width:10%">Game</th>
+                <th style="width:25%">Date</th>
                 <th style="width:15%"></th>
             </tr>
             </thead>
@@ -27,3 +28,6 @@
         </table>
     </div>
 </div>
+
+
+<script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
