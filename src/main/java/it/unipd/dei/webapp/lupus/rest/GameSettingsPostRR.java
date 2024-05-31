@@ -167,14 +167,15 @@ public class GameSettingsPostRR extends AbstractRR {
 //                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if role setting respect the cardinality
-                else if (!isValidRolesCardinality(selectedRoles, realRoles)) {
+                else if (!isValidRolesCardinality(selectedRoles, realRoles).isEmpty()) {
+                    String message = isValidRolesCardinality(selectedRoles, realRoles);
                     ErrorCode ec = ErrorCode.INVALID_ROLES_CARDINALITY;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), message);
                     m.toJSON(res.getOutputStream());
 
-                    LOGGER.warn("Invalid roles cardinality, totalPlayers: " + totalPlayers + "; totalRoles: " + totalRoles);
+                    LOGGER.warn(message);
                 }
                 // check if number of players it's equal to number of roles
                 else if (totalPlayers != totalRoles) {
@@ -277,7 +278,8 @@ public class GameSettingsPostRR extends AbstractRR {
      *
      * @param selectedRoles Map with the roles and the selected cardinality
      * @param roles         List with all the roles
-     * @return {@code True} if all prerequisites have been satisfied; otherwise, {@code false}. <br> Possible cases for returning false include:
+     * @return if all prerequisites have been satisfied; otherwise, a message describing the first encountered issue.
+     * <br> Possible cases for returning a non-empty message include:
      * <ul>
      * <li>Invalid role cardinality, i.e., the cardinality must be greater than or equal to 0 and less than or equal to the maximum cardinality allowed for the role.</li>
      * <li>When the maximum count of good roles exceeds three-quarters of the total number of roles.</li>
@@ -285,7 +287,7 @@ public class GameSettingsPostRR extends AbstractRR {
      * <li>When the minimum count of evil roles falls below one-eighth of the total number of roles.</li>
      * </ul>
      */
-    private boolean isValidRolesCardinality(Map<String, Integer> selectedRoles, List<Role> roles) {
+    private String isValidRolesCardinality(Map<String, Integer> selectedRoles, List<Role> roles) {
         Map<Integer, Integer> type = new HashMap<>(); // roleType it's the key
         int totalRolesNumber = 0;
         for (Role role : roles) {
@@ -293,18 +295,28 @@ public class GameSettingsPostRR extends AbstractRR {
             if (!selectedRoles.containsKey(role.getName())) continue;
 
             int cardinality = selectedRoles.get(role.getName());
-            if (cardinality < 0 || cardinality > role.getMax_number()) {
-                LOGGER.warn("Invalid role cardinality: " + cardinality + " for role " + role.getName());
-                return false;
-            }
+            if (cardinality < 0 || cardinality > role.getMax_number())
+                return "Invalid role cardinality: " + cardinality + " for role " + role.getName();
 
             type.put(role.getType(), type.getOrDefault(role.getType(), 0) + cardinality);
             totalRolesNumber += cardinality;
         }
-        boolean maxGood = type.get(RoleType.GOOD.getType()) <= ((totalRolesNumber) * 3 / 4);
-        boolean maxEvil = type.get(RoleType.EVIL.getType()) <= totalRolesNumber / 4;
-        boolean minEvil = type.get(RoleType.EVIL.getType()) >= Math.round((float) totalRolesNumber / 8);
-        return maxGood && maxEvil && minEvil;
+
+        String message = "";
+        int minGood = (int) Math.floor((totalRolesNumber) / 2.5);
+        int maxEvil = (int) Math.round(totalRolesNumber / 3.0); // max 1/3 of total players could be evil
+        int minEvil = Math.max((int) Math.round(totalRolesNumber / 8.0), 1); // at least 1
+
+        LOGGER.info("minGood: " + minGood + "; maxEvil: " + maxEvil + "; minEvil: " + minEvil);
+
+        if (type.get(RoleType.GOOD.getType()) < minGood)
+            message += "The GOOD role must be at minimum " + minGood + ", but provided " + type.get(RoleType.GOOD.getType()) + "; ";
+        if(type.get(RoleType.EVIL.getType()) > maxEvil)
+            message += "The EVIL role must be at maximum " + maxEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
+        if(type.get(RoleType.EVIL.getType()) < minEvil)
+            message += "The EVIL role must be at minimum " + minEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
+
+        return message;
     }
 
     /**

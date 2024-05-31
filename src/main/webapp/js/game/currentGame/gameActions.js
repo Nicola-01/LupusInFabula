@@ -516,11 +516,13 @@ function fillNightActions(list) {
         // get the wolves that can do ad action for kill someone
         if (actionTarget.action === "maul" || actionTarget.action === "rage" || actionTarget.action === "explore") {
             let wolfPlayers = actionTarget['players'];
-            for (let j = 0; j < wolfPlayers.length && !berserkAlreadyInsert; j++)
-                wolfPack.push({
-                    player: wolfPlayers[j].player,
-                    role: actionTarget.role
-                });
+            for (let j = 0; j < wolfPlayers.length; j++){
+                if(!wolfPack.some(p => p.player === wolfPlayers[j].player))
+                    wolfPack.push({
+                        player: wolfPlayers[j].player,
+                        role: actionTarget.role
+                    });
+            }
 
             if (berserkAlreadyInsert) {
                 text = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?"

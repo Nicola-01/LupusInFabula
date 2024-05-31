@@ -17,7 +17,8 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 .playersTableContainer, .friendsTableContainer {
-    max-height: 25em;
+    /*max-height: 25em;*/
+    height: 25em;
     overflow: auto;
 }
 
