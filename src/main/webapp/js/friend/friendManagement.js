@@ -93,8 +93,8 @@ function deleteFriend(username){
 // Function to remove username from players_tb table
 function removeFromFriendsTable(username) {
 
-    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase(), 1))
-
+    playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase()), 1);
+    
     let rows = document.getElementById("my_friends").rows;
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[0].textContent === username) {
