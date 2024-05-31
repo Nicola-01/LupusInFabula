@@ -29,13 +29,12 @@ body {
     height: 100%;
 }
 
-.lb_login, .lb_singup {
+.lb_login, .lb_signup {
     color: #fff;
     font-size: 2.3em;
     justify-content: center;
     display: flex;
-    margin: 40px auto; /* 60px sopra e sotto, centrato orizzontalmente */
-    margin-bottom: 30px; /* margine inferiore aggiunto */
+    margin: 40px auto 15px;
     font-weight: bold;
     cursor: pointer;
     transition: .5s ease-in-out;
@@ -47,6 +46,17 @@ body {
 
 .login .additional-options {
     color: #052033;
+}
+
+.showPassword{
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 40px;
+    width: 40px;
+    border: none;
+    background-color: transparent;
+    border-left: 1px solid #ccc;
 }
 
 #loginSignup {
@@ -135,6 +145,25 @@ input[type="submit"]:disabled {
     transform: scale(1);
 }
 
-#loginCB:checked ~ .signup label {
+#loginCB:checked ~ .signup .lb_signup {
     transform: scale(.6);
+}
+
+.control-label {
+    top: 6px !important;
+}
+
+.form-control:focus ~ .control-label,
+.form-control:not(:placeholder-shown) ~ .control-label {
+    top: -27px !important;
+}
+
+.login .form-control:focus ~ .control-label,
+.login .form-control:not(:placeholder-shown) ~ .control-label {
+    color: #0d324d;
+}
+
+.signup .form-control:focus ~ .control-label,
+.signup .form-control:not(:placeholder-shown) ~ .control-label {
+    color: #e0dede;
 }

@@ -11,17 +11,6 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
-
-    <style>
-        .control-label {
-            top: 7px;
-        }
-
-        .form-control:focus ~ .control-label,
-        .form-control:not(:placeholder-shown) ~ .control-label {
-            color: #4BA3C3FF;
-        }
-    </style>
 </head>
 
 <body>
@@ -61,16 +50,16 @@
             <input type="checkbox" id="loginCB" aria-hidden="true" checked>
             <div class="signup">
                 <form action="<c:url value="/signup"/>" method="POST">
-                    <label class="lb_singup" for="loginCB" aria-hidden="true">Sign up</label>
+                    <label class="lb_signup" for="loginCB" aria-hidden="true">Sign up</label>
                     <div class="inputs my-0 mx-auto px-2">
                         <div class="form-group">
-                            <input type="text" id="sing_username" class="custom-input form-control" name="username"
+                            <input type="text" id="sign_username" class="custom-input form-control" name="username"
                                    placeholder="" minlength="3" maxlength="20"
                                    required="">
                             <label class="control-label">Username</label>
                         </div>
                         <div class="form-group">
-                            <input type="email" id="sing_email" class="custom-input form-control" name="email" placeholder=""
+                            <input type="email" id="sign_email" class="custom-input form-control" name="email" placeholder=""
                                    required="">
                             <label class="control-label">Email</label>
                         </div>
@@ -85,22 +74,28 @@
                             </ul>
                         </div>
                         <div class="form-group">
-                            <input type="password" id="sing_password" class="custom-input form-control" name="password"
+                            <input type="password" id="sign_password" class="custom-input form-control" name="password"
                                    placeholder="" maxlength="20"
                                    required=""> <!-- TODO add in password input minlength="8" -->
+                            <button id="sign_password_ShowPassword" class="showPassword">
+                                <i id="sign_password_eyeIcon" class="fas fa-eye"></i>
+                            </button>
                             <label class="control-label">Password</label>
                         </div>
                         <div class="form-group">
-                            <input type="password" id="sing_password_rp" class="custom-input mb-1 form-control" name="password_rp"
+                            <input type="password" id="sign_password_rp" class="custom-input mb-1 form-control" name="password_rp"
                                    placeholder="" maxlength="20"
                                    required="">
+                            <button id="sign_password_rp_ShowPassword" class="showPassword">
+                                <i id="sign_password_rp_eyeIcon" class="fas fa-eye"></i>
+                            </button>
                             <label class="control-label">Repeat password</label>
                         </div>
-                        <div class="additional-options">
-                            <input type="checkbox" id="signupShowPassword">
-                            <label for="signupShowPassword">Show Password</label>
-                        </div>
-                        <input type="submit" id="sing_submit" class="mt-4" value="Sign up">
+<%--                        <div class="additional-options">--%>
+<%--                            <input type="checkbox" id="sign_ShowPassword">--%>
+<%--                            <label for="sign_ShowPassword">Show Password</label>--%>
+<%--                        </div>--%>
+                        <input type="submit" id="sign_submit" class="mt-4" value="Sign up">
                     </div>
                 </form>
             </div>
@@ -119,15 +114,18 @@
                             <input type="password" id="login_password" class="custom-input mb-1 form-control" name="password"
                                    placeholder="" maxlength="20"
                                    required=""> <!-- TODO add in password input minlength="8" -->
+                            <button id="login_password_ShowPassword" class="showPassword">
+                                <i id="login_password_eyeIcon" class="fas fa-eye"></i>
+                            </button>
                             <label class="control-label">Password</label>
                         </div>
                         <%--<div class="additional-options">--%>
                         <%--<a href="#" class="forgot-password">Forgot password?</a>--%>
                         <%--</div>--%>
-                        <div class="additional-options">
-                            <input type="checkbox" id="loginShowPassword">
-                            <label for="loginShowPassword">Show Password</label>
-                        </div>
+<%--                        <div class="additional-options">--%>
+<%--                            <input type="checkbox" id="login_ShowPassword">--%>
+<%--                            <label for="login_ShowPassword">Show Password</label>--%>
+<%--                        </div>--%>
                         <input type="submit" id="login_submit" class="mt-4" value="Login">
                     </div>
                 </form>
@@ -136,7 +134,7 @@
     </div>
 
     <c:import url="/jsp/include/foot.jsp"/>
-    <script src="${pageContext.request.contextPath}/js/passwordComplexHint.js"></script>
+    <script src="${pageContext.request.contextPath}/js/utils/passwordComplexHint.js"></script>
     <script src="${pageContext.request.contextPath}/js/login.js"></script>
 
 </body>

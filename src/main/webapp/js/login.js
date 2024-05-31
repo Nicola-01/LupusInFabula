@@ -1,19 +1,23 @@
-// SingUp
-const singUsername = document.getElementById("sing_username");
-const singEmail = document.getElementById("sing_email");
-const singPassword = document.getElementById("sing_password");
-const singPasswordRp = document.getElementById("sing_password_rp");
-const singSubmit = document.getElementById("sing_submit");
+// signUp
+const signUsername = document.getElementById("sign_username");
+const signEmail = document.getElementById("sign_email");
+const signPassword = document.getElementById("sign_password");
+const signPasswordRp = document.getElementById("sign_password_rp");
+const signSubmit = document.getElementById("sign_submit");
 
-singUsername.addEventListener('input', enableSignup);
-singEmail.addEventListener('input', enableSignup);
-singPassword.addEventListener('input', enableSignup);
-singPassword.addEventListener('input', () => passwordComplexHint(singPassword.value));
-singPassword.addEventListener('focus', () => showPasswordHint(true));
-singPassword.addEventListener('blur', () => showPasswordHint(false));
-singPasswordRp.addEventListener('input', enableSignup);
+const loginCB = document.getElementById("loginCB");
 
-singSubmit.addEventListener('click', saveField)
+loginCB.addEventListener('change', disabledElements)
+
+signUsername.addEventListener('input', enableSignup);
+signEmail.addEventListener('input', enableSignup);
+signPassword.addEventListener('input', enableSignup);
+signPassword.addEventListener('input', () => passwordComplexHint(signPassword.value));
+signPassword.addEventListener('focus', () => showPasswordHint(true));
+signPassword.addEventListener('blur', () => showPasswordHint(false));
+signPasswordRp.addEventListener('input', enableSignup);
+
+signSubmit.addEventListener('click', saveField)
 
 // Login
 const loginUser = document.getElementById("login_user");
@@ -26,39 +30,51 @@ loginPassword.addEventListener('input', enableLogin);
 loginSubmit.addEventListener('click', saveField)
 
 // Show password
-
-const loginShowPasswordCB = document.getElementById("loginShowPassword");
-const signupShowPasswordCB = document.getElementById("signupShowPassword");
-loginShowPasswordCB.addEventListener('change', loginShowPassword);
-signupShowPasswordCB.addEventListener('change', signupShowPassword);
+document.getElementById("login_password_ShowPassword").addEventListener('click', loginShowPassword);
+document.getElementById("sign_password_ShowPassword").addEventListener('click', signupShowPassword);
+document.getElementById("sign_password_rp_ShowPassword").addEventListener('click', signupShowPasswordRp);
 
 function enableSignup() {
-    singSubmit.disabled = !(singUsername.value.trim() !== '' && singEmail.value.trim() !== '' && singPassword.value.trim() !== '' && singPasswordRp.value.trim() !== '');
+    signSubmit.disabled = !(signUsername.value.trim() !== '' && signEmail.value.trim() !== '' && signPassword.value.trim() !== '' && signPasswordRp.value.trim() !== '');
 }
 
 function enableLogin() {
     loginSubmit.disabled = !(loginUser.value.trim() !== '' && loginPassword.value.trim() !== '');
 }
 
-function loginShowPassword() {
-    if (loginShowPasswordCB.checked)
-        loginPassword.type = "text";
-    else
-        loginPassword.type = "password";
-}
+function showPassword(idInput) {
+    const input = document.getElementById(idInput)
+    const eyeIcon = document.getElementById(idInput + "_eyeIcon");
 
-function signupShowPassword() {
-    if (signupShowPasswordCB.checked) {
-        singPassword.type = "text";
-        singPasswordRp.type = "text";
+    if (eyeIcon.classList.contains("fa-eye")) {
+        input.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
     } else {
-        singPassword.type = "password";
-        singPasswordRp.type = "password";
+        input.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
     }
 }
 
+
+function loginShowPassword(event) {
+    event.preventDefault(); // Prevent the default behavior of the button click event
+    showPassword("login_password");
+}
+
+function signupShowPassword(event) {
+    event.preventDefault(); // Prevent the default behavior of the button click event
+    showPassword("sign_password");
+}
+
+function signupShowPasswordRp(event) {
+    event.preventDefault(); // Prevent the default behavior of the button click event
+    showPassword("sign_password_rp");
+}
+
 function saveField() {
-    if (document.getElementById("loginCB").checked) { // is login
+    if (loginCB.checked) { // is login
         const loginOBJ = {
             type: "login",
             user: loginUser.value,
@@ -69,35 +85,47 @@ function saveField() {
     } else { // is signup
         const loginOBJ = {
             type: "signup",
-            username: singUsername.value,
-            email: singEmail.value,
-            password: singPassword.value,
-            passwordRp: singPasswordRp.value
+            username: signUsername.value,
+            email: signEmail.value,
+            password: signPassword.value,
+            passwordRp: signPasswordRp.value
         };
         storeData('loginOBJ', loginOBJ, 15); // Store data for 15 seconds
     }
-    }
+}
 
 function loadSavedValues() {
     const loginOBJ = retrieveData('loginOBJ');
     if (loginOBJ) {
         if (loginOBJ.type === "login") {
-            document.getElementById("loginCB").checked = true;
+            loginCB.checked = true;
 
             loginUser.value = loginOBJ.user;
             loginPassword.value = loginOBJ.password
         } else {
-            document.getElementById("loginCB").checked = false;
+            loginCB.checked = false;
 
-            singUsername.value = loginOBJ.username;
-            singEmail.value = loginOBJ.email;
-            singPassword.value = loginOBJ.password;
-            singPasswordRp.value = loginOBJ.passwordRp;
+            signUsername.value = loginOBJ.username;
+            signEmail.value = loginOBJ.email;
+            signPassword.value = loginOBJ.password;
+            signPasswordRp.value = loginOBJ.passwordRp;
         }
     }
 }
 
-window.onload = function () {
+function disabledElements() {
+    const signElements = document.querySelectorAll('[id*="sign_"]');
+    const loginElements = document.querySelectorAll('[id*="login_"]');
+
+    for (let i = 0; i < signElements.length; i++)
+        signElements[i].disabled = loginCB.checked;
+
+    for (let i = 0; i < loginElements.length; i++)
+        loginElements[i].disabled = !loginCB.checked;
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+
     const currentURL = window.location.href;
 
     // Check if the URL ends with '/login' and set the checkbox state accordingly
@@ -109,4 +137,14 @@ window.onload = function () {
     // call the functions to disable the button
     enableSignup();
     enableLogin();
-};
+    disabledElements();
+
+    const focusableElements = document.querySelectorAll('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
+    focusableElements.forEach(element => {
+        element.addEventListener('focus', function (event) {
+            // Prevent the default scroll behavior when an element receives focus
+            event.preventDefault();
+            element.scrollIntoView({block: "nearest", inline: "nearest"});
+        });
+    });
+});

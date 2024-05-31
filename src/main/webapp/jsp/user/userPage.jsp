@@ -66,7 +66,7 @@
 <script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/userPage.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/updateCredentials.js"></script>
-<script src="${pageContext.request.contextPath}/js/passwordComplexHint.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/passwordComplexHint.js"></script>
 <script src="${pageContext.request.contextPath}/js/user/deleteAccount.js"></script>
 <script src="${pageContext.request.contextPath}/js/friend/friendManagement.js"></script>
 
