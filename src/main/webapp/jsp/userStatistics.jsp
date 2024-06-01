@@ -14,7 +14,7 @@
 <head>
     <title>Lupus In Fabula - Logs and Statistics of user</title>
     <c:import url="/jsp/include/head.jsp"/>
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/testLogs/logs.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/userStatistics.css">
     <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">--%>
 </head>
 
