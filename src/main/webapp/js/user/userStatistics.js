@@ -1,52 +1,58 @@
+/**
+ * User statistics file, provides methods for getting personal statistics and logs of the games played by a player.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
 document.addEventListener('DOMContentLoaded', function (event) {
     var username = document.getElementById('username_requested').innerText;
-
-
-    // console.log(username);
     loadLogs(username);
     loadStatics(username);
 });
 
 /**
- * Get logs.
+ * Fetch and display logs for a user.
+ *
+ * @param {string} username - The username for which to load logs.
  */
 function loadLogs(username) {
     genericGETRequest(contextPath + "user/" + username + "/logs", getLogs)
 }
 
+/**
+ * Fetch and display statistics for a user.
+ *
+ * @param {string} username - The username for which to load statistics.
+ */
 function loadStatics(username) {
     genericGETRequest(contextPath + "user/" + username + "/statistic", getStatsRole)
     genericGETRequest(contextPath + "user/" + username + "/logs", getGeneralStats)
 }
 
+/**
+ * Handle the response from the server for getting game logs for a user.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function getLogs(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
 
-            var list = JSON.parse(req.responseText)["resource-list"]; //[JSON_resource_list]
-
+            var list = JSON.parse(req.responseText)["resource-list"];
 
             if (list == null)
                 alert("User Not Existing");
 
-            var table = document.getElementById("logs_table")
-
-            //var tableBody = table.createTBody();
+            var table = document.getElementById("logs_table");
             var tbody = table.querySelector("tbody");
 
-            //var sizeid = 0;
             var sizerounds = 0;
 
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
-
-                //  var gameIdLength = log.game_id.toString().length;
-
-                // if (gameIdLength > sizeid) {
-                //     sizeid = gameIdLength;
-                // }
-
                 var roundsLength = log.number_of_rounds.toString().length;
                 if (roundsLength > sizerounds) {
                     sizerounds = roundsLength;
@@ -54,17 +60,12 @@ function getLogs(req) {
             }
 
             for (let i = 0; i < list.length; i++) {
-
                 let log = list[i]['PlaysJoinGame'];
                 var row = tbody.insertRow();
-
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = log.public_id; //.padStart(sizeid, '0');
-                // cell0.innerHTML = Number(log.game_id);
-                //cell0.classList.add("cell-with-zero");
-
+                cell0.innerHTML = log.public_id;
 
                 var cell1 = row.insertCell(1);
                 cell1.innerHTML = log.start;
@@ -73,13 +74,7 @@ function getLogs(req) {
                 cell2.innerHTML = log.game_duration;
 
                 var cell3 = row.insertCell(3);
-                // cell3.innerHTML = Number(log.number_of_rounds);
-
-                if (sizerounds === 1) {
-                    cell3.innerHTML = String(log.number_of_rounds);
-                } else {
-                    cell3.innerHTML = String(log.number_of_rounds).padStart(sizerounds, '0');
-                }//cell3.classList.add("cell-with-zero");
+                cell3.innerHTML = String(log.number_of_rounds).padStart(sizerounds, '0');
 
                 var cell4 = row.insertCell(4);
                 if (log.is_game_finished) {
@@ -90,25 +85,18 @@ function getLogs(req) {
 
                 var cell5 = row.insertCell(5);
                 if (log.name !== "master" && log.is_game_finished) {
-                    if (log.has_won)
-                        cell5.innerHTML = "Victory";
-                    else {
-                        cell5.innerHTML = "Defeat";
-                    }
+                    cell5.innerHTML = log.has_won ? "Victory" : "Defeat";
                 } else {
                     cell5.innerHTML = "-";
                 }
 
                 var cell6 = row.insertCell(6);
-
-                //http://localhost:8080/lupus/village/{game_id}
                 const link = contextPath + "village/" + log.public_id;
                 cell6.innerHTML = '<a href="' + link + '" target="_blank">View match</a>';
-                //cell6.innerHTML = "Not working now";
             }
 
             if (list.length === 0) {
-                row = tbody.insertRow();
+                var row = tbody.insertRow();
                 row.classList.add("item");
 
                 var user_logged = document.getElementById("username_logged").innerText;
@@ -116,52 +104,19 @@ function getLogs(req) {
 
                 var cell = row.insertCell(0);
                 cell.colSpan = 7;
-                // cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
-
-
-                if (user_requested === user_logged) {
-                    cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
-                } else {
-                    cell.innerHTML = user_requested + 'haven\'t taken part in any games yet, invite him now!';
-                }
+                cell.innerHTML = user_requested === user_logged
+                    ? 'You haven\'t taken part in any games yet, create a game now!'
+                    : user_requested + ' haven\'t taken part in any games yet, invite him now!';
             }
         }
     }
-
 }
 
-// function hasError(req) {
-//     return req.status !== HTTP_STATUS_OK;
-// }
-
-function handleError(req) {
-
-    const errorMessageContainer = document.getElementById('error_message');
-
-    if (req.status === HTTP_STATUS_NOT_FOUND) {
-
-        //todo gia' gestita da not found
-        errorMessageContainer.innerHTML = '<h1 class="not_found">User Not Existing</h1>';
-        //alert("User Not Existing");
-    } else if (req.status === HTTP_STATUS_FORBIDDEN) {
-        errorMessageContainer.innerHTML = '<h1 class="not_logged">Please login to check the statistics</h1>';
-        //alert("Not logged");
-    } else {
-        errorMessageContainer.innerHTML = '<h1 class="unexpected_error">An unexpected error occurred. Please try again later.</h1>';
-        alert("Unexpected error");
-    }
-    errorMessageContainer.style.display = 'block';
-}
-
-function handleHttpStatus(req) {
-    if (req.status === HTTP_STATUS_OK) {
-        const back_con = document.getElementById('main_class');
-        back_con.style.display = 'block';
-    } else {
-        handleError(req);
-    }
-}
-
+/**
+ * Handle the response from the server for getting user statistics for each role played.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function getStatsRole(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         handleHttpStatus(req);
@@ -180,7 +135,6 @@ function getStatsRole(req) {
 
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
-
                 if (stats.name !== "master") {
                     var countNameLength = stats.countName.toString().length;
                     if (countNameLength > sizeCountName) {
@@ -202,10 +156,8 @@ function getStatsRole(req) {
 
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
-
                 if (stats.name !== "master") {
                     var row = tbody.insertRow();
-
                     pairs.push([capitalizeFirstLetter(stats.name), stats.countName]);
 
                     row.classList.add("item");
@@ -223,64 +175,38 @@ function getStatsRole(req) {
                     cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
 
                     var cell4 = row.insertCell(4);
-                    cell4.innerHTML = (String)(((stats.countName / size).toFixed(3)) * 100) + "%";
-
+                    cell4.innerHTML = ((stats.countName / size).toFixed(3) * 100) + "%";
                 }
             }
 
             if (list.length !== 0) {
                 completePieChart(pairs);
-
             } else {
-                row = tbody.insertRow();
+                var row = tbody.insertRow();
                 row.classList.add("item");
                 var cell = row.insertCell(0);
                 cell.colSpan = 5;
 
                 var user_logged = document.getElementById("username_logged").innerText;
                 var user_requested = document.getElementById("username_requested").innerText;
-                if (user_requested === user_logged) {
-                    cell.innerHTML = 'You haven\'t taken part in any games yet, create a game now!';
-                } else {
-                    cell.innerHTML = user_requested + 'haven\'t taken part in any games yet, invite him now!';
-                }
+                cell.innerHTML = user_requested === user_logged
+                    ? 'You haven\'t taken part in any games yet, create a game now!'
+                    : user_requested + ' haven\'t taken part in any games yet, invite him now!';
             }
         }
     }
 }
 
-function completePieChart(pairs) {
-
-    const ctx = document.getElementById('myChart');
-    let names = pairs.map(pair => pair[0]);
-    let rates = pairs.map(pair => pair[1]);
-
-    if (pairs.length === 0) {
-        names = ["Not played"];
-        rates = [1];
-    }
-
-
-    new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: names,
-            datasets: [{
-                label: 'Times of games played as',
-                data: rates,
-                borderWidth: 1
-            }]
-        },
-        options: {}
-    });
-}
-
+/**
+ * Handle the response from the server for getting general user statistics.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function getGeneralStats(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var table = document.getElementById("general_stats");
-            //var par = document.getElementById("gen_stats");
 
             var list = JSON.parse(req.responseText)["resource-list"];
             if (list == null)
@@ -298,7 +224,6 @@ function getGeneralStats(req) {
                     totalPlayTime = sumTime(totalPlayTime, log.is_game_finished ? log.game_duration : "00:00:00");
                     totalGamesWon += (log.has_won && log.is_game_finished) ? 1 : 0;
                 } else {
-//                    totalGamesAsMaster++;
                     totalGamesAsMaster += (log.is_game_finished) ? 1 : 0;
                 }
             }
@@ -312,29 +237,11 @@ function getGeneralStats(req) {
                 ["Games as master", totalGamesAsMaster]];
 
             for (let i = 0; i < couple.length; i++) {
-
-                // var paragraph = document.createElement('p');
-                // var info = "";
-                // if (couple[i][0] === "Ratio") {
-                //     info = '<div id="info_ratio" title="The percentage of games won over the total played">&#9432</div>';
-                // }
-                // console.log(info);
-                // var text = couple[i][0] + info + ": " + couple[i][1];
-                // console.log("text=" + text);
-                // paragraph.innerHTML = text;
-                // par.appendChild(paragraph);
-
                 var row = table.insertRow();
+                row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = '<b>' + couple[i][0] + '</b>';
-
-                if (couple[i][0] === "Ratio") {
-                    cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
-                }
-                if (couple[i][0] === "Games Played") {
-                    cell0.innerHTML += ' <a title="If the number is different from the sum of games won and loss it means that there are pending games">&#9432</a>';
-                }
+                cell0.innerHTML = couple[i][0];
 
                 var cell1 = row.insertCell(1);
                 cell1.innerHTML = couple[i][1];
@@ -344,29 +251,93 @@ function getGeneralStats(req) {
 }
 
 
-function capitalizeFirstLetter(string) {
-    if (string.length === 0) return string;
-    return string.charAt(0).toUpperCase() + string.slice(1);
+
+//HELPER FUNCTIONS
+
+/**
+ * Handle the status of the request.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
+function handleHttpStatus(req) {
+    if (req.status === HTTP_STATUS_OK) {
+        const back_con = document.getElementById('main_class');
+        back_con.style.display = 'block';
+    } else {
+        handleError(req);
+    }
 }
 
-function sumTime(time1, time2) {
-    var secondTime1 = convertInSeconds(time1);
-    var secondTime2 = convertInSeconds(time2);
+/**
+ * Handle the error situation.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
+function handleError(req) {
 
-    var sumSecond = secondTime1 + secondTime2;
+    const errorMessageContainer = document.getElementById('error_message');
 
-    var hours = Math.floor(sumSecond / 3600);
-    var minutes = Math.floor((sumSecond % 3600) / 60);
-    var seconds = sumSecond % 60;
-    var sizeHours = Math.max(hours, 99).toString().length;
-
-    return `${String(hours).padStart(sizeHours, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    if (req.status === HTTP_STATUS_FORBIDDEN) {
+        errorMessageContainer.innerHTML = '<h1 class="not_logged">Please login to check the statistics</h1>';
+        //alert("Not logged");
+    } else {
+        errorMessageContainer.innerHTML = '<h1 class="unexpected_error">An unexpected error occurred. Please try again later.</h1>';
+        alert("Unexpected error");
+    }
+    errorMessageContainer.style.display = 'block';
 }
 
-function convertInSeconds(time) {
-    var parts = time.split(":");
-    var hours = parseInt(parts[0]);
-    var minutes = parseInt(parts[1]);
-    var seconds = parseInt(parts[2]);
-    return hours * 3600 + minutes * 60 + seconds;
+/**
+ * Create and display a pie chart for roles and their counts.
+ *
+ * @param {Array} pairs - An array of role names and their counts.
+ */
+function completePieChart(pairs) {
+    const ctx = document.getElementById('myChart');
+    let names = pairs.map(pair => pair[0]);
+    let rates = pairs.map(pair => pair[1]);
+    let label_name = 'Times of games played as';
+
+    if (pairs.length === 0) {
+        names = ["Not played"];
+        rates = [1];
+        label_name = 'Any game played so far'
+    }
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: names,
+            datasets: [{
+                label: label_name,
+                data: rates,
+                borderWidth: 1
+            }]
+        },
+        options: {}
+    });
+}
+
+/**
+ * Sum two time strings in HH:MM:SS format.
+ *
+ * @param {string} times1 - The first time string.
+ * @param {string} times2 - The second time string.
+ * @returns {string} The summed time string in HH:MM:SS format.
+ */
+function sumTime(times1, times2) {
+    const getSeconds = t => {
+        const p = t.split(':');
+        return parseInt(p[0], 10) * 3600 + parseInt(p[1], 10) * 60 + parseInt(p[2], 10);
+    };
+
+    const format = seconds => {
+        return [
+            Math.floor(seconds / 3600),
+            Math.floor(seconds % 3600 / 60),
+            seconds % 60
+        ].map(v => v < 10 ? '0' + v : v).join(':');
+    };
+
+    return format(getSeconds(times1) + getSeconds(times2));
 }
