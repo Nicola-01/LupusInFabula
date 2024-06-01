@@ -22,7 +22,7 @@ public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT game_id, public_id, start, game_duration, round_of_death AS number_of_rounds_alive, name, with_who_wins, who_wins " +
+    private static final String STATEMENT = "SELECT game_id, public_id, start, game_duration, rounds AS number_of_rounds, name, with_who_wins, who_wins " +
             "FROM plays_as_in " +
             "JOIN public.game g " +
             "on g.id = plays_as_in.game_id join " +
@@ -67,7 +67,7 @@ public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
                         rs.getString("public_id"),
                         rs.getTimestamp("start"),
                         rs.getTime("game_duration"),
-                        rs.getInt("number_of_rounds_alive"),
+                        rs.getInt("number_of_rounds"),
                         rs.getString("name"),
                         rs.getInt("with_who_wins"),
                         rs.getInt("who_wins")

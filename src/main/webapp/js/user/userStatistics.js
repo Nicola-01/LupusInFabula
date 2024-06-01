@@ -74,8 +74,12 @@ function getLogs(req) {
 
                 var cell3 = row.insertCell(3);
                 // cell3.innerHTML = Number(log.number_of_rounds);
-                cell3.innerHTML = String(log.number_of_rounds).padStart(sizerounds, '0');
-                //cell3.classList.add("cell-with-zero");
+
+                if (sizerounds === 1) {
+                    cell3.innerHTML = String(log.number_of_rounds);
+                } else {
+                    cell3.innerHTML = String(log.number_of_rounds).padStart(sizerounds, '0');
+                }//cell3.classList.add("cell-with-zero");
 
                 var cell4 = row.insertCell(4);
                 if (log.is_game_finished) {
@@ -163,7 +167,6 @@ function getStatsRole(req) {
         handleHttpStatus(req);
         if (req.status === HTTP_STATUS_OK) {
             var list = JSON.parse(req.responseText)["resource-list"];
-            console.log(list);
 
             if (list == null)
                 alert("User Not Existing");
@@ -220,13 +223,14 @@ function getStatsRole(req) {
                     cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
 
                     var cell4 = row.insertCell(4);
-                    cell4.innerHTML = (stats.countName / size).toFixed(3);
+                    cell4.innerHTML = (String)(((stats.countName / size).toFixed(3)) * 100) + "%";
 
                 }
             }
 
             if (list.length !== 0) {
                 completePieChart(pairs);
+
             } else {
                 row = tbody.insertRow();
                 row.classList.add("item");
@@ -253,7 +257,7 @@ function completePieChart(pairs) {
 
     if (pairs.length === 0) {
         names = ["Not played"];
-        rates = [0];
+        rates = [1];
     }
 
 
