@@ -32,9 +32,9 @@
 <div id="error_message" style="display: none;"></div>
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
-    <div class="row">
-        <div class="col-8">
-            <h1>Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
+    <div class="row mb-2">
+        <div class="col-9">
+            <h1 class="mb-0">Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
         </div>
         <div class="col-3" id="friendButtonContainer"></div>
     </div>

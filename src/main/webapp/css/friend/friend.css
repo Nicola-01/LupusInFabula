@@ -35,7 +35,7 @@
 
 #my_friends .deleteFriendButton:hover {
     transform: scale(1.05);
-    background-color: #ff4d4d;
+    background-color: var(--red-color);
 }
 
 #addFriend{

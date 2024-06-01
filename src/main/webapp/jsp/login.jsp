@@ -7,7 +7,7 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/passwordComplexHint.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/passwordComplexAndShowPassword.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
@@ -49,7 +49,7 @@
         <div class="main">
             <input type="checkbox" id="loginCB" aria-hidden="true" checked>
             <div class="signup">
-                <form action="<c:url value="/signup"/>" method="POST">
+                <form id="signup" action="<c:url value="/signup"/>" method="POST">
                     <label class="lb_signup" for="loginCB" aria-hidden="true">Sign up</label>
                     <div class="inputs my-0 mx-auto px-2">
                         <div class="form-group">
@@ -59,7 +59,8 @@
                             <label class="control-label">Username</label>
                         </div>
                         <div class="form-group">
-                            <input type="email" id="sign_email" class="custom-input form-control" name="email" placeholder=""
+                            <input type="email" id="sign_email" class="custom-input form-control" name="email"
+                                   placeholder=""
                                    required="">
                             <label class="control-label">Email</label>
                         </div>
@@ -77,31 +78,30 @@
                             <input type="password" id="sign_password" class="custom-input form-control" name="password"
                                    placeholder="" maxlength="20"
                                    required=""> <!-- TODO add in password input minlength="8" -->
-                            <button id="sign_password_ShowPassword" class="showPassword">
+                            <button id="sign_password_ShowPassword" class="showPassword" tabindex="-1">
                                 <i id="sign_password_eyeIcon" class="fas fa-eye"></i>
                             </button>
                             <label class="control-label">Password</label>
                         </div>
                         <div class="form-group">
-                            <input type="password" id="sign_password_rp" class="custom-input mb-1 form-control" name="password_rp"
+                            <input type="password" id="sign_password_rp" class="custom-input mb-1 form-control"
+                                   name="password_rp"
                                    placeholder="" maxlength="20"
                                    required="">
-                            <button id="sign_password_rp_ShowPassword" class="showPassword">
+                            <button id="sign_password_rp_ShowPassword" class="showPassword" tabindex="-1">
                                 <i id="sign_password_rp_eyeIcon" class="fas fa-eye"></i>
                             </button>
                             <label class="control-label">Repeat password</label>
                         </div>
-<%--                        <div class="additional-options">--%>
-<%--                            <input type="checkbox" id="sign_ShowPassword">--%>
-<%--                            <label for="sign_ShowPassword">Show Password</label>--%>
-<%--                        </div>--%>
-                        <input type="submit" id="sign_submit" class="mt-4" value="Sign up">
+
+                        <%-- Without tabindex, when user pressed the Tab key the page scroll dowm--%>
+                        <input type="submit" id="sign_submit" class="mt-4" value="Sign up" tabindex="-1">
                     </div>
                 </form>
             </div>
 
             <div class="login">
-                <form action="<c:url value="/login"/>" method="POST">
+                <form id="login" action="<c:url value="/login"/>" method="POST">
                     <label class="lb_login" for="loginCB" aria-hidden="true">Login</label>
                     <div class="inputs my-0 mx-auto px-2">
                         <div class="form-group">
@@ -111,10 +111,11 @@
                             <label class="control-label">Username/Email</label>
                         </div>
                         <div class="form-group">
-                            <input type="password" id="login_password" class="custom-input mb-1 form-control" name="password"
+                            <input type="password" id="login_password" class="custom-input mb-1 form-control"
+                                   name="password"
                                    placeholder="" maxlength="20"
                                    required=""> <!-- TODO add in password input minlength="8" -->
-                            <button id="login_password_ShowPassword" class="showPassword">
+                            <button id="login_password_ShowPassword" class="showPassword" tabindex="-1">
                                 <i id="login_password_eyeIcon" class="fas fa-eye"></i>
                             </button>
                             <label class="control-label">Password</label>
@@ -122,10 +123,6 @@
                         <%--<div class="additional-options">--%>
                         <%--<a href="#" class="forgot-password">Forgot password?</a>--%>
                         <%--</div>--%>
-<%--                        <div class="additional-options">--%>
-<%--                            <input type="checkbox" id="login_ShowPassword">--%>
-<%--                            <label for="login_ShowPassword">Show Password</label>--%>
-<%--                        </div>--%>
                         <input type="submit" id="login_submit" class="mt-4" value="Login">
                     </div>
                 </form>
@@ -134,7 +131,7 @@
     </div>
 
     <c:import url="/jsp/include/foot.jsp"/>
-    <script src="${pageContext.request.contextPath}/js/utils/passwordComplexHint.js"></script>
+    <script src="${pageContext.request.contextPath}/js/utils/passwordComplexAndShowPassword.js"></script>
     <script src="${pageContext.request.contextPath}/js/login.js"></script>
 
 </body>

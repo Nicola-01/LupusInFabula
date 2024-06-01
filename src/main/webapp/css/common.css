@@ -190,3 +190,9 @@ footer {
 .neutralRoles {
     background-color: var(--roles-bg-neutral);
 }
+
+/*hide MS Edge show password button*/
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}

@@ -48,17 +48,6 @@ body {
     color: #052033;
 }
 
-.showPassword{
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 40px;
-    width: 40px;
-    border: none;
-    background-color: transparent;
-    border-left: 1px solid #ccc;
-}
-
 #loginSignup {
     width: 100%;
     max-width: 700px;

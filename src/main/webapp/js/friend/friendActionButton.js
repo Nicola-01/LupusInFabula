@@ -21,13 +21,16 @@ function checkFriend(req){
             console.log("isUserFound: " + isUserFound)
             let button = document.createElement('button');
             button.id = "friendActionButton";
+            button.classList.add("ms-auto")
             if (isUserFound){
-                button.textContent = 'Remove from friends';
+                button.textContent = 'Remove friend';
+                button.classList.add('remove')
                 button.addEventListener('click', function(){
                     removeFriend(targetUsername)
                 });
             }else{
-                button.textContent = 'Add to friends';
+                button.textContent = 'Add friend';
+                button.classList.remove('remove')
                 button.addEventListener('click', function(){
                     addFriend(targetUsername)
                 });

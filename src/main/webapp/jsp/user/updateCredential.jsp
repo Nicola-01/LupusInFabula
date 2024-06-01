@@ -38,6 +38,9 @@
         <div class="form-group">
             <input type="password" name="CurrentPassword" id="oldPassword" class="form-control" placeholder="">
             <label class="control-label">Current Password</label>
+            <button id="oldPassword_ShowPassword" class="showPassword" tabindex="-1">
+                <i id="oldPassword_eyeIcon" class="fas fa-eye"></i>
+            </button>
         </div>
         <br>
         <br>
@@ -55,6 +58,9 @@
         <div class="form-group">
             <input type="password" name="NewPassword" id="newPassword" class="form-control" placeholder="">
             <label class="control-label">New Password</label>
+            <button id="newPassword_ShowPassword" class="showPassword" tabindex="-1">
+                <i id="newPassword_eyeIcon" class="fas fa-eye"></i>
+            </button>
         </div>
         <br>
         <br>
@@ -62,6 +68,9 @@
         <div class="form-group">
             <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control" placeholder="">
             <label class="control-label">Repeat New Password</label>
+            <button id="confirm-password_ShowPassword" class="showPassword" tabindex="-1">
+                <i id="confirm-password_eyeIcon" class="fas fa-eye"></i>
+            </button>
         </div>
         <br>
 

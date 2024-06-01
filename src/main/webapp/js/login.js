@@ -17,6 +17,11 @@ signPassword.addEventListener('focus', () => showPasswordHint(true));
 signPassword.addEventListener('blur', () => showPasswordHint(false));
 signPasswordRp.addEventListener('input', enableSignup);
 
+signUsername.addEventListener('keypress', handleKeyPressSignup);
+signEmail.addEventListener('keypress', handleKeyPressSignup);
+signPassword.addEventListener('keypress', handleKeyPressSignup);
+signPasswordRp.addEventListener('keypress', handleKeyPressSignup);
+
 signSubmit.addEventListener('click', saveField)
 
 // Login
@@ -27,12 +32,40 @@ const loginSubmit = document.getElementById("login_submit");
 loginUser.addEventListener('input', enableLogin);
 loginPassword.addEventListener('input', enableLogin);
 
+loginUser.addEventListener('keypress', handleKeyPressLogin);
+loginPassword.addEventListener('keypress', handleKeyPressLogin);
+
 loginSubmit.addEventListener('click', saveField)
 
 // Show password
-document.getElementById("login_password_ShowPassword").addEventListener('click', loginShowPassword);
-document.getElementById("sign_password_ShowPassword").addEventListener('click', signupShowPassword);
-document.getElementById("sign_password_rp_ShowPassword").addEventListener('click', signupShowPasswordRp);
+document.getElementById("login_password_ShowPassword").addEventListener('click', event => {
+    event.preventDefault();
+    showPassword("login_password");
+});
+document.getElementById("sign_password_ShowPassword").addEventListener('click', event => {
+    event.preventDefault();
+    showPassword("sign_password");
+});
+document.getElementById("sign_password_rp_ShowPassword").addEventListener('click', event => {
+    event.preventDefault();
+    showPassword("sign_password_rp");
+});
+
+function handleKeyPressSignup(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        saveField();
+        document.forms["signup"].submit();
+    }
+}
+
+function handleKeyPressLogin(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        saveField();
+        document.forms["login"].submit();
+    }
+}
 
 function enableSignup() {
     signSubmit.disabled = !(signUsername.value.trim() !== '' && signEmail.value.trim() !== '' && signPassword.value.trim() !== '' && signPasswordRp.value.trim() !== '');
@@ -40,37 +73,6 @@ function enableSignup() {
 
 function enableLogin() {
     loginSubmit.disabled = !(loginUser.value.trim() !== '' && loginPassword.value.trim() !== '');
-}
-
-function showPassword(idInput) {
-    const input = document.getElementById(idInput)
-    const eyeIcon = document.getElementById(idInput + "_eyeIcon");
-
-    if (eyeIcon.classList.contains("fa-eye")) {
-        input.type = "text";
-        eyeIcon.classList.remove("fa-eye");
-        eyeIcon.classList.add("fa-eye-slash");
-    } else {
-        input.type = "password";
-        eyeIcon.classList.remove("fa-eye-slash");
-        eyeIcon.classList.add("fa-eye");
-    }
-}
-
-
-function loginShowPassword(event) {
-    event.preventDefault(); // Prevent the default behavior of the button click event
-    showPassword("login_password");
-}
-
-function signupShowPassword(event) {
-    event.preventDefault(); // Prevent the default behavior of the button click event
-    showPassword("sign_password");
-}
-
-function signupShowPasswordRp(event) {
-    event.preventDefault(); // Prevent the default behavior of the button click event
-    showPassword("sign_password_rp");
 }
 
 function saveField() {
@@ -122,6 +124,10 @@ function disabledElements() {
 
     for (let i = 0; i < loginElements.length; i++)
         loginElements[i].disabled = !loginCB.checked;
+
+    // call the functions to disable the button
+    enableSignup();
+    enableLogin();
 }
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -134,17 +140,5 @@ document.addEventListener('DOMContentLoaded', function () {
     // load saved values
     loadSavedValues()
 
-    // call the functions to disable the button
-    enableSignup();
-    enableLogin();
     disabledElements();
-
-    const focusableElements = document.querySelectorAll('input, button, select, textarea, a[href], [tabindex]:not([tabindex="-1"])');
-    focusableElements.forEach(element => {
-        element.addEventListener('focus', function (event) {
-            // Prevent the default scroll behavior when an element receives focus
-            event.preventDefault();
-            element.scrollIntoView({block: "nearest", inline: "nearest"});
-        });
-    });
 });

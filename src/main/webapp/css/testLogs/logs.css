@@ -54,12 +54,18 @@ table.general_statics tr {
 #friendActionButton{
     display: block;
     background-color: var(--navbar-second-bg);;
-    color: #fff;
+    color: var(--text-color-fixed);
     border: none;
     padding: 6px 10px;
     border-radius: 20px;
     cursor: pointer;
     transition: .3s ease;
+    width: 145px;
+    height: 40px;
+}
+
+.remove {
+    background-color: var(--red-color) !important;
 }
 
 #friendActionButton:hover{

@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     document.getElementById('email').addEventListener('input', checkFormCompletionDelete);
     document.getElementById('password').addEventListener('input', checkFormCompletionDelete);
+
+    document.getElementById("password_ShowPassword").addEventListener('click', event => {
+        event.preventDefault();
+        showPassword("password");
+    });
 });
 
 function sendDeleteUpdate() {

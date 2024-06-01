@@ -11,6 +11,20 @@ document.addEventListener('DOMContentLoaded', function (event) {
     newPasswordHint.addEventListener('input', () => passwordComplexHint(newPasswordHint.value));
     newPasswordHint.addEventListener('focus', () => showPasswordHint(true));
     newPasswordHint.addEventListener('blur', () => showPasswordHint(false));
+
+    // Show password
+    document.getElementById("newPassword_ShowPassword").addEventListener('click', event => {
+        event.preventDefault();
+        showPassword("newPassword");
+    });
+    document.getElementById("oldPassword_ShowPassword").addEventListener('click', event => {
+        event.preventDefault();
+        showPassword("oldPassword");
+    });
+    document.getElementById("confirm-password_ShowPassword").addEventListener('click', event => {
+        event.preventDefault();
+        showPassword("confirm-password");
+    });
 });
 
 function sendPutUpdate() {

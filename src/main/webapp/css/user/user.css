@@ -18,7 +18,7 @@
     border-radius: 16px;
 }
 
-#deleteAccountPage .form, #changeCredentialsPage .form  {
+#deleteAccountPage .form, #changeCredentialsPage .form {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -26,4 +26,9 @@
 
 #deleteForm input, #updateForm input {
     background-color: var(--inputs-bg-color);
+}
+
+.showPassword {
+    height: 45px !important;
+    width: 45px !important;
 }

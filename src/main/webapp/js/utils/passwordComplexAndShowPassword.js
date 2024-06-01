@@ -27,3 +27,18 @@ function passwordComplexHint(password) {
         }
     }
 }
+
+function showPassword(idInput) {
+    const input = document.getElementById(idInput)
+    const eyeIcon = document.getElementById(idInput + "_eyeIcon");
+
+    if (eyeIcon.classList.contains("fa-eye")) {
+        input.type = "text";
+        eyeIcon.classList.remove("fa-eye");
+        eyeIcon.classList.add("fa-eye-slash");
+    } else {
+        input.type = "password";
+        eyeIcon.classList.remove("fa-eye-slash");
+        eyeIcon.classList.add("fa-eye");
+    }
+}

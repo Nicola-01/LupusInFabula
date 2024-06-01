@@ -36,6 +36,9 @@
         <div class="form-group">
             <input type="password" name="password" id="password" class="form-control" placeholder="">
             <label class="control-label">Password</label>
+            <button id="password_ShowPassword" class="showPassword" tabindex="-1">
+                <i id="password_eyeIcon" class="fas fa-eye"></i>
+            </button>
         </div>
         <br>
 
