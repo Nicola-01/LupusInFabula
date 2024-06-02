@@ -1,6 +1,9 @@
 logs = []
 divLogs = null
 
+/*
+* Add the event listener to the page
+* */
 document.addEventListener('DOMContentLoaded', function (event)
 {
     let url = window.location.href;
@@ -18,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function (event)
     logElementsReload();
 });
 
+/**
+* Permit to reload the log information
+* */
 function logElementsReload()
 {
     // reset of variables and state
@@ -29,6 +35,10 @@ function logElementsReload()
     genericGETRequest(contextPath + "game/logs/" + gameID + masterlog, fillGameLog);
 }
 
+/**
+ * Permit to fill the log ul with the data from the request
+ * @param req request make to the api
+ */
 function fillGameLog(req)
 {
     if (req.readyState === XMLHttpRequest.DONE)
@@ -36,12 +46,16 @@ function fillGameLog(req)
         if (req.status === HTTP_STATUS_OK)
         {
             logs = JSON.parse(req.responseText)[JSON_resource_list]
-            createTable(logs)
+            createUl(logs)
         }
     }
 }
 
-
+/**
+ * function to create the button for the round
+ * @param round round that represent the log
+ * @returns {string} html string that represent the button for the round
+ */
 function createButtonRound(round)
 {
     return '<button class="nav-link px-4 text-start my-1 '+(round===1 ? 'active' : "")+'" id="round-' + round + '-tab" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
@@ -51,15 +65,32 @@ function createButtonRound(round)
             '</button>'
 }
 
-function createButtonRoundExpand(round, text)
+/**
+ * Function to create the button to expand a row day / night
+ * @param round round that represent the log
+ * @param text text to write inside the button
+ * @param phase phase that represent the log
+ * @returns {string} html string that represent the button
+ */
+function createButtonRoundExpand(round, text, phase)
 {
-    return  '<button class="btn btn-primary ms-2" id="round-' + round + '-expand" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
+    return  '<button class="btn btn-primary ms-2" id="round-' + round + '-expand-' + phase + '" data-bs-toggle="tab" type="button" role="tab" aria-selected="true">' +
                 '<span class="d-block fs-5 fw-bold">' +
                     text +
                 '</span>' +
             '</button>'
 }
 
+/**
+ * function to create the row that represent a log
+ * @param phase phase that represent the log
+ * @param subphase subphase that represent the log
+ * @param typeOfAction action that represent the log
+ * @param user user that make the action on target
+ * @param target target of action
+ * @param color  color for log
+ * @returns {string} html string that represent the log row
+ */
 function createActionBlock(phase, subphase, typeOfAction, user, target, color)
 {
     return  '<li class="d-flex flex-column flex-md-row py-2"' +
@@ -77,6 +108,13 @@ function createActionBlock(phase, subphase, typeOfAction, user, target, color)
             '</li>'
 }
 
+/**
+ * Function to create the row title day / night
+ * @param round round that represent the log
+ * @param text text to write inside the button expand
+ * @param phase phase that represent the log
+ * @returns {string} html string that represent the row for title day / night
+ */
 function createRowBlock(phase, round, text)
 {
     return  '<li class="d-flex flex-column flex-md-row">' +
@@ -86,12 +124,17 @@ function createRowBlock(phase, round, text)
                         'ㅤ'+ capitalizeFirstLetter(phase) +
                         '</h3>' +
                         '<div class="flex-grow-1 border-top m-0" style="border: 2px solid rgb(128,128,128)"></div>ㅤ' +
-                        (phase==="day" ? createButtonRoundExpand(round, text):"")+
+                        createButtonRoundExpand(round, text, phase) +
                     '</div>'+
                 '</div>'+
             '</li>'
 }
 
+/**
+ * Function to create the container for button to show the action
+ * @param round that represent the round for the button
+ * @returns {string} html string that represent the container for button to show the action
+ */
 function createContActionButton(round)
 {
     return  '<div>' +
@@ -108,6 +151,11 @@ function createContActionButton(round)
 
 }
 
+/**
+ * Function to create the container for the logs
+ * @param ContAction container for all action
+ * @returns {string} html string that represent the container for the logs
+ */
 function createCont(ContAction)
 {
     return  ' <div class="container position-relative p-0">' +
@@ -117,6 +165,11 @@ function createCont(ContAction)
             '</div>'
 }
 
+/**
+ * Function that permit to identify the role for the user nm, need the exe of playerStatus.js before of gameLogs.js
+ * @param nm name of user
+ * @returns {string|null|string|*|string} information about user
+ */
 function getRole(nm)
 {
     let i =0
@@ -131,6 +184,15 @@ function getRole(nm)
     return ""
 }
 
+/**
+ *
+ * @param data data that represent the request
+ * @param firstDataKey key for the first identification for data
+ * @param secondDataKeykey key for the second identification for data
+ * @param r round
+ * @param ret return value
+ * @returns {*} dict that contain r*dict that have the key {dayExt, daySum, nightSum, nightExt} that represent the data for day expand, day summary, night expand, night summary
+ */
 function makeData(data, firstDataKey, secondDataKey, r, ret)
 {
     let phase = ""
@@ -140,7 +202,7 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
     let i = 0
     let col = null
     let s = ""
-    ret.push({dayExt:"", daySum:"", night:""})
+    ret.push({dayExt:"", daySum:"", nightSum:"", nightExt:""})
 
     while (i < data.length && data[i][firstDataKey[0]][secondDataKey[1]]<=r)
     {
@@ -161,16 +223,19 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
             switch (subphase)
             {
                 case 0:
-                    phase = phase==="day" ? "Vote" : "Special action"
+                    phase = phase==="day" ?
+                                    "Vote" :
+                                    "Special action"
                 break;
                 case 1:
                     phase = "1° ballot"
                 break;
                 default:
                     phase =  action==="vote" ?
-                                "2° ballot" :
-                                action==="dead" ? "Dead" :
-                                    "Special action break"
+                                    "2° ballot" :
+                                    action==="dead" ?
+                                        "Dead" :
+                                        "Special action break"
                 break;
             }
             s = createActionBlock(phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
@@ -182,83 +247,92 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                 ret[r-1].dayExt = ret[r-1].dayExt.concat(s)
             }
             else
-                ret[r-1].night = ret[r-1].night.concat(s)
+            {
+                if(action==="plague" || action==="dead")
+                    ret[r-1].nightSum =  ret[r-1].nightSum.concat(s)
+                ret[r-1].nightExt = ret[r-1].nightExt.concat(s)
+            }
         }
         i++
     }
+
     if(ret[r-1].dayExt!=="")
     {
         ret[r-1].daySum = createRowBlock("day", r, 'Expand').concat(ret[r-1].daySum)
         ret[r-1].dayExt = createRowBlock("day", r, 'Reduce').concat(ret[r-1].dayExt)
     }
-    ret[r-1].night  = createRowBlock("night", r, "").concat(ret[r-1].night)
+    if(ret[r-1].nightExt!=="")
+    {
+        ret[r-1].nightSum = createRowBlock("night", r, 'Expand').concat(ret[r-1].nightSum)
+        ret[r-1].nightExt = createRowBlock("night", r, 'Reduce').concat(ret[r-1].nightExt)
+    }
 
     return ret
 }
 
-function createTable(data)
+/**
+ * permit to create all container for the logs and add all the action lister to all the button
+ * @param data data that represent the request
+ */
+function createUl(data)
 {
     let bs = ''
     let secondDataKey = ["player", "round", "phase", "subphase", "typeAction", "target"]
     let firstDataKey = data.length > 0 ? Object.keys(data[0]) : [0]
     let roundMax = data.length-1 >= 0 ? data[data.length-1][firstDataKey[0]][secondDataKey[1]] : 0
-    let b
     let ulData = []
-    let sw = []
-    let swExp = []
+    let swRound = []
+    let swExpDay = []
+    let swExpNight = []
 
 
     for (let r = 1; r<=roundMax; r++)
     {
         bs = bs.concat(createContActionButton(r))
         ulData = makeData(data, firstDataKey, secondDataKey, r, ulData)
-        swExp.push(true)
-        sw.push(true)
+        swExpDay.push(true)
+        swExpNight.push(true)
+        swRound.push(true)
     }
 
     divLogs.innerHTML = createCont(bs)
 
     for (let r = 1; r<=roundMax; r++)
     {
-        b = document.getElementById('round-' + r + '-tab')
-
-        b.addEventListener("click", function ()
+        document.getElementById('round-' + r + '-tab')?.addEventListener("click", function ()
         {
             let nightContent = document.getElementById('round-'+r+'-night')
             let dayContent = document.getElementById('round-'+r+'-day')
-            let b2
-            let f = function ()
+            let fDay = function ()
                 {
-                    if (swExp[r-1])
-                    {
-                        dayContent.innerHTML = ulData[r-1].dayExt
-                        swExp[r-1] = false
-                    }
-                    else
-                    {
-                        dayContent.innerHTML = ulData[r-1].daySum
-                        swExp[r-1] = true
-                    }
-                    b2 = document.getElementById('round-' + r + '-expand')
-                    b2.addEventListener("click", f)
+                    if (!(swExpDay[r-1]=!swExpDay[r-1])) dayContent.innerHTML = ulData[r-1].dayExt
+                    else                                 dayContent.innerHTML = ulData[r-1].daySum
+
+                    document.getElementById('round-' + r + '-expand-day')?.addEventListener("click", fDay)
                 }
-
-            if(sw[r-1])
+            let fNight = function ()
             {
-                nightContent.innerHTML=ulData[r-1].night
-                dayContent.innerHTML=swExp[r-1] ? ulData[r-1].daySum : ulData[r-1].dayExt
+                if (!(swExpNight[r-1]=!swExpNight[r-1])) nightContent.innerHTML = ulData[r-1].nightExt
+                else                                     nightContent.innerHTML = ulData[r-1].nightSum
 
-                b2 = document.getElementById('round-' + r + '-expand')
-                if(b2!==null)
-                    b2.addEventListener("click", f)
-                sw[r-1] = false
+                document.getElementById('round-' + r + '-expand-night')?.addEventListener("click", fNight)
             }
-            else
-            {
-                sw[r-1] = true
-                nightContent.innerHTML = ""
-                dayContent.innerHTML = ""
-            }
+
+            nightContent.innerHTML = swRound[r-1] ?
+                                        (swExpNight[r-1] ?
+                                            ulData[r-1].nightSum :
+                                            ulData[r-1].nightExt) :
+                                        ""
+            dayContent.innerHTML = swRound[r-1] ?
+                                        (swExpDay[r-1] ?
+                                            ulData[r-1].daySum :
+                                            ulData[r-1].dayExt) :
+                                        ""
+
+            document.getElementById('round-' + r + '-expand-day')?.addEventListener("click", fDay)
+            document.getElementById('round-' + r + '-expand-night')?.addEventListener("click", fNight)
+
+            swRound[r-1]=!swRound[r-1]
         })
     }
 }
