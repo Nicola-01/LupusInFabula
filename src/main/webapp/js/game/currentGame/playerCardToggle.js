@@ -47,10 +47,3 @@ function toggleCard()
         }
     });
 }
-
-/*
-document.addEventListener('DOMContentLoaded', function (event) {
-    if(document.getElementById("toggleButton"))
-        toggleCard();
-});
-*/

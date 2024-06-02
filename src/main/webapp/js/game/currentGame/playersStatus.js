@@ -61,9 +61,12 @@ function fillPlayersStatus(req) {
                 }
 
                 if (playerRole.length <= maxPlayersForCircularButtons)
-                    circularPlayersStatus()
+                    circularPlayersStatus();
                 else
-                    gridPlayersStatus()
+                    gridPlayersStatus();
+
+                // by default, the role is hidden
+                toggleCard();
             }
         } else {
             // alert("Not logged in");

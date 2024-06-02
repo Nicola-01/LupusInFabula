@@ -94,11 +94,12 @@
 
 <c:import url="/jsp/include/footer.jsp"/>
 <c:import url="/jsp/include/foot.jsp"/>
+
+<script src="${pageContext.request.contextPath}/js/game/currentGame/playerCardToggle.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/gameActions.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/playersStatus.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/gameLog.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame.js"></script>
-<script src="${pageContext.request.contextPath}/js/game/currentGame/playerCardToggle.js" defer></script>
 
 </body>
 </html>
