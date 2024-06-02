@@ -15,6 +15,7 @@ public class CardsServlet extends AbstractDatabaseServlet
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        /*
         String imagePath = "/webapp/media/cards/card_back";
         File imageDir = new File(imagePath);
         String[] imageList = imageDir.list((dir, name) -> name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".png"));
@@ -23,6 +24,7 @@ public class CardsServlet extends AbstractDatabaseServlet
             LOGGER.info("img: " + imageList[i]);
 
         req.setAttribute("imageList", imageList);
+        */
         req.getRequestDispatcher("/jsp/cards.jsp").forward(req, resp);;
     }
 

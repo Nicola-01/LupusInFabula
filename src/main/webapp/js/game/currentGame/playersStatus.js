@@ -34,9 +34,6 @@ function fillPlayersStatus(req) {
                         const frontCard = document.querySelector(".card-front");
                         if(frontCard !== null)
                             frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
-                        //var playerImageElement = document.getElementById("playerImage");
-                        //playerImageElement.src = "../media/cards/" + playsAsIn.role + ".png";
-                        //playerImageElement.alt = playsAsIn.role + "'s card";
 
                         const toggleButton = document.getElementById("toggleButton");
                         if(toggleButton !== null)
@@ -66,7 +63,13 @@ function fillPlayersStatus(req) {
                     gridPlayersStatus();
 
                 // by default, the role is hidden
-                toggleCard();
+                if (document.getElementById("toggleButton")) {
+                    var toggleElement = document.getElementById("toggle");
+
+                    if (toggleElement.style.display !== "none") {
+                        toggleCard();
+                    }
+                }
             }
         } else {
             // alert("Not logged in");
