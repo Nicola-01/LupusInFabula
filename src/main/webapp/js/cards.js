@@ -7,7 +7,7 @@ function loadImages()
     var imageContainer = document.getElementById("imageContainer");
     var selectionFieldset = document.getElementById("selectionFieldset");
 
-    var imageFiles = ["fantasy1.png", "fantasy2.png", "yugioh.png"];
+    var imageFiles = ["fantasy1.png", "fantasy2.png", "yugioh.png", "standard_red.png", "standard_blue.png", "wooden.png", "japo_lightblue.png", "japo_white.png"];
 
     imageFiles.forEach(function(imageName)
     {
