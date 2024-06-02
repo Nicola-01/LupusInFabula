@@ -329,20 +329,21 @@
 .menu {
     filter: url("#shadowed-goo");
     position: absolute;
-    right: 50px;
+    right: 40px;
+    top: -13px;
 }
 
 .menu-item, .menu-open-button {
     background: var(--navbar-bg);
     border-radius: 100%;
-    width: 80px;
-    height: 80px;
-    margin-left: -40px;
+    width: 50px;
+    height: 50px;
+    margin-left: -30px;
     position: absolute;
     top: 20px;
     color: white;
     text-align: center;
-    line-height: 80px;
+    line-height: 60px;
     transform: translate3d(0, 0, 0);
     transition: transform ease-out 200ms;
 }
@@ -352,20 +353,20 @@
 }
 
 .hamburger {
-    width: 25px;
-    height: 3px;
+    width: 20px;
+    height: 2px;
     background: white;
     display: block;
     position: absolute;
     top: 50%;
     left: 50%;
-    margin-left: -12.5px;
-    margin-top: -1.5px;
+    margin-left: -10px;
+    margin-top: -1px;
     transition: transform 200ms;
 }
 
 .hamburger-1 {
-    transform: translate3d(0, -8px, 0);
+    transform: translate3d(0, -6px, 0);
 }
 
 .hamburger-2 {
@@ -373,7 +374,7 @@
 }
 
 .hamburger-3 {
-    transform: translate3d(0, 8px, 0);
+    transform: translate3d(0, 6px, 0);
 }
 
 .menu-open:checked + .menu-open-button .hamburger-1 {
@@ -386,22 +387,8 @@
     transform: translate3d(0, 0, 0) rotate(-45deg);
 }
 
-/*.menu {
-    position: absolute;
-    left: 50%;
-    margin-left: -80px;
-    padding-top: 20px;
-    padding-left: 80px;
-    width: 650px;
-    height: 150px;
-    box-sizing: border-box;
-    font-size: 20px;
-    text-align: left;
-}*/
-
 .menu-item:hover {
     background: var(--navbar-inverted-bg);
-    /*color: #ffc107;*/
 }
 .menu-item:nth-child(3) {
     transition-duration: 180ms;
@@ -436,13 +423,13 @@
 }
 .menu-open:checked ~ .menu-item:nth-child(3) {
     transition-duration: 170ms;
-    transform: translate3d(0, 80px, 0);
+    transform: translate3d(0, 55px, 0);
 }
 .menu-open:checked ~ .menu-item:nth-child(4) {
     transition-duration: 250ms;
-    transform: translate3d(0, 160px, 0);
+    transform: translate3d(0, 110px, 0);
 }
 .menu-open:checked ~ .menu-item:nth-child(5) {
     transition-duration: 330ms;
-    transform: translate3d( 0, 240px, 0);
+    transform: translate3d(0, 165px, 0);
 }
