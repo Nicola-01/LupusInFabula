@@ -29,12 +29,11 @@
         </div>
     </div>
 
+    <c:import url="/jsp/utils/infoMessage.jsp"/>
+
     <div id="imageContainer" class="row"></div>
 
     <form id="selectionForm">
-        <fieldset id="selectionFieldset">
-            <legend>Select a Card</legend>
-        </fieldset>
         <button type="submit">Submit</button>
     </form>
 
@@ -45,6 +44,7 @@
 <c:import url="/jsp/include/foot.jsp"/>
 
 <script src="${pageContext.request.contextPath}/js/cards.js"></script>
+<script src="${pageContext.request.contextPath}/js/utils/message.js"></script>
 
 </body>
 </html>

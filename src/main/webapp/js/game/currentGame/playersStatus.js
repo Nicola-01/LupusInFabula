@@ -2,6 +2,19 @@ let playerRole = [];
 
 const maxPlayersForCircularButtons = 12;
 
+// to change card backing
+function getCookie(name)
+{
+    let cookieArr = document.cookie.split(";");
+    for(let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        if(name == cookiePair[0].trim())
+        {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
 
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE)
@@ -35,6 +48,12 @@ function fillPlayersStatus(req) {
                         if(frontCard !== null)
                             frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
 
+                        var selectedBack = getCookie("selectedCard");
+                        var cardBack = document.querySelector(".card-back");
+                        if(cardBack && selectedBack)
+                            cardBack.style.backgroundImage = "url('../media/cards/card_back/"+selectedBack+"')";
+
+
                         const toggleButton = document.getElementById("toggleButton");
                         if(toggleButton !== null)
                             toggleButton.style.display = "inline-block";
@@ -64,7 +83,7 @@ function fillPlayersStatus(req) {
 
                 // by default, the role is hidden
                 if (document.getElementById("toggleButton")) {
-                    var toggleElement = document.getElementById("toggle");
+                    var toggleElement = document.getElementById("toggleButton");
 
                     if (toggleElement.style.display !== "none") {
                         toggleCard();
