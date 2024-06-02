@@ -52,6 +52,11 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.CurrentGameServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>CardsServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.CardsServlet</servlet-class>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>NewGameServlet</servlet-name>
         <url-pattern>/newVillage</url-pattern>
@@ -66,6 +71,11 @@
     <servlet-mapping>
         <servlet-name>HomePageServlet</servlet-name>
         <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CardsServlet</servlet-name>
+        <url-pattern>/cards</url-pattern>
     </servlet-mapping>
 
     <servlet>
