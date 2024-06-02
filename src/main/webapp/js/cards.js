@@ -21,20 +21,19 @@ function loadImages()
         img.alt = imageName;
         img.classList.add("img-fluid");
 
-        imageContainer.appendChild(div_img);
-        div_img.appendChild(img);
-
         var radioBtn = document.createElement("input");
         radioBtn.type = "radio";
         radioBtn.name = "cardSelection";
         radioBtn.value = imageName;
-        selectionFieldset.appendChild(radioBtn);
+
+        div_img.appendChild(img);
+        div_img.appendChild(radioBtn);
 
         var label = document.createElement("label");
-        label.textContent = imageName;
-        selectionFieldset.appendChild(label);
+        label.textContent = imageName.split('.').slice(0, -1).join('.');
+        div_img.appendChild(label);
 
-        selectionFieldset.appendChild(document.createElement("br"));
+        imageContainer.appendChild(div_img);
     });
 
 }
@@ -49,37 +48,6 @@ document.getElementById("selectionForm").addEventListener("submit", function(eve
     var selectedCard = document.querySelector('input[name="cardSelection"]:checked').value;
 
     document.cookie = "selectedCard=" + selectedCard + ";path=/; max-age=" + (60 * 60 * 24 * 365);  // 1 year
-
-    console.log("SET COOKIE: Selected card: " + selectedCard);
+    var msg = "Card backing successfully updated to "+selectedCard.split('.').slice(0, -1).join('.');
+    populateInfoMessage("Card backing changed", msg);
 });
-
-function setImageCookie()
-{
-    const selectedImage = document.querySelector('input[name="selectedImage"]:checked').value;
-    if (selectedImage) {
-        document.cookie = "selectedImage=" + selectedImage + "; path=/; max-age=" + (60 * 60 * 24 * 365);
-        alert("Image selected: " + selectedImage);
-    } else {
-        alert("Please select an image.");
-    }
-}
-
-function getCookie(name)
-{
-    let cookieArr = document.cookie.split(";");
-    for(let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if(name == cookiePair[0].trim())
-        {
-            return decodeURIComponent(cookiePair[1]);
-        }
-    }
-    return null;
-}
-
-
-let selectedImage = getCookie("selectedCard");
-if (selectedImage)
-{
-    console.log("GET COOKIE: Selected image:", selectedImage);
-}
