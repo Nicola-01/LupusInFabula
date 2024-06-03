@@ -1,11 +1,12 @@
 package it.unipd.dei.webapp.lupus.rest;
 
-import it.unipd.dei.webapp.lupus.dao.GetActionByIdGameDAO;
-import it.unipd.dei.webapp.lupus.dao.GetDeadPlayersInformationByGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
+import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -13,6 +14,8 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static it.unipd.dei.webapp.lupus.utils.ErrorCode.LOGS_NOT_EXIST;
 
@@ -110,9 +113,28 @@ public class GameLogGetRR extends AbstractRR
     {
         ArrayList<Action> r = new GetActionByIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
         ArrayList<Action> d = new GetDeadPlayersInformationByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        Map pl = new GetPlayersAndRoleByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        boolean isDorkyActive = (new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+        boolean nmDivNig;
+        boolean isPlugueAction;
+        boolean isEvilUs;
+        int i=0;
 
         if(!this.isMaster && !r.isEmpty())
-            r.removeIf(x -> (!x.getPlayer().equals(nmPlayer) && x.getPhase()==GamePhase.NIGHT.ordinal()));
+            while (i<r.size())
+            {
+                nmDivNig =  !(r.get(i).getPlayer().equals(nmPlayer)) &&
+                        r.get(i).getPhase()==GamePhase.NIGHT.ordinal();
+                isPlugueAction = r.get(i).getTypeAction().equals(GameRoleAction.PLAGUE_SPREADER.getAction());
+                isEvilUs =  GameRoleAction.valueOfName(String.valueOf(pl.get(nmPlayer))).getRoleType().equals(RoleType.EVIL) &&
+                            GameRoleAction.valueOfName(String.valueOf(pl.get(r.get(i).getPlayer()))).getRoleType().equals(RoleType.EVIL);
+                isEvilUs = pl.get(nmPlayer).equals(GameRoleAction.DORKY.getName()) ? isDorkyActive && isEvilUs : isEvilUs;
+
+                if(nmDivNig && !isPlugueAction && !isEvilUs)
+                    r.remove(r.get(i));
+                else
+                    i++;
+            }
 
         r.addAll(d);
         r.sort(Action::compareTo);

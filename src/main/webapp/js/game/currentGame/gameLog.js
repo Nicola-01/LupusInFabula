@@ -82,6 +82,36 @@ function createButtonRoundExpand(round, text, phase)
 }
 
 /**
+ * function to create a string with text in color color
+ * @param text text to insert in the span
+ * @param color color for text
+ * @returns {string} string with text in color color
+ */
+function colText(text, color) {return '<span style="color:'+ color + '">'+text+'</span>'}
+
+/**
+ * function to create the string that represent the text for log
+ * @param typeOfAction action that represent the log
+ * @param user user that make the action on target
+ * @param target target of action
+ * @param color  color for log
+ * @returns {string} string that represent the text for log
+ */
+function getStringLog(user, typeOfAction, target, color)
+{
+    let s = 'The user '+user
+
+    if(typeOfAction === 'dead')
+        return s +' is ' + colText(typeOfAction, color)
+    else if (typeOfAction === "last chance")
+        return s +' use ' + colText(typeOfAction, color)
+    else if (typeOfAction === "plague" && !endsWithMaster)
+        return 'The user' + target + ' got ' + colText('sick', color)
+    else
+        return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target
+}
+
+/**
  * function to create the row that represent a log
  * @param phase phase that represent the log
  * @param subphase subphase that represent the log
@@ -99,10 +129,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, target, color)
                 '</span>' +
                 '<div class="flex-grow-1 ps-4"' +
                     ' <p class="mb-0" style="border: 2px solid rgb(128,128,128); border-style: hidden hidden hidden solid;">'+
-                        (target === null ? 'The user '+user+' <span style="color:'+ color + '"> is dead</span>' :
-                            typeOfAction === "last chance" ?
-                                'The user '+user+' use <span style="color:'+ color + '">' +typeOfAction+'</span>'  :
-                                'The user '+user+' <span style="color:'+ color + '">' +typeOfAction+'s </span> '+ target )+ //user , typeaction, target
+                       getStringLog(user, typeOfAction, target, color) +
                     '</p>'+
                 '</div>'+
             '</li>'
