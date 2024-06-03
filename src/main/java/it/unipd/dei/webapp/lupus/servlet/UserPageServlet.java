@@ -56,27 +56,37 @@ public class UserPageServlet extends AbstractDatabaseServlet {
                 if (req.getSession(false) != null) {
                     if (req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE) != null) {
                         if (username.isEmpty()) {
-                            username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-                            resp.sendRedirect(req.getContextPath() + "/habitant/" + username);
+                            String username_requested = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                            resp.sendRedirect(req.getContextPath() + "/habitant/" + username_requested);
                             return;
+
                         } else {
                             player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
                             if (player_user == null) {
                                 req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
                                 return;
                             }
+                            if (!username.equals(player_user.getUsername())) {
+                                resp.sendRedirect(req.getContextPath() + "/habitant/" + player_user.getUsername());
+                                return;
+                            }
+
                         }
                     }
+                    req.setAttribute("player", username);
+                    req.getRequestDispatcher("/jsp/userStatistics.jsp").forward(req, resp);
                 }
 
-                req.setAttribute("player", username);
-                req.getRequestDispatcher("/jsp/userStatistics.jsp").forward(req, resp);
-
             }
-        } catch (SQLException e) {
+        } catch (
+                SQLException e) {
             ErrorCode er = ErrorCode.INTERNAL_ERROR;
-            resp.setStatus(er.getHTTPCode());
-            LOGGER.error("stacktrace:", e);
+            resp.
+
+                    setStatus(er.getHTTPCode());
+            LOGGER.
+
+                    error("stacktrace:", e);
         }
     }
 }

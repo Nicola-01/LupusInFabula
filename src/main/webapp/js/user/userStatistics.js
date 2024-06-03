@@ -65,10 +65,10 @@ function getLogs(req) {
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = log.public_id;
+                cell0.innerHTML = log.start;
 
                 var cell1 = row.insertCell(1);
-                cell1.innerHTML = log.start;
+                cell1.innerHTML = log.public_id;
 
                 var cell2 = row.insertCell(2);
                 cell2.innerHTML = log.game_duration;
@@ -132,6 +132,7 @@ function getStatsRole(req) {
             var sizeCountName = 0;
             var sizeCountWins = 0;
             var size = 0;
+            var sizeGamesAsMaster = 0;
 
             for (let i = 0; i < list.length; i++) {
                 let stats = list[i]['StatsRole'];
@@ -147,10 +148,10 @@ function getStatsRole(req) {
                     }
 
                     size += stats.countName;
+                } else {
+                    sizeGamesAsMaster++;
                 }
             }
-
-            size = (size === 0) ? 1 : size;
 
             const pairs = [];
 
@@ -175,11 +176,11 @@ function getStatsRole(req) {
                     cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
 
                     var cell4 = row.insertCell(4);
-                    cell4.innerHTML = ((stats.countName / size).toFixed(3) * 100) + "%";
+                    cell4.innerHTML = ((stats.countName / ((size === 0) ? 1 : size)).toFixed(3) * 100) + "%";
                 }
             }
 
-            if (list.length !== 0) {
+            if (list.length !== 0 && size !== 0) {
                 completePieChart(pairs);
             } else {
                 var row = tbody.insertRow();
@@ -187,11 +188,19 @@ function getStatsRole(req) {
                 var cell = row.insertCell(0);
                 cell.colSpan = 5;
 
-                var user_logged = document.getElementById("username_logged").innerText;
-                var user_requested = document.getElementById("username_requested").innerText;
-                cell.innerHTML = user_requested === user_logged
-                    ? 'You haven\'t taken part in any games yet, create a game now!'
-                    : user_requested + ' haven\'t taken part in any games yet, invite him now!';
+                var user_logged = (document.getElementById("username_logged").innerText).toLowerCase();
+                var user_requested = (document.getElementById("username_requested").innerText).toLowerCase();
+
+                if (sizeGamesAsMaster > 0) {
+                    cell.innerHTML = user_requested === user_logged ? "You have played only as master, play a game now!" : user_requested + " has only played as master, invite him now!";
+                } else if (!(document.getElementById("logs_table").innerText.endsWith("!"))) {
+                    cell.innerHTML = user_requested === user_logged ? "The match is not finished yet" : user_requested + " is still in a match";
+                } else {
+                    cell.innerHTML = user_requested === user_logged
+                        ? 'You haven\'t taken part in any games yet, create a game now!'
+                        : user_requested + ' haven\'t taken part in any games yet, invite him now!';
+
+                }
             }
         }
     }
@@ -249,7 +258,6 @@ function getGeneralStats(req) {
         }
     }
 }
-
 
 
 //HELPER FUNCTIONS

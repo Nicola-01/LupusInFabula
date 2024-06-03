@@ -94,8 +94,8 @@
 
                 <%--                <thead class="sticky-top top-0">--%>
                 <tr>
-                    <th>GameId</th>
                     <th>Date and time</th>
+                    <th>GameId</th>
                     <th>Duration</th>
                     <th>Number of rounds</th>
                     <th>Role played</th>
