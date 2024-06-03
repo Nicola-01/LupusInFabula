@@ -53,6 +53,7 @@ public enum ErrorCode {
     // friend
     FRIEND_ALREADY_EXIST("EFRN1", HttpServletResponse.SC_CONFLICT, "The friend is already in the list"),
     FRIEND_NOT_EXIST("EFRN2", HttpServletResponse.SC_BAD_REQUEST, "The friend is not in the list"),
+    INVALID_FRIEND("EFRN3", HttpServletResponse.SC_BAD_REQUEST, "Cannot add yourself as a friend"),
 
     //game logs
     LOGS_NOT_EXIST("EGLN1", HttpServletResponse.SC_NOT_FOUND, "Logs not found."),

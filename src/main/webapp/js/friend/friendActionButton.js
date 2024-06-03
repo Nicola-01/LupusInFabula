@@ -13,32 +13,35 @@ function checkFriend(req){
         if (req.status === HTTP_STATUS_OK) {
             let list = JSON.parse(req.responseText)[JSON_resource_list];
             console.log(list);
-
+            let playerUsername = localStorage.getItem("playerName").toLowerCase();
+            console.log(playerUsername);
             let path = window.location.pathname;
             let targetUsername = path.split("/")[3];
             console.log("targetUsername: " + targetUsername);
-            let isUserFound = list.some(friend => friend['friend'].username === targetUsername);
-            console.log("isUserFound: " + isUserFound)
-            let button = document.createElement('button');
-            button.id = "friendActionButton";
-            button.classList.add("ms-auto")
-            if (isUserFound){
-                button.textContent = 'Remove friend';
-                button.classList.add('remove')
-                button.addEventListener('click', function(){
-                    removeFriend(targetUsername)
-                });
-            }else{
-                button.textContent = 'Add friend';
-                button.classList.remove('remove')
-                button.addEventListener('click', function(){
-                    addFriend(targetUsername)
-                });
+            if (playerUsername !== targetUsername) {
+                let isUserFound = list.some(friend => friend['friend'].username === targetUsername);
+                console.log("isUserFound: " + isUserFound)
+                let button = document.createElement('button');
+                button.id = "friendActionButton";
+                button.classList.add("ms-auto")
+                if (isUserFound) {
+                    button.textContent = 'Remove friend';
+                    button.classList.add('remove')
+                    button.addEventListener('click', function () {
+                        removeFriend(targetUsername)
+                    });
+                } else {
+                    button.textContent = 'Add friend';
+                    button.classList.remove('remove')
+                    button.addEventListener('click', function () {
+                        addFriend(targetUsername)
+                    });
+                }
+                let container = document.getElementById('friendButtonContainer');
+                container.appendChild(button);
             }
-            let container = document.getElementById('friendButtonContainer');
-            container.appendChild(button);
         }
-        }
+    }
 }
 
 function removeFriend(username){

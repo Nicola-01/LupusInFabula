@@ -56,6 +56,14 @@ public class AddFriendRR extends AbstractRR {
             // creates a new DAO for accessing the database and stores the employee
             Friend f = new AddFriendDAO(ds.getConnection(), player.getUsername(), friend_username, date).access().getOutputParam();
 
+            if (player.getUsername().equals(friend_username)) {
+                ErrorCode ec = ErrorCode.INVALID_FRIEND;
+                res.setStatus(ec.getHTTPCode());
+                m = new Message("Cannot add yourself as a friend.", ec.getErrorCode(), "Invalid operation: a player cannot be friends with themselves.");
+                m.toJSON(res.getOutputStream());
+                return;
+            }
+
             if (f != null) {
                 LOGGER.info("Friend successfully added.");
 
@@ -75,15 +83,15 @@ public class AddFriendRR extends AbstractRR {
             if ("23505".equals(ex.getSQLState())) {
                 ErrorCode ec = ErrorCode.FRIEND_ALREADY_EXIST;
                 res.setStatus(ec.getHTTPCode());
-                LOGGER.warn("Cannot add the friend: it already exists.");
-                m = new Message("Cannot add the friend: it already exists.", ec.getErrorCode(), ex.getMessage());
+                LOGGER.warn("This player is already your friend.");
+                m = new Message("This player is already your friend.", ec.getErrorCode(), ex.getMessage());
                 m.toJSON(res.getOutputStream());
             } else if (ex.getMessage().contains("is_friend_with_friend_username_fkey")) {
 
                 ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                 res.setStatus(ec.getHTTPCode());
-                LOGGER.warn("Cannot add the friend: friend username does not exist in the 'player' table.");
-                m = new Message("Cannot add the friend: friend username does not exist in the 'player' table.", ec.getErrorCode(), ex.getMessage());
+                LOGGER.warn("Cannot add the friend: friend username doesn't exist.");
+                m = new Message("Cannot add the friend: friend username doesn't exist.", ec.getErrorCode(), ex.getMessage());
                 m.toJSON(res.getOutputStream());
             } else {
                 ErrorCode ec = ErrorCode.DATABASE_ERROR;

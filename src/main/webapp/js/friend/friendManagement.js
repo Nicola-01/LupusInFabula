@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
 
     loadFriendList();
-    playersToIgnore.push(localStorage.getItem("playerName").toLowerCase());
 
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
@@ -31,6 +30,9 @@ function fillFriendsList(req){
 
                 tbody.innerHTML = "";
                 playersToIgnore = [];
+                playersToIgnore.push(localStorage.getItem("playerName").toLowerCase());
+                console.log("Player: " + localStorage.getItem("playerName").toLowerCase());
+
                 for(var i=0; i < list.length;i++) {
                     let friend = list[i]['friend'];
 
