@@ -61,7 +61,7 @@ function getLogs(req) {
 
             for (let i = 0; i < list.length; i++) {
                 let log = list[i]['PlaysJoinGame'];
-                var row = tbody.insertRow();
+                var row = tbody.insertRow(0);
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
