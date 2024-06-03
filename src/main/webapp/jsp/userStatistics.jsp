@@ -32,15 +32,25 @@
 <div id="error_message" style="display: none;"></div>
 
 
-
 <main class="container flex-grow-1" id="main_class" style="display: none">
 
 
-    <div class="container">
-        <div id="friendsPage">
-            <div id="addFriend" class="row justify-content-center">
-                <div class="col-9" style="position: absolute;">
-                    <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
+    <%--    <div class="container">--%>
+    <%--        <div id="friendsPage">--%>
+    <%--            <div id="addFriend" class="row justify-content-center">--%>
+    <%--                --%>
+    <%--            </div>--%>
+    <%--        </div>--%>
+    <%--    </div>--%>
+
+    <div class="row justify-content-center">
+        <div class="=col-9" style="position:relative">
+            <div class="search m-2">
+                <input id="playerUsername" placeholder="Search a player..." type="text" data-1p-ignore data-bwignore
+                       data-lpignore="true" data-form-type="other">
+                <button id="addPlayer" class="searchUser">Search!</button>
+                <div id="playerListPopup" class="popup">
+                    <ul id="playerList" class="player-list"></ul>
                 </div>
             </div>
         </div>
