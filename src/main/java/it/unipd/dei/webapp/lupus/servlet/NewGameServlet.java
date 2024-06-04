@@ -10,6 +10,9 @@ public class NewGameServlet extends AbstractDatabaseServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("/jsp/game/createNewGame.jsp").forward(req, resp);
+        if (req.getSession(false) == null)
+            resp.sendRedirect(req.getContextPath() + "/login");
+        else
+            req.getRequestDispatcher("/jsp/game/createNewGame.jsp").forward(req, resp);
     }
 }

@@ -42,51 +42,47 @@ public class UserPageServlet extends AbstractDatabaseServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        Message m = null;
-        String uri = req.getRequestURI();
-        Player player_user;
+        if (req.getSession(false) == null || req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE) == null)
+            resp.sendRedirect(req.getContextPath() + "/login");
+        else {
 
-        try {
-            if (uri.endsWith("/me"))
-                req.getRequestDispatcher("/jsp/user/userPage.jsp").forward(req, resp);
-            else {
+            Message m = null;
+            String uri = req.getRequestURI();
+            Player player_user;
 
-                String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
+            try {
+                if (uri.endsWith("/me"))
+                    req.getRequestDispatcher("/jsp/user/userPage.jsp").forward(req, resp);
+                else {
 
-                if (req.getSession(false) != null) {
-                    if (req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE) != null) {
-                        if (username.isEmpty()) {
-                            String username_requested = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-                            resp.sendRedirect(req.getContextPath() + "/habitant/" + username_requested);
+                    String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
+
+
+                    if (username.isEmpty()) {
+                        String username_requested = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                        resp.sendRedirect(req.getContextPath() + "/habitant/" + username_requested);
+                        return;
+                    } else {
+                        player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
+                        if (player_user == null) {
+                            req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
                             return;
-
-                        } else {
-                            player_user = new SearchPlayerByUsernameDAO(getConnection(), username).access().getOutputParam();
-                            if (player_user == null) {
-                                req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
-                                return;
-                            }
-                            if (!username.equals(player_user.getUsername())) {
-                                resp.sendRedirect(req.getContextPath() + "/habitant/" + player_user.getUsername());
-                                return;
-                            }
-
+                        }
+                        if (!username.equals(player_user.getUsername())) {
+                            resp.sendRedirect(req.getContextPath() + "/habitant/" + player_user.getUsername());
+                            return;
                         }
                     }
+
                     req.setAttribute("player", username);
                     req.getRequestDispatcher("/jsp/userStatistics.jsp").forward(req, resp);
+
                 }
-
+            } catch (SQLException e) {
+                ErrorCode er = ErrorCode.INTERNAL_ERROR;
+                resp.setStatus(er.getHTTPCode());
+                LOGGER.error("stacktrace:", e);
             }
-        } catch (
-                SQLException e) {
-            ErrorCode er = ErrorCode.INTERNAL_ERROR;
-            resp.
-
-                    setStatus(er.getHTTPCode());
-            LOGGER.
-
-                    error("stacktrace:", e);
         }
     }
 }

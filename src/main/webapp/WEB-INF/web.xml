@@ -52,11 +52,6 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.CurrentGameServlet</servlet-class>
     </servlet>
 
-    <servlet>
-        <servlet-name>CardsServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.CardsServlet</servlet-class>
-    </servlet>
-
     <servlet-mapping>
         <servlet-name>NewGameServlet</servlet-name>
         <url-pattern>/newVillage</url-pattern>
@@ -73,21 +68,6 @@
         <url-pattern>/home</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>CardsServlet</servlet-name>
-        <url-pattern>/cards</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>FriendPageServlet</servlet-name>
-        <servlet-class>it.unipd.dei.webapp.lupus.servlet.FriendPageServlet</servlet-class>
-    </servlet>
-
-    <servlet-mapping>
-        <servlet-name>FriendPageServlet</servlet-name>
-        <url-pattern>/tmp/friend</url-pattern>
-    </servlet-mapping>
-
     <servlet>
         <servlet-name>UserPageServlet</servlet-name>
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserPageServlet</servlet-class>
@@ -97,8 +77,6 @@
         <servlet-name>UserPageServlet</servlet-name>
         <url-pattern>/habitant/*</url-pattern>
     </servlet-mapping>
-
-<!--    finish test area-->
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>

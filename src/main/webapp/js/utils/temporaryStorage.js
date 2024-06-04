@@ -10,7 +10,7 @@ function retrieveData(key) {
     const nameEQ = key + "=";
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
-        let c = cookies[i];
+        let c = cookies[i].trim();
         if (c.indexOf(nameEQ) === 0)
             return JSON.parse(c.substring(nameEQ.length, c.length));
     }
