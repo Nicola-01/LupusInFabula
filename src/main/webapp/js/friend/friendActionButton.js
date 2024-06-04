@@ -13,7 +13,7 @@ function checkFriend(req){
         if (req.status === HTTP_STATUS_OK) {
             let list = JSON.parse(req.responseText)[JSON_resource_list];
             console.log(list);
-            let playerUsername = localStorage.getItem("playerName").toLowerCase();
+            let playerUsername = localStorage.getItem("playerName");
             console.log(playerUsername);
             let path = window.location.pathname;
             let targetUsername = path.split("/")[3];

@@ -71,3 +71,7 @@ table.general_statics tr {
 #friendActionButton:hover{
     transform: scale(1.05);
 }
+
+#friendButtonContainer{
+    flex: fit-content;
+}
