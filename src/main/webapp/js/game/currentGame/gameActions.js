@@ -665,7 +665,7 @@ function fillDayActions(list) {
                 playersOrder.splice(0, 1);
 
                 gameActions.appendChild(plagueDiv);
-                plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true));
+                plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, true));
                 addPlaguesListener();
                 break;
             default:
@@ -773,13 +773,17 @@ function updatePlaguesVictims() {
     let nPlayers = playersOrder.length;
     let indexOriginal = playersOrder.indexOf(original);
 
-    plagueDiv.appendChild(createActionWrapperForPlague(original, playersPlague[indexOriginal].value, true))
+    let plagueCB = createActionWrapperForPlague(original, true);
+    plagueDiv.appendChild(plagueCB)
+    plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[indexOriginal].value;
 
     let insertPlayers = 1
     // next player
     for (let i = indexOriginal; i < nPlayers + indexOriginal - 1; i++) {
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
-            plagueDiv.appendChild(createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers], playersPlague[(i + 1) % nPlayers].value))
+            plagueCB = createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers]);
+            plagueDiv.appendChild(plagueCB);
+            plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[(i + 1) % nPlayers].value;
             insertPlayers++;
         } else break;
     }
@@ -789,14 +793,16 @@ function updatePlaguesVictims() {
         if (insertPlayers >= nPlayers)
             break
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
-            plagueDiv.prepend(createActionWrapperForPlague(playersOrder[(i + nPlayers - 1) % nPlayers], playersPlague[(i + nPlayers - 1) % nPlayers].value))
+            plagueCB = createActionWrapperForPlague(playersOrder[(i + nPlayers - 1) % nPlayers])
+            plagueDiv.prepend(plagueCB);
+            plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[(i + nPlayers - 1) % nPlayers].value;
             insertPlayers++;
         } else break;
     }
     addPlaguesListener();
 }
 
-function createActionWrapperForPlague(plaguedPlayer, checked, original = false) {
+function createActionWrapperForPlague(plaguedPlayer, original = false) {
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
 
@@ -812,7 +818,6 @@ function createActionWrapperForPlague(plaguedPlayer, checked, original = false) 
     if (original)
         checkBox.classList.add("originalPlagued")
     checkBox.setAttribute("player", plaguedPlayer);
-    checkBox.checked = checked;
     checkBox.classList.add("inp-cbx", "plague_CB") //), "col-12", "col-sm-4", "col-md-5");
 
     actionWrapper.appendChild(wrapPlaguedCheckBox(checkBox));
@@ -821,7 +826,7 @@ function createActionWrapperForPlague(plaguedPlayer, checked, original = false) 
 }
 
 function addPlaguesListener() {
-    const plaguedCB = document.querySelectorAll('[id*="_plaguedCB"]')
+    const plaguedCB = document.getElementsByClassName('plague_CB')
 
     for (let i = 0; i < plaguedCB.length; i++) {
         plaguedCB[i].addEventListener('click', updatePlaguesVictims)

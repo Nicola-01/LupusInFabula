@@ -123,6 +123,8 @@ hr {
     border-radius: 0.6rem;
 }
 
+/*plague checkbox*/
+
 .checkbox-wrapper {
     display: flex;
 }
@@ -201,30 +203,4 @@ hr {
     height: 0;
     pointer-events: none;
     user-select: none;
-}
-@media screen and (max-width: 640px) {
-    .checkbox-wrapper .cbx {
-        width: 100%;
-        display: inline-block;
-    }
-}
-@-moz-keyframes wave-4 {
-    50% {
-        transform: scale(0.9);
-    }
-}
-@-webkit-keyframes wave-4 {
-    50% {
-        transform: scale(0.9);
-    }
-}
-@-o-keyframes wave-4 {
-    50% {
-        transform: scale(0.9);
-    }
-}
-@keyframes wave-4 {
-    50% {
-        transform: scale(0.9);
-    }
 }
