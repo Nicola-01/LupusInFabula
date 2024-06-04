@@ -74,7 +74,7 @@ public class UserPageServlet extends AbstractDatabaseServlet {
                         }
                     }
                     req.setAttribute("player", username);
-                    req.getRequestDispatcher("/jsp/userStatistics.jsp").forward(req, resp);
+                    req.getRequestDispatcher("/jsp/user/userStatistics.jsp").forward(req, resp);
                 }
 
             }

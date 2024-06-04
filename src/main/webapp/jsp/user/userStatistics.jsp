@@ -34,19 +34,10 @@
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
 
-
-    <%--    <div class="container">--%>
-    <%--        <div id="friendsPage">--%>
-    <%--            <div id="addFriend" class="row justify-content-center">--%>
-    <%--                --%>
-    <%--            </div>--%>
-    <%--        </div>--%>
-    <%--    </div>--%>
-
     <div class="row justify-content-center">
-        <div class="=col-9" style="position:relative">
+        <div class="=col-9 mt-5" style="position:relative">
             <div class="search m-2">
-                <input id="playerUsername" placeholder="Search a player..." type="text" data-1p-ignore data-bwignore
+                <input id="playerUsername" placeholder="Search a player to see its statics..." type="text" data-1p-ignore data-bwignore
                        data-lpignore="true" data-form-type="other">
                 <button id="addPlayer" class="searchUser">Search!</button>
                 <div id="playerListPopup" class="popup">
@@ -58,8 +49,10 @@
 
     <div class="row mb-2">
         <div class="col-9">
-            <h1 class="mb-0">Statistics and history of <b><%= request.getAttribute("player") %>
-            </b></h1>
+            <h1 class="mb-0" id="title">
+<%--                Statistics and history of <b><%= request.getAttribute("player") %></b>    --%>
+
+            </h1>
         </div>
         <div class="col-3" id="friendButtonContainer"></div>
     </div>

@@ -8,9 +8,44 @@
 
 document.addEventListener('DOMContentLoaded', function (event) {
     var username = document.getElementById('username_requested').innerText;
+    setHeading(username);
     loadLogs(username);
     loadStatics(username);
+
 });
+
+/**
+* Manage the title (h1) of the page.
+*
+*/
+function setHeading(username){
+    var heading = document.getElementById("title");
+
+    if (username === document.getElementById("username_logged").innerText){
+        heading.innerHTML = 'Your statistics and history'
+    }
+    else{
+        heading.innerHTML = 'Statistics and history of <b>' + username + '</b>';
+    }
+
+}
+
+
+/**
+ * Manage the search of a player redirecting to its statistics page if found.
+ *
+ */
+function addPlayerToTable() {
+
+    var username = document.getElementById("playerUsername").value;
+    if (username.trim() !== "") {
+        window.location.href = contextPath + "habitant/" + username;
+    } else {
+        console.error("Username cannot be empty");
+    }
+
+}
+
 
 /**
  * Fetch and display logs for a user.
@@ -238,7 +273,7 @@ function getGeneralStats(req) {
             }
 
             var totalGamesPlayed = list.length - totalGamesAsMaster - totalPendingGame;
-            var ratio = ((totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3)*100) + "%";
+            var ratio = ((totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3) * 100) + "%";
 
             let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed + totalPendingGame],
                 ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed - totalGamesWon],
