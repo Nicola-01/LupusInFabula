@@ -77,8 +77,6 @@ public class UserPageServlet extends AbstractDatabaseServlet {
                     req.setAttribute("player", username);
                     req.getRequestDispatcher("/jsp/user/userStatistics.jsp").forward(req, resp);
                 }
-
-                }
             } catch (SQLException e) {
                 ErrorCode er = ErrorCode.INTERNAL_ERROR;
                 resp.setStatus(er.getHTTPCode());
