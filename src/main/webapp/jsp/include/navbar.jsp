@@ -24,32 +24,74 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
-        <div class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link mx-3" aria-current="page" href="<c:url value="/home"/>">
-                    Home
-                </a>
-            <li class="nav-item">
-                <a class="nav-link mx-3" href="<c:url value="/habitant/"/>">Stats&History</a>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle mx-3" href="#" role="button" data-bs-toggle="dropdown"
-                   aria-expanded="false">
-                    Game
-                </a>
-                <ul class="dropdown-menu mx-2 mx-md-0">
-                    <li><a class="dropdown-item" href="<c:url value="/rules"/>">Rulebook</a></li>
-                    <hr class="dropdown-divider">
-                    <li><a class="dropdown-item" href="<c:url value="/newVillage"/>">Create a village</a></li>
-                    <li><a class="dropdown-item" href="<c:url value="/village"/>">Join your village</a></li>
-                </ul>
-            </li>
-            <div class="d-flex d-md-none pb-2 text-center nav-item mx-2">
-                <span class="navigation__group">
-                    <a class="profile nav-link mx-2">Account</a>
-                </span>
+        <div class="container-fluid">
+            <div class="row justify-content-start">
+                <div class="row justify-content-between">
+
+                    <!-- First column with navigation links -->
+                    <div class="col-4 col-md-5 text-left">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <a class="nav-link mx-3" aria-current="page" href="<c:url value='/home'/>">
+                                    Home
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mx-3" href="<c:url value='/habitant/'/>">Stats&History</a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle mx-3" href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Game
+                                </a>
+                                <ul class="dropdown-menu mx-2 mx-md-0">
+                                    <li><a class="dropdown-item" href="<c:url value='/rules'/>">Rulebook</a></li>
+                                    <hr class="dropdown-divider">
+                                    <li><a class="dropdown-item" href="<c:url value='/newVillage'/>">Create a village</a></li>
+                                    <li><a class="dropdown-item" href="<c:url value='/village'/>">Join your village</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- Second column with account link -->
+                    <div class="col-4 col-md-5 text-end">
+                        <ul class="navbar-nav">
+                            <li class="nav-item">
+                                <c:if test="${not empty sessionScope}">
+                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/habitant/me">My Profile</a>
+                                </c:if>
+                                <c:if test="${empty sessionScope}">
+                                    <p>Not Logged In</p>
+                                </c:if>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle mx-3" href="#" role="button"
+                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                    Theme
+                                </a>
+                                <ul class="dropdown-menu mx-2 mx-md-0" id="theme">
+                                    <li><a class="dropdown-item" theme="light">Light</a></li>
+                                    <li><a class="dropdown-item" theme="dark">Dark</a></li>
+                                    <li><a class="dropdown-item" theme="auto">Auto</a></li>
+                                    <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <c:if test="${not empty sessionScope}">
+                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/lupus/logout">Log Out</a>
+                                </c:if>
+                                <c:if test="${empty sessionScope}">
+                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/lupus/login">Log In</a>
+                                </c:if>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
+    </div>
+
     </div>
 
     <div class="d-flex w-50 order-last px-3 py-2 p-lg-0 mx-0 navbar-brand justify-content-end d-none d-md-flex">
@@ -61,71 +103,88 @@
                 <span class="hamburger hamburger-3"></span>
             </label>
 
-            <a href="${pageContext.request.contextPath}/habitant/me" class="menu-item"> <svg xmlns="http://www.w3.org/2000/svg" height="24" width="13.69" viewBox="0 0 448 512" style="vertical-align: unset;"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/></svg> </a>
-            <button id="theme-button" class="menu-item"> <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 512 512" style="vertical-align: unset;"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/></svg> </button>
+            <a href="${pageContext.request.contextPath}/habitant/me" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="13.69" viewBox="0 0 448 512"
+                     style="vertical-align: unset;">
+                    <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path fill="#ffffff"
+                          d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"/>
+                </svg>
+            </a>
+            <button id="theme-button" class="menu-item">
+                <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 512 512"
+                     style="vertical-align: unset;">
+                    <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path fill="#ffffff"
+                          d="M512 256c0 .9 0 1.8 0 2.7c-.4 36.5-33.6 61.3-70.1 61.3H344c-26.5 0-48 21.5-48 48c0 3.4 .4 6.7 1 9.9c2.1 10.2 6.5 20 10.8 29.9c6.1 13.8 12.1 27.5 12.1 42c0 31.8-21.6 60.7-53.4 62c-3.5 .1-7 .2-10.6 .2C114.6 512 0 397.4 0 256S114.6 0 256 0S512 114.6 512 256zM128 288a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm0-96a32 32 0 1 0 0-64 32 32 0 1 0 0 64zM288 96a32 32 0 1 0 -64 0 32 32 0 1 0 64 0zm96 96a32 32 0 1 0 0-64 32 32 0 1 0 0 64z"/>
+                </svg>
+            </button>
             <c:if test="${not empty sessionScope.user}">
-                <a href="/lupus/logout" id="logout" class="menu-item"> <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 512 512" style="vertical-align: unset;"><!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path fill="#ffffff" d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/></svg> </a>
+                <a href="/lupus/logout" id="logout" class="menu-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 512 512"
+                         style="vertical-align: unset;">
+                        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path fill="#ffffff"
+                              d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z"/>
+                    </svg>
+                </a>
             </c:if>
             <c:if test="${empty sessionScope.user}">
-                <a href="/lupus/login" id="login" class="menu-item"> </a>
+                <a href="/lupus/login" id="login" class="menu-item">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24" width="18" viewBox="0 0 512 512"
+                         style="vertical-align: unset;">
+                        <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path fill="#ffffff"
+                              d="M217.9 105.9L340.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L217.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1L32 320c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM352 416l64 0c17.7 0 32-14.3 32-32l0-256c0-17.7-14.3-32-32-32l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32l64 0c53 0 96 43 96 96l0 256c0 53-43 96-96 96l-64 0c-17.7 0-32-14.3-32-32s14.3-32 32-32z"/>
+                    </svg>
+                </a>
             </c:if>
         </div>
     </div>
 
-<%--    <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">--%>
-<%--        <div class="dropdown__group">--%>
-<%--            <c:if test="${not empty sessionScope.user}">--%>
-<%--                <div class="user-name">${sessionScope.user.getUsername()}</div>--%>
-<%--                <div class="email">${sessionScope.user.getEmail()}</div>--%>
-<%--            </c:if>--%>
-<%--            <c:if test="${empty sessionScope.user}">--%>
-<%--                <div class="user-name">Not Logged In</div>--%>
-<%--            </c:if>--%>
-<%--        </div>--%>
-<%--        <hr class="divider">--%>
-<%--        <nav class="profile_nav">--%>
-<%--            <ul>--%>
-<%--                <li>--%>
-<%--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--navbar-inverted-bg)"--%>
-<%--                         viewBox="0 0 448 512">--%>
-<%--                        <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/>--%>
-<%--                    </svg>--%>
-<%--                    <a href="${pageContext.request.contextPath}/habitant/me"> My Profile</a>--%>
-<%--                </li>--%>
-<%--                <li>--%>
-<%--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--navbar-inverted-bg)"--%>
-<%--                         viewBox="0 0 512 512">--%>
-<%--                        <path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>--%>
-<%--                    </svg>--%>
-<%--                    <div class="dropup">--%>
-<%--                        <a class="dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"--%>
-<%--                           aria-expanded="false">--%>
-<%--                            Theme--%>
-<%--                        </a>--%>
-<%--                        <ul class="dropdown-menu" id="theme" style="font-size: 0.95rem; padding: 0;">--%>
-<%--                            <li><a class="dropdown-item" theme="light">Light</a></li>--%>
-<%--                            <li><a class="dropdown-item" theme="dark">Dark</a></li>--%>
-<%--                            <li><a class="dropdown-item" theme="auto">Auto</a></li>--%>
-<%--                            <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>--%>
-<%--                        </ul>--%>
-<%--                    </div>--%>
-<%--                </li>--%>
-<%--            </ul>--%>
-<%--            <hr class="divider">--%>
-<%--            <ul>--%>
-<%--                <li style="color: #E3452F;">--%>
-<%--                    <c:if test="${not empty sessionScope.user}">--%>
-<%--                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogOut"><a--%>
-<%--                            href="/lupus/logout">Logout</a>--%>
-<%--                    </c:if>--%>
-<%--                    <c:if test="${empty sessionScope.user}">--%>
-<%--                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogIn"><a--%>
-<%--                            href="/lupus/login">Login</a>--%>
-<%--                    </c:if>--%>
-<%--                </li>--%>
-<%--            </ul>--%>
-<%--        </nav>--%>
-<%--    </div>--%>
+    <%--    <div class="dropdown__wrapper hide dropdown__wrapper--fade-in none">--%>
+    <%--        <div class="dropdown__group">--%>
+    <%--            <c:if test="${not empty sessionScope.user}">--%>
+    <%--                <div class="user-name">${sessionScope.user.getUsername()}</div>--%>
+    <%--                <div class="email">${sessionScope.user.getEmail()}</div>--%>
+    <%--            </c:if>--%>
+    <%--            <c:if test="${empty sessionScope.user}">--%>
+    <%--                <div class="user-name">Not Logged In</div>--%>
+    <%--            </c:if>--%>
+    <%--        </div>--%>
+    <%--        <hr class="divider">--%>
+    <%--        <nav class="profile_nav">--%>
+    <%--            <ul>--%>
+    <%--                <li>--%>
+    <%--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--navbar-inverted-bg)"--%>
+    <%--                         viewBox="0 0 448 512">--%>
+    <%--                        <path d="M304 128a80 80 0 1 0 -160 0 80 80 0 1 0 160 0zM96 128a128 128 0 1 1 256 0A128 128 0 1 1 96 128zM49.3 464H398.7c-8.9-63.3-63.3-112-129-112H178.3c-65.7 0-120.1 48.7-129 112zM0 482.3C0 383.8 79.8 304 178.3 304h91.4C368.2 304 448 383.8 448 482.3c0 16.4-13.3 29.7-29.7 29.7H29.7C13.3 512 0 498.7 0 482.3z"/>--%>
+    <%--                    </svg>--%>
+    <%--                    <a href="${pageContext.request.contextPath}/habitant/me"> My Profile</a>--%>
+    <%--                </li>--%>
+    <%--                <li>--%>
+    <%--                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="var(--navbar-inverted-bg)"--%>
+    <%--                         viewBox="0 0 512 512">--%>
+    <%--                        <path d="M448 256c0-106-86-192-192-192V448c106 0 192-86 192-192zM0 256a256 256 0 1 1 512 0A256 256 0 1 1 0 256z"/>--%>
+    <%--                    </svg>--%>
+
+    <%--                </li>--%>
+    <%--            </ul>--%>
+    <%--            <hr class="divider">--%>
+    <%--            <ul>--%>
+    <%--                <li style="color: #E3452F;">--%>
+    <%--                    <c:if test="${not empty sessionScope.user}">--%>
+    <%--                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogOut"><a--%>
+    <%--                            href="/lupus/logout">Logout</a>--%>
+    <%--                    </c:if>--%>
+    <%--                    <c:if test="${empty sessionScope.user}">--%>
+    <%--                        <img src="${pageContext.request.contextPath}/media/navbar/logout.svg" alt="LogIn"><a--%>
+    <%--                            href="/lupus/login">Login</a>--%>
+    <%--                    </c:if>--%>
+    <%--                </li>--%>
+    <%--            </ul>--%>
+    <%--        </nav>--%>
+    <%--    </div>--%>
 
 </nav>
 
