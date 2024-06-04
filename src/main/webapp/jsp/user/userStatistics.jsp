@@ -15,13 +15,13 @@
     <title>Lupus In Fabula - Logs and Statistics of user</title>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/userStatistics.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
     <%--    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/common.css">--%>
 </head>
 
 
 <body class="d-flex flex-column">
 <jsp:include page="/jsp/include/navbar.jsp"/>
-
 
 <div id="username_requested" style="display: none;"><%= request.getAttribute("player")%>
 </div>
@@ -31,21 +31,39 @@
 
 <div id="error_message" style="display: none;"></div>
 
+
 <main class="container flex-grow-1" id="main_class" style="display: none">
+
+    <div class="row justify-content-center">
+        <div class="=col-9 mt-5" style="position:relative">
+            <div class="search m-2">
+                <input id="playerUsername" placeholder="Search a player to see its statics..." type="text" data-1p-ignore data-bwignore
+                       data-lpignore="true" data-form-type="other">
+                <button id="addPlayer" class="searchUser">Search!</button>
+                <div id="playerListPopup" class="popup">
+                    <ul id="playerList" class="player-list"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-2">
         <div class="col-9">
-            <h1 class="mb-0">Statistics and history of <b><%= request.getAttribute("player") %></b></h1>
+            <h1 class="mb-0" id="title">
+<%--                Statistics and history of <b><%= request.getAttribute("player") %></b>    --%>
+
+            </h1>
         </div>
         <div class="col-3" id="friendButtonContainer"></div>
     </div>
-    
+
     <div class="internal-container p-3" id="background_container">
-<%--         style="display: none">--%>
+        <%--         style="display: none">--%>
 
 
         <div id="block_container">
 
-            <h2>Statistics <a title="You can sort the table clicking on the name of the column">&#9432</a> </h2>
+            <h2>Statistics <a title="You can sort the table clicking on the name of the column">&#9432</a></h2>
 
             <div>
                 <div class="row">
@@ -119,6 +137,8 @@
 <script src="${pageContext.request.contextPath}/js/friend/friendActionButton.js"></script>
 <%--for pie chart--%>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="${pageContext.request.contextPath}/js/utils/searchPlayer.js"></script>
 
 
 </body>

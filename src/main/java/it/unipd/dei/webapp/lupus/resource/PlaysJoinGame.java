@@ -169,7 +169,8 @@ public class PlaysJoinGame extends AbstractResource {
         String duration = game_duration != null ? game_duration.toString() : "";
         jg.writeStringField("game_duration", duration);
         jg.writeNumberField("number_of_rounds", number_of_rounds);
-        jg.writeStringField("name", name);
+        String role_name = is_game_finished ? name : "****";
+        jg.writeStringField("name", role_name);
         jg.writeBooleanField("has_won", has_won);
         jg.writeBooleanField("is_game_finished", is_game_finished);
         jg.writeEndObject();
