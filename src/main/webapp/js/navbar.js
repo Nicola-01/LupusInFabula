@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-const responsiveThemeElements= document.querySelectorAll("#theme a");
+const responsiveThemeElements = document.querySelectorAll("#theme a");
 
 responsiveThemeElements.forEach(function (a) {
 
@@ -116,7 +116,7 @@ responsiveThemeElements.forEach(function (a) {
         a.classList.add("active");
 
         // Set the theme cookie based on the clicked anchor element's theme attribute
-        document.cookie = "theme=" + a.getAttribute("theme") + ";path=/;SameSite=Lax;";
+        setCookie("theme", a.getAttribute("theme"));
 
         // Reload the theme
         loadTheme();
