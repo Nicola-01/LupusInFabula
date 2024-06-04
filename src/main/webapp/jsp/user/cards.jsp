@@ -11,9 +11,11 @@
 
 <div id="imageContainer" class="row"></div>
 
-<form id="selectionForm">
-    <button type="submit">Submit</button>
-</form>
+<div class="button-container mb-0">
+    <button type="button" class="gradientButton" id="updateCard">
+        <span>Update the card</span>
+    </button>
+</div>
 
 
 <script src="${pageContext.request.contextPath}/js/user/cards.js"></script>

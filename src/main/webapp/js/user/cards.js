@@ -41,7 +41,7 @@ function loadImages()
 document.addEventListener("DOMContentLoaded", loadImages);
 
 
-document.getElementById("selectionForm").addEventListener("submit", function(event)
+document.getElementById("updateCard").addEventListener("click", function(event)
 {
     event.preventDefault();
 

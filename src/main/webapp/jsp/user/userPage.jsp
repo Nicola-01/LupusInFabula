@@ -36,6 +36,11 @@
         </label>
 
         <label class="radio col-6 col-sm-3">
+            <input type="radio" name="radio" value="playerCards">
+            <span>Cards</span>
+        </label>
+
+        <label class="radio col-6 col-sm-3">
             <input type="radio" name="radio" value="changeCredentials">
             <span>Change Credentials</span>
         </label>
@@ -44,25 +49,20 @@
             <input type="radio" name="radio" value="deleteAccount">
             <span>Delete Account</span>
         </label>
-
-        <label class="radio col-6 col-sm-3">
-            <input type="radio" name="radio" value="playerCards">
-            <span>Cards</span>
-        </label>
     </div>
     <div class="internal-container p-3">
                 <div id="contentBox">
             <div id="friendsPage">
                 <jsp:include page="/jsp/friend/friend.jsp"/>
             </div>
+            <div class="row" id="playerCardsPage" style="display: none;">
+                <jsp:include page="cards.jsp"/>
+            </div>
             <div class="row" id="changeCredentialsPage" style="display: none;">
                 <jsp:include page="updateCredential.jsp"/>
             </div>
             <div class="row" id="deleteAccountPage" style="display: none;">
                 <jsp:include page="deleteAccount.jsp"/>
-            </div>
-            <div class="row" id="playerCardsPage" style="display: none;">
-                <jsp:include page="cards.jsp"/>
             </div>
         </div>
     </div>
