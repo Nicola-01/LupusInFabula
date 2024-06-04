@@ -10,6 +10,10 @@
     color: var(--text-color);
 }
 
+.mainNavElements {
+    width: 365px;
+}
+
 #check-for-clicking {
     display: none;
 }

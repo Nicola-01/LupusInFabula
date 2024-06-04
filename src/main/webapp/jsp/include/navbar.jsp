@@ -29,14 +29,14 @@
                 <div class="row justify-content-between w-100 m-0">
 
                     <!-- First column with navigation links -->
-                    <div class="col-4 text-left">
-                        <ul class="navbar-nav ms-4">
-                            <li class="nav-item">
+                    <div class="col-4 col-md-12 text-left">
+                        <ul class="navbar-nav ms-4 mx-md-auto mainNavElements">
+                            <li class="nav-item mx-md-3">
                                 <a class="nav-link" aria-current="page" href="<c:url value='/home'/>">
                                     Home
                                 </a>
                             </li>
-                            <li class="nav-item dropdown order-md-last">
+                            <li class="nav-item mx-md-3 dropdown order-md-last">
                                 <a class="nav-link dropdown-toggle" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     Game
@@ -48,7 +48,7 @@
                                     <li><a class="dropdown-item" href="<c:url value='/village'/>">Join your village</a></li>
                                 </ul>
                             </li>
-                            <li class="nav-item">
+                            <li class="nav-item mx-md-3">
                                 <a class="nav-link" href="<c:url value='/habitant/'/>">Stats&History</a>
                             </li>
                         </ul>
