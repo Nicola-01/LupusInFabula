@@ -26,18 +26,18 @@
     <div id="headerNavbar" class="justify-content-center bg-blue order-2 w-50 navbar-collapse collapse">
         <div class="container-fluid">
             <div class="row justify-content-start">
-                <div class="row justify-content-between">
+                <div class="row justify-content-between w-100 m-0">
 
                     <!-- First column with navigation links -->
-                    <div class="col-4 col-md-5 text-left">
-                        <ul class="navbar-nav">
+                    <div class="col-4 text-left">
+                        <ul class="navbar-nav ms-4">
                             <li class="nav-item">
-                                <a class="nav-link mx-3" aria-current="page" href="<c:url value='/home'/>">
+                                <a class="nav-link" aria-current="page" href="<c:url value='/home'/>">
                                     Home
                                 </a>
                             </li>
                             <li class="nav-item dropdown order-md-last">
-                                <a class="nav-link dropdown-toggle mx-3" href="#" role="button"
+                                <a class="nav-link dropdown-toggle" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     Game
                                 </a>
@@ -49,23 +49,23 @@
                                 </ul>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link mx-3" href="<c:url value='/habitant/'/>">Stats&History</a>
+                                <a class="nav-link" href="<c:url value='/habitant/'/>">Stats&History</a>
                             </li>
                         </ul>
                     </div>
                     <!-- Second column with account link -->
-                    <div class="col-4 text-end d-md-none">
-                        <ul class="navbar-nav">
+                    <div class="col-8 text-end d-md-none">
+                        <ul class="navbar-nav me-4">
                             <li class="nav-item">
                                 <c:if test="${not empty sessionScope}">
-                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/habitant/me">My Profile</a>
+                                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/habitant/me">My Profile</a>
                                 </c:if>
                                 <c:if test="${empty sessionScope}">
-                                    <a class="nav-link mx-3 disabled">Not Logged In</a>
+                                    <a class="nav-link disabled">Not Logged In</a>
                                 </c:if>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle mx-3 left-icon" href="#" role="button"
+                                <a class="nav-link dropdown-toggle left-icon" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     Theme
                                 </a>
@@ -78,10 +78,10 @@
                             </li>
                             <li class="nav-item">
                                 <c:if test="${not empty sessionScope}">
-                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/logout">Log Out</a>
+                                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/logout">Log Out</a>
                                 </c:if>
                                 <c:if test="${empty sessionScope}">
-                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/login">Log In</a>
+                                    <a class="nav-link" aria-current="page" href="${pageContext.request.contextPath}/login">Log In</a>
                                 </c:if>
                             </li>
                         </ul>
