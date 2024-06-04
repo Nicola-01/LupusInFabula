@@ -328,7 +328,7 @@
 /***************************************/
 .menu {
     position: absolute;
-    right: 40px;
+    right: 25px;
     top: -12px;
 }
 
@@ -339,7 +339,7 @@
     height: 50px;
     margin-left: -30px;
     position: absolute;
-    top: 20px;
+    top: 15px;
     color: white;
     text-align: center;
     line-height: 60px;
@@ -412,9 +412,9 @@
     cursor: pointer;
 }
 
-.menu-open-button:hover {
-    transform: scale(1.2, 1.2) translate3d(0, 0, 0);
-}
+/*.menu-open-button:hover {*/
+/*    transform: scale(1.2, 1.2) translate3d(0, 0, 0);*/
+/*}*/
 
 .menu-open:checked + .menu-open-button {
     transition-timing-function: linear;
