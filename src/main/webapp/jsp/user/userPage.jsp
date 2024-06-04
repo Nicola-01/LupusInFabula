@@ -31,7 +31,7 @@
     <h1>Your personal area</h1>
     <div class="radio-inputs m-0 mb-2 row">
         <label class="radio col-6 col-sm-3">
-            <input type="radio" name="radio" value="friends" checked="">
+            <input type="radio" name="radio" value="friends">
             <span>Friends</span>
         </label>
 
@@ -52,7 +52,7 @@
     </div>
     <div class="internal-container p-3">
                 <div id="contentBox">
-            <div id="friendsPage">
+            <div id="friendsPage" style="display: none;">
                 <jsp:include page="/jsp/friend/friend.jsp"/>
             </div>
             <div class="row" id="playerCardsPage" style="display: none;">

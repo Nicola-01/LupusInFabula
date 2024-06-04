@@ -34,10 +34,11 @@
 
 <main class="container flex-grow-1" id="main_class" style="display: none">
 
-    <div class="row justify-content-center">
-        <div class="=col-9 mt-5" style="position:relative">
+    <div class="row justify-content-center my-4">
+        <div class="col-9 mt-5" style="position:relative">
             <div class="search m-2">
-                <input id="playerUsername" placeholder="Search a player to see its statics..." type="text" data-1p-ignore data-bwignore
+                <input id="playerUsername" placeholder="Search a player to see its statics..." type="text"
+                       data-1p-ignore data-bwignore
                        data-lpignore="true" data-form-type="other">
                 <button id="addPlayer" class="searchUser">Search!</button>
                 <div id="playerListPopup" class="popup">
@@ -50,7 +51,7 @@
     <div class="row mb-2">
         <div class="col-9">
             <h1 class="mb-0" id="title">
-<%--                Statistics and history of <b><%= request.getAttribute("player") %></b>    --%>
+                <%--                Statistics and history of <b><%= request.getAttribute("player") %></b>    --%>
 
             </h1>
         </div>

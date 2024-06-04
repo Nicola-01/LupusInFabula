@@ -73,5 +73,6 @@ table.general_statics tr {
 }
 
 #friendButtonContainer{
+    height: 45px;
     flex: fit-content;
 }

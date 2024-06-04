@@ -7,28 +7,68 @@ const playerCardsPage = document.getElementById('playerCardsPage');
 // Add event listener to the radio buttons
 const radioInputs = document.querySelectorAll('.radio-inputs input[type="radio"]');
 
+loadPage()
+
+function loadPage() {
+    let params = new URLSearchParams(window.location.search);
+    const page = params.get('page');
+
+    friendsPage.style.display = 'none';
+    changeCredentialsPage.style.display = 'none';
+    deleteAccountPage.style.display = 'none';
+    playerCardsPage.style.display = 'none';
+
+    switch (page) {
+        case 'friends':
+            friendsPage.style.display = 'block';
+            break;
+        case 'changeCredentials':
+            changeCredentialsPage.style.display = 'block';
+            break;
+        case 'deleteAccount':
+            deleteAccountPage.style.display = 'block';
+            break;
+        case 'playerCards':
+            playerCardsPage.style.display = 'block';
+            break;
+        default:
+            let url = new URL(location.protocol + '//' + location.host + location.pathname);
+            url.searchParams.set('page', 'friends');
+            window.location.href = url;
+            return;
+    }
+
+    document.querySelector("input[type='radio'][value=" + page + "]").checked = true
+}
+
 radioInputs.forEach(input => {
     input.addEventListener('change', function () {
-        // Toggle display based on selected radio button
-        friendsPage.style.display = 'none';
-        changeCredentialsPage.style.display = 'none';
-        deleteAccountPage.style.display = 'none';
-        playerCardsPage.style.display = 'none';
 
-        switch (this.value) {
-            case 'friends':
-                friendsPage.style.display = 'block';
-                break;
-            case 'changeCredentials':
-                changeCredentialsPage.style.display = 'block';
-                break;
-            case 'deleteAccount':
-                deleteAccountPage.style.display = 'block';
-                break;
-            case 'playerCards':
-                playerCardsPage.style.display = 'block';
-                break;
-        }
+        let url = new URL(contextPath + "habitant/me");
+        url.searchParams.set('page', this.value);
+        window.location.href = url;
+
+
+        // // Toggle display based on selected radio button
+        // friendsPage.style.display = 'none';
+        // changeCredentialsPage.style.display = 'none';
+        // deleteAccountPage.style.display = 'none';
+        // playerCardsPage.style.display = 'none';
+        //
+        // switch (this.value) {
+        //     case 'friends':
+        //         friendsPage.style.display = 'block';
+        //         break;
+        //     case 'changeCredentials':
+        //         changeCredentialsPage.style.display = 'block';
+        //         break;
+        //     case 'deleteAccount':
+        //         deleteAccountPage.style.display = 'block';
+        //         break;
+        //     case 'playerCards':
+        //         playerCardsPage.style.display = 'block';
+        //         break;
+        // }
 
     });
 });
