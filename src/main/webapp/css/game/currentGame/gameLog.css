@@ -2,6 +2,15 @@
     background-color: var(--navbar-bg);
 }
 
-#gameLog button:hover  {
+#gameLog button:hover {
     background-color: var(--navbar-second-bg);
+}
+
+.phase {
+    width: 75px;
+}
+
+.leftBorder {
+    border: 2px solid rgb(128, 128, 128);
+    border-style: hidden hidden hidden solid;
 }

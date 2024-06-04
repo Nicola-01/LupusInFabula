@@ -99,14 +99,14 @@ function colText(text, color) {return '<span style="color:'+ color + '">'+text+'
  */
 function getStringLog(user, typeOfAction, target, color)
 {
-    let s = 'The user '+user
+    let s = ''+user
 
     if(typeOfAction === 'dead')
         return s +' is ' + colText(typeOfAction, color)
     else if (typeOfAction === "last chance")
         return s +' use ' + colText(typeOfAction, color)
     else if (typeOfAction === "plague" && !endsWithMaster)
-        return 'The user' + target + ' got ' + colText('sick', color)
+        return target + ' has been ' + colText('infected', color)
     else
         return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target
 }
@@ -123,12 +123,12 @@ function getStringLog(user, typeOfAction, target, color)
  */
 function createActionBlock(phase, subphase, typeOfAction, user, target, color)
 {
-    return  '<li class="d-flex flex-column flex-md-row py-2"' +
-                '<span class="flex-shrink-0 width-13x me-md-4 d-block mb-3 mb-md-0 small text-muted">' +
+    return  '<li class="d-flex flex-column flex-md-row py-2">' +
+                '<span class="phase text-muted">' +
                     'ㅤ'+ phase + 'ㅤ'+
                 '</span>' +
-                '<div class="flex-grow-1 ps-4"' +
-                    ' <p class="mb-0" style="border: 2px solid rgb(128,128,128); border-style: hidden hidden hidden solid;">'+
+                '<div class="flex-grow-1 leftBorder">' +
+                    ' <p class="mb-0 ms-2">'+
                        getStringLog(user, typeOfAction, target, color) +
                     '</p>'+
                 '</div>'+
@@ -150,7 +150,7 @@ function createRowBlock(phase, round, text)
                         '<h3 class="m-0 me-2">' +
                         'ㅤ'+ capitalizeFirstLetter(phase) +
                         '</h3>' +
-                        '<div class="flex-grow-1 border-top m-0" style="border: 2px solid rgb(128,128,128)"></div>ㅤ' +
+                        '<div class="flex-grow-1 border-top m-0"></div>ㅤ' +
                         createButtonRoundExpand(round, text, phase) +
                     '</div>'+
                 '</div>'+
@@ -252,7 +252,7 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                 case 0:
                     phase = phase==="day" ?
                                     "Vote" :
-                                    "Special action"
+                                    "Action"
                 break;
                 case 1:
                     phase = "1° ballot"
@@ -262,7 +262,7 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                                     "2° ballot" :
                                     action==="dead" ?
                                         "Dead" :
-                                        "Special action break"
+                                        "Action"
                 break;
             }
             s = createActionBlock(phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
