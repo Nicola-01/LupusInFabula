@@ -59,12 +59,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
 
             // Get all anchor elements within the ul with id "theme"
-            const anchorElements = document.querySelectorAll(".menu-item-new");
+            const createdThemeElements = document.querySelectorAll(".menu-item-new");
 
-            anchorElements.forEach(function (a) {
+            createdThemeElements.forEach(function (a) {
                 a.addEventListener('click', function () {
                     // Remove "active" class from all anchor elements
-                    anchorElements.forEach(function (item) {
+                    createdThemeElements.forEach(function (item) {
                         item.classList.remove("active");
                     });
 
@@ -121,6 +121,26 @@ document.addEventListener('DOMContentLoaded', function () {
 //         dropdown.classList.add('dropdown__wrapper--fade-in');
 //     }
 // });
+
+const responsiveThemeElements= document.querySelectorAll("#theme a");
+
+responsiveThemeElements.forEach(function (a) {
+    a.addEventListener('click', function () {
+        // Remove "active" class from all anchor elements
+        responsiveThemeElements.forEach(function (item) {
+            item.classList.remove("active");
+        });
+
+        // Add "active" class to the clicked anchor element
+        a.classList.add("active");
+
+        // Set the theme cookie based on the clicked anchor element's theme attribute
+        document.cookie = "theme=" + a.getAttribute("theme") + ";path=/;SameSite=Lax;";
+
+        // Reload the theme
+        loadTheme();
+    })
+})
 
 loadTheme();
 

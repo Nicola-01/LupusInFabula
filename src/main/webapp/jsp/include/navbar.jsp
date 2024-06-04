@@ -36,9 +36,6 @@
                                     Home
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link mx-3" href="<c:url value='/habitant/'/>">Stats&History</a>
-                            </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle mx-3" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
@@ -50,6 +47,9 @@
                                     <li><a class="dropdown-item" href="<c:url value='/newVillage'/>">Create a village</a></li>
                                     <li><a class="dropdown-item" href="<c:url value='/village'/>">Join your village</a></li>
                                 </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link mx-3" href="<c:url value='/habitant/'/>">Stats&History</a>
                             </li>
                         </ul>
                     </div>
@@ -65,7 +65,7 @@
                                 </c:if>
                             </li>
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle mx-3" href="#" role="button"
+                                <a class="nav-link dropdown-toggle mx-3 left-icon" href="#" role="button"
                                    data-bs-toggle="dropdown" aria-expanded="false">
                                     Theme
                                 </a>
@@ -78,10 +78,10 @@
                             </li>
                             <li class="nav-item">
                                 <c:if test="${not empty sessionScope}">
-                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/lupus/logout">Log Out</a>
+                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/logout">Log Out</a>
                                 </c:if>
                                 <c:if test="${empty sessionScope}">
-                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/lupus/login">Log In</a>
+                                    <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/login">Log In</a>
                                 </c:if>
                             </li>
                         </ul>
@@ -120,7 +120,7 @@
                 </svg>
             </button>
             <c:if test="${not empty sessionScope.user}">
-                <a href="/lupus/logout" id="logout" class="menu-item">
+                <a href="${pageContext.request.contextPath}/logout" id="logout" class="menu-item">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="15" viewBox="0 0 512 512"
                          style="vertical-align: unset;">
                         <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
@@ -130,7 +130,7 @@
                 </a>
             </c:if>
             <c:if test="${empty sessionScope.user}">
-                <a href="/lupus/login" id="login" class="menu-item">
+                <a href="${pageContext.request.contextPath}/login" id="login" class="menu-item">
                     <svg xmlns="http://www.w3.org/2000/svg" height="24" width="18" viewBox="0 0 512 512"
                          style="vertical-align: unset;">
                         <!--!Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
