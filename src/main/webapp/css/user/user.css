@@ -32,3 +32,13 @@
     height: 45px !important;
     width: 45px !important;
 }
+
+.selected-card
+{
+    border: 8px solid var(--navbar-second-bg) !important;
+}
+
+.selected-card-cookie
+{
+    border: 8px solid var(--navbar-inverted-second-bg);
+}

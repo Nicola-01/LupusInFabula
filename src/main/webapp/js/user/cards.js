@@ -1,13 +1,22 @@
-
+function getCardCookie(name)
+{
+    let cookieArr = document.cookie.split(";");
+    for(let i = 0; i < cookieArr.length; i++) {
+        let cookiePair = cookieArr[i].split("=");
+        if(name == cookiePair[0].trim())
+        {
+            return decodeURIComponent(cookiePair[1]);
+        }
+    }
+    return null;
+}
 
 function loadImages()
 {
     var imagesFolder = "../media/cards/card_back/";
-
     var imageContainer = document.getElementById("imageContainer");
-    var selectionFieldset = document.getElementById("selectionFieldset");
-
     var imageFiles = ["fantasy1.png", "fantasy2.png", "yugioh.png", "standard_red.png", "standard_blue.png", "wooden.png", "japo_lightblue.png", "japo_white.png"];
+    var selectedBack = getCardCookie("selectedCard");
 
     imageFiles.forEach(function(imageName)
     {
@@ -25,6 +34,26 @@ function loadImages()
         radioBtn.type = "radio";
         radioBtn.name = "cardSelection";
         radioBtn.value = imageName;
+
+        img.addEventListener("click", function()
+        {
+            document.querySelectorAll('.img-fluid').forEach(function(img)
+            {
+                img.classList.remove('selected-card');
+            });
+
+            img.classList.add('selected-card');
+            radioBtn.checked = true;
+        });
+
+        // if there's already a selected card back, apply colored border
+        if(selectedBack)
+        {
+            if(selectedBack === imageName)
+            {
+                img.classList.add('selected-card-cookie');
+            }
+        }
 
         div_img.appendChild(img);
         div_img.appendChild(radioBtn);
@@ -46,6 +75,15 @@ document.getElementById("updateCard").addEventListener("click", function(event)
     event.preventDefault();
 
     var selectedCard = document.querySelector('input[name="cardSelection"]:checked').value;
+
+    document.querySelectorAll('.img-fluid').forEach(function(img)
+    {
+        img.classList.remove('selected-card');
+        img.classList.remove('selected-card-cookie');
+        if(img.alt === selectedCard)
+            img.classList.add('selected-card-cookie');
+    });
+
 
     document.cookie = "selectedCard=" + selectedCard + ";path=/; max-age=" + (60 * 60 * 24 * 365);  // 1 year
     var msg = "Card backing successfully updated to "+selectedCard.split('.').slice(0, -1).join('.');
