@@ -17,6 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //Buttons theme creation
     const themeButton = document.getElementById('theme-button');
     const logoutLink = document.getElementById('logout');
+    const loginLink = document.getElementById('login');
     const menuOpenCheckbox = document.getElementById('menu-open');
     let circlesCreated = false;
 
@@ -55,7 +56,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         break;
                 }
 
-                logoutLink.parentNode.insertBefore(newItem, logoutLink.nextSibling);
+                if (logoutLink !== null)
+                    logoutLink.parentNode.insertBefore(newItem, logoutLink.nextSibling);
+                if (loginLink !== null)
+                    loginLink.parentNode.insertBefore(newItem, loginLink.nextSibling);
             }
 
             // Get all anchor elements within the ul with class "menu-item-new"
@@ -95,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function () {
             circlesCreated = false;
         }
     });
-
 
 });
 
