@@ -2,30 +2,39 @@
 const friendsPage = document.getElementById('friendsPage');
 const changeCredentialsPage = document.getElementById('changeCredentialsPage');
 const deleteAccountPage = document.getElementById('deleteAccountPage');
+const playerCardsPage = document.getElementById('playerCardsPage');
 
 // Add event listener to the radio buttons
 const radioInputs = document.querySelectorAll('.radio-inputs input[type="radio"]');
+
 radioInputs.forEach(input => {
-    input.addEventListener('change', function() {
+    input.addEventListener('change', function () {
         // Toggle display based on selected radio button
-        if (this.value === 'friends') {
-            friendsPage.style.display = 'block';
-            changeCredentialsPage.style.display = 'none';
-            deleteAccountPage.style.display = 'none';
-        } else if (this.value === 'changeCredentials') {
-            friendsPage.style.display = 'none';
-            changeCredentialsPage.style.display = 'block';
-            deleteAccountPage.style.display = 'none';
-        } else if (this.value === 'deleteAccount') {
-            friendsPage.style.display = 'none';
-            changeCredentialsPage.style.display = 'none';
-            deleteAccountPage.style.display = 'block';
+        friendsPage.style.display = 'none';
+        changeCredentialsPage.style.display = 'none';
+        deleteAccountPage.style.display = 'none';
+        playerCardsPage.style.display = 'none';
+
+        switch (this.value) {
+            case 'friends':
+                friendsPage.style.display = 'block';
+                break;
+            case 'changeCredentials':
+                changeCredentialsPage.style.display = 'block';
+                break;
+            case 'deleteAccount':
+                deleteAccountPage.style.display = 'block';
+                break;
+            case 'playerCards':
+                playerCardsPage.style.display = 'block';
+                break;
         }
+
     });
 });
 
 const alertPlaceholderDelete = document.getElementById('liveAlertPlaceholderDelete');
-const alertPlaceholderPut= document.getElementById('liveAlertPlaceholderPut');
+const alertPlaceholderPut = document.getElementById('liveAlertPlaceholderPut');
 
 const appendAlert = (message, type, action) => {
     const wrapper = document.createElement('div');

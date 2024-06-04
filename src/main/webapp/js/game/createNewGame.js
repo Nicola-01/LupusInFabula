@@ -269,7 +269,7 @@ function gameCreation(req) {
         } else {
             let message = getMessage(req)
             if (message != null)
-                populateErrorMessage(message.message, message.errorCode, message.errorDetails);
+                populateErrorMessage("#errorMessage",message.message, message.errorCode, message.errorDetails);
             else {
                 let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
                 let msgs = ""
@@ -286,7 +286,7 @@ function gameCreation(req) {
                             errorDetails += "<br>" + message['error-details'];
                     }
                     // remove ", " from errorCodes and "<br>" form errorDetails
-                    populateErrorMessage(msgs, errorCodes.substring(2), errorDetails.substring(4));
+                    populateErrorMessage("#errorMessage", msgs, errorCodes.substring(2), errorDetails.substring(4));
                 }
             }
         }

@@ -29,20 +29,25 @@
 
 <main class="container flex-grow-1">
     <h1>Your personal area</h1>
-    <div class="radio-inputs mb-2">
-        <label class="radio">
+    <div class="radio-inputs m-0 mb-2 row">
+        <label class="radio col-6 col-sm-3">
             <input type="radio" name="radio" value="friends" checked="">
             <span>Friends</span>
         </label>
 
-        <label class="radio">
+        <label class="radio col-6 col-sm-3">
             <input type="radio" name="radio" value="changeCredentials">
             <span>Change Credentials</span>
         </label>
 
-        <label class="radio">
+        <label class="radio col-6 col-sm-3">
             <input type="radio" name="radio" value="deleteAccount">
             <span>Delete Account</span>
+        </label>
+
+        <label class="radio col-6 col-sm-3">
+            <input type="radio" name="radio" value="playerCards">
+            <span>Cards</span>
         </label>
     </div>
     <div class="internal-container p-3">
@@ -55,6 +60,9 @@
             </div>
             <div class="row" id="deleteAccountPage" style="display: none;">
                 <jsp:include page="deleteAccount.jsp"/>
+            </div>
+            <div class="row" id="playerCardsPage" style="display: none;">
+                <jsp:include page="cards.jsp"/>
             </div>
         </div>
     </div>

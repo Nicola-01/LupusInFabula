@@ -1,67 +1,59 @@
+const shoMoreButtons = document.querySelectorAll(".message .showMore");
+for (let i = 0; i < shoMoreButtons.length; i++) {
+    shoMoreButtons[i].addEventListener('click', function(event) {
+        showMore(event.currentTarget);
+    });
+}
+
 // ERROR MESSAGE POPUP
-function populateErrorMessage(messageDetails, errorCode, errorDetails) {
-    populateMessage("errorMessage", "Error!", messageDetails, errorCode.toUpperCase() + " - " + errorDetails);
+function populateErrorMessage(element, messageDetails, errorCode, errorDetails) {
+    populateMessage(element, "Error!", messageDetails, errorCode.toUpperCase() + " - " + errorDetails);
 }
 
 // INFO MESSAGE POPUP
-function populateInfoMessage(infoTitle, messageDetails, moreDetails = "") {
-    populateMessage("infoMessage", infoTitle, messageDetails, moreDetails)
+function populateInfoMessage(element, infoTitle, messageDetails, moreDetails = "") {
+    populateMessage(element, infoTitle, messageDetails, moreDetails)
 }
 
 // WARNING MESSAGE POPUP
-function populateWarningMessage(infoTitle, messageDetails, moreDetails = "") {
-    populateMessage("warningMessage", infoTitle, messageDetails, moreDetails)
+function populateWarningMessage(element, infoTitle, messageDetails, moreDetails = "") {
+    populateMessage(element, infoTitle, messageDetails, moreDetails)
 }
 
 // SUCCESS POPUP
-function populateSuccessMessage(infoTitle, messageDetails, moreDetails = "") {
-    populateMessage("successMessage", infoTitle, messageDetails, moreDetails)
+function populateSuccessMessage(element, infoTitle, messageDetails, moreDetails = "") {
+    populateMessage(element, infoTitle, messageDetails, moreDetails)
 }
 
-function hideErrorPopup(){
-    removePopUp("errorMessage")
-}
-
-function hideInfoPopup(){
-    removePopUp("infoMessage")
-}
-
-function hideWarningPopup(){
-    removePopUp("warningMessage")
-}
-
-function hideSuccessPopup(){
-    removePopUp("successMessage")
+function hideErrorPopup(element) {
+    document.querySelector(element).style.display = "none"
 }
 
 // COMMON
-function populateMessage(messagePopup, title, details, moreDetails = "") {
-    document.getElementById(messagePopup).style.display = "block";
-    document.querySelector("#" + messagePopup + " .messageTitle").innerHTML = title;
-    document.querySelector("#" + messagePopup + " .messageDetails").innerHTML = details;
-    document.querySelector("#" + messagePopup + " .moreDetails").innerHTML = moreDetails;
+function populateMessage(element, title, details, moreDetails = "") {
+    document.querySelector(element).style.display = "block";
+    document.querySelector(element + " .messageTitle").innerHTML = title;
+    document.querySelector(element + " .messageDetails").innerHTML = details;
+    document.querySelector(element + " .moreDetails").innerHTML = moreDetails;
 
     if (moreDetails === "") {
-        document.querySelector("#" + messagePopup + " .showMore").style.display = "none";
-        document.querySelector("#" + messagePopup + " .moreDetails").style.display = "none";
-        document.querySelector("#" + messagePopup + " .messageDetails").classList.add("mb-0");
+        document.querySelector(element + " .showMore").style.display = "none";
+        document.querySelector(element + " .moreDetails").style.display = "none";
+        document.querySelector(element + " .messageDetails").classList.add("mb-0");
     }
 }
 
-function showMore(messagePopup) {
-    let moreDetails = document.querySelector("#" + messagePopup + " .moreDetails");
-    let showMoreText = document.querySelector("#" + messagePopup + " .showMoreText");
+function showMore(element) {
+    element = element.parentElement
+    let moreDetails = element.querySelector(".moreDetails");
+    let showMoreText = element.querySelector(".showMoreText");
     if (moreDetails.style.display === "none") {
         moreDetails.style.display = "block";
         showMoreText.innerText = "Show less";
-        document.querySelector("#" + messagePopup + " .showMore").classList.remove("mb-0");
+        element.querySelector(".showMore").classList.remove("mb-0");
     } else {
         moreDetails.style.display = "none";
         showMoreText.innerText = "Show more";
-        document.querySelector("#" + messagePopup + " .showMore").classList.add("mb-0")
+        element.querySelector(".showMore").classList.add("mb-0")
     }
-}
-
-function removePopUp(popup){
-    document.getElementById(popup).style.display = "none"
 }

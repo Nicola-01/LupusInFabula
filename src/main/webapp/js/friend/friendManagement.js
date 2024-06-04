@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
 
     loadFriendList();
 
-    window.addEventListener('pageshow', function(event) {
+    window.addEventListener('pageshow', function (event) {
         if (event.persisted) {
             loadFriendList();
         }
@@ -12,20 +11,20 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 
-function loadFriendList(){
+function loadFriendList() {
     var url = contextPath + "user/me/friend";
     genericGETRequest(url, fillFriendsList);
 }
 
 
-function fillFriendsList(req){
+function fillFriendsList(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let list = JSON.parse(req.responseText)[JSON_resource_list];
             console.log(list);
-            if (list == null){
+            if (list == null) {
                 alert("No friends");
-            }else{
+            } else {
                 let tbody = document.getElementById("my_friends").querySelector("tbody");
 
                 tbody.innerHTML = "";
@@ -33,7 +32,7 @@ function fillFriendsList(req){
                 playersToIgnore.push(localStorage.getItem("playerName").toLowerCase());
                 console.log("Player: " + localStorage.getItem("playerName").toLowerCase());
 
-                for(var i=0; i < list.length;i++) {
+                for (var i = 0; i < list.length; i++) {
                     let friend = list[i]['friend'];
 
                     // Create a new row
@@ -56,7 +55,7 @@ function fillFriendsList(req){
                     let deleteButton = document.createElement("button");
                     deleteButton.textContent = "Delete";
                     deleteButton.classList.add("deleteFriendButton", "m-auto")
-                    deleteButton.addEventListener("click", function() {
+                    deleteButton.addEventListener("click", function () {
                         deleteFriend(friend.username);
                     });
                     deleteCell.appendChild(deleteButton);
@@ -71,19 +70,19 @@ function fillFriendsList(req){
     }
 }
 
-function deleteFriend(username){
+function deleteFriend(username) {
 
     var url = contextPath + "user/me/friend"; // Endpoint for deleting friend
     var xhr = new XMLHttpRequest();
     xhr.open("DELETE", url, true);
     xhr.setRequestHeader("Content-Type", "application/json"); // Set content type to JSON
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
         if (xhr.readyState === XMLHttpRequest.DONE) {
             if (xhr.status === HTTP_STATUS_OK) {
                 // Friend successfully deleted
                 removeFromFriendsTable(username);
                 var msg = username + " removed from your friends"
-                populateInfoMessage("Friend deleted", msg)
+                populateInfoMessage("#friendsPage #infoMessage", "Friend deleted", msg)
             } else {
                 // Handle error case
                 console.error("Error deleting friend:", xhr.status);
@@ -105,7 +104,7 @@ function deleteFriend(username){
 function removeFromFriendsTable(username) {
 
     playersToIgnore.splice(playersToIgnore.indexOf(username.toLowerCase()), 1);
-    
+
     let rows = document.getElementById("my_friends").rows;
     for (let i = 0; i < rows.length; i++) {
         if (rows[i].cells[0].textContent === username) {
@@ -129,12 +128,12 @@ function addPlayerToTable() {
                     let friend = JSON.parse(xhr.responseText)['friend'];
                     addToFriendsTable(friend.username, friend.commonGame, friend.friendship_date);
                     var msg = friend.username + " added to your friends";
-                    populateSuccessMessage("Friend added", msg)
+                    populateSuccessMessage("#friendsPage #successMessage", "Friend added", msg)
                 } else {
                     // Handle error case
                     var msg = getMessage(xhr);
                     console.error("Error adding friend:", xhr.status);
-                    populateErrorMessage(msg.message, msg.errorCode, msg.errorDetails);
+                    populateErrorMessage("#friendsPage #errorMessage", msg.message, msg.errorCode, msg.errorDetails);
                 }
             }
         };
@@ -179,7 +178,7 @@ function addToFriendsTable(username, commonGame, friendshipDate) {
     let deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
     deleteButton.classList.add("deleteFriendButton", "m-auto")
-    deleteButton.addEventListener("click", function() {
+    deleteButton.addEventListener("click", function () {
         deleteFriend(username);
     });
 
@@ -220,7 +219,7 @@ function updateFriendAvailability(req) {
                     link.innerHTML = "&#128994; free";
                     link.classList.add("newGame-link");
                     rows[i].cells[1].appendChild(link);
-                }else{
+                } else {
                     rows[i].cells[1].innerHTML = "";
                     let link = document.createElement("a");
                     link.href = contextPath + "village/" + players.get(rows[i].cells[0].textContent.toLowerCase());

@@ -90,7 +90,7 @@ function addFriend(username){
                 // Handle error case
                 var msg = getMessage(xhr);
                 console.error("Error adding friend:", xhr.status);
-                populateErrorMessage(msg.message, msg.errorCode, msg.errorDetails);
+                populateErrorMessage("#friendsPage #errorMessage", msg.message, msg.errorCode, msg.errorDetails);
              }
         }
     };

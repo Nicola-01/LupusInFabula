@@ -29,4 +29,3 @@
 <!-- Utils JS -->
 <script src="${pageContext.request.contextPath}/js/utils/utils.js"></script>
 <script src="${pageContext.request.contextPath}/js/utils/temporaryStorage.js"></script>
-<script src="${pageContext.request.contextPath}/js/utils/message.js"></script>

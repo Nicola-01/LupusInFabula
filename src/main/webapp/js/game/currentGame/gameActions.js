@@ -48,7 +48,7 @@ const factions = ["farmers", "wolf pack", "hamster", "jester"];
 const factions_color = ["green", "red", "#ffcc00", "#ffcc00"];
 
 // the game is over
-function setGameOver(game){
+function setGameOver(game) {
     const s = game.who_win < 2 ? "" : "s";
 
     // // remove toggle button to hide or show roles
@@ -60,8 +60,7 @@ function setGameOver(game){
     const win_faction_div = document.getElementById("winning_faction");
     const gameTime = document.getElementById("gameTime")
 
-    if(win_faction_div !== null && gameTime !== null)
-    {
+    if (win_faction_div !== null && gameTime !== null) {
         win_faction_div.innerHTML = "The ";
         const faction_div = document.createElement('span');
         faction_div.id = "faction_name";
@@ -69,7 +68,7 @@ function setGameOver(game){
         faction_div.style.color = factions_color[game.who_win];
         win_faction_div.appendChild(faction_div);
 
-        win_faction_div.innerHTML += " win"+s+"!";
+        win_faction_div.innerHTML += " win" + s + "!";
 
         gameTime.innerHTML = "The game started at " + game.start + ".<br>There was " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ", and lasted " + game.game_duration + ".";
 
@@ -240,7 +239,7 @@ function enableButtons() {
                 } else {
                     if (i + 1 < maxPhase) {
                         document.getElementById("voteRadio_" + (i + 1)).disabled = false
-                        populateWarningMessage("Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
+                        populateWarningMessage("#warningMessage", "Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
                     }
                     disable = true
                 }
@@ -604,19 +603,19 @@ function fillDayActions(list) {
     let samDiv = document.createElement("div");
     let plagueDiv = document.createElement("div");
 
-    sectionChange.classList.add("sections", "radio-inputs", "mb-2");
+    sectionChange.classList.add("sections", "radio-inputs", "m-0", "mb-2", "row");
     sectionChange.innerHTML =
-        "  <label class='radio' for='voteRadio_0'>" +
+        "  <label class='radio col-4' for='voteRadio_0'>" +
         "    <input type='radio' name='radio' id='voteRadio_0' checked='' subPhase='0'>" +
         "    <span>VOTE</span>" +
         "  </label>"
     sectionChange.innerHTML +=
-        "  <label class='radio' for='voteRadio_1'>" +
+        "  <label class='radio col-4' for='voteRadio_1'>" +
         "    <input type='radio' name='radio' id='voteRadio_1' subPhase='1' disabled=''>" +
         "    <span>1 BALLOT</span>" +
         "  </label>"
     sectionChange.innerHTML +=
-        "  <label class='radio' for='voteRadio_2'>" +
+        "  <label class='radio col-4' for='voteRadio_2'>" +
         "    <input type='radio' name='radio' id='voteRadio_2' subPhase='2' disabled=''>" +
         "    <span>2 BALLOT</span>" +
         "  </label>"
@@ -624,7 +623,7 @@ function fillDayActions(list) {
 
     const voteRadio = document.querySelectorAll('[id*="voteRadio_"]');
     for (let i = 0; i < voteRadio.length; i++)
-        voteRadio[i].addEventListener('click', function() {
+        voteRadio[i].addEventListener('click', function () {
             changeSubPhase(voteRadio[i]);
         });
 
@@ -955,7 +954,7 @@ function actionsResponse(req) {
 
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(gameWin)
-                populateInfoMessage(message, phaseInfo)
+                populateInfoMessage("#infoMessage", message, phaseInfo)
 
                 location.reload()
                 // elementsReload()
@@ -1007,13 +1006,13 @@ function actionsResponse(req) {
                 }
                 window.scrollTo({top: 0, behavior: 'smooth'})
                 console.log(actionResults)
-                populateInfoMessage("Results of the " + phase + "!", deadPlayers + phaseInfo)
+                populateInfoMessage("#infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
                 // location.reload()
                 elementsReload()
             }
         } else {
             let message = getMessage(req)
-            populateErrorMessage(message.message, message.errorCode, message.errorDetails);
+            populateErrorMessage("#errorMessage", message.message, message.errorCode, message.errorDetails);
         }
     }
 }

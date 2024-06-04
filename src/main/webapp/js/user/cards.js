@@ -2,7 +2,7 @@
 
 function loadImages()
 {
-    var imagesFolder = "../lupus/media/cards/card_back/";
+    var imagesFolder = "../media/cards/card_back/";
 
     var imageContainer = document.getElementById("imageContainer");
     var selectionFieldset = document.getElementById("selectionFieldset");
@@ -49,5 +49,6 @@ document.getElementById("selectionForm").addEventListener("submit", function(eve
 
     document.cookie = "selectedCard=" + selectedCard + ";path=/; max-age=" + (60 * 60 * 24 * 365);  // 1 year
     var msg = "Card backing successfully updated to "+selectedCard.split('.').slice(0, -1).join('.');
-    populateInfoMessage("Card backing changed", msg);
+    populateInfoMessage("#playerCardsPage #infoMessage", "Card backing changed", msg);
+    window.scrollTo({top: 0, behavior: 'smooth'})
 });
