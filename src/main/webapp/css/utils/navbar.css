@@ -1,7 +1,3 @@
-.p-0 {
-    padding: 5px 0 !important;
-}
-
 .navbar-toggler:focus,
 .navbar-toggler:active,
 .navbar-toggler-icon:focus {
@@ -469,4 +465,8 @@
 .menu-item-new:nth-child(9) {
     transition-duration: 410ms;
     transform: translate3d(-220px, 110px, 0);
+}
+
+a.menu-item.menu-item-new.active {
+    background: var(--navbar-inverted-bg);
 }
