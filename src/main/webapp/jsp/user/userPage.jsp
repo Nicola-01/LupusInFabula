@@ -14,6 +14,7 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/cards.css">
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/utils/passwordComplexAndShowPassword.css">
 

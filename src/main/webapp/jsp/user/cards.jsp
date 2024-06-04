@@ -3,13 +3,12 @@
 
 <c:import url="/jsp/utils/infoMessage.jsp"/>
 
-<div id="imageContainer" class="row"></div>
+<div id="imageContainer" class="row m-auto"></div>
 
-<div class="button-container mb-0">
+<div class="button-container mt-4 mb-0">
     <button type="button" class="gradientButton" id="updateCard">
         <span>Update the card</span>
     </button>
 </div>
-
 
 <script src="${pageContext.request.contextPath}/js/user/cards.js"></script>

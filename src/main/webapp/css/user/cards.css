@@ -1,0 +1,17 @@
+/*.selected-card-cookie {*/
+/*border: 4px solid;*/
+/*border-radius: .6em;*/
+/*    border-color: var(--navbar-second-bg);*/
+/*}*/
+
+.selected-card {
+    border: 4px solid;
+    border-radius: .6em;
+    border-color: var(--navbar-inverted-bg) !important;
+}
+
+.internalCard {
+    width: 200px;
+    min-width: 200px;
+    height: 280px;
+}
