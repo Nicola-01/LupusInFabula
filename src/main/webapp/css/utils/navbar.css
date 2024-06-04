@@ -328,7 +328,7 @@
 /***************************************/
 .menu {
     position: absolute;
-    right: 25px;
+    right: 30px;
     top: -12px;
 }
 
@@ -339,7 +339,7 @@
     height: 50px;
     margin-left: -30px;
     position: absolute;
-    top: 15px;
+    top: 20px;
     color: white;
     text-align: center;
     line-height: 60px;

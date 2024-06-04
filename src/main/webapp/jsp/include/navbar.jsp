@@ -6,7 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display&display=swap" rel="stylesheet">
 
 
-<nav class="navbar navbar-expand-md shadow p-0 py-3 sticky-top mb-4">
+<nav class="navbar navbar-expand-md shadow p-0 py-1 sticky-top mb-4">
 
     <a class="d-flex w-50 order px-3 py-2 navbar-brand" href="<c:url value="/home"/>">
         <svg xmlns="http://www.w3.org/2000/svg" width="43" height="40" viewBox="0 0 42 40">
@@ -61,7 +61,7 @@
                                     <a class="nav-link mx-3" aria-current="page" href="${pageContext.request.contextPath}/habitant/me">My Profile</a>
                                 </c:if>
                                 <c:if test="${empty sessionScope}">
-                                    <p>Not Logged In</p>
+                                    <a class="nav-link mx-3 disabled">Not Logged In</a>
                                 </c:if>
                             </li>
                             <li class="nav-item dropdown">
