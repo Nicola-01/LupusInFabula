@@ -73,7 +73,7 @@
                                     <li><a class="dropdown-item" theme="light">Light</a></li>
                                     <li><a class="dropdown-item" theme="dark">Dark</a></li>
                                     <li><a class="dropdown-item" theme="auto">Auto</a></li>
-                                    <li><a class="dropdown-item active" theme="dynamic">Dynamic</a></li>
+                                    <li><a class="dropdown-item" theme="dynamic">Dynamic</a></li>
                                 </ul>
                             </li>
                             <li class="nav-item">
