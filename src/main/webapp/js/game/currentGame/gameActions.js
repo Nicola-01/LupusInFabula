@@ -665,7 +665,8 @@ function fillDayActions(list) {
                 playersOrder.splice(0, 1);
 
                 gameActions.appendChild(plagueDiv);
-                plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true))
+                plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, false, true));
+                addPlaguesListener();
                 break;
             default:
                 text = "Who <u>" + list[i]['actionTarget'].player + "</u> voted out?";
@@ -792,6 +793,7 @@ function updatePlaguesVictims() {
             insertPlayers++;
         } else break;
     }
+    addPlaguesListener();
 }
 
 function createActionWrapperForPlague(plaguedPlayer, checked, original = false) {
@@ -811,11 +813,37 @@ function createActionWrapperForPlague(plaguedPlayer, checked, original = false) 
         checkBox.classList.add("originalPlagued")
     checkBox.setAttribute("player", plaguedPlayer);
     checkBox.checked = checked;
-    checkBox.classList.add("plague_CB", "col-12", "col-sm-4", "col-md-5");
-    checkBox.addEventListener("click", updatePlaguesVictims)
-    actionWrapper.appendChild(checkBox);
+    checkBox.classList.add("inp-cbx", "plague_CB") //), "col-12", "col-sm-4", "col-md-5");
+
+    actionWrapper.appendChild(wrapPlaguedCheckBox(checkBox));
 
     return actionWrapper;
+}
+
+function addPlaguesListener() {
+    const plaguedCB = document.querySelectorAll('[id*="_plaguedCB"]')
+
+    for (let i = 0; i < plaguedCB.length; i++) {
+        plaguedCB[i].addEventListener('click', updatePlaguesVictims)
+    }
+}
+
+function wrapPlaguedCheckBox(checkbox) {
+    const divCont = document.createElement("div")
+    divCont.classList.add("checkbox-wrapper", "col-12", "col-sm-4", "col-md-5", "d-flax");
+    divCont.appendChild(checkbox)
+    divCont.innerHTML +=
+        "  <label class='cbx' for='" + checkbox.id + "'><span>" +
+        "  <svg width='12px' height='10px'>" +
+        "    <use xlink:href='#check-4'></use>" +
+        "  </svg></span><span>Died of plague</span></label>" +
+        "  <svg class='inline-svg'>" +
+        "    <symbol id='check-4' viewbox='0 0 12 10'>" +
+        "      <polyline points='1.5 6 4.5 9 10.5 1'></polyline>" +
+        "    </symbol>" +
+        "  </svg>"
+
+    return divCont;
 }
 
 function sendActions() {
