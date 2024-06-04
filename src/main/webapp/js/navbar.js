@@ -3,16 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     const currentPath = window.location.pathname;
 
     // Check for Game section paths
-    if (currentPath === "/lupus/habitant/me") {
-        return; // nothing to set active
+    if (currentPath !== "/lupus/habitant/me") {
+        const gamePaths = ["/rules", "/newVillage", "/village"];
+        document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
+            if (currentPath.includes(navLink.getAttribute('href')))
+                navLink.classList.add('active');
+            else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1]) || currentPath.includes(gamePaths[2]))
+                document.querySelector('.dropdown-toggle').classList.add('active')
+        });
     }
-    const gamePaths = ["/rules", "/newVillage", "/village"];
-    document.querySelectorAll('.nav-item .nav-link').forEach(navLink => {
-        if (currentPath.includes(navLink.getAttribute('href')))
-            navLink.classList.add('active');
-        else if (currentPath.includes(gamePaths[0]) || currentPath.includes(gamePaths[1]) || currentPath.includes(gamePaths[2]))
-            document.querySelector('.dropdown-toggle').classList.add('active')
-    });
 
     //Buttons theme creation
     const themeButton = document.getElementById('theme-button');
