@@ -216,7 +216,7 @@ public class PossibleGameActions {
             String plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
 
             // if the target is dead no one is plagued
-            if(deadPlayers.get(plaguedPlayer))
+            if (deadPlayers.get(plaguedPlayer))
                 return;
 
             List<String> targets = new ArrayList<>(players);
@@ -253,10 +253,24 @@ public class PossibleGameActions {
             LOGGER.info("Actions for player: " + player + "; with role: " + role);
 
             // if the role don't have nightAction or if the player is death
-            if (!nightAction.containsKey(role) || deadPlayers.get(player))
+            if (!nightAction.containsKey(role))
                 continue;
 
             List<String> targets = new ArrayList<>();
+
+            if (!deadPlayers.get(player)) {
+                for (String targetPlayer : playerRole.keySet()) {
+                    if (isValidTarget(player, targetPlayer, role))
+                        targets.add(targetPlayer);
+                }
+
+
+                Collections.sort(targets);
+                if (role.equals(GameRoleAction.SHERIFF.getName()))
+                    targets.add(0, "No shot");
+            }
+            // if the player have a role that could have an action but in dead, insert anyway in the list,
+            // but without targets
 
             // if the role is not a puppy or is a puppy but is the last wolf alive
             if (role.equals(GameRoleAction.PUPPY.getName()) && !(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()))
@@ -268,18 +282,10 @@ public class PossibleGameActions {
                 wolfAlreadyInsert = true;
             }
 
-            for (String targetPlayer : playerRole.keySet()) {
-                if (isValidTarget(player, targetPlayer, role))
-                    targets.add(targetPlayer);
-            }
             if (role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
                 continue;
 
-            Collections.sort(targets);
-            if (role.equals(GameRoleAction.SHERIFF.getName()))
-                targets.add(0, "No shot");
-
-            LOGGER.info("targets: " + String.join(", ", targets));
+            LOGGER.info("Targets: " + String.join(", ", targets));
             actionTargets.add(new ActionTarget(role, playerWithRole(role),
                     getNightAction(role), targets));
 
@@ -423,11 +429,11 @@ public class PossibleGameActions {
                 return false;
 
             // Check if the target is valid for the specified role
-            if(extra){
-                if(action.getRole().equals(GameRoleAction.SAM.getName())){
+            if (extra) {
+                if (action.getRole().equals(GameRoleAction.SAM.getName())) {
                     index = actionTargets.size() - 2;
                 }
-                if(action.getRole().equals(GameRoleAction.PLAGUE_SPREADER.getName())){
+                if (action.getRole().equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
                     index = actionTargets.size() - 1;
                 }
             }

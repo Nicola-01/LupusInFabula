@@ -134,6 +134,7 @@ function enableButtons() {
         const designatedWolfPlayer = designatedWolfSB.value
         const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
+        // role check
         for (let i = 0; i < role_targets.length; i++) {
             let role = role_targets[i].getAttribute("role");
             if (role === "illusionist") {
@@ -203,7 +204,8 @@ function enableButtons() {
                 else
                     disable = (role_targets[i].value !== "")
             } else {
-                if (role_targets[i].hasAttribute("blocked"))
+                if (role_targets[i].hasAttribute("blocked") ||
+                    role_targets[i].hasAttribute('dead'))
                     continue;
                 else
                     disable = (role_targets[i].value === "")
@@ -682,7 +684,7 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
     let roleTargetsElem = document.createElement("select");
     if (gamePhase === GamePhase.NIGHT) {
         roleTargetsElem.id = actionTarget.role + "_targets";
-        if (!memberOfWolfPack)
+        if (!memberOfWolfPack && actionTarget.players.length > 0)
             roleTargetsElem.setAttribute("player", actionTarget.players[0].player);
         roleTargetsElem.setAttribute("memberOfWolfPack", memberOfWolfPack.toString());
     } else {
@@ -692,16 +694,22 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
     roleTargetsElem.setAttribute("required", "required");
     roleTargetsElem.setAttribute("role", actionTarget.role);
 
+    let possibleTargets = actionTarget['possibleTargets'];
 
     // Create default option
     let defaultOption = document.createElement("option");
     defaultOption.setAttribute("value", "");
-    defaultOption.setAttribute("disabled", "disabled");
     defaultOption.setAttribute("selected", "selected");
-    defaultOption.textContent = "Select option";
+    if (possibleTargets.length > 0) {
+        defaultOption.setAttribute("disabled", "disabled");
+        defaultOption.textContent = "Select option";
+    } else {
+        defaultOption.textContent = "DEAD";
+        roleTargetsElem.setAttribute("dead", "dead");
+        roleTargetsElem.disabled = true;
+    }
     roleTargetsElem.append(defaultOption);
 
-    let possibleTargets = actionTarget['possibleTargets'];
     for (let j = 0; j < possibleTargets.length; j++) {
         let option = document.createElement("option");
         option.text = possibleTargets[j].player;
@@ -727,20 +735,6 @@ function insertSelectionBox(actionWrapper, selectBox) {
     const label = document.createElement("label");
     label.classList.add("select", "roleTargets", "col-12", "col-sm-4", "col-md-5");
     label.setAttribute("for", selectBox.id);
-
-    // // Create SVG
-    // var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // // svg.innerHTML = '<use xlink:href="#select-arrow-down"></use>';
-    //
-    // const svgSprites = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    // const symbol = document.createElementNS("http://www.w3.org/2000/svg", "symbol");
-    // symbol.setAttribute("viewBox", "0 0 10 6");
-    // symbol.innerHTML = '<polyline points="1 1 5 5 9 1"></polyline>';
-    // svgSprites.appendChild(symbol);
-    // svg.appendChild(svgSprites)
-    //
-    // // Append SVG to label
-    // label.appendChild(svg);
 
     // Append select to label
     label.appendChild(selectBox);
@@ -772,17 +766,17 @@ function updatePlaguesVictims() {
         })
     }
 
-    // remove contet
+    // remove content
     plagueDiv.innerText = "";
 
     let nPlayers = playersOrder.length;
-    let inxedOriginal = playersOrder.indexOf(original);
+    let indexOriginal = playersOrder.indexOf(original);
 
-    plagueDiv.appendChild(createActionWrapperForPlague(original, playersPlague[inxedOriginal].value, true))
+    plagueDiv.appendChild(createActionWrapperForPlague(original, playersPlague[indexOriginal].value, true))
 
     let insertPlayers = 1
     // next player
-    for (let i = inxedOriginal; i < nPlayers + inxedOriginal - 1; i++) {
+    for (let i = indexOriginal; i < nPlayers + indexOriginal - 1; i++) {
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
             plagueDiv.appendChild(createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers], playersPlague[(i + 1) % nPlayers].value))
             insertPlayers++;
@@ -790,7 +784,7 @@ function updatePlaguesVictims() {
     }
 
     // previous player
-    for (let i = inxedOriginal; i > inxedOriginal - nPlayers + 1; i--) {
+    for (let i = indexOriginal; i > indexOriginal - nPlayers + 1; i--) {
         if (insertPlayers >= nPlayers)
             break
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
@@ -844,6 +838,8 @@ function sendActions() {
         let gameAction = [];
 
         for (let i = 0; i < role_targets.length; i++) {
+            if (role_targets[i].hasAttribute('dead'))
+                continue;
             const role_target = role_targets[i];
             player = role_target.getAttribute("player");
             role = role_target.getAttribute('role');
@@ -936,7 +932,7 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            hideWarningPopup(); // hide ballot popup
+            hideMessagePopup("#warningMessage"); // hide ballot popup
             let actionResults;
             let phase;
             let deadPlayers;

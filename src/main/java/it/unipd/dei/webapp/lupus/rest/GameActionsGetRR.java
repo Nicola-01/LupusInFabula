@@ -27,39 +27,6 @@ import java.util.stream.Stream;
 public class GameActionsGetRR extends AbstractRR {
 
     /**
-     * The ID of the game.
-     */
-    private final int gameID;
-
-    /**
-     * The round of current game.
-     */
-    private int currentRound;
-
-    /**
-     * Map containing the actions available during the night phase of the game.
-     * The key is the role name, and the value is the corresponding action.
-     */
-    private static final Map<String, String> nightAction = new HashMap<>();
-
-    /**
-     * Map containing the players and their roles in the game.
-     * The key is the player's name, and the value is the player's role.
-     */
-    private static Map<String, String> playerRole = new HashMap<>();
-
-    /**
-     * Map indicating whether players are dead or alive in the game.
-     * The key is the player's name, and the value is a boolean indicating if the player is dead.
-     */
-    private static Map<String, Boolean> deadPlayers = new HashMap<>();
-
-    /**
-     * List with all roles that are Wolf, Berserk, Explorer or Puppy
-     */
-    List<String> wolfPlayers = new ArrayList<>();
-
-    /**
      * Object that contains all possible actions of the specific game
      */
     private final PossibleGameActions possibleGameActions;
@@ -75,7 +42,6 @@ public class GameActionsGetRR extends AbstractRR {
      */
     public GameActionsGetRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.GET_GAME_ACTIONS_ACTION, req, res, ds);
-        this.gameID = gameID;
 
         possibleGameActions = new PossibleGameActions(ds,gameID);
     }

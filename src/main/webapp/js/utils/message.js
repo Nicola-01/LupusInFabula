@@ -25,7 +25,7 @@ function populateSuccessMessage(element, infoTitle, messageDetails, moreDetails 
     populateMessage(element, infoTitle, messageDetails, moreDetails)
 }
 
-function hideErrorPopup(element) {
+function hideMessagePopup(element) {
     document.querySelector(element).style.display = "none"
 }
 
