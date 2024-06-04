@@ -66,10 +66,10 @@
                             </li>
                             <li class="nav-item dropdown">
                                 <a class="nav-link dropdown-toggle left-icon" href="#" role="button"
-                                   data-bs-toggle="dropdown" aria-expanded="false">
+                                   data-bs-toggle="dropdown" data-bs-display="static" aria-expanded="false">
                                     Theme
                                 </a>
-                                <ul class="dropdown-menu position-absolute mx-2 mx-md-0" id="theme">
+                                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-lg-start position-absolute mx-2 mx-md-0" id="theme">
                                     <li><a class="dropdown-item" theme="light">Light</a></li>
                                     <li><a class="dropdown-item" theme="dark">Dark</a></li>
                                     <li><a class="dropdown-item" theme="auto">Auto</a></li>
