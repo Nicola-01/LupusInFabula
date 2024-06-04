@@ -61,10 +61,10 @@ function fillFriendsList(req) {
                     deleteCell.appendChild(deleteButton);
 
 
-                    playersToIgnore.push(friend.username.toLowerCase())
+                    playersToIgnore.push(friend.username.toLowerCase());
                 }
-
-                sendFriendAvailabilityRequest()
+                addFriendsTableHint();
+                sendFriendAvailabilityRequest();
             }
         }
     }
@@ -81,8 +81,9 @@ function deleteFriend(username) {
             if (xhr.status === HTTP_STATUS_OK) {
                 // Friend successfully deleted
                 removeFromFriendsTable(username);
+                addFriendsTableHint();
                 var msg = username + " removed from your friends"
-                populateInfoMessage("#friendsPage #infoMessage", "Friend deleted", msg)
+                populateInfoMessage("#infoMessage", "Friend deleted", msg)
             } else {
                 // Handle error case
                 console.error("Error deleting friend:", xhr.status);
@@ -126,14 +127,15 @@ function addPlayerToTable() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === HTTP_STATUS_CREATED) {
                     let friend = JSON.parse(xhr.responseText)['friend'];
+                    removeFriendsTableHint();
                     addToFriendsTable(friend.username, friend.commonGame, friend.friendship_date);
                     var msg = friend.username + " added to your friends";
-                    populateSuccessMessage("#friendsPage #successMessage", "Friend added", msg)
+                    populateSuccessMessage("#successMessage", "Friend added", msg)
                 } else {
                     // Handle error case
                     var msg = getMessage(xhr);
                     console.error("Error adding friend:", xhr.status);
-                    populateErrorMessage("#friendsPage #errorMessage", msg.message, msg.errorCode, msg.errorDetails);
+                    populateErrorMessage("#errorMessage", msg.message, msg.errorCode, msg.errorDetails);
                 }
             }
         };
@@ -211,23 +213,47 @@ function updateFriendAvailability(req) {
             }
 
             let rows = document.getElementById("my_friends").querySelector("tbody").rows;
-            for (let i = 0; i < rows.length; i++) {
-                if (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) {
-                    rows[i].cells[1].innerHTML = "";
-                    let link = document.createElement("a");
-                    link.href = contextPath + "newVillage";
-                    link.innerHTML = "&#128994; free";
-                    link.classList.add("newGame-link");
-                    rows[i].cells[1].appendChild(link);
-                } else {
-                    rows[i].cells[1].innerHTML = "";
-                    let link = document.createElement("a");
-                    link.href = contextPath + "village/" + players.get(rows[i].cells[0].textContent.toLowerCase());
-                    link.innerHTML = "&#128308; in game";
-                    link.classList.add("game-link");
-                    rows[i].cells[1].appendChild(link);
+            if (rows.length > 0 && !rows[0].hasAttribute('noFriends')) {
+                for (let i = 0; i < rows.length; i++) {
+                    if (players.get(rows[i].cells[0].textContent.toLowerCase()) === null) {
+                        rows[i].cells[1].innerHTML = "";
+                        let link = document.createElement("a");
+                        link.href = contextPath + "newVillage";
+                        link.innerHTML = "&#128994; free";
+                        link.classList.add("newGame-link");
+                        rows[i].cells[1].appendChild(link);
+                    } else {
+                        rows[i].cells[1].innerHTML = "";
+                        let link = document.createElement("a");
+                        link.href = contextPath + "village/" + players.get(rows[i].cells[0].textContent.toLowerCase());
+                        link.innerHTML = "&#128308; in game";
+                        link.classList.add("game-link");
+                        rows[i].cells[1].appendChild(link);
+                    }
                 }
             }
         }
     }
+}
+
+
+function addFriendsTableHint() {
+    const tbody = document.getElementById("my_friends").querySelector("tbody")
+    const rows = tbody.rows;
+    if (rows.length === 0) {
+        let row = tbody.insertRow();
+        row.setAttribute("noFriends", '')
+        const tableData = row.insertCell(0)
+        tableData.setAttribute("colspan", "5");
+        tableData.innerText = "Here you can find your friends.";
+    }
+}
+
+function removeFriendsTableHint() {
+    const tbody = document.getElementById("my_friends").querySelector("tbody")
+    const rows = tbody.rows;
+    if(rows.length === 0)
+        return;
+    if (rows[0].hasAttribute('noFriends'))
+        rows[0].remove()
 }
