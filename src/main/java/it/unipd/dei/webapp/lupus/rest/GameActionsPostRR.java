@@ -132,9 +132,6 @@ public class GameActionsPostRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
         try {
-
-            // todo -> actions of Day -> GameSettingsPostRR - line 72 for multiple JSON list
-
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
             possibleGameActions = new PossibleGameActions(ds, gameID);
             currentRound = game.getRounds() == 0 ? 1 : game.getRounds();

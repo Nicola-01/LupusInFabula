@@ -73,9 +73,6 @@ public class UserUsernameGetRR extends AbstractRR {
                 LOGGER.info("User %s successfully found.", username);
                 res.setStatus(HttpServletResponse.SC_OK);
                 player.toJSON(res.getOutputStream());
-                // TODO insert the jsp file linked to this servlet
-                //req.getRequestDispatcher("/jsp/...").forward(req, res);
-
             } else {
 
                 LOGGER.error("Username %s not found", username);
@@ -84,9 +81,6 @@ public class UserUsernameGetRR extends AbstractRR {
                 m = new Message("Username " + username + " not found", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
-                // TODO --> insert the jsp file linked to this servlet (the jsp for the error)
-                //req.getRequestDispatcher("/jsp/...").forward(req, res);
-
             }
 
         } catch (SQLException e) {

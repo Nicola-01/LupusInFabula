@@ -7,7 +7,8 @@
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/login.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/inputFormAnimations.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/passwordComplexAndShowPassword.css">
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/css/utils/passwordComplexAndShowPassword.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/show-message.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/firefly.css">
     <title>Lupus in Fabula - Login</title>
@@ -76,8 +77,7 @@
                         </div>
                         <div class="form-group">
                             <input type="password" id="sign_password" class="custom-input form-control" name="password"
-                                   placeholder="" maxlength="20"
-                                   required=""> <!-- TODO add in password input minlength="8" -->
+                                   placeholder="" maxlength="20" minlength="1" required="">
                             <button id="sign_password_ShowPassword" class="showPassword" tabindex="-1">
                                 <i id="sign_password_eyeIcon" class="fas fa-eye"></i>
                             </button>
@@ -112,9 +112,8 @@
                         </div>
                         <div class="form-group">
                             <input type="password" id="login_password" class="custom-input mb-1 form-control"
-                                   name="password"
-                                   placeholder="" maxlength="20"
-                                   required=""> <!-- TODO add in password input minlength="8" -->
+                                   name="password" placeholder="" maxlength="20" minlength="1"
+                                   required="">
                             <button id="login_password_ShowPassword" class="showPassword" tabindex="-1">
                                 <i id="login_password_eyeIcon" class="fas fa-eye"></i>
                             </button>
