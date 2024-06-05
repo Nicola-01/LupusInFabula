@@ -40,6 +40,11 @@ function loadImages()
                 img.classList.add('selected-card');
             }
         }
+        else
+        {
+            if(imageName === "fantasy1.png")
+                img.classList.add('selected-card');
+        }
 
         div_img.appendChild(img);
         div_img.appendChild(radioBtn);
