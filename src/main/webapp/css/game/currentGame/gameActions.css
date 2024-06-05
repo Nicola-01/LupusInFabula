@@ -1,0 +1,206 @@
+.action-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.action-wrapper u {
+    font-weight: bold;
+}
+
+.roleTargets {
+    margin-left: auto;
+}
+
+/*insert action*/
+
+.select {
+    position: relative;
+    margin-bottom: 0;
+}
+
+.select svg {
+    position: absolute;
+    right: 12px;
+    top: calc(50% - 3px);
+    width: 10px;
+    height: 6px;
+    stroke-width: 2px;
+    stroke: #9098a9;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    pointer-events: none;
+}
+
+.select select {
+    -webkit-appearance: none;
+    padding: 3px 8px;
+    width: 100%;
+    border: 0;
+    border-radius: 5px;
+    background: var(--inputs-bg-color);
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    transition: all 150ms ease;
+}
+
+.select select:required:invalid {
+    color: #5a667f;
+}
+
+.select select option {
+    color: var(--text-color);
+    background-color: var(--inputs-bg-color);
+}
+
+.select select option[value=""][disabled] {
+    display: none;
+}
+
+.select select:focus {
+    outline: none;
+    border-color: #07f;
+    box-shadow: 0 0 0 2px rgba(0, 119, 255, 0.2);
+}
+
+.select select:hover + svg {
+    stroke: #07f;
+}
+
+select:disabled, select:disabled ~ label {
+    cursor: not-allowed !important;
+}
+
+.sprites {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+.goodRoles, .evilRoles, .victoryStealerRoles, .neutralRoles,
+.votes, .samDiv, .plagueDiv {
+    padding: 1em;
+    margin: 0 0 1em 0;
+}
+
+.votes {
+    background-color: var(--votes);
+    border-radius: 0.6rem;
+}
+
+.plagueDiv {
+    background-color: var(--plague-spreader);
+    border-radius: 0.6rem;
+}
+
+.plague_CB {
+    height: 24px;
+}
+
+.samDiv {
+    background-color: var(--sam);
+    border-radius: 0.6rem;
+}
+
+hr {
+    margin: 0.8em 0;
+}
+
+.action-wrapper:not(:last-child) {
+    margin-bottom: .7em;
+}
+
+.evilRoles > .action-wrapper:not(#designatedWolves .action-wrapper) {
+    margin-top: .7em;
+}
+
+#designatedWolves {
+    background-color: var(--roles-bg-designatedWolves);
+    padding: 1em;
+    border-radius: 0.6rem;
+}
+
+/*plague checkbox*/
+
+.checkbox-wrapper {
+    display: flex;
+}
+
+.checkbox-wrapper * {
+    box-sizing: border-box;
+}
+.checkbox-wrapper .cbx {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+.checkbox-wrapper .cbx:not(:last-child) {
+    margin-right: 6px;
+}
+.checkbox-wrapper .cbx:hover {
+    background: rgba(0,119,255,0.06);
+}
+.checkbox-wrapper .cbx span {
+    float: left;
+    vertical-align: middle;
+    transform: translate3d(0, 0, 0);
+}
+.checkbox-wrapper .cbx span:first-child {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    transform: scale(1);
+    border: 1px solid #cccfdb;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 1px rgba(0,16,75,0.05);
+}
+.checkbox-wrapper .cbx span:first-child svg {
+    position: absolute;
+    top: 3px;
+    left: 2px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 16px;
+    stroke-dashoffset: 16px;
+    transition: all 0.3s ease;
+    transition-delay: 0.1s;
+    transform: translate3d(0, 0, 0);
+}
+.checkbox-wrapper .cbx span:last-child {
+    padding-left: 8px;
+    line-height: 18px;
+}
+.checkbox-wrapper .cbx:hover span:first-child {
+    border-color: var(--navbar-inverted-bg);
+}
+.checkbox-wrapper .inp-cbx {
+    position: absolute;
+    visibility: hidden;
+}
+.checkbox-wrapper .inp-cbx:checked + .cbx span:first-child {
+    background: var(--navbar-inverted-bg);
+    border-color: var(--navbar-inverted-bg);
+    animation: wave-4 0.4s ease;
+}
+.checkbox-wrapper .inp-cbx:checked + .cbx span:first-child svg {
+    stroke-dashoffset: 0;
+}
+.checkbox-wrapper .inline-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}

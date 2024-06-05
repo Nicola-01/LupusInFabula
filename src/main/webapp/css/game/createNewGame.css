@@ -1,0 +1,236 @@
+h2:not(#players h2):not(#friends h2) {
+    text-align: center;
+    margin: 10px 0;
+    height: 75px;
+}
+
+#players, #friends{
+    background-color: var(--bg-second-color);
+    width: 100%;
+    height: 100%;
+    border-radius: 0.5rem;
+}
+
+/*tables*/
+#players_tb, #friends_tb {
+    overflow-y: auto;
+}
+
+.playersTableContainer, .friendsTableContainer {
+    /*max-height: 25em;*/
+    height: 25em;
+    overflow: auto;
+}
+
+
+/*remove player*/
+.removePlayer {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.3em;
+    border: 0 solid transparent;
+    background-color: rgba(100, 77, 237, 0.08);
+    border-radius: 0.7em;
+    transition: all 0.2s linear;
+    position: relative;
+    display: inline-block;
+}
+
+/*Add button*/
+.addButton {
+    cursor: pointer;
+    fill: none;
+    stroke: var(--neutral-color-5);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    height: 30px;
+    width: 30px;
+}
+
+.visually-hidden {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    width: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+}
+
+.checkbox-label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    background-color: transparent;
+    border-radius: 100%;
+    transition: 0.3s;
+    /*display: inline-flex;*/
+    align-items: center;
+    margin: 0;
+}
+
+.addCheckbox:checked + .checkbox-label {
+    background-color: #1e40af;
+    transform: rotate(45deg);
+}
+
+
+/*ARROWS*/
+.arrows-container {
+    width: 3em;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+.arrow-up, .arrow-down {
+    border: 1px solid #ccc;
+    background-color: var(--bd-teal-rgb);
+    /*background-color: #fff;*/
+    padding: 0 1.5em;
+    font-size: 0.7em;
+    cursor: pointer;
+}
+
+.arrow-up {
+    border-radius: 1em 1em 0 0;
+}
+
+.arrow-down {
+    border-radius: 0 0 1em 1em;
+}
+
+
+/*SWITCH*/
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    min-width: 60px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.toggle-switch input[type="checkbox"] {
+    display: none;
+}
+
+.toggle-switch-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #aaa;
+    border-radius: 20px;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.toggle-switch-handle {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: white;
+    /*background-color: #fff;*/
+    border-radius: 50%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease-in-out;
+}
+
+.toggle-switch input[type="checkbox"]:checked + .toggle-switch-handle {
+    transform: translateX(45px);
+}
+
+.toggle-switch input[type="checkbox"]:checked + .toggle-switch-background {
+    background-color: var(--navbar-second-bg);
+}
+
+.toggle-switch input[type="checkbox"]:checked + .toggle-switch:before {
+    content: "On";
+    right: -15px;
+}
+
+.toggle-switch input[type="checkbox"]:checked + .toggle-switch-background .toggle-switch-handle {
+    transform: translateX(30px);
+}
+
+/*role div*/
+.role {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-switch {
+    margin-left: auto;
+    width: 60px;
+    min-width: 60px;
+    margin-bottom: 0;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.number_container {
+    display: flex;
+    width: 60px;
+    height: 2em;
+    border-radius: 2em;
+    border: 1px solid #bbb;
+    justify-content: center;
+    align-items: center;
+    min-width: 60px;
+    margin-left: auto;
+    background-color: #bbb;
+}
+
+.number {
+    text-align: center;
+    width: 1em;
+    height: 2em;
+    margin: 0;
+    border: none;
+    outline: none;
+    color: #000;
+    background: rgba(0, 0, 0, 0);
+}
+
+.add, .minus {
+    width: 1.5em;
+    height: 2em;
+    border-radius: 100%;
+    font-size: 1em;
+    margin: 0;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: opacity .15s;
+    background: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.add:focus, .minus:focus {
+    outline: none;
+}
+
+.goodRoles, .evilRoles, .neutralRoles, .victoryStealerRoles {
+    height: 100%;
+}
+
+.goodRoles > .role:not(:last-child), .evilRoles > .role:not(:last-child),
+.neutralRoles > .role:not(:last-child), .victoryStealerRoles > .role:not(:last-child) {
+    margin-bottom: .7em;
+}

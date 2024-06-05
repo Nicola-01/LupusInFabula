@@ -5,9 +5,13 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import javax.sql.DataSource;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -40,14 +44,24 @@ public class GameActionsPostRR extends AbstractRR {
     private final Map<String, String> playersRole;
 
     /**
+     * List containing the actions that have to be inserted into the database
+     */
+    List<Action> insertActions;
+
+    /**
+     * List containing the deaths that have to be inserted into the database
+     */
+    List<PlaysAsIn> updatePlayersDeath;
+
+    /**
      * The results of the night actions.
      */
-    private final NightActionResults nightActionResults;
+    private final NightActionsResults nightActionsResults;
 
     /**
      * The results of the day actions.
      */
-    private final DayActionResults dayActionResults;
+    private final DayActionsResults dayActionsResults;
 
 
     /**
@@ -71,6 +85,16 @@ public class GameActionsPostRR extends AbstractRR {
     int currentSubPhase;
 
     /**
+     * Victory condition if the vote of the second ballot is a tie
+     */
+    Boolean notVote = false;
+
+    /**
+     * Object to check the correctness of the action
+     */
+    PossibleGameActions possibleGameActions;
+
+    /**
      * Constructs a new GameActionsPostRR object with the specified game ID, request, response, and data source.
      *
      * @param gameID The ID of the game.
@@ -92,8 +116,11 @@ public class GameActionsPostRR extends AbstractRR {
         deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
         playersRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-        nightActionResults = new NightActionResults();
-        dayActionResults = new DayActionResults();
+        nightActionsResults = new NightActionsResults();
+        dayActionsResults = new DayActionsResults();
+
+        insertActions = new ArrayList<>();
+        updatePlayersDeath = new ArrayList<>();
     }
 
     /**
@@ -106,32 +133,62 @@ public class GameActionsPostRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
         try {
-            List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream());
+
+            // todo -> actions of Day -> GameSettingsPostRR - line 72 for multiple JSON list
 
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+            possibleGameActions = new PossibleGameActions(ds, gameID);
             currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
             currentPhase = game.getPhase();
             currentSubPhase = game.getSubphase();
 
             if (game.getWho_win() != -1) {
+
                 LOGGER.error("ERROR: the game is over");
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
                 Message m = new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
+
             } else {
                 if (currentPhase == GamePhase.NIGHT.getId()) {
+
+                    List<GameAction> gameActions = GameAction.fromJSON(req.getInputStream());
+
                     // check of the correctness of the actions
                     if (!correctnessOfNightActions(gameActions))
                         return;
                     LOGGER.info("correctness of night actions done");
                     if (!handleNightPhase(gameActions))
                         return;
-                } else {
-                    if (!correctnessOfDayActions(gameActions))
+                }
+                else {
+
+                    InputStream inputStream = req.getInputStream();
+                    String JSON = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+
+                    InputStream stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
+
+                    List<GameAction> votes_0 = GameAction.fromJSON(stream, "votes_0");
+                    LOGGER.info("Votes_0 done");
+
+                    stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
+                    List<GameAction> votes_1 = GameAction.fromJSON(stream, "votes_1");
+                    LOGGER.info("Votes_1 done");
+
+                    stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
+                    List<GameAction> votes_2 = GameAction.fromJSON(stream, "votes_2");
+                    LOGGER.info("Votes_2 done");
+
+                    stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
+                    List<GameAction> extraActions = GameAction.fromJSON(stream, "extraActions");
+                    LOGGER.info("Extra action done");
+
+
+                    if (!correctnessOfFirstVote(votes_0))
                         return;
-                    LOGGER.info("correctness of day actions done");
-                    if (!handleDayPhase(gameActions))
+                    LOGGER.info("correctness of first vote done");
+                    if (!handleDayPhase(votes_0, votes_1, votes_2, extraActions))
                         return;
                 }
 
@@ -142,29 +199,35 @@ public class GameActionsPostRR extends AbstractRR {
                     currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
                     LOGGER.info("The game finished, winner(s): " + vm.getMessage());
-                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                } else {
-
+                    new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, vm.getFaction()).access();
+                } else
+                {
                     res.setStatus(HttpServletResponse.SC_OK);
                     // return the action result before updating the round and the phase
                     if (currentPhase == GamePhase.DAY.getId()) {
                         res.setStatus(HttpServletResponse.SC_OK);
-                        dayActionResults.toJSON(res.getOutputStream());
+                        dayActionsResults.toJSON(res.getOutputStream());
                         currentRound++;
                         currentPhase = GamePhase.NIGHT.getId();
+                        LOGGER.info(dayActionsResults.toString());
                     } else {
                         res.setStatus(HttpServletResponse.SC_OK);
-                        nightActionResults.toJSON(res.getOutputStream());
+                        nightActionsResults.toJSON(res.getOutputStream());
                         currentPhase = GamePhase.DAY.getId();
+                        LOGGER.info(nightActionsResults.toString());
                     }
 
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
-                    LOGGER.info(nightActionResults.toString());
+
                 }
             }
 
         } catch (SQLException | IOException e) {
-            throw new RuntimeException(e);
+            LOGGER.error("Unable to serve the REST request.", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            res.setStatus(ec.getHTTPCode());
+            Message m = new Message("Unable to serve the REST request.", ec.getErrorCode(), e.getMessage());
+            m.toJSON(res.getOutputStream());
         } finally {
             LogContext.removeIPAddress();
             LogContext.removeUser();
@@ -181,163 +244,296 @@ public class GameActionsPostRR extends AbstractRR {
      * including voting and special actions based on player roles such as the carpenter's ability,
      * sam's ability, and plague spreader's ability. It also handles errors related to invalid actions.
      *
-     * @param gameActions A list of GameAction objects representing the actions performed during the day phase.
+     * @param votes_0 A list of GameAction objects representing the votes performed during the day phase.
+     * @param votes_1 A list of GameAction objects representing the first ballot votes performed during the day phase.
+     * @param votes_2 A list of GameAction objects representing the second ballot votes (if needed) performed during the day phase.
+     * @param extraActions A list of GameAction objects representing the actions performed during the day phase.
      * @return {@code true} if the day phase actions are processed successfully, {@code false} otherwise.
      * @throws SQLException If an SQL exception occurs while accessing the database.
      * @throws IOException  If an IO exception occurs.
      */
-    private boolean handleDayPhase(List<GameAction> gameActions) throws SQLException, IOException {
+    private boolean handleDayPhase(List<GameAction> votes_0, List<GameAction> votes_1, List<GameAction> votes_2, List<GameAction> extraActions) throws SQLException, IOException {
 
         try {
-            //create a map for the votes
-            Map<String, Integer> votesMap = getVotesMap(gameActions);
-            //create a map for the ballot votes
-            Map<String, Integer> ballotVotesMap = getVotesMap(gameActions);
-            String votedPlayer1 = "";
-            String votedPlayer2 = "";
-            int voteNumber = playersRole.size();
-            int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
+
+            String votedPlayer;
             Message m = null;
-            int numberAction = 0;
 
-            for (GameAction gameAction : gameActions) {
 
-                numberAction++;
+            // First vote with all the players, also the dead player vote in this phase
+            List<Map.Entry<String, Integer>> votesList = handleVotes(votes_0);
+            List<String> ballotPlayers = votesResult(votesList, false);
+            currentSubPhase++;
+
+            if(ballotPlayers.size() == 1){
+                votedPlayer = ballotPlayers.get(0);
+                updateDayResult(votedPlayer);
+            }else {
+                // First ballot
+                if(!correctnessOfBallotVotes(votes_1, ballotPlayers))
+                    return false;
+                List<Map.Entry<String, Integer>> ballotList_1 = handleBallot(votes_1, ballotPlayers);
+                List<String> ballotPlayers_1 = votesResult(ballotList_1, true);
+                currentSubPhase++;
+
+                if(ballotPlayers_1.size() == 1){
+                    votedPlayer = ballotPlayers_1.get(0);
+                    updateDayResult(votedPlayer);
+                }else {
+                    //Second ballot if needed
+                    if(!correctnessOfBallotVotes(votes_2, ballotPlayers_1))
+                        return false;
+                    List<Map.Entry<String, Integer>> ballotList_2 = handleBallot(votes_2, ballotPlayers_1);
+                    List<String> ballotPlayers_2 = votesResult(ballotList_2, true);
+                    currentSubPhase++;
+
+                    if(ballotPlayers_2.size() == 1){
+                        votedPlayer = ballotPlayers_2.get(0);
+                        updateDayResult(votedPlayer);
+                    }else{
+                        notVote = true;
+                        return true;
+                    }
+                }
+            }
+
+            //extraAction
+            if(!correctnessOfExtraAction(extraActions))
+                return false;
+
+            Boolean plaguedPlayerDeath = true;
+            int counterPlagueAction = 0;
+            String plaguedPlayer = "";
+
+            for(GameAction gameAction: extraActions){
+
                 String player = gameAction.getPlayer();
                 String role = gameAction.getRole();
                 String target = gameAction.getTarget();
 
-                if (numberAction <= voteNumber) { //first votation
-                    LOGGER.info(player + " with role " + role + " has voted " + target);
+                if (role.equals(GameRoleAction.SAM.getName()) && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer).access().getOutputParam().equals("sam"))) {
+                    //He can decide to kill someone else before his dead
+                    Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
+                    insertActions.add(samAction);
+                    LOGGER.info("Sam killed " + target);
+                    dayActionsResults.setSamTarget(target);
+                    updatePlayersDeath.add(updatePlayerDeath(target));
 
-                    Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
-                    // DAO for add the action to the database
-                    new InsertIntoActionDAO(ds.getConnection(), action).access();
-                    votesMap.put(target, votesMap.get(target) + 1);
+                } else if (role.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
 
-                    //First vote
-                    if (numberAction == voteNumber) {
-                        List<Map.Entry<String, Integer>> votesList = new ArrayList<>(votesMap.entrySet());
-                        Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+                    counterPlagueAction++;
 
-                        votedPlayer1 = votesList.get(0).getKey();
-                        votedPlayer2 = votesList.get(1).getKey();
-                        if (votesList.get(0).getValue() == votesList.get(1).getValue()) {
-                            LOGGER.info("Ballot between " + votedPlayer1 + " and " + votedPlayer2);
-                            currentSubPhase++;
-                        } else {
-                            LOGGER.info("Player " + votedPlayer1 + " is voted");
-
-                            if (carpenterCheck(votedPlayer1)) {
-                                LOGGER.info("The carpenter use his ability");
-                                dayActionResults.setCarpenterAbility(true);
-                            } else {
-                                LOGGER.info(votedPlayer1 + " is voted out");
-                                dayActionResults.setVotedPlayer(votedPlayer1);
-                                updatePlayerDeath(votedPlayer1);
-                            }
-                        }
-
-                    }
-                } else if ((numberAction <= (voteNumber + ballotVoteNumber)) && (currentSubPhase > 0) && (gameActions.size() > deadPlayers.size()+2)) { //ballot votes
-                    LOGGER.info(player +  " with role " + role + " has voted " + target);
-
-                    if (!(target.equals(votedPlayer1) || target.equals(votedPlayer2))) {
-                        LOGGER.error("ERROR: target of the vote in the ballot phase not correct");
-                        ErrorCode ec = ErrorCode.BALLOT_VOTE_NOT_VALID;
-                        m = new Message("ERROR: target of the vote in the ballot phase not correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
+                    if(counterPlagueAction == 1) {
+                        plaguedPlayer = new PlayerWithPlagueInGameDAO(ds.getConnection(), gameID, currentRound).access().getOutputParam();
+                        plaguedPlayerDeath = false;
                     }
 
-
-                    Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
-                    // DAO for add the action to the database
-                    new InsertIntoActionDAO(ds.getConnection(), action).access();
-                    ballotVotesMap.put(target, ballotVotesMap.get(target) + 1);
-
-                    if (numberAction == (voteNumber + ballotVoteNumber)) {
-                        List<Map.Entry<String, Integer>> ballotVotesList = new ArrayList<>(ballotVotesMap.entrySet());
-                        Collections.sort(ballotVotesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
-
-                        votedPlayer1 = ballotVotesList.get(0).getKey();
-                        LOGGER.info("Players " + votedPlayer1 + " is voted");
-                        if (carpenterCheck(votedPlayer1)) {
-                            LOGGER.info("The carpenter use his ability");
-                            dayActionResults.setCarpenterAbility(true);
-                        } else {
-                            LOGGER.info(votedPlayer1 + " is voted out");
-                            dayActionResults.setVotedPlayer(votedPlayer1);
-                            updatePlayerDeath(votedPlayer1);
-                        }
-
+                    if(gameAction.getTarget().equals(plaguedPlayer)){
+                        plaguedPlayerDeath = true;
                     }
+
+                    Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
+                    insertActions.add(plagueAction);
+                    LOGGER.info("Plague spreader killed " + target);
+                    dayActionsResults.addPlaguePlayer(target);
+                    updatePlayersDeath.add(updatePlayerDeath(target));
+
                 } else {
-                    currentSubPhase++;
-                    if (role.equals("sam") && (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, votedPlayer1).access().getOutputParam().equals("sam"))) {
-                        //He can decide to kill someone else before his dead
-                        Action samAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.SAM.getAction(), target);
-                        new InsertIntoActionDAO(ds.getConnection(), samAction).access();
-                        LOGGER.info("Sam killed " + target);
-                        dayActionResults.setSamTarget(target);
-                        updatePlayerDeath(target);
-                    } else if (role.equals("plague spreader")) {
-                        Action plagueAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.PLAGUE_SPREADER.getAction(), target);
-                        new InsertIntoActionDAO(ds.getConnection(), plagueAction).access();
-                        LOGGER.info("Plague spreader killed " + target);
-                        dayActionResults.setPlaguePlayer(target);
-                        updatePlayerDeath(target);
-                    } else {
-                        //error
-                        LOGGER.error("ERROR: not valid action");
-                        ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
-                        m = new Message("ERROR: not valid action", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-                    }
+                    //error
+                    LOGGER.error("ERROR: not valid action");
+                    ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                    m = new Message("ERROR: not valid action", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
                 }
-
             }
 
-            return true;
+            if(!plaguedPlayerDeath){
+                LOGGER.error("ERROR: not valid action, plague spreader action not correct");
+                ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                m = new Message("ERROR: not valid action, plague spreader action not correct", ec.getErrorCode(), ec.getErrorMessage());
+                res.setStatus(ec.getHTTPCode());
+                m.toJSON(res.getOutputStream());
+                return false;
+            }
+
+
+            for (Action action : insertActions) {
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+            }
+
+            for (PlaysAsIn playsAsIn : updatePlayersDeath) {
+                new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+            }
+
         } catch (SQLException e) {
+
             LOGGER.error("ERROR: something went wrong in access the database", e);
             ErrorCode ec = ErrorCode.DATABASE_ERROR;
             Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
+
         } catch (IOException e) {
+
             LOGGER.error("ERROR: something went wrong", e);
             ErrorCode ec = ErrorCode.INTERNAL_ERROR;
             Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
             return false;
+
         }
+
+        return true;
+
     }
 
     /**
-     * Counts the number of dead players in the game.
-     * <p>
-     * This method calculates the number of players who are marked as dead in the provided
-     * map of player names and their corresponding status of being dead or alive.
+     * Handles the voting process by counting votes for each player.
      *
-     * @param deadPlayers A map where the keys are player names and the values indicate whether the player is dead (true) or alive (false).
-     * @return The number of dead players in the game.
+     *
+     * @param votes a list of GameAction objects representing the votes cast by players.
+     * @return a list of objects representing the updated vote counts for each player.
      */
-    private static int countDeadPlayers(Map<String, Boolean> deadPlayers) {
-        int numDeadPlayers = 0;
+    private List<Map.Entry<String, Integer>> handleVotes(List<GameAction> votes){
 
-        for (Boolean isDead : deadPlayers.values()) {
-            if (isDead) {
-                numDeadPlayers++;
+        Map<String, Integer> votesMap = getVotesMap(votes);
+
+        for (GameAction vote: votes){
+
+            String player = vote.getPlayer();
+            String target = vote.getTarget();
+
+            Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+            // DAO for add the action to the database
+            insertActions.add(action);
+            //new InsertIntoActionDAO(ds.getConnection(), action).access();
+            votesMap.put(target, votesMap.get(target) + 1);
+
+        }
+
+        return new ArrayList<>(votesMap.entrySet());
+
+    }
+
+    /**
+     * Handles the ballot voting process by counting votes for each player.
+     *
+     *
+     * @param votes a list of GameAction objects representing the votes cast by players.
+     * @param ballotPlayers a list of username
+     * @return a list objects representing the updated vote counts for each player.
+     */
+    private List<Map.Entry<String, Integer>> handleBallot(List<GameAction> votes, List<String> ballotPlayers){
+
+        Map<String, Integer> ballotMap = getBallotMap(ballotPlayers);
+
+        for (GameAction vote: votes){
+
+            String player = vote.getPlayer();
+            String target = vote.getTarget();
+
+            Action action = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, Action.VOTE, target);
+            // DAO for add the action to the database
+            insertActions.add(action);
+            //new InsertIntoActionDAO(ds.getConnection(), action).access();
+            ballotMap.put(target, ballotMap.get(target) + 1);
+
+        }
+
+        return new ArrayList<>(ballotMap.entrySet());
+
+    }
+
+    /**
+     * Determines the players involved in a ballot or the result of a vote.
+     *
+     * <p>This method sorts a list of players with their respective votes and determines the players
+     * who either proceed to a ballot or win based on the votes. If the ballot flag is false, it returns
+     * the top two players. If the ballot flag is true, it checks for ties and includes all tied players.
+     *
+     * @param votesList a list representing the players and their votes
+     * @param ballot a boolean value indicating whether it's the first vote (false) or a ballot (true)
+     * @return a username list of players who either proceed to a ballot or win the vote
+     */
+    private static List<String> votesResult(List<Map.Entry<String, Integer>> votesList, Boolean ballot){
+
+        List<String> ballotPlayers= new ArrayList<>();
+        Integer nVote;
+        String logger = "";
+
+        Collections.sort(votesList, (entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
+
+        ballotPlayers.add(votesList.get(0).getKey());
+        nVote = votesList.get(0).getValue();
+        logger = logger + votesList.get(0).getKey();
+
+        if(votesList.get(1).getValue() == 0){
+            LOGGER.info("The player " + ballotPlayers.get(0) + " voted");
+            return ballotPlayers;
+        }
+
+        if(!ballot) {
+            LOGGER.info("First votation");
+            ballotPlayers.add(votesList.get(1).getKey());
+            nVote = votesList.get(1).getValue();
+            logger = logger + " " + votesList.get(1).getKey();
+        }else{
+            LOGGER.info("ballot");
+            if(nVote == votesList.get(1).getValue()){
+                ballotPlayers.add(votesList.get(1).getKey());
+                logger = logger + " " + votesList.get(1).getKey();
+            }else{
+                LOGGER.info("The player " + ballotPlayers.get(0) + " voted");
+                return ballotPlayers;
             }
         }
-        return numDeadPlayers;
+
+        for(Map.Entry<String, Integer> vote: votesList){
+            if(vote.getValue() == nVote ){
+                if(!(vote.getKey().equals(votesList.get(1).getKey()) || vote.getKey().equals(votesList.get(0).getKey()))){
+                    ballotPlayers.add(vote.getKey());
+                    logger = logger + " " + vote.getKey();
+                }
+            }
+        }
+
+        LOGGER.info("Ballot between " + logger);
+
+        return ballotPlayers;
     }
+
+    /**
+     * Updates the result of the day based on the player voted out.
+     *
+     * <p>This method determines if the player voted out is a carpenter by calling the
+     * {@link #carpenterCheck(String)} method. If the player is a carpenter, it logs the event
+     * and sets the carpenter's ability as used in the {@link DayActionsResults} instance.
+     * If the player is not a carpenter, it logs the voted-out player, updates the
+     * {@link DayActionsResults} with the voted-out player's name, and adds the result of the
+     * {@link #updatePlayerDeath(String)} method to the {@link #updatePlayersDeath} list.
+     *
+     * @param playerVoted the name of the player who was voted out.
+     * @throws SQLException if a database access error occurs.
+     * @throws IOException if an I/O error occurs.
+     */
+    private void updateDayResult (String playerVoted) throws SQLException, IOException {
+
+        if (carpenterCheck(playerVoted)) {
+            LOGGER.info("The carpenter use his ability");
+            dayActionsResults.setCarpenterAbility(true);
+        } else {
+            LOGGER.info(playerVoted + " is voted out");
+            dayActionsResults.setVotedPlayer(playerVoted);
+            updatePlayersDeath.add(updatePlayerDeath(playerVoted));
+        }
+
+    }
+
+
 
     /**
      * Checks the ability of a player with the role "carpenter" during a game round.
@@ -350,7 +546,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @param player The username of the player to check for the role "carpenter".
      * @return {@code true} if the player is a carpenter and is safe this round, {@code false} otherwise.
      * @throws SQLException If an SQL exception occurs while accessing the database.
-     * @throws IOException If an IO exception occurs.
+     * @throws IOException  If an IO exception occurs.
      */
     private boolean carpenterCheck(String player) throws SQLException, IOException {
         try {
@@ -358,7 +554,6 @@ public class GameActionsPostRR extends AbstractRR {
                 LOGGER.info("Carpenter ability check");
                 if (new CarpenterAbilityDAO(ds.getConnection(), gameID).access().getOutputParam()) {
                     LOGGER.info("Carpenter is safe this round");
-                    currentSubPhase++;
                     Action carpenterAction = new Action(gameID, player, currentRound, currentPhase, currentSubPhase, GameRoleAction.CARPENTER.getAction(), player);
                     new InsertIntoActionDAO(ds.getConnection(), carpenterAction).access();
                     return true;
@@ -375,147 +570,51 @@ public class GameActionsPostRR extends AbstractRR {
         }
     }
 
-
     /**
-     * Checks the correctness of the actions performed during a game day.
+     * Checks the correctness of the actions performed during first vote of the day.
      * <p>
      * This method verifies the correctness of the actions performed by players during a game day.
      * It checks various conditions such as whether players and targets are in the game,
      * if players have the correct role, if targets are dead, and the validity of voting actions.
      *
-     * @param gameActions A list of GameAction objects representing the actions performed during the game day.
+     * @param votes_0 A list of GameAction objects representing the votes performed during the day phase.
      * @return {@code true} if all actions are correct, {@code false} otherwise.
      * @throws SQLException If an SQL exception occurs while accessing the database.
      * @throws IOException  If an IO exception occurs.
      */
-    private boolean correctnessOfDayActions(List<GameAction> gameActions) throws SQLException, IOException {
+    private boolean correctnessOfFirstVote(List<GameAction> votes_0) throws SQLException, IOException {
 
         try {
-            int voteNumber = playersRole.size();
-            int ballotVoteNumber = voteNumber - countDeadPlayers(deadPlayers);
-            int numberAction = 0;
+
             int deadListCount = 0;
             Message m = null;
 
-            int stop = deadPlayers.size();
-            List<GameAction> firstGameAction = new ArrayList<>(gameActions.subList(0, stop));
-            Collections.sort(firstGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
-
-            List<GameAction> secondGameAction = null;
-            if (gameActions.size() > voteNumber + 2) {
-                stop = voteNumber + ballotVoteNumber;
-                secondGameAction = new ArrayList<>(gameActions.subList(deadPlayers.size(), stop));
-                Collections.sort(secondGameAction, (entry1, entry2) -> entry1.getPlayer().compareTo(entry2.getPlayer()));
+            m = possibleGameActions.populateList();
+            if (m != null) {
+                res.setStatus(Objects.requireNonNull(ErrorCode.getErrorCode(m.getErrorCode())).getHTTPCode());
+                m.toJSON(res.getOutputStream());
+                return false;
             }
 
-            List<GameAction> thirdGameAction = new ArrayList<>(gameActions.subList(stop, gameActions.size()));
-
-            List<GameAction> orderedGameActions = firstGameAction;
-            if (!(gameActions.size() <= deadPlayers.size())) {
-                if (secondGameAction != null) {
-                    orderedGameActions.addAll(secondGameAction);
-                    orderedGameActions.addAll(thirdGameAction);
-                } else {
-                    orderedGameActions.addAll(thirdGameAction);
-                }
-            }
             List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
-            Collections.sort(deadPlayersList, (entry1, entry2) -> entry1.getKey().compareTo(entry2.getKey()));
+            deadPlayersList.sort(Map.Entry.comparingByKey());
 
+            votes_0.sort(Comparator.comparing(GameAction::getPlayer));
+            for (GameAction vote: votes_0){
 
-            for (GameAction gameAction : orderedGameActions) {
-                numberAction++;
-                int game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
-                //check if the player is in the game
-                if (game_id != gameID) {
-
-                    LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
-                    ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
-                    m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(ec.getHTTPCode());
-                    m.toJSON(res.getOutputStream());
+                if(!correctnessOfAction(vote, false))
                     return false;
 
-                }
-
-                game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
-                //check if target is in the game
-                if (game_id != gameID) {
-
-                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
-                    ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
-                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(ec.getHTTPCode());
-                    m.toJSON(res.getOutputStream());
-                    return false;
-
-                }
-
-                String player_role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
-                //check if the player has the correct role in the game
-                if (!player_role.equals(gameAction.getRole())) {
-
-                    LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
-                    ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
-                    m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
-                    res.setStatus(ec.getHTTPCode());
-                    m.toJSON(res.getOutputStream());
-                    return false;
-
-                }
-
-                //check if the target is dead
-                if (deadPlayers.get(gameAction.getTarget())) {
-                    LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
-                    ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                    m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
+                if (!(vote.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
+                    LOGGER.error("ERROR: the list of vote isn't correct");
+                    ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
+                    m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
                     res.setStatus(ec.getHTTPCode());
                     m.toJSON(res.getOutputStream());
                     return false;
                 }
 
-                //check the list of vote correctness
-                if (numberAction <= voteNumber) {
-                    if (!(gameAction.getPlayer().equals(deadPlayersList.get(numberAction - 1).getKey()))) {
-                        LOGGER.error("ERROR: the list of vote isn't correct");
-                        ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
-                        m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-                    }
-                } else if ((gameActions.size() > voteNumber + 2) && (numberAction <= (voteNumber + ballotVoteNumber))) {
-                    if (deadPlayers.get(gameAction.getPlayer())) {
-                        LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot");
-                        ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                        m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead, cannot vote in the ballot", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-                    }
-                    while (deadPlayersList.get(deadListCount).getValue()) {
-                        deadListCount++;
-                    }
-
-                    if (!(gameAction.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
-                        LOGGER.error("ERROR: the list of vote isn't correct");
-                        ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
-                        m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-                    }
-                    deadListCount++;
-                } else {
-                    if (!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))) {
-                        LOGGER.error("ERROR: action not permitted");
-                        ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
-                        m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-                    }
-                }
+                deadListCount++;
             }
 
             return true;
@@ -535,6 +634,193 @@ public class GameActionsPostRR extends AbstractRR {
             m.toJSON(res.getOutputStream());
             return false;
         }
+    }
+
+
+    /**
+     * Checks the correctness of the actions performed during ballot vote of the day.
+     * <p>
+     * This method verifies the correctness of the actions performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param ballotVotes A list of GameAction objects representing the votes performed during ballot of day phase.
+     * @param ballotPlayer A list of String objects that contains the username of the player in the ballot
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
+    private boolean correctnessOfBallotVotes(List<GameAction> ballotVotes, List<String> ballotPlayer) throws SQLException, IOException {
+
+        try {
+            int deadListCount = 0;
+            Message m = null;
+
+            List<Map.Entry<String, Boolean>> deadPlayersList = new ArrayList<>(deadPlayers.entrySet());
+            deadPlayersList.sort(Map.Entry.comparingByKey());
+
+            ballotVotes.sort(Comparator.comparing(GameAction::getPlayer));
+            for (GameAction vote : ballotVotes) {
+
+                if (!correctnessOfAction(vote, false))
+                    return false;
+
+                if (deadPlayers.get(vote.getPlayer())) {
+                    LOGGER.error("ERROR: the player " + vote.getPlayer() + " is dead, cannot vote in the ballot");
+                    ErrorCode ec = ErrorCode.DEAD_PLAYER;
+                    m = new Message("ERROR: the player " + vote.getPlayer() + " is dead, cannot vote in the ballot", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+
+                while (deadPlayersList.get(deadListCount).getValue() || ballotPlayer.contains(deadPlayersList.get(deadListCount).getKey())) {
+                    deadListCount++;
+                }
+
+                if (!(vote.getPlayer().equals(deadPlayersList.get(deadListCount).getKey()))) {
+                    LOGGER.error("ERROR: the list of vote isn't correct");
+                    LOGGER.error(vote.getPlayer() + " != " + deadPlayersList.get(deadListCount).getKey());
+                    ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
+                    m = new Message("ERROR: the list of vote isn't correct", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+
+                if (!ballotPlayer.contains(vote.getTarget())) {
+                    LOGGER.error("ERROR: the target of the vote isn't one of the player in the ballot");
+                    LOGGER.info("target: " + vote.getTarget());
+                    ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                    m = new Message("ERROR: the target of the vote isn't one of the player in the ballot", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+
+                deadListCount++;
+            }
+
+            return true;
+        }catch (SQLException e) {
+            LOGGER.error("ERROR: something went wrong in access the database", e);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        } catch (IOException e) {
+            LOGGER.error("ERROR: something went wrong", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
+    }
+
+    /**
+     * Checks the correctness of the extra actions performed during the game day.
+     * <p>
+     * This method verifies the correctness of the actions performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param extraActions A list of GameAction objects representing extra actions of the day phase.
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
+    private boolean correctnessOfExtraAction(List<GameAction> extraActions) throws SQLException, IOException {
+
+        try {
+            Message m = null;
+
+            for (GameAction gameAction : extraActions) {
+
+                if (!correctnessOfAction(gameAction, true))
+                    return false;
+
+                if (!(gameAction.getRole().equals("sam")) && !(gameAction.getRole().equals("plague spreader"))) {
+                    LOGGER.error("ERROR: action not permitted");
+                    ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                    m = new Message("ERROR: action not permitted", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+            }
+
+            return true;
+        }catch (SQLException e) {
+            LOGGER.error("ERROR: something went wrong in access the database", e);
+            ErrorCode ec = ErrorCode.DATABASE_ERROR;
+            Message m = new Message("ERROR: something went wrong in access the database", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        } catch (IOException e) {
+            LOGGER.error("ERROR: something went wrong", e);
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            Message m = new Message("ERROR: something went wrong", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
+    }
+
+    /**
+     * Checks the correctness of the action performed during a game day.
+     * <p>
+     * This method verifies the correctness of the action performed by players during a game day.
+     * It checks various conditions such as whether players and targets are in the game,
+     * if players have the correct role, if targets are dead, and the validity of voting actions.
+     *
+     * @param gameAction A GameAction object representing an action of the day phase.
+     * @param extra A boolean value that indicate if an action is extra or a normal action of the day
+     * @return {@code true} if all actions are correct, {@code false} otherwise.
+     * @throws SQLException If an SQL exception occurs while accessing the database.
+     * @throws IOException  If an IO exception occurs.
+     */
+    private boolean correctnessOfAction(GameAction gameAction, Boolean extra) throws SQLException, IOException{
+
+        Message m = null;
+
+        if (!possibleGameActions.isValidAction(gameAction, extra)){
+
+            LOGGER.error("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid");
+            ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+            m = new Message("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
+
+        //check if the target is in the game
+        if (gameID != new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam()) {
+
+            LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
+            ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
+            m = new Message("ERROR: the player " + gameAction.getPlayer() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
+
+        //check if the player is in the game
+        if (gameID != new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam()){
+
+            LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
+            ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
+            m = new Message("ERROR: the target " + gameAction.getTarget() + " is not in the game", ec.getErrorCode(), ec.getErrorMessage());
+            res.setStatus(ec.getHTTPCode());
+            m.toJSON(res.getOutputStream());
+            return false;
+        }
+
+
+
+        return true;
     }
 
     /**
@@ -558,8 +844,17 @@ public class GameActionsPostRR extends AbstractRR {
             int berserker_count = 0;
 
             // check of the actions
-            if (!actionCheck(actionsMap, playersRole))
-                return false;
+            for (GameAction gameAction : gameActions) {
+                PossibleGameActions possibleGameActions = new PossibleGameActions(ds, gameID);
+                Message m = possibleGameActions.populateList();
+                if (m != null) {
+                    res.setStatus(Objects.requireNonNull(ErrorCode.getErrorCode(m.getErrorCode())).getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+                if (!possibleGameActions.isValidAction(gameAction, false))
+                    return false;
+            }
 
             // illusionist action must be the first one
             for (Map.Entry<String, Map<String, Boolean>> illusionist_entry : actionsMap.entrySet()) {
@@ -587,7 +882,8 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                     LOGGER.info("The target " + target + " has been blocked during the night by the illusionist");
-                    new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target)).access();
+                    insertActions.add(new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target));
+                    //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, illusionist, currentRound, currentPhase, 0, GameRoleAction.ILLUSIONIST.getAction(), target)).access();
                 }
 
             }
@@ -606,10 +902,11 @@ public class GameActionsPostRR extends AbstractRR {
                     if (actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())) {
                         if (!new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction())) {
                             LOGGER.info("The target " + target + " has been killed by the explorer");
-//
+
                             String explorer = getPlayerByRole(gameActions, GameRoleAction.EXPLORER.getName()).getPlayer();
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, explorer, currentRound, currentPhase, 0, GameRoleAction.EXPLORER.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
                     }
 
@@ -630,11 +927,12 @@ public class GameActionsPostRR extends AbstractRR {
                         LOGGER.info("The knight has protect " + target);
 
                         String knight = getPlayerByRole(gameActions, GameRoleAction.KNIGHT.getName()).getPlayer();
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, knight, currentRound, currentPhase, 0, GameRoleAction.KNIGHT.getAction(), target)).access();
 
-                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
+                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getName())) {
                             LOGGER.info("The knight has protected the hamster " + target);
-                            updatePlayerDeath(target);
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
 
                     }
@@ -645,25 +943,32 @@ public class GameActionsPostRR extends AbstractRR {
 
                         String wolf = "";
                         for (GameAction gameAction : gameActions) {
-                            if (gameAction.getTarget().equals(target)) {
+                            if (gameAction.getTarget().equals(target)
+                                    && (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
+                                            || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
+                                                    && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+                                            || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                                            || gameAction.getRole().equals(GameRoleAction.PUPPY.getName()))) {
                                 wolf = gameAction.getPlayer();
                             }
                         }
-                        //String wolf = getPlayerByRole(gameActions, GameRoleAction.WOLF.getName()).getPlayer();
 
                         if ((!actionPlayerMap.get(GameRoleAction.KNIGHT.getAction())
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HAMSTER.getAction()))
                                 && !new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName())) {
 
-                            LOGGER.info("The target " + target + " has been killed by the wolves during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            LOGGER.info("The target " + target + " has been killed by the wolves (" + wolf + ") during the night");
+                            //LOGGER.info("-------------------------> Wolf: " + wolf + " " + "Target: " + target);
+                            insertActions.add(new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         } else if (new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, target).access().getOutputParam().equals(GameRoleAction.HOBBIT.getName()) && (number_of_wolves <= 1)) {
 
                             LOGGER.info("The target " + target + " has been killed by the wolves during the night (number of wolves: " + number_of_wolves + ")");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            insertActions.add(new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, wolf, currentRound, currentPhase, 0, GameRoleAction.WOLF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         }
 
@@ -676,8 +981,9 @@ public class GameActionsPostRR extends AbstractRR {
 
                             String dorky = getPlayerByRole(gameActions, GameRoleAction.DORKY.getName()).getPlayer();
                             //add the action point to action table since the dorky is not a wolf
-                            LOGGER.info("The target " + target + " has been pointed by the dorky");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
+                            LOGGER.info("The target " + target + " has been pointed by the dorky " + dorky);
+                            insertActions.add(new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, dorky, currentRound, currentPhase, 0, GameRoleAction.DORKY.getAction(), target)).access();
                         }
                     }
 
@@ -687,11 +993,12 @@ public class GameActionsPostRR extends AbstractRR {
                         String seer = getPlayerByRole(gameActions, GameRoleAction.SEER.getName()).getPlayer();
                         // in case the seer sees the puppy he will see that is a good role
                         LOGGER.info("The target " + target + " has been seen during the night");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, seer, currentRound, currentPhase, 0, GameRoleAction.SEER.getAction(), target)).access();
 
-                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getAction())) {
+                        if (playersRole.get(target).equals(GameRoleAction.HAMSTER.getName())) {
                             LOGGER.info("The seer has seen the hamster " + target);
-                            updatePlayerDeath(target);
+                            updatePlayersDeath.add(updatePlayerDeath(target));
                         }
 
                     }
@@ -706,15 +1013,17 @@ public class GameActionsPostRR extends AbstractRR {
                         assert player_role != null;
                         if (player_role.getRoleType().getType() == 1 || player_role.getRoleType().getType() == 2) {
 
-                            LOGGER.info("The target " + target + " has been killed by the sheriff during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
-                            updatePlayerDeath(target);
+                            LOGGER.info("The target " + target + " has been killed by the sheriff " + sheriff + " during the night");
+                            insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), target)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(target));
 
                         } else {
 
-                            LOGGER.info("The sheriff " + sheriff + " has killed himself during the night");
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
-                            updatePlayerDeath(sheriff);
+                            LOGGER.info("The sheriff " + sheriff + " has killed himself during the night (he has shoot " + target + ")");
+                            insertActions.add(new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, sheriff, currentRound, currentPhase, 0, GameRoleAction.SHERIFF.getAction(), sheriff)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(sheriff));
                         }
 
                     }
@@ -724,15 +1033,23 @@ public class GameActionsPostRR extends AbstractRR {
                     if (playersRole.get(target).equals(GameRoleAction.KAMIKAZE.getName())
                             && (actionPlayerMap.get(GameRoleAction.WOLF.getAction())
                             || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
-                            || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction()))) {
+                            || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())
+                            || actionPlayerMap.get(GameRoleAction.PUPPY.getAction()))) {
+
                         String wolf = "";
                         for (GameAction gameAction : gameActions)
-                            if (gameAction.getTarget().equals(target))
+                            if (gameAction.getTarget().equals(target)
+                                    && (gameAction.getRole().equals(GameRoleAction.WOLF.getName())
+                                            || gameAction.getRole().equals(GameRoleAction.EXPLORER.getName())
+                                            || gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
+                                            || (gameAction.getRole().equals(GameRoleAction.DORKY.getName())
+                                                    && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())))
                                 wolf = gameAction.getPlayer();
 
-                        LOGGER.info("The target " + target + " is blown up with the wolf");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
-                        updatePlayerDeath(wolf);
+                        LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
+                        insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
+                        updatePlayersDeath.add(updatePlayerDeath(wolf));
                     }
 
                     // check for the "plague" action --> PLAGUE SPREADER
@@ -740,8 +1057,9 @@ public class GameActionsPostRR extends AbstractRR {
 
                         String plague_spreader = getPlayerByRole(gameActions, GameRoleAction.PLAGUE_SPREADER.getName()).getPlayer();
                         LOGGER.info("The target " + target + " is anointed");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
-                        nightActionResults.setPlaguedPlayer(target);
+                        insertActions.add(new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, plague_spreader, currentRound, currentPhase, 0, GameRoleAction.PLAGUE_SPREADER.getAction(), target)).access();
+                        nightActionsResults.setPlaguedPlayer(target);
                     }
 
                     // check for the "rage" action --> BERSERKER
@@ -753,14 +1071,15 @@ public class GameActionsPostRR extends AbstractRR {
                             String berserker = getPlayerByRole(gameActions, GameRoleAction.BERSERKER.getName()).getPlayer();
                             LOGGER.info("The target " + target + " has been killed by the berserker");
                             berserker_count++;
-                            new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
+                            insertActions.add(new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, berserker, currentRound, currentPhase, 0, GameRoleAction.BERSERKER.getAction(), target)).access();
 
                             if (berserker_count == 2) {
                                 LOGGER.info("The berserker has killed also himself during the night");
-                                updatePlayerDeath(target);
-                                updatePlayerDeath(berserker);
+                                updatePlayersDeath.add(updatePlayerDeath(target));
+                                updatePlayersDeath.add(updatePlayerDeath(berserker));
                             } else if (berserker_count == 1) {
-                                updatePlayerDeath(target);
+                                updatePlayersDeath.add(updatePlayerDeath(target));
                             }
 
                         }
@@ -768,20 +1087,32 @@ public class GameActionsPostRR extends AbstractRR {
                     }
 
                     // check for the "look" action --> MEDIUM
-                    // (he looks at the RoleType of the target that died by the stake during the day)
-                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())) {
+                    // (he looks at the RoleType of the target that died by the stake during the previous day - it start to activate his effect from the second night)
+                    if (actionPlayerMap.get(GameRoleAction.MEDIUM.getAction())
+                            && !(currentRound == 1 && currentPhase == 0)) {
 
                         String medium = getPlayerByRole(gameActions, GameRoleAction.MEDIUM.getName()).getPlayer();
                         LOGGER.info("The target " + target + " have seen if the stake dead target is good, evil or neutral");
-                        new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target)).access();
+                        insertActions.add(new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target));
+                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, medium, currentRound, currentPhase, 0, GameRoleAction.MEDIUM.getAction(), target)).access();
 
                     }
 
                 }
 
             }
-            nightActionResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
-            nightActionResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam());
+
+            nightActionsResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+
+            for (Action action : insertActions)
+                new InsertIntoActionDAO(ds.getConnection(), action).access();
+
+            for (PlaysAsIn playsAsIn : updatePlayersDeath) {
+                new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+                nightActionsResults.addDeadPlayer(playsAsIn.getPlayerUsername());
+            }
+
         } catch (SQLException | IOException e) {
 
             LOGGER.error("ERROR: something went wrong", e);
@@ -816,7 +1147,7 @@ public class GameActionsPostRR extends AbstractRR {
                     && !deadPlayers.get(playerRole.getKey()))
                 number_of_wolves++;
             else if (playerRole.getValue().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()
+                    && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()
                     && !deadPlayers.get(playerRole.getKey()))
                 number_of_wolves++;
             else if (playerRole.getValue().equals(GameRoleAction.DORKY.getName())
@@ -843,6 +1174,8 @@ public class GameActionsPostRR extends AbstractRR {
 
         Message m;
         boolean wolfActionDone = false;
+        boolean hasSheriffShoot = false;
+        boolean areAllAlive = true;
         int berserkerCount = 0;
         int game_id;
 
@@ -875,34 +1208,19 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-            String player_role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), game_id, gameAction.getPlayer()).access().getOutputParam();
-            //check if the player has the correct role in the game
-            if (!player_role.equals(gameAction.getRole())) {
-
-                LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game");
-                ErrorCode ec = ErrorCode.ROLE_NOT_CORRESPOND;
-                m = new Message("ERROR: the player " + gameAction.getPlayer() + " has not the correct role (" + gameAction.getRole() + " != " + player_role + ") in the game", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
+            // check if the action is valid or not
+            PossibleGameActions possibleGameActions = new PossibleGameActions(ds, gameID);
+            m = possibleGameActions.populateList();
+            if (m != null) {
+                res.setStatus(Objects.requireNonNull(ErrorCode.getErrorCode(m.getErrorCode())).getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
-
             }
+            if (!possibleGameActions.isValidAction(gameAction, false)) {
 
-            // check if the target and the player are alive
-            if (deadPlayers.get(gameAction.getPlayer())) {
-
-                LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is dead");
-                ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                m = new Message("ERROR: the player " + gameAction.getPlayer() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
-                res.setStatus(ec.getHTTPCode());
-                m.toJSON(res.getOutputStream());
-                return false;
-
-            } else if (deadPlayers.get(gameAction.getTarget())) {
-
-                LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is dead");
-                ErrorCode ec = ErrorCode.DEAD_PLAYER;
-                m = new Message("ERROR: the target " + gameAction.getTarget() + " is dead", ec.getErrorCode(), ec.getErrorMessage());
+                LOGGER.error("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid");
+                ErrorCode ec = ErrorCode.NOT_VALID_ACTION;
+                m = new Message("ERROR: the action " + gameAction.getPlayer() + " (" + gameAction.getRole() + ") -> " + gameAction.getTarget() + " is not valid", ec.getErrorCode(), ec.getErrorMessage());
                 res.setStatus(ec.getHTTPCode());
                 m.toJSON(res.getOutputStream());
                 return false;
@@ -930,6 +1248,7 @@ public class GameActionsPostRR extends AbstractRR {
                         return false;
 
                     }
+
                 } else {
 
                     if (!wolfActionDone) {
@@ -959,7 +1278,7 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
             } else if (gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
-                    && !new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                    && !new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                 LOGGER.error("ACTION NOT POSSIBLE: the puppy can't maul anyone since there's still some wolves alive");
                 ErrorCode ec = ErrorCode.NOT_VALID_TARGET;
@@ -969,10 +1288,24 @@ public class GameActionsPostRR extends AbstractRR {
                 return false;
 
             }
+
+            if (gameAction.getRole().equals(GameRoleAction.SHERIFF.getName())) {
+
+                hasSheriffShoot = true;
+
+            }
+
         }
 
-        //map with the player and his role in the game (only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him) and alive)
-        //if in the game there's the berserker he can do two action
+        for (Map.Entry<String, Boolean> entry : deadPlayers.entrySet()) {
+            if (entry.getValue()) {
+                areAllAlive = false;
+                break;
+            }
+        }
+
+        // map with the player, his role in the game and if he has done the action (true if so, false if not)(only roles with a night active effect (e.g. kamikaze has a passive effect because he activates it only if a wolf attack him) and alive)
+        // if in the game there's the berserker he can do two action
         Map<String, String> rolesWithEffect = new HashMap<>();
         for (Map.Entry<String, String> playerRoleEntry : playersRole.entrySet()) {
 
@@ -983,18 +1316,42 @@ public class GameActionsPostRR extends AbstractRR {
                     && !gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
                     && !gameRoleAction.getName().equals(GameRoleAction.SAM.getName())
                     && !gameRoleAction.getName().equals(GameRoleAction.CARPENTER.getName())
+                    && !gameRoleAction.getName().equals(GameRoleAction.SHERIFF.getName())
+                    && !gameRoleAction.getName().equals(GameRoleAction.MEDIUM.getName())
+                    && !deadPlayers.get(playerRoleEntry.getKey())) {
+
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+                //LOGGER.info(playerRoleEntry.getValue());
+
+            } else if (gameRoleAction.getAction() != null
+                    && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
+                    && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()
+                    && !deadPlayers.get(playerRoleEntry.getKey())) {
+
+                rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+                //LOGGER.info(playerRoleEntry.getValue());
+
+            } else if (gameRoleAction.getAction() != null
+                    && gameRoleAction.getName().equals(GameRoleAction.SHERIFF.getName())
+                    && hasSheriffShoot
                     && !deadPlayers.get(playerRoleEntry.getKey())) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
 
             } else if (gameRoleAction.getAction() != null
-                    && gameRoleAction.getName().equals(GameRoleAction.PUPPY.getName())
-                    && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                    && gameRoleAction.getName().equals(GameRoleAction.MEDIUM.getName())
+                    && !deadPlayers.get(playerRoleEntry.getKey())
+                    && !(currentRound == 1 && currentPhase == 0)
+                    && !areAllAlive) {
 
                 rolesWithEffect.put(playerRoleEntry.getKey(), playerRoleEntry.getValue());
+                //LOGGER.info(playerRoleEntry.getValue() + " " + areAllAlive);
+
+            }
 
         }
 
+        // check for the medium (during the first night he has not to do any action)
         //check if each role with an effect has done the action
         if (berserkerCount == 0) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
@@ -1009,7 +1366,7 @@ public class GameActionsPostRR extends AbstractRR {
             }
         } else if (berserkerCount == 1) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 1)) {
-
+                //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                 LOGGER.error("ERROR: someone has not done his action this turn");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action this turn", ec.getErrorCode(), ec.getErrorMessage());
@@ -1020,7 +1377,7 @@ public class GameActionsPostRR extends AbstractRR {
             }
         } else if (berserkerCount == 2) {
             if (gameActions.size() != (rolesWithEffect.size() - wolfCount() + 2)) {
-                LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
+                //LOGGER.info(gameActions.size() + " " + rolesWithEffect.size() + " " + wolfCount());
                 LOGGER.error("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)");
                 ErrorCode ec = ErrorCode.NUMBER_ACTIONS_DOESNT_MATCH;
                 m = new Message("ERROR: someone has not done his action, or has done too many actions this turn (berserker case)", ec.getErrorCode(), ec.getErrorMessage());
@@ -1036,53 +1393,6 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
-     * Checks the validity of night actions performed by players ensuring that the
-     * target of each action is valid for the corresponding player role.
-     *
-     * @param actionsMap a map containing player names as keys and maps of actions as values
-     * @param playerRole a map containing player names as keys and their corresponding roles as values
-     * @return {@code true} if all actions are valid, {@code false} otherwise
-     * @throws IOException if an I/O exception occurs
-     */
-    private boolean actionCheck(Map<String, Map<String, Boolean>> actionsMap, Map<String, String> playerRole) throws IOException {
-
-        if (actionsMap == null)
-            return false;
-
-        // for all targeted players
-        for (Map.Entry<String, Map<String, Boolean>> entry : actionsMap.entrySet()) {
-
-            String player = entry.getKey();
-            String roleOfPlayer = playerRole.get(player);
-            Map<String, Boolean> actionTarget = entry.getValue();
-
-            for (Map.Entry<String, Boolean> entry1 : actionTarget.entrySet()) {
-                String action = entry1.getKey();
-                Boolean target = entry1.getValue();
-
-                if (target) {
-
-                    //check if player can be a target of the action
-                    if (nightAction.get(roleOfPlayer) != null
-                            && nightAction.get(roleOfPlayer).equals(action)
-                            && !roleOfPlayer.equals(GameRoleAction.KNIGHT.getName())
-                            && !roleOfPlayer.equals(GameRoleAction.PLAGUE_SPREADER.getName())) {
-
-                        LOGGER.error("ERROR: the target of " + action + " is not a valid target");
-                        ErrorCode ec = ErrorCode.NOT_VALID_TARGET;
-                        Message m = new Message("ERROR: the target of " + action + " is not a valid target", ec.getErrorCode(), ec.getErrorMessage());
-                        res.setStatus(ec.getHTTPCode());
-                        m.toJSON(res.getOutputStream());
-                        return false;
-
-                    }
-                }
-            }
-        }
-        return true;
-    }
-
-    /**
      * Generates a map of actions performed during the game round.
      * This method constructs a map where each player is associated with a map of actions. The map of actions represents
      * if the player associated with it is targeted by some action. If he's targeted then the map of action will have
@@ -1095,7 +1405,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @throws IOException  if an I/O exception occurs
      * @throws SQLException if a SQL exception occurs
      */
-    private Map<String, Map<String, Boolean>> getActionsMap(List<GameAction> gameActions, Map<String, String> playerRole) throws IOException, SQLException {
+    private Map<String, Map<String, Boolean>> getActionsMap (List<GameAction> gameActions, Map<String, String> playerRole) throws IOException, SQLException {
 
         // first String: playerUsername , second String: action , boolean: if playerUsername is the target of action
         Map<String, Map<String, Boolean>> actions = new HashMap<>();
@@ -1116,7 +1426,7 @@ public class GameActionsPostRR extends AbstractRR {
                     }
                 } else if (entry1.getKey().equals(GameRoleAction.PUPPY.getName())) {
                     // if the puppy is the last wolf pack member alive he can start to maul
-                    if (new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam())
+                    if (new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
                         tmp.put(GameRoleAction.WOLF.getAction(), false);
                 } else if (entry1.getKey().equals(GameRoleAction.EXPLORER.getName())) {
                     // if the explorer has already activated his effect then he can only maul
@@ -1140,14 +1450,14 @@ public class GameActionsPostRR extends AbstractRR {
             if (nightAction.get(gameAction.getRole()) != null) {
                 //LOGGER.info(gameAction.getRole() + " " + gameAction.getPlayer());
                 if (!deadPlayers.get(gameAction.getPlayer())) {
-                    // if the player of the action is puppy and if he's the last wolf alive, then i can start to maul
+                    // if the player of the action is puppy and if he's the last wolf alive, then he can start to maul
                     if (!gameAction.getRole().equals(GameRoleAction.PUPPY.getName())) {
 
                         Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
                         tmp.put(nightAction.get(gameAction.getRole()), true);
                         actions.put(gameAction.getTarget(), tmp);
 
-                    } else if (new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                    } else if (new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                         Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
                         tmp.put(nightAction.get(gameAction.getRole()), true);
@@ -1182,7 +1492,7 @@ public class GameActionsPostRR extends AbstractRR {
                 }
 
                 if (gameAction.getRole().equals(GameRoleAction.PUPPY.getName())
-                        && new IsPuppyAWolfDAO(ds.getConnection(), gameID).access().getOutputParam()) {
+                        && new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam()) {
 
                     Map<String, Boolean> tmp = actions.get(gameAction.getTarget());
                     tmp.put(nightAction.get(GameRoleAction.WOLF.getName()), true);
@@ -1226,15 +1536,31 @@ public class GameActionsPostRR extends AbstractRR {
     }
 
     /**
+     * Utility method to initialize a map representing player votes.
+     *
+     * @param players a list of the name of the player in the ballot.
+     * @return a Map where the keys represent player names and the values represent the initial vote count (0).
+     */
+    private Map<String, Integer> getBallotMap(List<String> players) {
+        Map<String, Integer> ballotMap = new HashMap<>();
+
+        for (String player : players) {
+            ballotMap.put(player, 0);
+        }
+
+        return ballotMap;
+    }
+
+    /**
      * Updates the information about a player's death in the game.
      *
      * @param player The username of the player who died.
      * @throws SQLException if a database access error occurs.
      */
-    private void updatePlayerDeath(String player) throws SQLException {
-        PlaysAsIn playsAsIn = new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
-        new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
-        nightActionResults.addDeadPlayer(player);
+    private PlaysAsIn updatePlayerDeath(String player) throws SQLException {
+        return new PlaysAsIn(player, gameID, playersRole.get(player), currentRound, currentPhase);
+//        new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
+//        nightActionResults.addDeadPlayer(player);
     }
 
     /**
@@ -1299,17 +1625,17 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) >= totalRoles - roleTypeCardinality.get(RoleType.EVIL.getType()))
-            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getName());
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0) || notVote)
+            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0 && !hamster.isEmpty())
-            return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getName());
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0 && !hamster.isEmpty())
+            return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getId());
 
-        if (roleTypeCardinality.get(WinFaction.WOLVES.getId()) - notCountedEvilRoles == 0)
-            return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getName());
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0)
+            return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getId());
 
         if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
-            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getName());
+            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getId());
 
         // No victory condition met
         return null;

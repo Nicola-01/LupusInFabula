@@ -36,11 +36,6 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
     private final DataSource ds;
 
     /**
-     * A map containing player names as keys and their corresponding roles as values.
-     */
-    private Map<String, String> wolfMap;
-
-    /**
      * Constructs a new IsDorkyAWolfDAO with the specified database connection, data source, and game ID.
      *
      * @param con    the database connection
@@ -52,7 +47,6 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
         this.gameId = gameId;
 
         this.ds = ds;
-        this.wolfMap = new HashMap<>();
     }
 
     /**
@@ -65,8 +59,9 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        List<String> playersList = new ArrayList<>();
-        boolean result = false;
+        List<String> targetedPlayers = new ArrayList<>();
+
+        this.outputParam = false;
 
         try {
 
@@ -75,22 +70,38 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
             rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                playersList.add(rs.getString("target"));
+                targetedPlayers.add(rs.getString("target"));
             }
 
-            wolfMap = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();
+            Map<String, String> playerRole = new SelectPlayersAndRolesByGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();
+            Map<String, Boolean> deadPlayers = new GetDeadPlayersByGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();
 
-            for (String player : playersList) {
-                if (wolfMap.get(player).equals(GameRoleAction.WOLF.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.GIUDA.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.EXPLORER.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.BERSERKER.getName())
-                        || wolfMap.get(player).equals(GameRoleAction.PUPPY.getName())) {
+            int wolfAlive = 0;
 
-                    result = true;
-
+            // check if the dorky pointed a member of wolf pack
+            for (String player : targetedPlayers) {
+                if (playerRole.get(player).equals(GameRoleAction.WOLF.getName())
+                        || playerRole.get(player).equals(GameRoleAction.PUPPY.getName())
+                        || playerRole.get(player).equals(GameRoleAction.EXPLORER.getName())
+                        || playerRole.get(player).equals(GameRoleAction.BERSERKER.getName())) {
+                    this.outputParam = true;
+                    return;
                 }
             }
+
+            // get the number of live wolves
+            for (Map.Entry<String, String> pr : playerRole.entrySet()) {
+                String player = pr.getKey();
+                if (!deadPlayers.get(player) && (playerRole.get(player).equals(GameRoleAction.WOLF.getName())
+                        || playerRole.get(player).equals(GameRoleAction.PUPPY.getName())
+                        || playerRole.get(player).equals(GameRoleAction.EXPLORER.getName())
+                        || playerRole.get(player).equals(GameRoleAction.BERSERKER.getName()))) {
+                    wolfAlive++;
+                }
+            }
+
+            // if all the wolves are dead the Dorky is a wolf
+            this.outputParam = (wolfAlive == 0);
 
         } finally {
             if (pstmt != null) {
@@ -100,6 +111,6 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
                 rs.close();
             }
         }
-        this.outputParam = result;
+
     }
 }

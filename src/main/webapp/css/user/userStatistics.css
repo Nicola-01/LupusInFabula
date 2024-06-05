@@ -1,0 +1,78 @@
+/*h1.not_logged {*/
+/*    text-align: center;*/
+/*    position: relative;*/
+/*    min-height: 70vh;*/
+
+/*    !*overflow-y: auto;*!*/
+/*    !*    min-height: calc(100vh - 65px - 45px);*!*/
+/*    !*top: 50%;*!*/
+/*    !*left: 50%;*!*/
+/*    !*transform: translate(-50%, -50%);*!*/
+/*}*/
+
+#main_class{
+    position: relative;
+}
+
+table.general_statics {
+    border: white;
+    border-width: medium;
+    border-radius: 25px;
+
+}
+
+table.general_statics tr {
+    border-radius: 25px;
+    /*border: none;*/
+}
+
+#general_stats{
+    margin: auto;
+    color: var(--text-color-fixed);
+    background-color: var(--navbar-second-bg);
+    border-radius: .6em;
+}
+
+.not_found, .not_logged, .unexpected_error {
+
+    text-align: center;
+    position: relative;
+    min-height: 70vh;
+
+    /*top: 50%;*/
+    /*left: 50%;*/
+    /*transform: translate(-50%, -50%);*/
+    /*width: 100%;*/
+    /*height: 100%;*/
+}
+
+#error_message {
+    position: relative;
+    min-height: calc(100vh - 150px); /* Adjust based on the approximate height of navbar, footer, and foot */
+}
+
+#friendActionButton{
+    display: block;
+    background-color: var(--navbar-second-bg);;
+    color: var(--text-color-fixed);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s ease;
+    width: 145px;
+    height: 40px;
+}
+
+.remove {
+    background-color: var(--red-color) !important;
+}
+
+#friendActionButton:hover{
+    transform: scale(1.05);
+}
+
+#friendButtonContainer{
+    height: 45px;
+    flex: fit-content;
+}

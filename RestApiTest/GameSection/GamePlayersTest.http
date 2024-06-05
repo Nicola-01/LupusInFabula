@@ -17,8 +17,8 @@ GET http://localhost:8080/lupus/game/players/farmer-sam-wolf HTTP/1.1
 POST http://localhost:8080/lupus/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
-user = esempio &
-password = password123
+user = user2 &
+password = ciao
 
 ### player7 Login
 POST http://localhost:8080/lupus/login HTTP/1.1

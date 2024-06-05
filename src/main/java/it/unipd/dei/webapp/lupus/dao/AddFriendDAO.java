@@ -24,6 +24,11 @@ public class AddFriendDAO extends AbstractDAO<Friend> {
     private final String player_username;
 
     /**
+     * The SQL statement to calculate the common game.
+     */
+    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id WHERE p1.player_username = ? AND p2.player_username = ? AND p1.player_username != p2.player_username";
+
+    /**
      * The username of the friend to be added.
      */
     private final String friend_username;
@@ -57,33 +62,48 @@ public class AddFriendDAO extends AbstractDAO<Friend> {
     public void doAccess() throws SQLException {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
+        PreparedStatement pstmt1 = null;
+        ResultSet rs1 = null;
         Friend f = null;
+        int commonGame = -1;
 
-        try {
-            pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setString(1, player_username);
-            pstmt.setString(2, friend_username);
-            pstmt.setDate(3, date);
+        if(!player_username.equals(friend_username)) {
+            try {
+                pstmt1 = con.prepareStatement(GAME_STATEMENT);
+                pstmt1.setString(1, player_username);
+                pstmt1.setString(2, friend_username);
+                rs1 = pstmt1.executeQuery();
+                if (rs1.next()) {
+                    commonGame = rs1.getInt("num_games");
+                } else {
+                    LOGGER.error("Error while calculating the number of common games");
+                }
+                pstmt = con.prepareStatement(STATEMENT);
+                pstmt.setString(1, player_username);
+                pstmt.setString(2, friend_username);
+                pstmt.setDate(3, date);
 
-            rs = pstmt.executeQuery();
-            if (rs.next()) {
-                f = new Friend(rs.getString("friend_username"), rs.getDate("date"));
-                LOGGER.info("friend %s added", f.getUsername());
+                rs = pstmt.executeQuery();
+                if (rs.next()) {
+                    f = new Friend(rs.getString("friend_username"), commonGame, rs.getDate("date"));
+                    LOGGER.info("friend %s added", f.getUsername());
 
-            } else {
-                LOGGER.info("friend NOT added");
+                } else {
+                    LOGGER.info("friend NOT added");
+                }
 
+            } finally {
+
+                if (pstmt != null) {
+                    pstmt.close();
+                }
+                if (pstmt1 != null) {
+                    pstmt1.close();
+                }
+
+                con.close();
             }
-
-        } finally {
-
-            if (pstmt != null) {
-                pstmt.close();
-            }
-
-            con.close();
         }
-
         this.outputParam = f;
 
     }

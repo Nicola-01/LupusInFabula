@@ -31,9 +31,9 @@ public final class Actions {
     public static final String INSERT_PLAYER = "INSERT_PLAYER";
 
     /**
-     * The search of player by their username/email and password
+     * The search of player by partial username
      */
-    public static final String SEARCH_PLAYER_BY_USER_AND_PASSWORD = "SEARCH_PLAYER_BY_USER_AND_PASSWORD";
+    public static final String SEARCH_PLAYER= "SEARCH_PLAYER";
 
     /**
      * The addition of a friend

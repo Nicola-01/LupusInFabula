@@ -52,7 +52,7 @@ public class GameSettingsPostRR extends AbstractRR {
 
             List<Message> messages = new ArrayList<>();
 
-            if (new PlayerInGameDAO(ds.getConnection(), gameMaster.getUsername()).access().getOutputParam() != -1) {
+            if (new PlayerInGameDAO(ds.getConnection(), gameMaster.getUsername()).access().getOutputParam() != null) {
                 ErrorCode ec = ErrorCode.MASTER_ALREADY_IN_GAME;
                 res.setStatus(ec.getHTTPCode());
 
@@ -96,29 +96,41 @@ public class GameSettingsPostRR extends AbstractRR {
                     ErrorCode ec = ErrorCode.PLAYER_NOT_EXIST;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("PLAYER " + username + " does not exist", ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("The player '" + username + "' does not exist.", ec.getErrorCode(), ec.getErrorMessage());
                     messages.add(m);
                     // m.toJSON(res.getOutputStream());
 
                     LOGGER.info("USER %s does not exist", username);
+                } else {
+                    // if the user exists, retrieve the correct name (lowercase and lowercase)
+                    username = validPlayer.getUsername();
+
+                    // check if the player is already in a game
+                    if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != null) {
+                        ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
+                        res.setStatus(ec.getHTTPCode());
+
+                        Message m = new Message("PLAYER " + username + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
+                        messages.add(m);
+                        // m.toJSON(res.getOutputStream());
+
+                        LOGGER.warn("USER %s is already in a game", username);
+                    }
+
+                    // add the player to the list
+                    if (!selectedPlayers.contains(username))
+                        selectedPlayers.add(username);
                 }
-                // if the user exists, retrieve the correct name (lowercase and lowercase)
-                username = validPlayer.getUsername();
+            }
 
-                // check if the player is already in a game
-                if (new PlayerInGameDAO(ds.getConnection(), username).access().getOutputParam() != -1) {
-                    ErrorCode ec = ErrorCode.PLAYER_ALREADY_IN_GAME;
-                    res.setStatus(ec.getHTTPCode());
+            if (selectedPlayers.contains(gameMaster)) {
+                ErrorCode ec = ErrorCode.MASTER_ALREADY_IN_GAME;
+                res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("PLAYER " + username + " is already in a game", ec.getErrorCode(), ec.getErrorMessage());
-                    messages.add(m);
-                    // m.toJSON(res.getOutputStream());
+                Message m = new Message("The master can't be a player of a game", ec.getErrorCode(), ec.getErrorMessage());
+                messages.add(m);
 
-                    LOGGER.warn("USER %s is already in a game", username);
-                }
-
-                // add the player to the list
-                selectedPlayers.add(username);
+                LOGGER.warn("The master can't be a player");
             }
 
             // Check all the roles
@@ -155,15 +167,15 @@ public class GameSettingsPostRR extends AbstractRR {
 //                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 // check if role setting respect the cardinality
-                else if (!isValidRolesCardinality(selectedRoles, realRoles)) {
+                else if (!isValidRolesCardinality(selectedRoles, realRoles).isEmpty()) {
+                    String message = isValidRolesCardinality(selectedRoles, realRoles);
                     ErrorCode ec = ErrorCode.INVALID_ROLES_CARDINALITY;
                     res.setStatus(ec.getHTTPCode());
 
-                    Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), ec.getErrorMessage());
+                    Message m = new Message("Invalid roles cardinality", ec.getErrorCode(), message);
                     m.toJSON(res.getOutputStream());
 
-                    LOGGER.warn("Invalid roles cardinality", totalPlayers, totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
+                    LOGGER.warn(message);
                 }
                 // check if number of players it's equal to number of roles
                 else if (totalPlayers != totalRoles) {
@@ -174,7 +186,6 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
                 }
                 //
                 else {
@@ -191,24 +202,30 @@ public class GameSettingsPostRR extends AbstractRR {
 
                     // set the gamemaster role to the player who created the game
                     PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
-                    new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn).access();
+                    new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
 
                     // add a session attribute to the user corresponding to the private game ID
-                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, gameID);
+                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
 
                     // Assign a random role to each player
+
+                    selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
+
+                    // generate the random generator only one time
+                    Random rand = new Random();
+
                     for (int i = 0; i < totalPlayers; i++) {
                         // Select a random role for the player
-                        String selectedRole = randomRole(selectedRoles);
+                        String selectedRole = randomRole(selectedRoles, rand);
 
                         // Get the ID of the selected role from the database
 //                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
 
                         // Create a PlaysAsIn for the player with the selected role and game ID, and insert into the database
                         PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
-                        new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn).access();
+                        new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn, i + 1).access();
 
-                        LOGGER.info("Player %s assigned role ID %d", selectedPlayers.get(i), selectedRole);
+                        LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), selectedRole);
                     }
                     // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
                     res.setStatus(HttpServletResponse.SC_CREATED);
@@ -261,7 +278,8 @@ public class GameSettingsPostRR extends AbstractRR {
      *
      * @param selectedRoles Map with the roles and the selected cardinality
      * @param roles         List with all the roles
-     * @return {@code True} if all prerequisites have been satisfied; otherwise, {@code false}. <br> Possible cases for returning false include:
+     * @return if all prerequisites have been satisfied; otherwise, a message describing the first encountered issue.
+     * <br> Possible cases for returning a non-empty message include:
      * <ul>
      * <li>Invalid role cardinality, i.e., the cardinality must be greater than or equal to 0 and less than or equal to the maximum cardinality allowed for the role.</li>
      * <li>When the maximum count of good roles exceeds three-quarters of the total number of roles.</li>
@@ -269,7 +287,7 @@ public class GameSettingsPostRR extends AbstractRR {
      * <li>When the minimum count of evil roles falls below one-eighth of the total number of roles.</li>
      * </ul>
      */
-    private boolean isValidRolesCardinality(Map<String, Integer> selectedRoles, List<Role> roles) {
+    private String isValidRolesCardinality(Map<String, Integer> selectedRoles, List<Role> roles) {
         Map<Integer, Integer> type = new HashMap<>(); // roleType it's the key
         int totalRolesNumber = 0;
         for (Role role : roles) {
@@ -277,18 +295,28 @@ public class GameSettingsPostRR extends AbstractRR {
             if (!selectedRoles.containsKey(role.getName())) continue;
 
             int cardinality = selectedRoles.get(role.getName());
-            if (cardinality < 0 || cardinality > role.getMax_number()) {
-                LOGGER.warn("Invalid role cardinality: " + cardinality + " for role " + role.getName());
-                return false;
-            }
+            if (cardinality < 0 || cardinality > role.getMax_number())
+                return "Invalid role cardinality: " + cardinality + " for role " + role.getName();
 
             type.put(role.getType(), type.getOrDefault(role.getType(), 0) + cardinality);
             totalRolesNumber += cardinality;
         }
-        boolean maxGood = type.get(RoleType.GOOD.getType()) <= ((totalRolesNumber) * 3 / 4);
-        boolean maxEvil = type.get(RoleType.EVIL.getType()) <= totalRolesNumber / 4;
-        boolean minEvil = type.get(RoleType.EVIL.getType()) >= Math.round((float) totalRolesNumber / 8);
-        return maxGood && maxEvil && minEvil;
+
+        String message = "";
+        int minGood = (int) Math.floor((totalRolesNumber) / 2.5);
+        int maxEvil = (int) Math.round(totalRolesNumber / 3.0); // max 1/3 of total players could be evil
+        int minEvil = Math.max((int) Math.round(totalRolesNumber / 8.0), 1); // at least 1
+
+        LOGGER.info("minGood: " + minGood + "; maxEvil: " + maxEvil + "; minEvil: " + minEvil);
+
+        if (type.get(RoleType.GOOD.getType()) < minGood)
+            message += "The GOOD role must be at minimum " + minGood + ", but provided " + type.get(RoleType.GOOD.getType()) + "; ";
+        if(type.get(RoleType.EVIL.getType()) > maxEvil)
+            message += "The EVIL role must be at maximum " + maxEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
+        if(type.get(RoleType.EVIL.getType()) < minEvil)
+            message += "The EVIL role must be at minimum " + minEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
+
+        return message;
     }
 
     /**
@@ -297,16 +325,14 @@ public class GameSettingsPostRR extends AbstractRR {
      * @param roles A map containing available roles and their counts.
      * @return A randomly selected role.
      */
-    private String randomRole(Map<String, Integer> roles) {
-        Random rand = new Random();
-        rand.setSeed(System.currentTimeMillis());
+    private String randomRole(Map<String, Integer> roles, Random rand) {
 
         // Get an array of available roles
-        String[] availableRoles = roles.keySet().toArray(new String[0]);
+        List<String> availableRoles = new ArrayList<>(roles.keySet());
         String role;
 
         // Select a random role, ensuring it has a non-zero count
-        role = availableRoles[rand.nextInt(availableRoles.length)];
+        role = availableRoles.get(rand.nextInt(availableRoles.size()));
 
         // Decrement the count of the selected role, and remove if count becomes zero
         roles.put(role, roles.get(role) - 1);

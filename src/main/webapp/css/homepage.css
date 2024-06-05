@@ -1,81 +1,67 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+.background-iframe {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Ensure it is behind all other content */
+    border: none;
 }
 
 /* Global Styles */
 body {
     font-family: Arial, sans-serif;
-    background-color: #f8f8f8;
-    color: #333;
     line-height: 1.6;
 }
 
-header {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-}
-
-footer {
-    background-color: #333;
-    color: #fff;
-    padding: 20px;
-    text-align: center;
-}
-
-nav ul {
-    list-style-type: none;
-    text-align: center;
-    margin-top: 20px;
-}
-
-nav ul li {
-    display: inline;
-    margin-right: 20px;
-}
-
-nav ul li a {
-    text-decoration: none;
-    color: #333;
-    padding: 10px;
-}
-
 main {
+    position: relative;
+    z-index: 1;
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
- .centered-box {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     height: 100vh;
- }
+.centered-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
 
 .box {
-    width: 200px;
-    height: 200px;
-    background-color: #fff;
-    border: 1px solid #333;
-    margin: 20px;
-    padding: 20px;
+    /*background-color: var(--bg-second-color);*/
+    /*border: 1px solid #333;*/
+    border-radius: .5rem;
     text-align: center;
+    backdrop-filter: blur(5px);
+    border: 0.13em solid var(--bg-second-color);
 }
 
 .box button {
     display: block;
-    width: 150px;
+    width: 100%;
+    max-width: 200px;
     margin: 10px auto;
     padding: 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: var(--navbar-inverted-bg);
+    color: var(--bg-first-color);
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    transition: 300ms;
+}
+
+.box button:hover {
+    background-color: var(--navbar-inverted-second-bg);
+}
+
+.box a {
+    text-decoration: none;
+}
+
+#logoutBT {
+    background-color: var(--navbar-second-bg);
+    color: var(--text-color);
 }
 
 .intro {

@@ -24,7 +24,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
     private static final String STATEMENT = "SELECT * "                                                     +
                                             "FROM  action a "+
                                             "WHERE a.game_id = ? "                                          +
-                                            "ORDER BY a.round, a.phase, a.subphase";
+                                            "ORDER BY a.round ASC, a.phase DESC, a.subphase ASC";
     /**
      * The ID of the game to retrieve
      */

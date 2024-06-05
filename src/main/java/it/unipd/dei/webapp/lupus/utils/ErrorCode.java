@@ -31,6 +31,7 @@ public enum ErrorCode {
     USERNAME_ALREADY_USED("EUSR6", HttpServletResponse.SC_CONFLICT, "Username already used"),
     EMAIL_ALREADY_USED("EUSR7", HttpServletResponse.SC_CONFLICT, "Email already used"),
     WRONG_CREDENTIALS("EUSR8", HttpServletResponse.SC_BAD_REQUEST, "Submitted credentials are wrong"),
+    ACCOUNT_DELETED("EUSR9", HttpServletResponse.SC_NOT_FOUND, "This account has been deleted"),
 
     //user
     USER_NOT_FOUND("EUSR9", HttpServletResponse.SC_NOT_FOUND, "User not found"),
@@ -52,6 +53,7 @@ public enum ErrorCode {
     // friend
     FRIEND_ALREADY_EXIST("EFRN1", HttpServletResponse.SC_CONFLICT, "The friend is already in the list"),
     FRIEND_NOT_EXIST("EFRN2", HttpServletResponse.SC_BAD_REQUEST, "The friend is not in the list"),
+    INVALID_FRIEND("EFRN3", HttpServletResponse.SC_BAD_REQUEST, "Cannot add yourself as a friend"),
 
     //game logs
     LOGS_NOT_EXIST("EGLN1", HttpServletResponse.SC_NOT_FOUND, "Logs not found."),
@@ -154,5 +156,13 @@ public enum ErrorCode {
         JSONObject info = new JSONObject();
         info.put("error", data);
         return info;
+    }
+
+    // todo add javadoc
+    public static ErrorCode getErrorCode(String errorCode) {
+        for (ErrorCode ec : ErrorCode.values())
+            if (ec.errorCode.equals(errorCode))
+                return ec;
+        return null;
     }
 }

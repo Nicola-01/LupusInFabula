@@ -47,11 +47,16 @@ public class Player extends AbstractResource {
     private Date registration_date;
 
     /**
+     * Public game ID of the game where the player is currently playing.
+     */
+    private String gameId;
+
+    /**
      * Constructs a Player object with the specified username, email, password, and registration date.
      *
-     * @param username The username of the player.
-     * @param email The email address of the player.
-     * @param password The password of the player.
+     * @param username          The username of the player.
+     * @param email             The email address of the player.
+     * @param password          The password of the player.
      * @param registration_date The registration date of the player.
      */
     public Player(final String username, final String email,
@@ -66,13 +71,22 @@ public class Player extends AbstractResource {
      * Constructs a Player object with the specified username, email, and password.
      *
      * @param username The username of the player.
-     * @param email The email address of the player.
+     * @param email    The email address of the player.
      * @param password The password of the player.
      */
     public Player(String username, String email, String password) {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    /**
+     * Constructs a Player object.
+     *
+     * @param username The username of the player.
+     */
+    public Player(String username) {
+        this(username, null, null, null);
     }
 
     /**
@@ -102,6 +116,7 @@ public class Player extends AbstractResource {
         return password;
     }
 
+
     /**
      * Gets the registration date of the player.
      *
@@ -109,6 +124,24 @@ public class Player extends AbstractResource {
      */
     public final Date getRegistration_date() {
         return registration_date;
+    }
+
+    /**
+     * Gets the public game ID of the game where the player is currently playing.
+     *
+     * @return The public game ID.
+     */
+    public String getGameId() {
+        return gameId;
+    }
+
+    /**
+     * Sets the public game ID of the game where the player is currently playing.
+     *
+     * @param gameId The public game ID to set.
+     */
+    public void setGameId(String gameId) {
+        this.gameId = gameId;
     }
 
     /**
@@ -127,8 +160,11 @@ public class Player extends AbstractResource {
         jg.writeStartObject();
 
         jg.writeStringField("username", username); // Write the username field
-        jg.writeStringField("email", email);
-        jg.writeStringField("registration_date", registration_date.toString());
+        if (email != null)
+            jg.writeStringField("email", email);
+        if (registration_date != null)
+            jg.writeStringField("registration_date", registration_date.toString());
+        jg.writeStringField("gameId", gameId);
 
         jg.writeEndObject();
         jg.writeEndObject();

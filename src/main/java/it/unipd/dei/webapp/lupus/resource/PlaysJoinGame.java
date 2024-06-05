@@ -22,6 +22,11 @@ public class PlaysJoinGame extends AbstractResource {
     private final int game_id;
 
     /**
+     * The public ID of the game.
+     */
+    private final String public_id;
+
+    /**
      * The start timestamp of the game.
      */
     private final Timestamp start;
@@ -47,9 +52,15 @@ public class PlaysJoinGame extends AbstractResource {
     private final boolean has_won;
 
     /**
+     * Indicates whether the game is finished.
+     */
+    private final boolean is_game_finished;
+
+    /**
      * Constructs a new PlaysJoinGame object with the specified parameters.
      *
      * @param game_id          The ID of the game.
+     * @param public_id   The public ID of the game.
      * @param start            The start timestamp of the game.
      * @param game_duration    The duration of the game.
      * @param number_of_rounds The number of rounds played in the game.
@@ -57,13 +68,15 @@ public class PlaysJoinGame extends AbstractResource {
      * @param with_who_wins    The ID of the winning team or player.
      * @param who_wins         The ID of the player who wins.
      */
-    public PlaysJoinGame(int game_id, Timestamp start, Time game_duration, int number_of_rounds, String name, int with_who_wins, int who_wins) {
+    public PlaysJoinGame(int game_id, String public_id, Timestamp start, Time game_duration, int number_of_rounds, String name, int with_who_wins, int who_wins) {
         this.game_id = game_id;
+        this.public_id = public_id;
         this.start = start;
         this.game_duration = game_duration;
         this.number_of_rounds = number_of_rounds;
         this.name = name;
         this.has_won = with_who_wins == who_wins;
+        this.is_game_finished = who_wins != -1;
     }
 
     /**
@@ -73,6 +86,15 @@ public class PlaysJoinGame extends AbstractResource {
      */
     public int getGameId() {
         return game_id;
+    }
+
+    /**
+     * Gets the public ID of the game.
+     *
+     * @return The public ID of the game.
+     */
+    public String getPublicGameId() {
+        return public_id;
     }
 
     /**
@@ -121,6 +143,15 @@ public class PlaysJoinGame extends AbstractResource {
     }
 
     /**
+     * Indicates whether the is finished.
+     *
+     * @return true if the game is finished, false otherwise.
+     */
+    public boolean getIsGameFinished() {
+        return is_game_finished;
+    }
+
+    /**
      * Writes JSON representation of the object to the output stream.
      *
      * @param out The output stream to write JSON to.
@@ -133,12 +164,15 @@ public class PlaysJoinGame extends AbstractResource {
         jg.writeFieldName("PlaysJoinGame");
         jg.writeStartObject();
         jg.writeNumberField("game_id", game_id);
+        jg.writeStringField("public_id", public_id);
         jg.writeStringField("start", start.toString());
         String duration = game_duration != null ? game_duration.toString() : "";
         jg.writeStringField("game_duration", duration);
         jg.writeNumberField("number_of_rounds", number_of_rounds);
-        jg.writeStringField("name", name);
+        String role_name = is_game_finished ? name : "****";
+        jg.writeStringField("name", role_name);
         jg.writeBooleanField("has_won", has_won);
+        jg.writeBooleanField("is_game_finished", is_game_finished);
         jg.writeEndObject();
         jg.writeEndObject();
         jg.flush();

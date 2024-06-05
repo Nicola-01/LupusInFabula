@@ -1,9 +1,7 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
-import it.unipd.dei.webapp.lupus.dao.SearchPlayerByEmailDAO;
-import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.dao.SignupPlayerDAO;
-import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
+import it.unipd.dei.webapp.lupus.dao.*;
+import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Message;
@@ -51,7 +49,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
      * Passwords must be between 8 and 16 characters long and contain at least one uppercase letter,
      * one lowercase letter, one number, and one special character.
      */
-    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,16}$";
+    String passwordRegex = "^(?=.*\\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\\w\\d\\s:])([^\\s]){8,20}$";
 
     /**
      * The compiled pattern for validating email addresses.
@@ -96,13 +94,13 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
             LogContext.removeUser();
         }
-        // session invalidate for all cases
         request.getSession().invalidate();
-
         LogContext.removeIPAddress();
         LogContext.removeAction();
-
-        request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
+        if(op.startsWith("logout"))
+            response.sendRedirect(request.getContextPath() + "/login");
+        else
+            request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
     }
 
     /**
@@ -237,7 +235,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     // adds the user to the session
                     HttpSession session = request.getSession();
-                    session.setAttribute("user", signupPlayer);
+                    session.setAttribute(UserFilter.USER_ATTRIBUTE, signupPlayer);
                     LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
 
                     LogContext.removeIPAddress();
@@ -245,7 +243,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     LogContext.removeUser();
 
                     // after sign up, redirects all to the homepage
-                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+                    response.sendRedirect(request.getContextPath() + "/home");
 
                 }
             }
@@ -312,14 +310,35 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
 
                     LOGGER.info("Credentials are wrong");
                     m = new Message("Credentials are wrong", ec.getErrorCode(), ec.getErrorMessage());
+                } else if (p.getUsername().equals(p.getEmail())) {
+                    ErrorCode ec = ErrorCode.ACCOUNT_DELETED;
+                    response.setStatus(ec.getHTTPCode());
+
+                    LOGGER.info("Account is deleted");
+                    m = new Message("The account '" + p.getUsername() + "' is deleted", ec.getErrorCode(), ec.getErrorMessage());
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
                     response.setStatus(HttpServletResponse.SC_CREATED);
-                    session.setAttribute("user", p);
-                    LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
+                    session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
 
-                    response.sendRedirect(request.getContextPath() + "/jsp/home.jsp");
+                    int gameID = new GetGameIdByPlayerUsernameDAO(getConnection(), p.getUsername()).access().getOutputParam();
+                    if (gameID > 0) {
+                        String publicGameID = new PlayerInGameDAO(getConnection(), p.getUsername()).access().getOutputParam();
+                        String gameMaster = new GetMasterFromIdGameDAO(getConnection(), gameID).access().getOutputParam();
+
+                        LOGGER.info(gameMaster.equals(p.getUsername()));
+                        LOGGER.info(publicGameID);
+
+                        if (gameMaster.equals(p.getUsername()))
+                            session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);
+                        else
+                            session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
+                    } else
+                        session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
+
+                    LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
+                    response.sendRedirect(request.getContextPath() + "/home");
                 }
             }
             if (m != null) {

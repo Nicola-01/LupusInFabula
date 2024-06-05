@@ -1,0 +1,199 @@
+/*#background{*/
+/*    position: absolute;*/
+/*    border: none;*/
+/*    width: 100%;*/
+/*    height: 100%;*/
+/*    top: 0;*/
+/*    left: 0;*/
+/*    z-index: -1;*/
+/*}*/
+
+#playersStatus {
+    position: relative;
+}
+
+#playersStatus, #gameLog {
+    margin: 0;
+    overflow-y: auto;
+    width: 100%;
+    height: calc(100% - 35px);
+    background-color: var(--bg-second-color);
+    border-radius: .5rem;
+}
+
+#copyLink {
+    background-color: var(--neutral-color-1);
+    width: 110px !important;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    overflow: hidden;
+    transition-duration: 700ms;
+}
+
+#copyLink span {
+    width: 100px;
+}
+
+#copyLink:hover {
+    background-color: var(--neutral-color-6);
+}
+
+#copyLink span:first-child {
+    color: var(--neutral-color-4);
+    position: absolute;
+    transform: translate(-50%, -50%)
+}
+
+#copyLink span:last-child {
+    position: absolute;
+    color: var(--neutral-color-1);
+    opacity: 0;
+    transform: translateY(100%) translateX(-50%);
+    height: 14px;
+    line-height: 13px;
+}
+
+#copyLink:focus {
+    background-color: var(--neutral-color-4);
+    width: 120px;
+    height: 40px;
+    transition-delay: 100ms;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus span:first-child {
+    color: #B5CCF3;
+    transform: translateX(-50%) translateY(-150%);
+    opacity: 0;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus span:last-child {
+    transform: translateX(-50%) translateY(-50%);
+    opacity: 1;
+    transition-delay: 300ms;
+    transition-duration: 500ms;
+}
+
+#copyLink:focus:end {
+    background-color: #FFFFFF;
+    width: 120px;
+    height: 40px;
+    transition-duration: 900ms;
+}
+
+.centralize {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+#playerRole
+{
+    font-size: 2em;
+    text-align: center;
+}
+
+#playerImage
+{
+    width: 100%;
+}
+
+@media (min-width: 768px)
+{
+    #playerImage {
+        width: 75%;
+    }
+}
+
+@media (min-width: 992px)
+{
+    #playerImage {
+        width: 50%;
+    }
+}
+
+#toggleButton {
+    width: 45px;
+    height: 45px;
+    background-color: var(--navbar-inverted-bg);
+    border: none;
+    transition: .3s all;
+}
+
+#toggleButton:hover {
+    background-color: var(--navbar-inverted-second-bg);
+}
+
+.blur-name {
+    filter: blur(10px);
+}
+
+.blurred {
+    filter: blur(10px);
+    position: relative;
+}
+
+.blurred::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: gray;
+    opacity: 1;
+    z-index: 1;
+    pointer-events: none; /* Allows clicks to pass through */
+}
+
+.hide-background {
+    background-color: rgb(159, 159, 159) !important;
+}
+
+.circular-player, .grid-player
+{
+    display: flex;
+    flex-direction: column;
+}
+
+.card-container {
+    perspective: 1000px;
+}
+
+.card {
+    width: 200px;
+    height: 280px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 1s;
+    border: none;
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+}
+
+.card-front {
+    background-size: cover;
+    background-position: center;
+}
+
+.card-back {
+    background-size: cover;
+    background-position: center;
+    background-image: url('../../media/cards/card_back/fantasy1.png');
+    transform: rotateY(180deg);
+}
+
+.is-flipped {
+    transform: rotateY(180deg);
+}

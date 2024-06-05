@@ -7,155 +7,290 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <title>Lupus in Fabula - Rules</title>
+    <c:import url="/jsp/include/head.jsp"/>
+
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/rules.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/homepage.css">
 </head>
 <body>
-    <header>
-        <h1>Lupus in Fabula</h1>
-    </header>
-    <div class="row upper">
-        <div class="title-row">
-            <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRules')">RULES</span>
+
+<jsp:include page="/jsp/include/navbar.jsp"/>
+
+<div class="container-fluid">
+    <h1>RULES</h1>
+    <ol class="list" style="--length: 7" role="list">
+        <li class="rules" style="--i: 0">
+            <h2><strong>Introduction to Lupus</strong></h2>
+            <p>In the remote village of Fabula, some people become werewolves at night. They attack an innocent person
+                to satisfy their instincts. During the day, the survivors discuss what to do. At the end of the
+                discussion, they lynch one of them. Who will survive the massacre?</p>
+        </li>
+
+        <li class="rules" style="--i: 1">
+            <h2><strong>Aim of the game</strong></h2>
+            <p>There are two factions in the game: the Werewolves and the Villagers. The aim of the Werewolf faction is
+                to eliminate all villagers. Conversely, the aim of the Villagers faction is to lynch all the
+                Werewolves.</p>
+        </li>
+        <li class="rules" style="--i: 2">
+            <h2><strong>Preparation</strong></h2>
+            <p>Before the game starts, one player is chosen to be the master/moderator. He doesn’t belong to any
+                faction, and he will only manage the game tracking everything that will happen. The other players will
+                play the role given to them by their card and look at their own card secretly.</p>
+        </li>
+        <li class="rules" style="--i: 3">
+            <h2><strong>Game</strong></h2>
+            <p>The game is divided into two phases: night and day. At night each role with an effect that resolves
+                during this phase will be called by the master to perform the respective action described in the role
+                card.
+                Once the master has called all roles with a night effect, night will end and the day phase will begin.
+                During the day, people will discuss and vote to lynch someone, hopefully a wolf or a member of the wolf
+                faction.</p>
+            <ol class="sublist" role="list">
+                <li class="subrules" style="--i: 4">
+                    <h2><strong>Night</strong></h2>
+                    <p>The moderator declares the beginning of the night (”it is night, everyone close your eyes”). All
+                        players
+                        then close their eyes, trying not to make any kind of noise for all the duration of this phase.
+                        The
+                        master then begins to call each role with effect:<br>
+                        Example of wolves calling:<br>
+                        - Master: ”Wolves open their eyes and choose who to go and maul.”<br>
+                        - Wolves silently agree and point to their prey<br>
+                        - Master: ”Decide who to send among you to maul your chosen prey”<br>
+                        - Wolves indicate who among them will go<br>
+                        - Master: ”The wolves close their eyes.”<br>
+                        Example of good role calling (e.g: Seer):<br>
+                        - Master: ”Seer open eyes and choose whom to investigate”<br>
+                        - Seer points to the player he wants to investigate<br>
+                        - Master nods to say whether the player has a bad or good role<br>
+                        - Master: ”Seer closes eyes.”<br>
+                    <hr>
+                    Note: This phase should be played even if the called role is already dead in order to not give clues
+                    to others. Once the master has called all roles with night effect, the night is over.</p>
+                </li>
+                <li class="subrules" style="--i: 5">
+                    <h2><strong>Day</strong></h2>
+                    <p>The master now declares the start of the day (”it’s day, everybody open your eyes”). The master
+                        then gives a recap of what happened during the past night, listing who died (if anyone died),
+                        who was anointed, etc. without giving explicit information about what happened (e.g. recap:
+                        Master: ”A died, B died, C was anointed”). Once the master has finished the recap, the
+                        still-living players can then start discussing among themselves to decide who to lynch. You may
+                        lie freely but under no circumstances may you show your card to others.</p>
+                </li>
+                <li class="subrules" style="--i: 6">
+                    <h2><strong>Voting</strong></h2>
+                    <p>After a maximum of three minutes of discussion, the master stops the discussion and asks each
+                        player, starting with the one to the left of the one who died first and proceeding clockwise,
+                        who he thinks should be lynched. All players, including ghosts (i.e., those who died), in their
+                        turn vote indicating who they want to lynch. At the end of the voting, the two players with the
+                        most votes will be clued (in case of a tie, the player closest to the first dead will be
+                        chosen). The two suspected players can now take a short speech defending themselves against the
+                        charges.
+                        After the two speeches are over, the remaining alive unindicted players will vote again for the
+                        new player to be lynched among the two suspects (in this case the voting will be
+                        counterclockwise starting with the alive unindicted player who was last to vote before). At this
+                        point the day is over and the master can start a new night and so on until one faction wins.
+                        <br>
+                    <hr>
+                    Note: all dead players (i.e. ghosts) for the rest of the entire game must not speak or show their
+                    role
+                    to other players.</p>
+                </li>
+            </ol>
+        </li>
+        <li class="rules" style="--i: 7">
+            <h2><strong>Victory Condition</strong></h2>
+            <p>The master declares the game over with a villagers victory if the villagers lynch all the werewolves.
+                Werewolves, on the other hand, are declared winners if at any point in time they are equal in number to
+                the still-living villagers (e.g., 2 werewolves and 2 villagers, or 1 and 1): in that case the werewolves
+                unceremoniously maul the remaining villagers! In case there are victory stealer roles in the game, they
+                will win if their victory condition is fulfilled, and in that case the master will declare them winners
+                any time in the game when they have completed their victory condition.
+            </p>
+        </li>
+    </ol>
+
+    <br>
+
+    <h1 id="roles">ROLES</h1>
+    <div class="slideshow-container goodRoles">
+        <h2 class="text-center mb-4"><strong>GOOD</strong></h2>
+        <div class="rolesDescription">
+            Resident of the village of Fabula, who wants to protect the village from the pack of wolves.
         </div>
-    </div>
-
-    <div id="myNavRoles" class="overlay roles">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav('myNavRoles')">&times;</a>
-        <div class="overlay-content">
-            <div class="slideshow-container">
-
-                <c:if test="${not empty roles}">
-                    <c:forEach var="roleList" items="${roles}">
-                        <c:forEach var="role" items="${roleList}">
-
-                            <div class="mySlides fade">
-                                <div>
-                                    <!-- <p><c:out value="${role.name}"/></p> -->
-                                    <img src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png" style="width:25%">
+        <c:if test="${not empty roles}">
+            <c:forEach var="roleList" items="${roles}">
+                <c:forEach var="role" items="${roleList}">
+                    <c:if test="${role.type eq 0}">
+                        <div class="mySlides slide1 p-2">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img class="asyncImage cards"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
                                 </div>
-                                <div>
-                                    <p><c:out value="${role.description}"/></p>
-                                    <br>
-                                    <p><c:out value="${role.with_who_wins}"/></p>
+                                <div class="col-md-7 roleDescription">
+                                    <h4 class="roleName">
+                                        <c:out value="${fn:toUpperCase(role.name)}"/>
+                                    </h4>
+                                    <p>
+                                        <c:out value="${role.description}"/>
+                                    </p>
+                                    <h5 class="wins">
+                                        WINS WITH: <strong class="winsWith">VILLAGERS</strong>
+                                    </h5>
                                 </div>
                             </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </c:forEach>
+        </c:if>
 
-                        </c:forEach>
-                    </c:forEach>
-                </c:if>
-
-                <a class="prev" onclick="plusSlides(-1)">❮</a>
-                <a class="next" onclick="plusSlides(1)">❯</a>
-
-            </div>
-            <br>
-            <div style="text-align:center">
-
-                <c:if test="${not empty roles}">
-                    <%
-                        var totalRole = 0;
-                    %>
-                    <c:forEach var="roleList" items="${roles}" varStatus="outerLoop">
-                        <c:forEach var="role" items="${roleList}" varStatus="innerLoop">
-                            <%
-                                totalRole++;
-                            %>
-                            <span class="dot" onclick="currentSlide(<%= totalRole%>)"></span>
-                        </c:forEach>
-                    </c:forEach>
-                </c:if>
-                <!-- <span class="dot" onclick="currentSlide(1)"></span>
-                <span class="dot" onclick="currentSlide(2)"></span>
-                <span class="dot" onclick="currentSlide(3)"></span>
-                <span class="dot" onclick="currentSlide(4)"></span> -->
-
-            </div>
-        </div>
+        <a class="prev" onclick="plusSlides(-1, 0)">❮</a>
+        <a class="next" onclick="plusSlides(1, 0)">❯</a>
     </div>
 
-    <div class="row down">
-        <div class="title-row">
-            <span style="font-size:30px;cursor:pointer" onclick="openNav('myNavRoles')">ROLES</span>
+    <br>
+
+    <div class="slideshow-container evilRoles">
+        <h2 class="text-center mb-4"><strong>EVIL</strong></h2>
+        <div class="rolesDescription">
+            Pack of wolves that want to maul the villagers
         </div>
+        <c:if test="${not empty roles}">
+            <c:forEach var="roleList" items="${roles}">
+                <c:forEach var="role" items="${roleList}">
+                    <c:if test="${role.type eq 1}">
+                        <div class="mySlides slide2 p-2">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img class="asyncImage cards"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
+                                </div>
+                                <div class="col-md-7 roleDescription">
+                                    <h4 class="roleName">
+                                        <c:out value="${fn:toUpperCase(role.name)}"/>
+                                    </h4>
+                                    <p>
+                                        <c:out value="${role.description}"/>
+                                    </p>
+                                    <h5 class="wins">
+                                        WINS WITH: <strong class="winsWith">WOLF PACK</strong>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </c:forEach>
+        </c:if>
+
+        <a class="prev" onclick="plusSlides(-1, 1)">❮</a>
+        <a class="next" onclick="plusSlides(1, 1)">❯</a>
     </div>
 
-    <div id="myNavRules" class="overlay rules">
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav('myNavRules')">&times;</a>
-        <div class="overlay-content">
-            <p style="color: white">This game requires at least five participants, one of whom will be the game-master, and the other will get roles
-                assigned randomly, for instance by drawing a card. The main roles are wolves and farmers, but other roles are
-                used - like medium, knight, werehamster etc - in order to make the game more entertaining, with specific rules
-                applying to each character. Each round is divided into two parts: night and day. The first night is used by the
-                game-master to know the role assigned to each player and writes them down. During the other nights, all players
-                close their eyes and the game-master calls one by one each role that has an ability (e.g. the wolf has the ability to
-                kill another player), the player that is called points out to the game-master (i.e. with the finger, without speaking)
-                which player is their target (e.g. the wolf A points player B to kill him). After all roles have done their actions, the
-                day phase starts. First of all the players can open their eyes, and the game-master says what happened during the
-                night (e.g. ”during the night player B died”), after that, the discussion starts, followed by the vote phase, where
-                each player votes which player they want to kill.
-                N.B. We have extra roles, e.g. the knight, who can protect a player during the night, so for example if the wolf
-                and knight target the same player, that person will not die that night, so the game-master will say ”no one died
-                during the night”.
-            </p>
+    <br>
+
+    <div class="slideshow-container victoryStealerRoles">
+        <h2 class="text-center mb-4"><strong>VICTORY STEALER</strong></h2>
+        <div class="rolesDescription">
+            Villagers who play for themselves without caring about other villagers
         </div>
+        <c:if test="${not empty roles}">
+            <c:forEach var="roleList" items="${roles}">
+                <c:forEach var="role" items="${roleList}">
+                    <c:if test="${role.type eq 2}">
+                        <div class="mySlides slide3 p-2">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img class="asyncImage cards"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
+                                </div>
+                                <div class="col-md-7 roleDescription">
+                                    <h4 class="roleName">
+                                        <c:out value="${fn:toUpperCase(role.name)}"/>
+                                    </h4>
+                                    <p>
+                                        <c:out value="${role.description}"/>
+                                    </p>
+                                    <h5 class="wins">
+                                        WINS WITH: <strong class="winsWith">ALONE</strong>
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </c:forEach>
+        </c:if>
+
+        <a class="prev" onclick="plusSlides(-1, 2)">❮</a>
+        <a class="next" onclick="plusSlides(1, 2)">❯</a>
     </div>
-    <footer>
-        <p>&copy; 2024 Team LIF - Lupus in Fabula. All rights reserved.</p>
-    </footer>
 
-    <script>
-        function openNav(id) {
-            var overlay = document.getElementById(id);
-            if (overlay) {
-                overlay.style.width = "100%";
-            } else {
-                console.error("Elemento con ID specificato non trovato");
-            }
-        }
+    <br>
 
-        function closeNav(id) {
-            var overlay = document.getElementById(id);
-            if (overlay) {
-                overlay.style.width = "0";
-            } else {
-                console.error("Elemento con ID specificato non trovato");
-            }
-        }
-    </script>
+    <div class="slideshow-container neutralRoles">
+        <h2 class="text-center mb-4"><strong>NEUTRAL ROLES</strong></h2>
+        <div class="rolesDescription">
+            Roles that play with the villagers or the pack of wolves, and that can cause chaos between any type of role
+        </div>
+        <c:if test="${not empty roles}">
+            <c:forEach var="roleList" items="${roles}">
+                <c:forEach var="role" items="${roleList}">
+                    <c:if test="${role.type eq 3}">
+                        <div class="mySlides slide4 p-2">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <img class="asyncImage cards"
+                                         src="${pageContext.request.contextPath}/media/cards/lowResolution/<c:out value="${role.name}"/>.png"
+                                         data-src="${pageContext.request.contextPath}/media/cards/<c:out value="${role.name}"/>.png"
+                                         alt="<c:out value="${role.name}"/>'s card">
+                                </div>
+                                <div class="col-md-7 roleDescription">
+                                    <h4 class="roleName">
+                                        <c:out value="${fn:toUpperCase(role.name)}"/>
+                                    </h4>
+                                    <p>
+                                        <c:out value="${role.description}"/>
+                                    </p>
+                                    <h5 class="wins">
+                                        WINS WITH: <strong class="winsWith">
+                                        <c:if test="${role.name eq 'plague spreader'}">
+                                            VILLAGERS
+                                        </c:if>
+                                        <c:if test="${role.name eq 'illusionist'}">
+                                            WOLF PACK
+                                        </c:if>
+                                    </strong>
+                                    </h5>
 
-    <script>
-        let slideIndex = 1;
-        showSlides(slideIndex);
+                                </div>
+                            </div>
+                        </div>
+                    </c:if>
+                </c:forEach>
+            </c:forEach>
+        </c:if>
 
-        function plusSlides(n) {
-            showSlides(slideIndex += n);
-        }
+        <a class="prev" onclick="plusSlides(-1, 3)">❮</a>
+        <a class="next" onclick="plusSlides(1, 3)">❯</a>
+    </div>
+</div>
 
-        function currentSlide(n) {
-            showSlides(slideIndex = n);
-        }
-
-        function showSlides(n) {
-            let i;
-            let slides = document.getElementsByClassName("mySlides");
-            let dots = document.getElementsByClassName("dot");
-            if (n > slides.length) {slideIndex = 1}
-            if (n < 1) {slideIndex = slides.length}
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-            slides[slideIndex-1].style.display = "block";
-            dots[slideIndex-1].className += " active";
-        }
-    </script>
+<c:import url="/jsp/include/footer.jsp"/>
+<script src="${pageContext.request.contextPath}/js/rules.js"></script>
 
 </body>
 </html>

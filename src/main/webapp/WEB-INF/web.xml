@@ -37,6 +37,46 @@
         <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserDispatcherServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>NewGameServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.NewGameServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>HomePageServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.HomePageServlet</servlet-class>
+    </servlet>
+
+    <servlet>
+        <servlet-name>CurrentGameServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.CurrentGameServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>NewGameServlet</servlet-name>
+        <url-pattern>/newVillage</url-pattern>
+        <url-pattern>/newvillage</url-pattern> <!-- case-insensitive -->
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>CurrentGameServlet</servlet-name>
+        <url-pattern>/village/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>HomePageServlet</servlet-name>
+        <url-pattern>/home</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>UserPageServlet</servlet-name>
+        <servlet-class>it.unipd.dei.webapp.lupus.servlet.UserPageServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserPageServlet</servlet-name>
+        <url-pattern>/habitant/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>LoginSignup</servlet-name>
@@ -80,5 +120,10 @@
         <filter-name>GameMasterFilter</filter-name>
         <url-pattern>/game/*</url-pattern>
     </filter-mapping>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/jsp/pageNotFound.jsp</location>
+    </error-page>
 
 </web-app>

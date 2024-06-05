@@ -1,6 +1,9 @@
 package it.unipd.dei.webapp.lupus.servlet;
 
+import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
@@ -128,6 +131,27 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             }
             return true;
         }
+
+        // GET /lupus/game/list
+        // returns the match that the logged in player is playing
+        if (path.equals("/list")) {
+            if (method.equals("GET")) {
+                String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                int privateGameID = new GetGameIdByPlayerUsernameDAO(getConnection(), username).access().getOutputParam();
+                new GameStatusRR(req, res, getDataSource(), privateGameID).serve();
+                return true;
+            } else {
+                LOGGER.warn("Unsupported operation for URI /game/list: %s.", method);
+
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsupported operation for URI /game/list.", ec.getErrorCode(),
+                        String.format("Requested operation %s, but required GET.", method));
+                res.setStatus(ec.getHTTPCode());
+
+                m.toJSON(res.getOutputStream());
+            }
+        }
+
         // GET /game/actions/
         // GET  /game/status/{gameID}
         // GET  /game/status/{gameID}/master
@@ -147,7 +171,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         // POST /actions/{gameID}
 
         String[] splitPath = path.split("/");
-        
+
         if (!(splitPath.length == 3 || (splitPath.length == 4 && path.endsWith("/master"))))
             return false;
 
@@ -156,8 +180,8 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         // splitPath[0] is empty
         String requestURI = splitPath[1];
         String publicGameID = splitPath[2];
-        int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
 
+        int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), publicGameID).access().getOutputParam();
         if (gameID == -1) {
             LOGGER.warn("Invalid gameID, the game %s doesn't exists.", publicGameID);
 
@@ -208,15 +232,18 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
+        Game game = new GetGameByGameIdDAO(getConnection(), gameID).access().getOutputParam();
+        boolean gameIsOver = game.getWho_win() >= 0;
+
         switch (requestURI) {
             case "status":
                 new GameStatusRR(req, res, getDataSource(), gameID).serve();
                 break;
             case "players":
-                new GamePlayersRR(req, res, getDataSource(), gameID, isMaster).serve();
+                new GamePlayersRR(req, res, getDataSource(), gameID, isMaster || gameIsOver).serve();
                 break;
             case "logs":
-                 new GameLogGetRR(gameID, isMaster, req, res, getDataSource()).serve();
+                new GameLogGetRR(gameID, isMaster || gameIsOver, req, res, getDataSource()).serve();
                 break;
         }
         return true;

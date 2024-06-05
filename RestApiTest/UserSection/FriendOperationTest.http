@@ -15,8 +15,7 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user1",
-    "friendship_date": "2024-04-19"
+    "username": "user1"
   }
 }
 
@@ -26,7 +25,57 @@ Content-Type: application/json
 
 {
   "friend" : {
-    "username": "user1",
-    "friendship_date": "2024-04-19"
+    "username": "user1"
+  }
+}
+
+### login as user1
+POST http://localhost:8080/lupus/login HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+user = user1 &
+password = ciao
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user2"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user3"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user4"
+  }
+}
+
+###
+
+POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+Content-Type: application/json
+
+{
+  "friend" : {
+    "username": "user8"
   }
 }

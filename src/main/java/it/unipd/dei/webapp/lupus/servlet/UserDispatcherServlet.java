@@ -219,6 +219,20 @@ public class UserDispatcherServlet extends AbstractDatabaseServlet {
             }
 
         }
+        else if (path.contains("/search/")){
+            if (method.equals("GET")) {
+                String username =  uri.substring(uri.lastIndexOf("/") + 1);
+                new SearchPlayerRR(username, req, resp, getDataSource()).serve();
+
+            } else {
+                LOGGER.warn("Unknown method: %s.", method);
+
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsupported operation for URI /search/{username}.", ec.getErrorCode(), String.format("Requested operation %s, but required GET.", method));
+                resp.setStatus(ec.getHTTPCode());
+                m.toJSON(resp.getOutputStream());
+            }
+        }
         //possible URI: /user/{username}
         else if (new SearchPlayerByUsernameDAO(getConnection(), uri.substring(uri.lastIndexOf("/") + 1)).access().getOutputParam() != null) {
 

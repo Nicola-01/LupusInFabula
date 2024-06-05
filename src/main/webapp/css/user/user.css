@@ -1,0 +1,34 @@
+#deleteAccountPage, #changeCredentialsPage {
+    margin: 1rem 9rem;
+}
+
+#deleteAccountPage, #changeCredentialsPage {
+    background: linear-gradient(var(--bg-second-color), var(--bg-second-color)) padding-box,
+    linear-gradient(145deg, #e81cff, #40c9ff) border-box;
+    max-width: 700px;
+    margin: auto;
+    border: 2px solid transparent;
+    padding: 32px 24px;
+    font-family: inherit;
+    color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    box-sizing: border-box;
+    border-radius: 16px;
+}
+
+#deleteAccountPage .form, #changeCredentialsPage .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#deleteForm input, #updateForm input {
+    background-color: var(--inputs-bg-color);
+}
+
+.showPassword {
+    height: 45px !important;
+    width: 45px !important;
+}

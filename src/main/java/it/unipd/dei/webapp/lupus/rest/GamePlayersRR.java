@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Handles the GET request for /game/players.
@@ -36,10 +38,10 @@ public class GamePlayersRR extends AbstractRR {
     /**
      * Creates a new GamePlayers REST resource.
      *
-     * @param req the HTTP request.
-     * @param res the HTTP response.
-     * @param ds the dataSource for the connection.
-     * @param gameID the ID of the game
+     * @param req         the HTTP request.
+     * @param res         the HTTP response.
+     * @param ds          the dataSource for the connection.
+     * @param gameID      the ID of the game
      * @param URIisMaster whether the requested URI contained /master at the end
      */
     public GamePlayersRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID, boolean URIisMaster) {
@@ -63,10 +65,11 @@ public class GamePlayersRR extends AbstractRR {
         LogContext.setGame(gameID);
         try {
             String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
-            el = new GetGamePlayersDAO(ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
+            el = new GetGamePlayersDAO(ds, ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
 
             if (el != null) {
                 LOGGER.info("Players successfully listed.");
+                el.removeIf(playsAsIn -> Objects.equals(playsAsIn.getRole(), GameRoleAction.MASTER.getName()));
 
                 res.setStatus(HttpServletResponse.SC_OK);
                 new ResourceList<PlaysAsIn>(el).toJSON(res.getOutputStream());
@@ -91,9 +94,7 @@ public class GamePlayersRR extends AbstractRR {
             m = new Message("Cannot return game info: unexpected database error.", ec.getErrorCode(), ex.getMessage());
             res.setStatus(ec.getHTTPCode());
             m.toJSON(res.getOutputStream());
-        }
-        finally
-        {
+        } finally {
             LogContext.removeAction();
             LogContext.removeUser();
             LogContext.removeIPAddress();

@@ -33,6 +33,11 @@ public class Friend extends AbstractResource {
     private final String username;
 
     /**
+     * The number of game in common
+     */
+    private final Integer commonGame;
+
+    /**
      * The date when the friendship was established
      */
     private final Date friendship_date;
@@ -43,8 +48,9 @@ public class Friend extends AbstractResource {
      * @param username       the username of the friend
      * @param friendship_date the date when the friendship was established
      */
-    public Friend(final String username, final Date friendship_date){
+    public Friend(final String username,final Integer commonGame, final Date friendship_date){
         this.username = username;
+        this.commonGame = commonGame;
         this.friendship_date = friendship_date;
     }
 
@@ -56,6 +62,16 @@ public class Friend extends AbstractResource {
     public String getUsername() {
         return username;
     }
+
+    /**
+     * Return the number of common game.
+     *
+     * @return the common game
+     */
+    public Integer getCommonName() {
+        return commonGame;
+    }
+
 
     /**
      * Returns the date when the friendship was established.
@@ -84,6 +100,8 @@ public class Friend extends AbstractResource {
 
         jg.writeStringField("username", username);
 
+        jg.writeNumberField("commonGame", commonGame);
+
         jg.writeStringField("friendship_date", friendship_date.toString());
 
         jg.writeEndObject();
@@ -104,6 +122,7 @@ public class Friend extends AbstractResource {
 
         // the fields read from JSON
         String jUsername = null;
+        Integer jCommonGame = null;
         String jFriendship_date = null;
 
         try {
@@ -129,6 +148,12 @@ public class Friend extends AbstractResource {
                             jp.nextToken();
                             jUsername = jp.getText();
                             break;
+
+                        case "commonGame":
+                            jp.nextToken();
+                            jCommonGame = jp.getIntValue();
+                            break;
+
                         case "friendship_date":
                             jp.nextToken();
                             jFriendship_date = jp.getText();
@@ -141,6 +166,6 @@ public class Friend extends AbstractResource {
             throw e;
         }
 
-        return new Friend(jUsername, Date.valueOf(jFriendship_date));
+        return new Friend(jUsername, jCommonGame, jFriendship_date == null ? null: Date.valueOf(jFriendship_date));
     }
 }

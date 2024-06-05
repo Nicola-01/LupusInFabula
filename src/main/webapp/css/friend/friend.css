@@ -1,0 +1,87 @@
+#friendsPage {
+    padding-bottom: 0.5rem;
+}
+
+#my_friends {
+    border-collapse: collapse;
+    /*margin-top: 20px;*/
+}
+
+#my_friends th,
+#my_friends td {
+    /*border: 1px solid #ddd;*/
+    /*text-align: left;*/
+}
+
+#my_friends th {
+    /*background-color: #f2f2f2;*/
+}
+
+#listFriend h2 {
+    text-align: center;
+    /*margin-bottom: 20px;*/
+}
+
+#my_friends .deleteFriendButton {
+    display: block;
+    background-color: var(--navbar-second-bg);;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: .3s ease;
+}
+
+#my_friends .deleteFriendButton:hover {
+    transform: scale(1.05);
+    background-color: var(--red-color);
+}
+
+#addFriend{
+    height: 70px;
+}
+
+#listFriend{
+    margin: auto;
+}
+
+#friendsTable{
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.playerStatus{
+    display: none;
+    margin-left: auto;
+}
+
+.friend-link {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.friend-link:hover {
+    color: var(--navbar-inverted-bg);
+    font-weight: bold;
+}
+
+.newGame-link{
+    text-decoration: none;
+    color: rgba(0, 200, 0, 1);
+}
+
+.newGame-link:hover {
+    font-size: larger;
+    font-weight: bold;
+}
+
+.game-link{
+    text-decoration: none;
+    color: rgba(200, 0, 0, 1);
+}
+
+.game-link:hover {
+    font-size: larger;
+    font-weight: bold;
+}

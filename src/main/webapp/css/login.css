@@ -1,4 +1,4 @@
-body{
+body {
     margin: 0;
     padding: 0;
     display: flex;
@@ -6,98 +6,114 @@ body{
     align-items: center;
     min-height: 100vh;
     font-family: 'Jost', sans-serif;
-    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e);
+    background-image: url('../media/forest_background.jpeg');
+    background-position: center;
+    background-size: cover;
 }
-.main{
-    width: 70%;
-    max-width: 700px;
+
+.main {
     height: 500px;
-    margin-left:auto;
-    margin-right:auto;
     overflow: hidden;
-    background: url("https://doc-08-2c-docs.googleusercontent.com/docs/securesc/68c90smiglihng9534mvqmq1946dmis5/fo0picsp1nhiucmc0l25s29respgpr4j/1631524275000/03522360960922298374/03522360960922298374/1Sx0jhdpEpnNIydS4rnN4kHSJtU1EyWka?e=view&authuser=0&nonce=gcrocepgbb17m&user=03522360960922298374&hash=tfhgbs86ka6divo3llbvp93mg4csvb38") no-repeat center/ cover;
+    background-color: #0D324D;
     border-radius: 10px;
     box-shadow: 5px 20px 50px #000;
 }
-#chk{
+
+#loginCB {
     display: none;
 }
-.signup{
+
+.signup {
     position: relative;
-    width:100%;
+    width: 100%;
     height: 100%;
 }
-.lb_login, .lb_singup{
+
+.lb_login, .lb_signup {
     color: #fff;
     font-size: 2.3em;
     justify-content: center;
     display: flex;
-    margin: 40px auto; /* 60px sopra e sotto, centrato orizzontalmente */
-    margin-bottom: 30px; /* margine inferiore aggiunto */
+    margin: 40px auto 15px;
     font-weight: bold;
     cursor: pointer;
     transition: .5s ease-in-out;
 }
-.custom-input{
-    width: 60%;
-    height: 40px;
-    background: #e0dede;
-    justify-content: center;
-    display: flex;
-    margin: 20px auto;
-    padding: 10px;
-    border: none;
-    outline: none;
-    border-radius: 5px;
+
+.signup .additional-options {
+    color: #e0dede;
 }
-.additional-options{
-    width: 60%;
+
+.login .additional-options {
+    color: #052033;
+}
+
+#loginSignup {
+    width: 100%;
+    max-width: 700px;
+}
+
+.additional-options {
     height: 20px;
     margin: 0 auto;
 }
-a {
+
+.forgot-password {
     color: #573b8a;
     text-decoration: none;
 }
-a:hover {
+
+.forgot-password:hover {
     text-decoration: underline;
 }
 
-input[type="submit"]{
-    width: 60%;
+.custom-input, input[type="submit"] {
+    width: 100%;
     height: 40px;
-    margin: 10px auto;
     justify-content: center;
-    display: block;
+    border: none;
+    outline: none;
+    border-radius: 5px;
+}
+
+.custom-input {
+    background: #e0dede;
+    display: flex;
+    margin: 1.5em auto;
+    padding: 10px;
+}
+
+input[type="submit"] {
     color: #fff;
-    background: #573b8a;
+    background: #1F6191;
+    display: block;
     font-size: 1em;
     font-weight: bold;
-    margin-top: 20px;
-    outline: none;
-    border: none;
-    border-radius: 5px;
+    margin: 20px auto 10px;
     transition: .2s ease-in;
     cursor: pointer;
 }
-input[type="submit"]:hover{
-    background: #6d44b8;
+
+input[type="submit"]:hover {
+    background: #134569;
 }
+
 input[type="submit"]:disabled {
-    background: #cfbef7;
-    color: #573b8a;
+    background: #ade4f8;
+    color: #0D324D;
     cursor: not-allowed;
 }
 
-.login{
+.login {
     height: 460px;
     background: #eee;
     border-radius: 60% / 10%;
     transform: translateY(-130px);
     transition: .8s ease-in-out;
 }
-.lb_login{
-    color: #573b8a;
+
+.lb_login {
+    color: #0D324D;
     transform: scale(.6);
 }
 
@@ -106,16 +122,37 @@ input[type="submit"]:disabled {
     vertical-align: middle;
 }
 
-.forgot-password{
+.forgot-password {
     text-align: right;
 }
 
-#chk:checked ~ .login{
+#loginCB:checked ~ .login {
     transform: translateY(-480px);
 }
-#chk:checked ~ .login label{
+
+#loginCB:checked ~ .login label {
     transform: scale(1);
 }
-#chk:checked ~ .signup label{
+
+#loginCB:checked ~ .signup .lb_signup {
     transform: scale(.6);
+}
+
+.control-label {
+    top: 6px !important;
+}
+
+.form-control:focus ~ .control-label,
+.form-control:not(:placeholder-shown) ~ .control-label {
+    top: -27px !important;
+}
+
+.login .form-control:focus ~ .control-label,
+.login .form-control:not(:placeholder-shown) ~ .control-label {
+    color: #0d324d;
+}
+
+.signup .form-control:focus ~ .control-label,
+.signup .form-control:not(:placeholder-shown) ~ .control-label {
+    color: #e0dede;
 }
