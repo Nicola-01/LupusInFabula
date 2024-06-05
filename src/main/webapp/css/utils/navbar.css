@@ -173,7 +173,7 @@
 
 .menu-item, .menu-open-button {
     background: var(--navbar-bg);
-    border-radius: 100%;
+    border-radius: 45%;
     width: 50px;
     height: 50px;
     margin-left: -30px;
@@ -267,18 +267,18 @@
 
 .menu-open:checked ~ .menu-item:nth-child(3) {
     transition-duration: 170ms;
-    transform: translate3d(0, 60px, 0);
+    transform: translate3d(0, 65px, 0);
 }
 
 .menu-open:checked ~ .menu-item:nth-child(4) {
     border: none;
     transition-duration: 250ms;
-    transform: translate3d(0, 115px, 0);
+    transform: translate3d(0, 120px, 0);
 }
 
 .menu-open:checked ~ .menu-item:nth-child(5) {
     transition-duration: 330ms;
-    transform: translate3d(0, 170px, 0);
+    transform: translate3d(0, 175px, 0);
 }
 
 
@@ -288,22 +288,22 @@
 
 .menu-item-new:nth-child(6) {
     transition-duration: 170ms;
-    transform: translate3d(-55px, 110px, 0);
+    transform: translate3d(-55px, 120px, 0);
 }
 
 .menu-item-new:nth-child(7) {
     transition-duration: 250ms;
-    transform: translate3d(-110px, 110px, 0);
+    transform: translate3d(-110px, 120px, 0);
 }
 
 .menu-item-new:nth-child(8) {
     transition-duration: 330ms;
-    transform: translate3d(-165px, 110px, 0);
+    transform: translate3d(-165px, 120px, 0);
 }
 
 .menu-item-new:nth-child(9) {
     transition-duration: 410ms;
-    transform: translate3d(-220px, 110px, 0);
+    transform: translate3d(-220px, 120px, 0);
 }
 
 a.menu-item.menu-item-new.active {

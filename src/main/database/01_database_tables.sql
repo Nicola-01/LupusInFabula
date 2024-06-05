@@ -161,6 +161,8 @@ COMMENT ON COLUMN Action.subphase IS 'The subphase of the phase in which the act
 COMMENT ON COLUMN Action.type_of_action IS 'The type of action performed by the player.';
 COMMENT ON COLUMN Action.target IS 'The username of the target player of the action.';
 
+
+
 -- #################################################################################################
 -- ## Create a user used by the webapp                                                            ##
 -- #################################################################################################
@@ -172,7 +174,8 @@ COMMENT ON COLUMN Action.target IS 'The username of the target player of the act
 -- REVOKE ALL PRIVILEGES ON TABLE player FROM lupus_sql;
 -- REVOKE ALL PRIVILEGES ON TABLE plays_as_in FROM lupus_sql;
 
-DO $$
+DO
+$$
     BEGIN
         -- Revoke privileges if the role exists
         IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'lupus_sql') THEN
@@ -186,7 +189,8 @@ DO $$
             -- Drop the lupus_sql role
             DROP ROLE lupus_sql;
         END IF;
-    END $$;
+    END
+$$;
 
 -- Drop the lupus_sql role if it exists
 DROP ROLE IF EXISTS lupus_sql;
@@ -194,7 +198,7 @@ DROP ROLE IF EXISTS lupus_sql;
 -- Recreate the lupus_sql role with the specified permissions
 CREATE ROLE lupus_sql LOGIN PASSWORD 'wolf';
 
-GRANT SELECT, INSERT, UPDATE ON action, game, player, plays_as_in TO lupus_sql;
+GRANT SELECT, INSERT , UPDATE ON action, game, player, plays_as_in TO lupus_sql;
 GRANT SELECT, INSERT, UPDATE, DELETE ON is_friend_with TO lupus_sql;
 GRANT SELECT ON role TO lupus_sql;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;

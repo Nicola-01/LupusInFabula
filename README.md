@@ -65,14 +65,14 @@ o reset the database, you have two options:
 
 - Delete the `/data/db/` directory and re-execute `docker-compose`.
 - Alternatively, access the terminal of the database container: `docker exec -it webapp-lupus-db-1 /bin/bash`, navigate to
-  the `/docker-entrypoint-initdb.d/` directory, and execute the SQL files. Note that `database.sql` and `populate_db.sql` must
+  the `/docker-entrypoint-initdb.d/` directory, and execute the SQL files. Note that `01_database_tables.sql` and `02_populate_db.sql` must
   always be executed after resetting the database.
 
 ### Test
 
 To execute the tests for the RestAPI it's needed to execute the two .sql file:
-- populate_db.sql
-- populate_db_optional.sql
+- 02_populate_db.sql
+- populate_db_optional.aaa
 
 The first file inserts into the database all the possible roles; the second, instead, insert one complete game with all actions and also insert some games to test the logs and the statistics of an user.
 ## Group members
