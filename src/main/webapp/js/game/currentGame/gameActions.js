@@ -1,7 +1,71 @@
+/**
+ * Used on the currentGame page to handle game actions. This is primarily used by the game master
+ * to insert actions during the game.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+/**
+ * List of players in the wolf pack.
+ * @type {[string]}
+ */
 let wolfPack = []
+
+/**
+ * The current round of the game.
+ * @type {number}
+ */
 let gameRound
+
+/**
+ * The current phase of the game.
+ * @type {number}
+ */
 let gamePhase
-let gameOver = false
+
+/**
+ * The current vote section.
+ * @type {number}
+ */
+let currentVoteSection = 0;
+
+/**
+ * Order of players in the game.
+ * @type {[String]}
+ */
+let playersOrder = []
+
+/**
+ * The player acting as Sam.
+ * @type {string}
+ */
+let samPlayer;
+
+/**
+ * The player acting as the plague spreader.
+ * @type {string}
+ */
+let plagueSpreaderPlayer;
+
+/**
+ * List of roles seen as evil.
+ * @type {string[]}
+ */
+const rolesSeeAsEvil = ["berserker", "dorky", "explorer", "wolf"]
+
+/**
+ * List of factions in the game.
+ * @type {string[]}
+ */
+const factions = ["farmers", "wolf pack", "hamster", "jester"];
+
+/**
+ * Corresponding colors for each faction.
+ * @type {string[]}
+ */
+const factions_color = ["green", "red", "#ffcc00", "#ffcc00"];
 
 /**
  * Handles the response from the game status GET request.
@@ -14,11 +78,13 @@ function gameStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let game = JSON.parse(req.responseText)['game'];
+            // Check if the game has ended
             if (game.who_win !== -1)
                 setGameOver(game)
             else {
                 const bt_gameStatus = document.getElementById("gameStatus");
                 const bt_text = document.getElementById("textActionsBt");
+                // Determine the current round and phase of the game
                 gameRound = (game.rounds === 0) ? 1 : game.rounds;
                 gamePhase = game.phase;
                 if (gamePhase === GamePhase.NIGHT) {
@@ -31,10 +97,10 @@ function gameStatus(req) {
                     logElementsReload()
                 }
 
-                // if the theme is dynamic -> change the theme
+                // Change theme dynamically if enabled
                 loadTheme();
 
-                // if url ends with master/, update actions
+                // If URL ends with 'master/', update actions for the game master
                 if (endsWithMaster) {
                     document.getElementById("sendActions").style.display = "flex";
                     return genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
@@ -44,17 +110,18 @@ function gameStatus(req) {
     }
 }
 
-const factions = ["farmers", "wolf pack", "hamster", "jester"];
-const factions_color = ["green", "red", "#ffcc00", "#ffcc00"];
-
-// the game is over
+/**
+ * Handles setting the game over message and updating the UI elements accordingly.
+ *
+ * @param {Object} game - The game object containing game information.
+ * @param {string} game.start - The start time of the game.
+ * @param {number} game.who_win - The index of the winning faction.
+ * @param {number} game.rounds - The number of rounds played in the game.
+ * @param {string} game.game_duration - The duration of the game.
+ */
 function setGameOver(game) {
+    // Determine if 's' should be appended to the win message
     const s = game.who_win < 2 ? "" : "s";
-
-    // // remove toggle button to hide or show roles
-    // const toggleButton = document.getElementById("toggleButton");
-    // if(toggleButton !== null)
-    //     toggleButton.remove();
 
     // set game over message
     const win_faction_div = document.getElementById("winning_faction");
@@ -70,9 +137,7 @@ function setGameOver(game) {
 
         win_faction_div.innerHTML += " win" + s + "!";
 
-        gameTime.innerHTML = "The game started at " + game.start + ".<br>There was " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ", and lasted " + game.game_duration + ".";
-
-        // 2024-05-29 22:28:46.0
+        // Format and display game start time and duration
         const gameStart = (((game.start).split(".")[0])).split(" ")
         const gameDuration = (game.game_duration).split(":").map(Number)
         gameTime.innerHTML = "The game started on " + gameStart[0] + " at " + gameStart[1] + " and lasted for " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ".<br>Total duration of "
@@ -109,15 +174,9 @@ function fillGameActions(req) {
                 else
                     fillDayActions(list);
             }
-        } else {
-            // Hide the "sendActions" button and check if the user is logged in
-            document.getElementById("sendActions").style.display = "none";
-            isLoggedUser(req);
         }
     }
 }
-
-let currentVoteSection = 0;
 
 /**
  * Enables or disables the "sendActions" button based on the current game phase
@@ -127,20 +186,24 @@ let currentVoteSection = 0;
 function enableButtons() {
     let disable = false;
 
-    if (gamePhase === GamePhase.NIGHT) { // night
+    // Check the game phase
+    if (gamePhase === GamePhase.NIGHT) {
         const role_targets = document.querySelectorAll('[id*="_targets"]');
 
+        // Get the designated wolf player and role
         const designatedWolfSB = document.getElementById("designatedWolf");
         const designatedWolfPlayer = designatedWolfSB.value
         const designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
-        // role check
+        // Iterate through the role targets
         for (let i = 0; i < role_targets.length; i++) {
             let role = role_targets[i].getAttribute("role");
+
+            // Handle special cases for certain roles
             if (role === "illusionist") {
                 const illusionistTarget = role_targets[i].value
 
-                // remove previus target
+                // Remove previous target selections
                 for (let j = 0; j < role_targets.length; j++) {
                     const defaultOption = role_targets[j].querySelector('option[value=""]');
                     if (role_targets[j].hasAttribute("blocked")) {
@@ -151,6 +214,7 @@ function enableButtons() {
                     }
                 }
 
+                // Handle targets based on whether the illusionist's target is in the wolf pack
                 if (wolfPackContainPlayer(illusionistTarget)) {
                     let targetRole = playerWolfPackRole(illusionistTarget);
                     let targetElem = document.getElementById(targetRole + "_targets")
@@ -169,8 +233,8 @@ function enableButtons() {
                         if (role_targets[j].getAttribute("player") === illusionistTarget) {
                             defaultOption.textContent = "BLOCKED";
                             defaultOption.selected = true;
-                            // send the first element as default if the user is blocked
-                            // the back end discard that action since the user is blocked
+                            // Send the first element as default if the user is blocked;
+                            // the backend discards that action since the user is blocked.
                             const firstTarget = role_targets[j].options[1].textContent;
                             role_targets[j].setAttribute("blocked", firstTarget)
                             role_targets[j].style.backgroundColor = ""
@@ -179,9 +243,11 @@ function enableButtons() {
                     }
                 }
             } else if (role === "seer" || role === "medium") {
-                // they cannot use their ability
+                // they cannot use their ability if they are blocked
                 if (role_targets[i].hasAttribute("blocked"))
                     continue;
+
+                // Set background colors based on the target's alignment
                 const target = role_targets[i].value;
                 if (target === "")
                     continue;
@@ -192,6 +258,7 @@ function enableButtons() {
             }
         }
 
+        // Check if the designated wolf player is selected and if the required targets are chosen based on the player's role
         if (designatedWolfPlayer === "")
             disable = true
         for (let i = 0; i < role_targets.length && !disable; i++) {
@@ -212,11 +279,10 @@ function enableButtons() {
             }
         }
 
-    } else { // day
-
+    } else { // Day phase
         let samDivDisplay = "none";
 
-        // maximum one vote and 2 ballot => 3
+        // Maximum one vote and 2 ballots => 3
         const maxPhase = 3
         for (let i = 0; i < maxPhase; i++) {
             const role_targets = document.querySelectorAll('#votes_' + i + ' [id*="_targets"]');
@@ -229,7 +295,7 @@ function enableButtons() {
 
             if (allSelected) {
                 let votedPlayers = getMostVotedPlayers(i)
-                // if there are at least 2 players is a ballot
+                // If there are at least 2 players, it is a ballot
                 if ((votedPlayers.length) < 2) {
                     // the player is sam => enable his input box
                     if (votedPlayers[0].player === samPlayer)
@@ -253,6 +319,7 @@ function enableButtons() {
             }
         }
 
+        // Show or hide the SAM div based on display value
         if (document.querySelector(".samDiv") != null) {
             document.querySelector(".samDiv").style.display = samDivDisplay;
 
@@ -264,12 +331,16 @@ function enableButtons() {
         }
 
     }
+    // Set the disabled state of the "sendActions" button
     document.getElementById("sendActions").disabled = disable;
 }
 
-// todo -> to define
-const RolesSeeAsEvil = evilRoles
-
+/**
+ * Determines whether a player is perceived as evil by certain roles in the game.
+ *
+ * @param {string} player - The username of the player being checked.
+ * @returns {boolean} - True if the player is seen as evil by certain roles, false otherwise.
+ */
 function isPlayerSeesAsEvil(player) {
     let role;
     if (wolfPackContainPlayer(player))
@@ -277,7 +348,7 @@ function isPlayerSeesAsEvil(player) {
     else
         // Split the string by <br> tags or spaces
         role = document.getElementById(player + "_status").innerHTML.split(/<br\s*\/?>|\s+/)[1].toLowerCase()
-    return RolesSeeAsEvil.includes(role)
+    return rolesSeeAsEvil.includes(role)
 }
 
 /**
@@ -456,30 +527,42 @@ function playerWolfPackRole(player) {
     return null;
 }
 
+/**
+ * Updates the options and enables/disables select boxes associated with the designated wolf role.
+ */
 function changeDesignatedWolf() {
     let designatedWolfSB = document.getElementById("designatedWolf");
     let designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
-    // for each select box associate to a role
+    // Iterate over each select box associated with a role
     const designatedWolves = document.querySelectorAll('#designatedWolves [id$="_targets"]');
     for (let i = 0; i < designatedWolves.length; i++) {
         const defaultOption = designatedWolves[i].querySelector('option[value=""]');
         if (designatedWolves[i].getAttribute("role") !== designatedRole) {
+            // Update options for non-designated roles
             defaultOption.textContent = "Not the designated role";
             defaultOption.selected = true;
             designatedWolves[i].disabled = true;
         } else {
+            // Enable select box for designated role and reset default option
             designatedWolves[i].disabled = false;
             defaultOption.textContent = "Select a target";
             defaultOption.selected = true;
         }
     }
+    // Enable/disable action buttons based on the selected wolf and other conditions
     enableButtons()
 }
 
+/**
+ * Fills the night actions on the game page based on the provided list of actions.
+ *
+ * @param {Array} list - The list of actions to be processed and displayed.
+ */
 function fillNightActions(list) {
     let gameActions = document.getElementById("gameActions");
 
+    // Create div elements for different role types
     let evilDiv = document.createElement("div");
     let neutralDiv = document.createElement("div");
     let goodDiv = document.createElement("div");
@@ -490,17 +573,20 @@ function fillNightActions(list) {
     goodDiv.classList.add("goodRoles", "mt-0");
     vicStealDiv.classList.add("victoryStealerRoles", "mt-0");
 
+    // Create a div to contain designated wolves
     let designatedWolfDiv = document.createElement("div");
     designatedWolfDiv.id = "designatedWolfDiv";
 
     let designatedWolvesDiv = document.createElement("div");
     designatedWolvesDiv.id = "designatedWolves";
 
+    // Create a div to contain all designated wolves
     designatedWolvesDiv.appendChild(designatedWolfDiv);
     designatedWolvesDiv.appendChild(document.createElement("hr"));
 
     evilDiv.appendChild(designatedWolvesDiv);
 
+    // Map role types to their respective div elements
     const divMap = {
         "good": goodDiv,
         "evil": evilDiv,
@@ -511,6 +597,7 @@ function fillNightActions(list) {
     let berserkAlreadyInsert = false;
     let text;
 
+    // Iterate over each action in the list
     for (let i = 0; i < list.length; i++) {
         let actionTarget = list[i]['actionTarget'];
 
@@ -525,6 +612,7 @@ function fillNightActions(list) {
                     });
             }
 
+            // Insert action wrapper for wolf-related actions
             if (berserkAlreadyInsert) {
                 text = "Against whom the <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u> rages?"
                 designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.NIGHT, true))
@@ -535,7 +623,7 @@ function fillNightActions(list) {
                 designatedWolvesDiv.appendChild(getActionWrapper(actionTarget, text, GamePhase.NIGHT, true))
             }
         } else {
-            // Add wrapper to the gameActions element
+            // Add action wrapper to the respective div based on role type
             const targetDiv = divMap[getRoleType(actionTarget.role)];
             if (targetDiv) {
                 text = "Who is the target of <u style='color: " + rolesColors.get(actionTarget.role) + ";'>" + actionTarget.role + "</u>?";
@@ -544,6 +632,7 @@ function fillNightActions(list) {
         }
     }
 
+    // Create elements for selecting the designated wolf
     let actionWrapperWolf = document.createElement("div");
     actionWrapperWolf.classList.add("action-wrapper", "row");
 
@@ -561,6 +650,7 @@ function fillNightActions(list) {
     defaultOption.textContent = "Select option";
     designatedWolf.append(defaultOption);
 
+    // Populate the designated wolf select box
     for (let i = 0; i < wolfPack.length; i++) {
         let option = document.createElement("option");
         option.text = wolfPack[i].player; // Assuming 'player' is the property containing the player name
@@ -576,36 +666,35 @@ function fillNightActions(list) {
     actionTextWolf.classList.add("col-12", "col-sm-8", "col-md-7")
     actionWrapperWolf.appendChild(actionTextWolf);
 
-    // Add roleTargetsElem to the wrapper
     insertSelectionBox(actionWrapperWolf, designatedWolf);
-
-    // Add wrapper to the gameActions element
     designatedWolfDiv.appendChild(actionWrapperWolf);
 
+    // Append role divs to the game actions element (only if contains something)
     if (evilDiv.innerHTML !== "") gameActions.appendChild(evilDiv);
     if (neutralDiv.innerHTML !== "") gameActions.appendChild(neutralDiv);
     if (goodDiv.innerHTML !== "") gameActions.appendChild(goodDiv);
     if (vicStealDiv.innerHTML !== "") gameActions.appendChild(vicStealDiv);
 
+    // Update designated wolf select box
     changeDesignatedWolf()
 }
 
-// order of players in the game
-let playersOrder = []
-
-// if Sam was voted out
-let samPlayer;
-let plagueSpreaderPlayer;
-
+/**
+ * Fills the actions for the day phase, including voting and special actions like Sam's revenge or plague spreading.
+ *
+ * @param {Object[]} list - The list of actions for the day phase.
+ */
 function fillDayActions(list) {
     let gameActions = document.getElementById("gameActions");
 
+    // Create a section for changing voting phases
     let sectionChange = document.createElement("div");
     let voteDiv = document.createElement("div");
     let samDiv = document.createElement("div");
     let plagueDiv = document.createElement("div");
 
     sectionChange.classList.add("sections", "radio-inputs", "m-0", "mb-2", "row");
+    // Add HTML content to the section for changing voting phases
     sectionChange.innerHTML =
         "  <label class='radio col-4' for='voteRadio_0'>" +
         "    <input type='radio' name='radio' id='voteRadio_0' checked='' subPhase='0'>" +
@@ -623,23 +712,27 @@ function fillDayActions(list) {
         "  </label>"
     gameActions.appendChild(sectionChange);
 
+    // Add event listeners to the voting phase radio buttons
     const voteRadio = document.querySelectorAll('[id*="voteRadio_"]');
     for (let i = 0; i < voteRadio.length; i++)
         voteRadio[i].addEventListener('click', function () {
             changeSubPhase(voteRadio[i]);
         });
 
+    // Create a container for displaying voting actions
     voteDiv.classList.add("votes");
     voteDiv.id = "votes_0";
     gameActions.appendChild(voteDiv);
 
+    // Create a container for Sam and plague spreader action
     samDiv.classList.add("samDiv");
     plagueDiv.classList.add("plagueDiv");
 
+    // Iterate through the list of actions for the day phase
     for (let i = 0; i < list.length; i++) {
         let text;
         switch (list[i]['actionTarget']['action']) {
-            case "revenge": // is Sam
+            case "revenge": // Sam's revenge action
                 samPlayer = list[i]['actionTarget'].player;
                 gameActions.appendChild(samDiv);
                 text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
@@ -650,7 +743,7 @@ function fillDayActions(list) {
 
                 samDiv.style.display = "none"
                 break;
-            case "plague": // is Plague spreader
+            case "plague":// Plague spreading action
                 plagueSpreaderPlayer = list[i]['actionTarget'].player;
                 playersOrder = []
 
@@ -662,14 +755,14 @@ function fillDayActions(list) {
                 // the plagueSpreader did not infect anyone
                 if (plaguedPlayer == null) break
 
-                // remove the first player, is the one with the plagued
+                // Remove the first player, which is the one with the plague
                 playersOrder.splice(0, 1);
 
                 gameActions.appendChild(plagueDiv);
                 plagueDiv.appendChild(createActionWrapperForPlague(plaguedPlayer, true));
                 addPlaguesListener();
                 break;
-            default:
+            default: // Regular voting action
                 text = "Who <u>" + list[i]['actionTarget'].player + "</u> voted out?";
                 voteDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
                 break;
@@ -677,6 +770,15 @@ function fillDayActions(list) {
     }
 }
 
+/**
+ * Creates a wrapper element to contain a select element for selecting action targets and accompanying text.
+ *
+ * @param {Object} actionTarget - The action target object containing information about the target.
+ * @param {string} text - The text to be displayed alongside the select element.
+ * @param {string} gamePhase - The current phase of the game ('NIGHT' or 'DAY').
+ * @param {boolean} memberOfWolfPack - Indicates whether the player is a member of the wolf pack (default: false).
+ * @returns {HTMLElement} - The wrapper element containing the select element and text.
+ */
 function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = false) {
     // Create wrapper element to contain roleTargetsElem and text
     let actionWrapper = document.createElement("div");
@@ -732,6 +834,12 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
     return actionWrapper;
 }
 
+/**
+ * Inserts a selection box into an action wrapper.
+ *
+ * @param {HTMLElement} actionWrapper - The wrapper element for the action.
+ * @param {HTMLElement} selectBox - The select box element to be inserted.
+ */
 function insertSelectionBox(actionWrapper, selectBox) {
     // Create label element
     const label = document.createElement("label");
@@ -746,42 +854,53 @@ function insertSelectionBox(actionWrapper, selectBox) {
     // actionWrapper.appendChild(svgSprites);
 }
 
+/**
+ * Updates the display of plague victims based on the current plague spreader's selection.
+ */
 function updatePlaguesVictims() {
+    // Get the plagueDiv element
     let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
 
     let original = ""
-
     let playersPlague = []
+
+    // Loop through all players to get their plagued status
     for (let i = 0; i < playersOrder.length; i++) {
         let value = false
         let CB_ofPlayer = document.getElementById(playersOrder[i] + "_plaguedCB");
 
+        // Check if the checkbox exists for the current player
         if (CB_ofPlayer !== null) {
             value = CB_ofPlayer.checked;
             if (CB_ofPlayer.getAttribute("original") === "true")
                 original = CB_ofPlayer.getAttribute("player");
         }
 
+        // Add player and their plagued status to playersPlague array
         playersPlague.push({
             player: playersOrder[i],
             value: value
         })
     }
 
-    // remove content
+    // Remove existing content from plagueDiv
     plagueDiv.innerText = "";
 
+    // Initialize variables for number of players and index of original plague spreader
     let nPlayers = playersOrder.length;
     let indexOriginal = playersOrder.indexOf(original);
 
+    // Create and append the checkbox for the original plague spreader
     let plagueCB = createActionWrapperForPlague(original, true);
     plagueDiv.appendChild(plagueCB)
     plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[indexOriginal].value;
 
     let insertPlayers = 1
-    // next player
+
+    // Loop through players after the original plague spreader
     for (let i = indexOriginal; i < nPlayers + indexOriginal - 1; i++) {
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
+            // Create and append a checkbox for the next player if they are plagued
             plagueCB = createActionWrapperForPlague(playersOrder[(i + 1) % nPlayers]);
             plagueDiv.appendChild(plagueCB);
             plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[(i + 1) % nPlayers].value;
@@ -789,29 +908,42 @@ function updatePlaguesVictims() {
         } else break;
     }
 
-    // previous player
+    // Loop through players before the original plague spreader
     for (let i = indexOriginal; i > indexOriginal - nPlayers + 1; i--) {
+        // Check if all players have been inserted
         if (insertPlayers >= nPlayers)
             break
         if (playersPlague[(i + nPlayers) % nPlayers].value) {
+            // Prepend a checkbox for the previous player if they are plagued
             plagueCB = createActionWrapperForPlague(playersOrder[(i + nPlayers - 1) % nPlayers])
             plagueDiv.prepend(plagueCB);
             plagueCB.getElementsByClassName("plague_CB")[0].checked = playersPlague[(i + nPlayers - 1) % nPlayers].value;
             insertPlayers++;
         } else break;
     }
+    // Add listeners to the plague checkboxes
     addPlaguesListener();
 }
 
+/**
+ * Creates an action wrapper for displaying a checkbox related to plague victims.
+ *
+ * @param {string} plaguedPlayer - The name of the plagued player.
+ * @param {boolean} original - Indicates if the player is the original plague spreader.
+ * @returns {HTMLElement} The action wrapper containing the checkbox.
+ */
 function createActionWrapperForPlague(plaguedPlayer, original = false) {
+    // Create the action wrapper element
     let actionWrapper = document.createElement("div");
     actionWrapper.classList.add("action-wrapper", "row");
 
+    // Create the text indicating the player's status
     let actionText = document.createElement("span");
     actionText.innerHTML = "<u>" + plaguedPlayer + "</u> died of the plague?"
     actionText.classList.add("col-12", "col-sm-8", "col-md-7", "mb-2", "mb-sm-0")
     actionWrapper.appendChild(actionText);
 
+    // Create the checkbox element
     let checkBox = document.createElement("input")
     checkBox.type = "checkbox"
     checkBox.id = plaguedPlayer + "_plaguedCB"
@@ -821,23 +953,29 @@ function createActionWrapperForPlague(plaguedPlayer, original = false) {
     checkBox.setAttribute("player", plaguedPlayer);
     checkBox.classList.add("inp-cbx", "plague_CB") //), "col-12", "col-sm-4", "col-md-5");
 
+    // Wrap the checkbox element
     actionWrapper.appendChild(wrapPlaguedCheckBox(checkBox));
-
     return actionWrapper;
 }
 
+/**
+ * Adds click event listeners to the plague checkboxes.
+ */
 function addPlaguesListener() {
-    const plaguedCB = document.getElementsByClassName('plague_CB')
-
-    for (let i = 0; i < plaguedCB.length; i++) {
-        plaguedCB[i].addEventListener('click', updatePlaguesVictims)
-    }
+    // Select all plague checkboxes and add click event listener to each checkbox
+    $('.plague_CB').click(updatePlaguesVictims);
 }
 
+/**
+ * Wraps the given checkbox element in a container div with specific classes and adds label elements using plain JavaScript.
+ * @param {HTMLElement} checkbox - The checkbox element to wrap.
+ * @returns {HTMLElement} The container div wrapping the checkbox.
+ */
 function wrapPlaguedCheckBox(checkbox) {
     const divCont = document.createElement("div")
     divCont.classList.add("checkbox-wrapper", "col-12", "col-sm-4", "col-md-5", "d-flax");
     divCont.appendChild(checkbox)
+
     divCont.innerHTML +=
         "  <label class='cbx' for='" + checkbox.id + "'><span>" +
         "  <svg width='12px' height='10px'>" +
@@ -852,6 +990,9 @@ function wrapPlaguedCheckBox(checkbox) {
     return divCont;
 }
 
+/**
+ * Sends the actions performed by players during the game to the server.
+ */
 function sendActions() {
     const role_targets = document.querySelectorAll('[id*="_targets"]');
 
@@ -865,12 +1006,14 @@ function sendActions() {
     let json = {};
 
     if (gamePhase === GamePhase.NIGHT) {
+        // Get designated wolf and their role
         let designatedWolfSB = document.getElementById("designatedWolf");
-        designatedPlayer = designatedWolfSB.value
+        designatedPlayer = designatedWolfSB.value;
         designatedRole = designatedWolfSB.options[designatedWolfSB.selectedIndex].getAttribute("role");
 
         let gameAction = [];
 
+        // Collect actions for each player
         for (let i = 0; i < role_targets.length; i++) {
             if (role_targets[i].hasAttribute('dead'))
                 continue;
@@ -878,11 +1021,13 @@ function sendActions() {
             player = role_target.getAttribute("player");
             role = role_target.getAttribute('role');
 
+            // Determine target based on role and whether it's blocked
             if (role_target.hasAttribute("blocked"))
-                target = role_target.getAttribute("blocked")
+                target = role_target.getAttribute("blocked");
             else
                 target = role_target.value;
 
+            // Check if the player is a member of the wolf pack and adjust if needed
             if (role_target.getAttribute("memberOfWolfPack") === "true") {
                 if (designatedRole === role_target.getAttribute("role"))
                     player = designatedPlayer;
@@ -890,23 +1035,23 @@ function sendActions() {
                     continue;
             }
 
+            // Exclude certain special actions
             if ((role === "sheriff" && target.toLowerCase() === "no shot")
                 || (role === "berserker" && target.toLowerCase() === "no rage"))
                 continue;
 
             gameAction.push({player, role, target});
         }
-        json = {gameAction}
-    } else {
-        // day phase
+        json = {gameAction};
+    } else { // Day phase actions
 
-        // 3 -> 1 vote + two ballot
+        // Collect votes for each phase
         for (let i = 0; i < 3; i++) {
             const role_targets = document.querySelectorAll('#votes_' + i + ' [id*="_targets"]');
             if (role_targets.length === 0)
                 break;
 
-            let votes = []
+            let votes = [];
 
             for (let i = 0; i < role_targets.length; i++) {
                 const role_target = role_targets[i];
@@ -918,12 +1063,10 @@ function sendActions() {
             json['votes_' + i] = votes;
         }
 
-        // console.log(json)
+        let sem_SB = document.getElementById("sam_SB");
+        let extraActions = [];
 
-        let sem_SB = document.getElementById("sam_SB")
-
-        let extraActions = []
-
+        // add Sam's action if present
         if (sem_SB !== null && sem_SB.value !== "") {
             let sam = "sam";
             let target = sem_SB.value;
@@ -935,6 +1078,7 @@ function sendActions() {
             });
         }
 
+        // add plague spreader's actions if present
         let plagueDiv = document.getElementsByClassName("plagueDiv")[0];
         if (plagueDiv !== null) {
             let CB_ofPlayer = document.getElementsByClassName("plague_CB");
@@ -955,10 +1099,17 @@ function sendActions() {
             json['extraActions'] = extraActions;
     }
 
-    // console.log(JSON.stringify(json));
+    // Send the JSON object via a POST request to the server
     genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
 }
 
+/**
+ * Handles the response received from the server after sending actions during the game.
+ * Processes the response to display relevant information to the players.
+ * If the game is over, displays the game results and reloads the page.
+ * If the game is ongoing, displays the results of the night or day phase actions.
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response from the server.
+ */
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -967,31 +1118,29 @@ function actionsResponse(req) {
             let phase;
             let deadPlayers;
             let phaseInfo = "";
-            if (JSON.parse(req.responseText).hasOwnProperty('gameWin')) { // the game is over
+            // Check if the game is over
+            if (JSON.parse(req.responseText).hasOwnProperty('gameWin')) {
                 let gameWin = JSON.parse(req.responseText)['gameWin']
                 let message = gameWin.message;
 
                 let players = gameWin['players'];
+                // Construct phase information for game-over message
                 for (let i = 0; i < players.length; i++)
                     phaseInfo += players[i].player + ", ";
                 phaseInfo = phaseInfo.substring(0, phaseInfo.length - 2);
 
-                gameOver = true
-
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                // console.log(gameWin)
                 populateInfoMessage("#infoMessage", message, phaseInfo)
-
                 location.reload()
-                // elementsReload()
-
             } else {
+                // Game is ongoing
                 if (gamePhase === GamePhase.NIGHT) {
                     actionResults = JSON.parse(req.responseText)['nightActionsResults'];
                     phase = "night";
 
                     let deadPlayersList = actionResults['deadPlayers'];
 
+                    // Determine if any deaths occurred during the night
                     if (deadPlayersList.length === 0)
                         deadPlayers = "No deaths during the night."
                     else {
@@ -1001,6 +1150,7 @@ function actionsResponse(req) {
                         deadPlayers = deadPlayers.substring(0, deadPlayers.length - 2);
                     }
 
+                    // Check for additional night action results
                     if (actionResults.dorkyIsWolf)
                         phaseInfo += "<br>The Dorky became a wolf!";
                     if (actionResults.puppyIsWolf)
@@ -1008,20 +1158,23 @@ function actionsResponse(req) {
                     if (actionResults.plaguedPlayer !== "")
                         phaseInfo += "<br> " + actionResults.plaguedPlayer + " has the plague!";
                 } else {
+                    // Day phase
                     actionResults = JSON.parse(req.responseText)['dayActionsResults'];
                     phase = "day";
 
+                    // Determine if any players were voted out during the day
                     if (actionResults.votedPlayer !== "")
                         deadPlayers = actionResults.votedPlayer + " was voted out:";
                     else
                         deadPlayers = "No players were voted out.";
 
+                    // Check for additional day action results
                     if (actionResults.samTarget !== "")
                         phaseInfo += "<br>" + actionResults.samTarget + " was killed by sam:"
-
                     if (actionResults.carpenterAbility)
                         phaseInfo += "<br> the carpenter refused to give wood"
 
+                    // Determine if any players were killed by the plague
                     let deadPlayersList = actionResults['plaguePlayers'];
                     if (deadPlayersList.length !== 0) {
                         phaseInfo += "<br>Player(s) killed by the plague:<br>";
@@ -1031,12 +1184,11 @@ function actionsResponse(req) {
                     }
                 }
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                // console.log(actionResults)
                 populateInfoMessage("#infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
-                // location.reload()
                 elementsReload()
             }
         } else {
+            // Error handling
             let message = getMessage(req)
             populateErrorMessage("#errorMessage", message.message, message.errorCode, message.errorDetails);
         }

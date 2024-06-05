@@ -1,3 +1,13 @@
+/**
+ * Used in the page for creating a new game.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+// Initializes event listeners and makes initial GET requests to fetch game settings and friend lists
+// when the DOM content is fully loaded.
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("sendSettings").addEventListener("click", sendSettings);
     genericGETRequest(contextPath + "game/settings", fillGameSettings)
@@ -10,6 +20,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
     playersToIgnore.push(localStorage.getItem("playerName").toLowerCase())
 });
 
+/**
+ * Generates HTML for a toggle switch.
+ * @param {string} name - The name to be used as the ID for the toggle switch element.
+ * @returns {string} The HTML string for the toggle switch.
+ */
 function HTML_switch(name) {
     return "<label class='toggle-switch'>" +
         "  <input type='checkbox' id='" + name + "_roleCard_switch'>" +
@@ -19,6 +34,12 @@ function HTML_switch(name) {
         "</label>\n";
 }
 
+/**
+ * Generates HTML for a number input with increment and decrement buttons.
+ * @param {string} name - The name to be used as the ID for the number input element.
+ * @param {number} max - The maximum value for the number input.
+ * @returns {string} The HTML string for the number input.
+ */
 function HTML_number_input(name, max) {
     return "<div class='number_container'>\n" +
         "  <button type='button' class='minus'><svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M6 12L18 12' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg></button>\n" +
@@ -27,11 +48,19 @@ function HTML_number_input(name, max) {
         "</div>"
 }
 
+/**
+ * Generates the HTML for a remove button.
+ */
 const HTML_remove_button =
     "  <svg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20' height='25' width='25'>\n" +
     "    <path fill='#6361D9' d='M8.78842 5.03866C8.86656 4.96052 8.97254 4.91663 9.08305 4.91663H11.4164C11.5269 4.91663 11.6329 4.96052 11.711 5.03866C11.7892 5.11681 11.833 5.22279 11.833 5.33329V5.74939H8.66638V5.33329C8.66638 5.22279 8.71028 5.11681 8.78842 5.03866ZM7.16638 5.74939V5.33329C7.16638 4.82496 7.36832 4.33745 7.72776 3.978C8.08721 3.61856 8.57472 3.41663 9.08305 3.41663H11.4164C11.9247 3.41663 12.4122 3.61856 12.7717 3.978C13.1311 4.33745 13.333 4.82496 13.333 5.33329V5.74939H15.5C15.9142 5.74939 16.25 6.08518 16.25 6.49939C16.25 6.9136 15.9142 7.24939 15.5 7.24939H15.0105L14.2492 14.7095C14.2382 15.2023 14.0377 15.6726 13.6883 16.0219C13.3289 16.3814 12.8414 16.5833 12.333 16.5833H8.16638C7.65805 16.5833 7.17054 16.3814 6.81109 16.0219C6.46176 15.6726 6.2612 15.2023 6.25019 14.7095L5.48896 7.24939H5C4.58579 7.24939 4.25 6.9136 4.25 6.49939C4.25 6.08518 4.58579 5.74939 5 5.74939H6.16667H7.16638ZM7.91638 7.24996H12.583H13.5026L12.7536 14.5905C12.751 14.6158 12.7497 14.6412 12.7497 14.6666C12.7497 14.7771 12.7058 14.8831 12.6277 14.9613C12.5495 15.0394 12.4436 15.0833 12.333 15.0833H8.16638C8.05588 15.0833 7.94989 15.0394 7.87175 14.9613C7.79361 14.8831 7.74972 14.7771 7.74972 14.6666C7.74972 14.6412 7.74842 14.6158 7.74584 14.5905L6.99681 7.24996H7.91638Z' clip-rule='evenodd' fill-rule='evenodd'></path>\n" +
     "  </svg>\n";
 
+/**
+ * Generates the HTML for an add button.
+ * @param {string} username - The username to be used for the add button element.
+ * @returns {string} The HTML string for the add button.
+ */
 function HTML_add_button(username) {
     return "<input type='checkbox' id='addCheckbox_" + username + "' class='addCheckbox visually-hidden' name='" + username + "' onclick='checkBoxPress(this)'>\n" +
         "<label for='addCheckbox_" + username + "' class='checkbox-label'>\n" +
@@ -43,6 +72,10 @@ function HTML_add_button(username) {
         "</label>\n"
 }
 
+/**
+ * Fills the friends table with data from the server response.
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the server response.
+ */
 function fillFriends(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -53,6 +86,7 @@ function fillFriends(req) {
             } else {
                 let tbody = document.getElementById("friends_tb").querySelector("tbody");
 
+                // if there aren't friends, add a hint
                 if (list.length === 0) {
                     let row = tbody.insertRow();
                     row.setAttribute("noFriends", '')
@@ -78,18 +112,24 @@ function fillFriends(req) {
                 sendAvailabilityRequest()
                 addPlayerTableHint()
             }
-        } else
-            isLoggedUser(req);
+        }
     }
 }
 
-// Set interval to send request every 30 seconds
+// Sets an interval to send a request every 30 seconds to check player availability.
 setInterval(sendAvailabilityRequest, 30000);
 
+/**
+ * Sends a GET request to retrieve player availability.
+ */
 function sendAvailabilityRequest() {
     genericGETRequest(contextPath + "user/search/", updateAvailability)
 }
 
+/**
+ * Updates the availability status of players and friends based on the server response.
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the server response.
+ */
 function updateAvailability(req) {
 // Since the database is small, I retrieve all users every time.
     if (req.readyState === XMLHttpRequest.DONE) {
@@ -101,6 +141,7 @@ function updateAvailability(req) {
                 for (let i = 0; i < list.length; i++)
                     players.set(list[i]['player']['username'].toLowerCase(), list[i]['player']['gameId']);
 
+            // Update the players table
             let rows = document.getElementById("players_tb").querySelector("tbody").rows;
             if (rows.length > 0 && !rows[0].hasAttribute('noPlayers'))
                 for (let i = 0; i < rows.length; i++) {
@@ -113,6 +154,7 @@ function updateAvailability(req) {
                     }
                 }
 
+            // Update the friends table
             rows = document.getElementById("friends_tb").querySelector("tbody").rows;
             if (!rows[0].hasAttribute('noFriends')) // if there are friends in the list
                 for (let i = 0; i < rows.length; i++)
@@ -121,6 +163,10 @@ function updateAvailability(req) {
     }
 }
 
+/**
+ * Handles the press event for the checkbox to add or remove players.
+ * @param {HTMLInputElement} checkbox - The checkbox element.
+ */
 function checkBoxPress(checkbox) {
     if (checkbox.checked)
         addToPlayersTable(checkbox.name);
@@ -128,6 +174,10 @@ function checkBoxPress(checkbox) {
         removeFromPlayersTable(checkbox.name);
 }
 
+/**
+ * Fills the game settings form with data from the server response.
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the server response.
+ */
 function fillGameSettings(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
@@ -196,7 +246,6 @@ function fillGameSettings(req) {
                             numberInput.value = parseInt(numberInput.value) - 1;
                         enableButton()
                     });
-
                     plusButton.addEventListener('click', () => {
                         // Increase value of input field if less than maximum
                         if (parseInt(numberInput.value) < max)
@@ -209,11 +258,14 @@ function fillGameSettings(req) {
                     enableButton()
                 });
             }
-        } else
-            isLoggedUser(req);
+        }
     }
 }
 
+/**
+ * Enables or disables the "sendSettings" button based on the number of players and roles.
+ * The button is enabled if there are at least 5 players and the total number of roles matches the number of players.
+ */
 function enableButton() {
     const role_card = document.querySelectorAll('[id*="_roleCard"]');
     let totRoles = 0;
@@ -230,47 +282,65 @@ function enableButton() {
     document.getElementById("sendSettings").disabled = !(totPlayer >= 5 && totPlayer === totRoles);
 }
 
+/**
+ * Gathers a JSON with roles and their cardinalities, along with player usernames,
+ * and sends these settings to the server for game creation.
+ */
 function sendSettings() {
+    // Select all elements related to role settings
     const role_card = document.querySelectorAll('[id*="_roleCard"]');
     const roleCardinality = [];
 
+    // Loop through all role card elements to extract role and cardinality
     let role;
     let cardinality;
     for (let i = 0; i < role_card.length; i++) {
         if (role_card[i].id.includes("_num")) {
+            // Extract role and cardinality from numerical input fields
             role = role_card[i].id.replace('_roleCard_num', '');
             cardinality = parseInt(role_card[i].value);
         } else {
+            // Extract role and cardinality from switch input fields
             role = role_card[i].id.replace('_roleCard_switch', '');
             cardinality = role_card[i].checked ? 1 : 0;
         }
         roleCardinality.push({role, cardinality});
     }
 
-    // Recover usernames from players_tb
+    // Recover usernames from the players table
     const playersTable = document.getElementById('players_tb');
     const playerRows = playersTable.querySelectorAll('tr');
     const player = [];
-    for (let i = 1; i < playerRows.length; i++) { // Start from index 1 to skip header row
+    // Start from index 1 to skip the header row
+    for (let i = 1; i < playerRows.length; i++) {
         const username = playerRows[i].cells[1].textContent.trim();
         player.push({username});
     }
 
+    // Create JSON object containing role cardinalities and player usernames
     const json = {roleCardinality, player};
-    // console.log(JSON.stringify(json));
     genericPOSTRequest(contextPath + "game/settings", JSON.stringify(json), gameCreation)
 }
 
+/**
+ * Handles the response from the game settings creation request.
+ * Redirects to the game page if successful, otherwise displays error messages.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the response.
+ */
 function gameCreation(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_CREATED) {
+            // Parse the response and redirect to the game page
             let game = JSON.parse(req.responseText)['game'];
             window.location.replace(contextPath + "village/" + game.public_ID);
         } else {
+            // Handle errors and display error messages
             let message = getMessage(req)
             if (message != null)
                 populateErrorMessage("#errorMessage",message.message, message.errorCode, message.errorDetails);
             else {
+                // Parse and display multiple error messages
                 let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
                 let msgs = ""
                 let errorCodes = ""
@@ -293,6 +363,9 @@ function gameCreation(req) {
     }
 }
 
+/**
+ * Adds a hint message to the players table if it is empty.
+ */
 function addPlayerTableHint() {
     const tbody = document.getElementById("players_tb").querySelector("tbody")
     const rows = tbody.rows;
@@ -305,6 +378,9 @@ function addPlayerTableHint() {
     }
 }
 
+/**
+ * Removes the hint message from the players table if it exists.
+ */
 function removePlayersTableHint() {
     const tbody = document.getElementById("players_tb").querySelector("tbody")
     const rows = tbody.rows;
@@ -314,7 +390,12 @@ function removePlayersTableHint() {
         rows[0].remove()
 }
 
-function addPlayerToTable() {
+/**
+ * Adds a player to the players table based on the input username.
+ * Also checks the corresponding friend checkbox if it exists.
+ * This function is used by the search bar.
+ */
+function searchThePlayer() {
     const username = document.getElementById("playerUsername").value;
     if (username !== "") {
         addToPlayersTable(username);
@@ -328,11 +409,15 @@ function addPlayerToTable() {
     }
 }
 
-// Function to add username to players_tb table
+/**
+ * Adds a username to the players table if it does not already exist.
+ *
+ * @param {string} username - The username to add to the players table.
+ */
 function addToPlayersTable(username) {
     removePlayersTableHint();
 
-    // no duplicate
+    // Prevent duplicate entries
     let tbody = document.getElementById("players_tb").querySelector("tbody");
     let rows = tbody.rows;
 
@@ -340,10 +425,10 @@ function addToPlayersTable(username) {
         if (rows[i].cells[1].textContent.toLowerCase() === username.toLowerCase())
             return;
 
-    // add to players to ignore
+    // Add username to the list of players to ignore
     playersToIgnore.push(username.toLowerCase())
 
-    // Add new row
+    // Add new row to the players table
     let newRow = tbody.insertRow();
     let arrows = newRow.insertCell(0);
     let usernameCell = newRow.insertCell(1);
@@ -356,6 +441,7 @@ function addToPlayersTable(username) {
         "</div>\n"
     usernameCell.textContent = username;
 
+    // Create and add the remove button
     let removeButton = document.createElement("button");
     removeButton.setAttribute("class", "removePlayer");
     removeButton.innerHTML = HTML_remove_button;
@@ -364,29 +450,23 @@ function addToPlayersTable(username) {
     });
     removeCell.appendChild(removeButton);
 
+    // Check the corresponding checkbox in the friends table if it exists
     let checkboxes = document.querySelectorAll('#friends_tb input[type="checkbox"]');
     checkboxes.forEach(function (checkbox) {
         if (checkbox.parentElement.previousElementSibling.textContent === username) {
-            checkbox.checked = true;
+            checkbox.checked = true; // If he exists, check his checkbox
         }
     });
 
+    // Update player availability
     sendAvailabilityRequest();
 }
 
-function moveUp(btn) {
-    console.log("moveUp")
-    const row = $(btn).parents('tr:first');
-    row.insertBefore(row.prev());
-}
-
-function moveDown(btn) {
-    console.log("moveDown")
-    const row = $(btn).parents('tr:first');
-    row.insertAfter(row.next());
-}
-
-// Function to remove username from players_tb table
+/**
+ * Removes the specified username from the players_tb table.
+ * Also updates the playersToIgnore list and corresponding checkboxes in the "friends" table.
+ * @param {string} username - The username to be removed from the table.
+ */
 function removeFromPlayersTable(username) {
     let rows = document.getElementById("players_tb").rows;
     for (let i = 0; i < rows.length; i++) {
@@ -400,7 +480,11 @@ function removeFromPlayersTable(username) {
     addPlayerTableHint()
 }
 
-// Function to remove row from players_tb table
+/**
+ * Removes the row containing the button that was clicked from the players_tb table.
+ * Also updates the playersToIgnore list and corresponding checkboxes in the "friends" table.
+ * @param {Object} button - The button element that was clicked.
+ */
 function removeRow(button) {
     let row = button.parentNode.parentNode;
     let username = row.cells[1].textContent; // Get the username from the row
@@ -419,10 +503,28 @@ function removeRow(button) {
     addPlayerTableHint()
 }
 
-// Select the table you want to observe
-const table = document.getElementById('players_tb');
+/**
+ * Moves the row containing the clicked button upwards in the table.
+ * @param {Object} btn - The button element that was clicked.
+ */
+function moveUp(btn) {
+    console.log("moveUp")
+    const row = $(btn).parents('tr:first');
+    row.insertBefore(row.prev());
+}
 
-// Create a new instance of MutationObserver
+/**
+ * Moves the row containing the clicked button downwards in the table.
+ * @param {Object} btn - The button element that was clicked.
+ */
+function moveDown(btn) {
+    console.log("moveDown")
+    const row = $(btn).parents('tr:first');
+    row.insertAfter(row.next());
+}
+
+// Observes changes in the players_tb table and triggers the enableButton function when nodes are added or removed.
+const table = document.getElementById('players_tb');
 const observer = new MutationObserver(function (mutations) {
     mutations.forEach(function (mutation) {
         // Check if nodes are added or removed from the table
@@ -430,8 +532,6 @@ const observer = new MutationObserver(function (mutations) {
             enableButton()
     });
 });
-
-// Configure the MutationObserver to observe changes in the table's child nodes
 const config = {childList: true, subtree: true};
 
 // Start observing the table

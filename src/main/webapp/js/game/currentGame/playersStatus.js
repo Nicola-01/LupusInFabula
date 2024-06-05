@@ -1,7 +1,31 @@
+/**
+ * Used for showing a grid or a circle containing all the users, their roles, and their status (i.e., dead or not).
+ * Also, if the current player is one in the game, show his card.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+/**
+ * Array to store player roles.
+ *
+ * @type {[string]}
+ */
 let playerRole = [];
 
+/**
+ * Maximum number of players for displaying circular buttons.
+ *
+ * @type {number}
+ */
 const maxPlayersForCircularButtons = 12;
 
+/**
+ * Fills the player status based on the request.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function fillPlayersStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE)
     {
@@ -9,9 +33,8 @@ function fillPlayersStatus(req) {
         {
             const list = JSON.parse(req.responseText)[JSON_resource_list];
 
-            if (list == null) {
+            if (list == null)
                 alert("No game settings available");
-            }
             else
             {
                 document.getElementById("playersStatus").innerHTML="";
@@ -34,8 +57,8 @@ function fillPlayersStatus(req) {
                         if(frontCard !== null)
                             frontCard.style.backgroundImage = "url('../media/cards/"+ playsAsIn.role +".png')";
 
-                        var selectedBack = getCookie("selectedCard");
-                        var cardBack = document.querySelector(".card-back");
+                        const selectedBack = getCookie("selectedCard");
+                        const cardBack = document.querySelector(".card-back");
                         if(cardBack && selectedBack)
                             cardBack.style.backgroundImage = "url('../media/cards/card_back/"+selectedBack+"')";
 
@@ -50,7 +73,7 @@ function fillPlayersStatus(req) {
                     playerRole.push(playsAsIn);
                 }
 
-                // if the player doesn't participate and it's not the master
+                // if the player doesn't participate, and it's not the master
                 if(!isPlayerInGame && !endsWithMaster)
                 {
                     const cardContainer = document.getElementById("cardContainer");
@@ -69,7 +92,7 @@ function fillPlayersStatus(req) {
 
                 // by default, the role is hidden
                 if (document.getElementById("toggleButton")) {
-                    var toggleElement = document.getElementById("toggleButton");
+                    const toggleElement = document.getElementById("toggleButton");
 
                     if (toggleElement.style.display !== "none") {
                         toggleCard();
@@ -82,6 +105,13 @@ function fillPlayersStatus(req) {
     }
 }
 
+/**
+ * Creates a player div based on the given player role.
+ *
+ * @param {Object} playerRole - The role of the player.
+ * @param {string} className - The CSS class name for styling.
+ * @returns {HTMLElement} The player div.
+ */
 function createUserDiv(playerRole, className){
     const player = document.createElement('div');
 
@@ -101,7 +131,9 @@ function createUserDiv(playerRole, className){
     return player
 }
 
-// Function to create buttons and position them in a circle around the square div
+/**
+ * Positions players in a circular layout.
+ */
 function circularPlayersStatus() {
     const epsilon = 0.05
     const numButtons = playerRole.length;
@@ -132,6 +164,10 @@ function circularPlayersStatus() {
         player.style.top = (-Math.cos(angle - epsilon_angle) * 50 + 50) + '%'; // Y position of the player
     }
 }
+
+/**
+ * Positions players in a grid layout.
+ */
 function gridPlayersStatus() {
     let playersStatusDiv = document.getElementById("playersStatus");
 

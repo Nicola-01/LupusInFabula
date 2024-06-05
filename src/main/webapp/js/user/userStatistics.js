@@ -35,7 +35,7 @@ function setHeading(username){
  * Manage the search of a player redirecting to its statistics page if found.
  *
  */
-function addPlayerToTable() {
+function searchThePlayer() {
 
     var username = document.getElementById("playerUsername").value;
     if (username.trim() !== "") {

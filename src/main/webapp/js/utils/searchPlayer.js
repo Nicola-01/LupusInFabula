@@ -43,7 +43,7 @@ let startedText = "";
 let playersToIgnore = []
 
 document.addEventListener('DOMContentLoaded', function (event) {
-    document.getElementById("addPlayer").addEventListener("click", addPlayerToTable);
+    document.getElementById("addPlayer").addEventListener("click", searchThePlayer);
 });
 
 /**
@@ -83,9 +83,9 @@ function handleKeyDown(event) {
                 playerListItems[0].scrollIntoView({behavior: 'smooth', block: 'nearest', inline: 'start'});
             }
             break;
-        case "Enter": // if is enter key, is like press the button "search"
+        case "Enter": // if is Enter key, is like press the button "search"
             searchUserContain = null;
-            addPlayerToTable();
+            searchThePlayer();
             hidePlayerListPopup();
             break;
         default:
@@ -185,7 +185,7 @@ function populatePlayerList(players, contains) {
         li.addEventListener("mousedown", function () {
             playerUsername.value = player.username;
             searchUserContain = null;
-            addPlayerToTable();
+            searchThePlayer();
             hidePlayerListPopup();
         });
         playerList.appendChild(li);

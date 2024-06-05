@@ -232,17 +232,6 @@ function genericDELETERequest(url, json, callback){
 }
 
 /**
- * Redirects to login page if user is not logged in.
- *
- * @param {object} req - The XMLHttpRequest object.
- */
-function isLoggedUser(req) {
-    if (req.status === HTTP_STATUS_FORBIDDEN)
-        window.location.replace(contextPath + "login")
-}
-
-
-/**
  * Redirects to "page not found" page if requested page is not found.
  *
  * @param {object} req - The XMLHttpRequest object.

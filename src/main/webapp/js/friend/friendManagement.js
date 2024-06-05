@@ -139,7 +139,7 @@ function removeFromFriendsTable(username) {
 /**
  * Sends a POST request to add a friend.
  */
-function addPlayerToTable() {
+function searchThePlayer() {
     var username = document.getElementById("playerUsername").value;
     if (username.trim() !== "") {
         var url = contextPath + "user/me/friend"; // Endpoint for adding friend
