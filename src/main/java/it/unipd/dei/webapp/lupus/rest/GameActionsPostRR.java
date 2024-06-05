@@ -63,7 +63,6 @@ public class GameActionsPostRR extends AbstractRR {
      */
     private final DayActionsResults dayActionsResults;
 
-
     /**
      * The ID of the game.
      */
@@ -533,8 +532,6 @@ public class GameActionsPostRR extends AbstractRR {
 
     }
 
-
-
     /**
      * Checks the ability of a player with the role "carpenter" during a game round.
      * <p>
@@ -635,7 +632,6 @@ public class GameActionsPostRR extends AbstractRR {
             return false;
         }
     }
-
 
     /**
      * Checks the correctness of the actions performed during ballot vote of the day.
@@ -822,6 +818,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         return true;
     }
+
 
     /**
      * Handles the night phase of the game by processing the actions performed by players. <br>

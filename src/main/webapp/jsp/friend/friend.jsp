@@ -1,15 +1,18 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
+<!-- Section to add a new friend -->
 <div id="addFriend" class="row justify-content-center">
-    <div  class="col-9" style="position: relative;">
-        <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
+    <div class="col-9" style="position: relative;">
+        <jsp:include page="/jsp/utils/searchPlayer.jsp"/> <!-- Include the searchPlayer.jsp to provide the functionality to search for a player -->
     </div>
 </div>
 
+<!-- Include success, info, and error message templates for displaying feedback to the user -->
 <c:import url="/jsp/utils/successMessage.jsp"/>
 <c:import url="/jsp/utils/infoMessage.jsp"/>
 <c:import url="/jsp/utils/errorMessage.jsp"/>
 
+<!-- Section to list current friends -->
 <div id="listFriend" class="row justify-content-center mt-3">
     <h2>Your Friends</h2>
     <div id="friendsTable" class="p-0">
@@ -24,10 +27,11 @@
             </tr>
             </thead>
             <tbody>
+            <!-- Friend list will be dynamically populated here -->
             </tbody>
         </table>
     </div>
 </div>
 
-
+<!-- External JavaScript library to make the table sortable -->
 <script src="https://www.kryogenix.org/code/browser/sorttable/sorttable.js"></script>
