@@ -2,7 +2,7 @@ function loadImages()
 {
     var imagesFolder = "../media/cards/card_back/";
     var imageContainer = document.getElementById("imageContainer");
-    var imageFiles = ["fantasy1.png", "fantasy2.png", "yugioh.png", "standard_red.png", "standard_blue.png", "wooden.png", "japo_lightblue.png", "japo_white.png"];
+    var imageFiles = ["fantasy1.png", "fantasy2.png", "yugioh.png", "standard_red.png", "standard_blue.png","standard_blue_white_border.png" ,"wooden.png", "japo_lightblue.png", "japo_white.png"];
     var selectedBack = getCookie("selectedCard");
 
     imageFiles.forEach(function(imageName)
