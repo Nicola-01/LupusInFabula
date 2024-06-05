@@ -88,12 +88,13 @@ rolesColors.set('jester', 'var(--role-color-jester)');
 rolesColors.set('illusionist', 'var(--role-color-illusionist)');
 rolesColors.set('plague spreader', 'var(--role-color-plagueSpreader)');
 
-rolesColors.set('', 'var(--role-color-null)')
+rolesColors.set('', 'var(--role-color-null)');
 
 //logs
-rolesColors.set('good', 'var(--role-color-good)')
-rolesColors.set('evil', 'var(--role-color-evil)')
-rolesColors.set('vote', 'var(--vote-color)')
+rolesColors.set('good', 'var(--role-color-good)');
+rolesColors.set('evil', 'var(--role-color-evil)');
+rolesColors.set('neutral', 'var(--role-color-neutral)');
+rolesColors.set('vote', 'var(--vote-color)');
 
 
 const GamePhase = {

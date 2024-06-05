@@ -91,13 +91,14 @@ function colText(text, color) {return '<span style="color:'+ color + '">'+text+'
 
 /**
  * function to create the string that represent the text for log
+ * @param gamePhase current game phase (night/day)
  * @param typeOfAction action that represent the log
  * @param user user that make the action on target
  * @param target target of action
  * @param color  color for log
  * @returns {string} string that represent the text for log
  */
-function getStringLog(user, typeOfAction, target, color)
+function getStringLog(gamePhase, user, typeOfAction, target, color)
 {
     let s = ''+user
 
@@ -105,14 +106,24 @@ function getStringLog(user, typeOfAction, target, color)
         return s +' is ' + colText(typeOfAction, color)
     else if (typeOfAction === "last chance")
         return s +' use ' + colText(typeOfAction, color)
-    else if (typeOfAction === "plague" && !endsWithMaster)
-        return target + ' has been ' + colText('infected', color)
+    else if (typeOfAction === "plague"){
+        if (gamePhase === "night"){
+            if(endsWithMaster)
+                return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target;
+            else
+                return target + ' is ' + colText('infected', color);
+        }
+        else
+            return target + ' died of ' + colText('plague', color);
+    }
+
     else
         return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target
 }
 
 /**
  * function to create the row that represent a log
+ * @param gamePhase current game phase (night/day)
  * @param phase phase that represent the log
  * @param subphase subphase that represent the log
  * @param typeOfAction action that represent the log
@@ -121,7 +132,7 @@ function getStringLog(user, typeOfAction, target, color)
  * @param color  color for log
  * @returns {string} html string that represent the log row
  */
-function createActionBlock(phase, subphase, typeOfAction, user, target, color)
+function createActionBlock(gamePhase, phase, subphase, typeOfAction, user, target, color)
 {
     return  '<li class="d-flex flex-column flex-md-row py-2">' +
                 '<span class="phase text-muted">' +
@@ -129,7 +140,7 @@ function createActionBlock(phase, subphase, typeOfAction, user, target, color)
                 '</span>' +
                 '<div class="flex-grow-1 leftBorder">' +
                     ' <p class="mb-0 ms-2">'+
-                       getStringLog(user, typeOfAction, target, color) +
+                       getStringLog(gamePhase, user, typeOfAction, target, color) +
                     '</p>'+
                 '</div>'+
             '</li>'
@@ -229,6 +240,7 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
     let i = 0
     let col = null
     let s = ""
+    let gamePhase = "";
     ret.push({dayExt:"", daySum:"", nightSum:"", nightExt:""})
 
     while (i < data.length && data[i][firstDataKey[0]][secondDataKey[1]]<=r)
@@ -236,6 +248,7 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
         if (data[i][firstDataKey[0]][secondDataKey[1]] === r)
         {
             phase = data[i][firstDataKey[0]][secondDataKey[2]]
+            gamePhase = phase;
             action = data[i][firstDataKey[0]][secondDataKey[4]]
             subphase = data[i][firstDataKey[0]][secondDataKey[3]]
             nm = data[i][firstDataKey[0]][secondDataKey[0]]
@@ -244,6 +257,8 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                 col = rolesColors.get("evil")
             else if (action==="vote")
                 col = rolesColors.get("vote")
+            else if (action==="plague" || action==="block")
+                col = rolesColors.get("neutral")
             else
                 col = rolesColors.get("good")
 
@@ -263,9 +278,11 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                                     action==="dead" ?
                                         "Dead" :
                                         "Action"
+                    phase = (action === "plague") ? "Dead" : phase
                 break;
             }
-            s = createActionBlock(phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
+
+            s = createActionBlock(gamePhase, phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
 
             if (data[i][firstDataKey[0]][secondDataKey[2]] === "day")
             {

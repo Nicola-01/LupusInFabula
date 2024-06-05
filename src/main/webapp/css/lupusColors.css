@@ -72,9 +72,9 @@
 
     --role-color-good: #389449;
     --role-color-evil: #C42504;
-    /*--role-color-neutral: #9f9f9f;*/
+    --role-color-neutral: #444444;
     /*--role-color-victoryStealer: #9f9f9f;*/
-    --vote-color: #9f9f9f;
+    --vote-color: #0f364e;
 }
 
 [data-bs-theme="dark"] {
@@ -136,7 +136,7 @@
 
     --role-color-good: #389449;
     --role-color-evil: #C42504;
-    /*--role-color-neutral: #9f9f9f;*/
+    --role-color-neutral: #908b8b;
     /*--role-color-victoryStealer: #9f9f9f;*/
-    --vote-color: #9f9f9f;
+    --vote-color: #84b8db;
 }
