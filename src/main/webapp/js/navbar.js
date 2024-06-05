@@ -1,3 +1,11 @@
+/**
+ * Handle the navbar buttons and the pages theme
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
     // Add active class based on current URL
     const currentPath = window.location.pathname;

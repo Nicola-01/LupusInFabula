@@ -1,4 +1,14 @@
 /**
+ * This script manages the game interface.
+ * It handles the basic interactions for managing other JavaScript
+ * files and the basic graphics of the game.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+/**
  * Indicates whether the URL ends with "master" or "master/"
  *
  * @type {boolean} endsWithMaster
@@ -32,11 +42,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     gameID = url.substring(startIndex, endIndex);
 
-    var lastSegment = url.substring(url.lastIndexOf("/") + 1);
-    endsWithMaster = lastSegment === "master" || lastSegment === "master/";
+    const lastSegment = url.substring(url.lastIndexOf("/") + 1);
+    endsWithMaster = (lastSegment.endsWith("master") || lastSegment.endsWith("master/"));
 
     if (document.getElementById("sendActions") !== null) {
-        document.getElementById("sendActions").style.display = "none"
+        document.getElementById("sendActions").style.display = "none";
         document.getElementById("sendActions").addEventListener("click", sendActions);
     }
 
@@ -51,9 +61,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 function elementsReload() {
     // reset of variables and state
     wolfPack = []
-    if (document.getElementById("sendActions") !== null) {
+    if (document.getElementById("sendActions") !== null)
         document.getElementById("sendActions").disabled = true;
-    }
 
     // recover the data
     const master = endsWithMaster ? "/master" : "";
@@ -61,15 +70,9 @@ function elementsReload() {
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
 }
 
-// change max height
-handleResize()
-
-window.addEventListener('resize', handleResize);
-
 /**
  * Handles the resizing of elements on the page.
  * Adjusts the height of the players status and game log elements to match the width of the game log element.
- * Recreates circular if it needs.
  */
 function handleResize() {
     // Calculate the maximum height based on the width of the game log element
@@ -88,9 +91,14 @@ function handleResize() {
 function copyGameLink() {
     let URL = window.location.href;
     URL = URL.replace(/\/master\/?$/, ''); // This will replace both '/master' and '/master/' at the end of the URL
-    navigator.clipboard.writeText(URL).then(function() {
+    navigator.clipboard.writeText(URL).then(function () {
         console.log('URL copied to clipboard: ' + URL);
-    }).catch(function(err) {
+    }).catch(function (err) {
         console.error('Could not copy text: ', err);
     });
 }
+
+// change max height of playersStatus and gameLog
+handleResize()
+
+window.addEventListener('resize', handleResize);

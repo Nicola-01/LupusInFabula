@@ -702,13 +702,13 @@ function getActionWrapper(actionTarget, text, gamePhase, memberOfWolfPack = fals
     let defaultOption = document.createElement("option");
     defaultOption.setAttribute("value", "");
     defaultOption.setAttribute("selected", "selected");
-    if (possibleTargets.length > 0) {
-        defaultOption.setAttribute("disabled", "disabled");
-        defaultOption.textContent = "Select option";
-    } else {
+    if (possibleTargets.length === 0 || (possibleTargets.length === 1 && (possibleTargets[0].player === "No rage"))) {
         defaultOption.textContent = "DEAD";
         roleTargetsElem.setAttribute("dead", "dead");
         roleTargetsElem.disabled = true;
+    } else {
+        defaultOption.setAttribute("disabled", "disabled");
+        defaultOption.textContent = "Select option";
     }
     roleTargetsElem.append(defaultOption);
 
@@ -918,7 +918,7 @@ function sendActions() {
             json['votes_' + i] = votes;
         }
 
-        console.log(json)
+        // console.log(json)
 
         let sem_SB = document.getElementById("sam_SB")
 
@@ -927,7 +927,7 @@ function sendActions() {
         if (sem_SB !== null && sem_SB.value !== "") {
             let sam = "sam";
             let target = sem_SB.value;
-            console.log({samPlayer, sam, target});
+            // console.log({samPlayer, sam, target});
             extraActions.push({
                 "player": samPlayer,
                 "role": sam,
@@ -942,11 +942,7 @@ function sendActions() {
             for (let i = 0; i < CB_ofPlayer.length; i++) {
                 let infectedPlayer = CB_ofPlayer[i].getAttribute("player");
                 if (CB_ofPlayer[i].checked) {
-                    console.log({
-                        plagueSpreaderPlayer,
-                        plague_spreader,
-                        infectedPlayer
-                    })
+                    // console.log({plagueSpreaderPlayer, plague_spreader, infectedPlayer})
                     extraActions.push({
                         "player": plagueSpreaderPlayer,
                         "role": plague_spreader,
@@ -959,7 +955,7 @@ function sendActions() {
             json['extraActions'] = extraActions;
     }
 
-    console.log(JSON.stringify(json));
+    // console.log(JSON.stringify(json));
     genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), actionsResponse)
 }
 
@@ -983,7 +979,7 @@ function actionsResponse(req) {
                 gameOver = true
 
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                console.log(gameWin)
+                // console.log(gameWin)
                 populateInfoMessage("#infoMessage", message, phaseInfo)
 
                 location.reload()
@@ -1035,7 +1031,7 @@ function actionsResponse(req) {
                     }
                 }
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                console.log(actionResults)
+                // console.log(actionResults)
                 populateInfoMessage("#infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
                 // location.reload()
                 elementsReload()

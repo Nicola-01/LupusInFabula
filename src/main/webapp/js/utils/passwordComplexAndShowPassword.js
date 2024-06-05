@@ -1,3 +1,16 @@
+/**
+ * It includes functions for handling password visibility and complexity hints.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+/**
+ * Shows or hides the password complexity hint.
+ *
+ * @param {boolean} toShow - If true, shows the hint; otherwise, hides it.
+ */
 function showPasswordHint(toShow){
     const passwordComplex = document.getElementById("passwordComplex");
     if (toShow)
@@ -6,6 +19,15 @@ function showPasswordHint(toShow){
         passwordComplex.classList.add("d-none");
 }
 
+/**
+ * An object that defines the criteria for password complexity.
+ *
+ * @property {RegExp} passwordLength - A regular expression that checks if the password length is between 8 and 20 characters.
+ * @property {RegExp} passwordUppercase - A regular expression that checks if the password contains at least one uppercase letter.
+ * @property {RegExp} passwordLowercase - A regular expression that checks if the password contains at least one lowercase letter.
+ * @property {RegExp} passwordNumber - A regular expression that checks if the password contains at least one number.
+ * @property {RegExp} passwordSymbol - A regular expression that checks if the password contains at least one of the specified symbols (!@#$%^&*).
+ */
 const criteria = {
     passwordLength: /^.{8,20}$/,
     passwordUppercase: /[A-Z]/,
@@ -14,6 +36,11 @@ const criteria = {
     passwordSymbol: /[!@#$%^&*]/
 };
 
+/**
+ * Shows hints for password complexity based on the given password.
+ *
+ * @param {string} password - The password to check.
+ */
 function passwordComplexHint(password) {
 
     for (let criterion in criteria) {
@@ -28,6 +55,11 @@ function passwordComplexHint(password) {
     }
 }
 
+/**
+ * Toggles the visibility of the password in the input field.
+ *
+ * @param {string} idInput - The ID of the input field.
+ */
 function showPassword(idInput) {
     const input = document.getElementById(idInput)
     const eyeIcon = document.getElementById(idInput + "_eyeIcon");

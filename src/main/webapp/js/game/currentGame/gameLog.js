@@ -15,8 +15,8 @@ document.addEventListener('DOMContentLoaded', function (event)
     if (endIndex === -1) endIndex = url.length;
     gameID = url.substring(startIndex, endIndex);
 
-    var lastSegment = url.substring(url.lastIndexOf("/") + 1);
-    endsWithMaster = lastSegment === "master" || lastSegment === "master/";
+    // var lastSegment = url.substring(url.lastIndexOf("/") + 1);
+    // endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
     logElementsReload();
 });

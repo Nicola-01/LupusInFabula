@@ -90,17 +90,44 @@ rolesColors.set('plague spreader', 'var(--role-color-plagueSpreader)');
 
 rolesColors.set('', 'var(--role-color-null)');
 
-//logs
+// game logs
 rolesColors.set('good', 'var(--role-color-good)');
 rolesColors.set('evil', 'var(--role-color-evil)');
 rolesColors.set('neutral', 'var(--role-color-neutral)');
 rolesColors.set('vote', 'var(--vote-color)');
 
-
+/**
+ * An object representing the phases of the game.
+ * @type {object}
+ */
 const GamePhase = {
     NIGHT: 0,
     DAY: 1
 };
+
+/**
+ * An array of roles that are considered "good".
+ * @type {string[]}
+ */
+const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "medium", "sam", "seer", "sheriff"];
+
+/**
+ * An array of roles that are considered "evil".
+ * @type {string[]}
+ */
+const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
+
+/**
+ * An array of roles that can steal victory.
+ * @type {string[]}
+ */
+const victoryStealerRoles = ["hamster", "jester"];
+
+/**
+ * An array of roles that are considered "neutral".
+ * @type {string[]}
+ */
+const neutralRoles = ["illusionist", "plague spreader"];
 
 document.addEventListener('DOMContentLoaded', function (event) {
     contextPath = window.location.origin + "/lupus/";
@@ -129,6 +156,14 @@ function genericGETRequest(url, callback) {
     httpRequest.send();
 }
 
+/**
+ * A generic POST XMLHTTPRequest.
+ *
+ * @param {string} url - The URL of the request.
+ * @param {string} json - The JSON data to send in the request.
+ * @param {function} callback - The function to invoke when the servlet answers.
+ * @returns {boolean} False if the request was not created.
+ */
 function genericPOSTRequest(url, json, callback) {
     const httpRequest = new XMLHttpRequest();
 
@@ -146,6 +181,14 @@ function genericPOSTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
+/**
+ * A generic PUT XMLHTTPRequest.
+ *
+ * @param {string} url - The URL of the request.
+ * @param {string} json - The JSON data to send in the request.
+ * @param {function} callback - The function to invoke when the servlet answers.
+ * @returns {boolean} False if the request was not created.
+ */
 function genericPUTRequest(url, json, callback) {
     const httpRequest = new XMLHttpRequest();
 
@@ -163,8 +206,16 @@ function genericPUTRequest(url, json, callback) {
     httpRequest.send(json);
 }
 
+/**
+ * A generic DELETE XMLHTTPRequest.
+ *
+ * @param {string} url - The URL of the request.
+ * @param {string} json - The JSON data to send in the request.
+ * @param {function} callback - The function to invoke when the servlet answers.
+ * @returns {boolean} False if the request was not created.
+ */
 function genericDELETERequest(url, json, callback){
-    var httpRequest = new XMLHttpRequest();
+    const httpRequest = new XMLHttpRequest();
 
     if (!httpRequest) {
         alert('Cannot create an XMLHTTP instance');
@@ -180,21 +231,33 @@ function genericDELETERequest(url, json, callback){
     httpRequest.send(json);
 }
 
+/**
+ * Redirects to login page if user is not logged in.
+ *
+ * @param {object} req - The XMLHttpRequest object.
+ */
 function isLoggedUser(req) {
     if (req.status === HTTP_STATUS_FORBIDDEN)
         window.location.replace(contextPath + "login")
 }
 
+
+/**
+ * Redirects to "page not found" page if requested page is not found.
+ *
+ * @param {object} req - The XMLHttpRequest object.
+ */
 function notFound(req) {
     if (req.status === HTTP_STATUS_NOT_FOUND)
         window.location.replace(contextPath + "jsp/pageNotFound.jsp")
 }
 
-const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "medium", "sam", "seer", "sheriff"];
-const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
-const victoryStealerRoles = ["hamster", "jester"];
-const neutralRoles = ["illusionist", "plague spreader"];
-
+/**
+ * Returns the type of the role.
+ *
+ * @param {string} role - The role to check.
+ * @returns {string} The type of the role.
+ */
 function getRoleType(role) {
     if (goodRoles.includes(role))
         return "good"
@@ -207,6 +270,12 @@ function getRoleType(role) {
 
 }
 
+/**
+ * Parses the response text and returns the message if it exists.
+ *
+ * @param {object} req - The XMLHttpRequest object.
+ * @returns {object|null} The message object if it exists, null otherwise.
+ */
 function getMessage(req) {
     let jsonResponse = JSON.parse(req.responseText);
     if (jsonResponse.hasOwnProperty('message')) {
@@ -222,10 +291,22 @@ function getMessage(req) {
     return null;
 }
 
+/**
+ * Returns the first letter of the string capitalized.
+ *
+ * @param {string} string - The string to capitalize.
+ * @returns {string} The string with the first letter capitalized.
+ */
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
+/**
+ * Returns a cookie with the specified name.
+ *
+ * @param {string} name - The name of the cookie.
+ * @returns {string|null} The cookie value if it exists, null otherwise.
+ */
 function getCookie(name) {
     const cookies = document.cookie.split(';');
     for (let i = 0; i < cookies.length; i++) {
@@ -236,9 +317,46 @@ function getCookie(name) {
     return null;
 }
 
+/**
+ * Sets a cookie with the specified name and value.
+ *
+ * @param {string} name - The name of the cookie.
+ * @param {string} value - The value of the cookie.
+ * @param {number} exdays - The number of days until the cookie expires.
+ */
 function setCookie(name, value, exdays=365) {
     const d = new Date();
     d.setTime(d.getTime() + (exdays*24*60*60*1000));
     let expires = "expires="+ d.toUTCString();
     document.cookie = name + "=" + value + ";path=/;";
+}
+
+/**
+ * Stores JSON data with an expiration time in the browser's cookie.
+ *
+ * @param {string} key - The name of the data to be stored.
+ * @param {any} value - The data to be stored.
+ * @param {number} seconds - The expiration time of the data in seconds.
+ */
+function storeData(key, value, seconds) {
+    const date = new Date();
+    date.setTime(date.getTime() + (seconds * 1000));
+    document.cookie = key + "=" + JSON.stringify(value) + ";expires=" + date.toUTCString() + ";path=/";
+}
+
+/**
+ * Retrieves JSON data from the browser's cookie.
+ *
+ * @param {string} key - The name of the data to be retrieved.
+ * @returns {any|null} The retrieved data if found, otherwise null.
+ */
+function retrieveData(key) {
+    const nameEQ = key + "=";
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        let c = cookies[i].trim();
+        if (c.indexOf(nameEQ) === 0)
+            return JSON.parse(c.substring(nameEQ.length, c.length));
+    }
+    return null;
 }

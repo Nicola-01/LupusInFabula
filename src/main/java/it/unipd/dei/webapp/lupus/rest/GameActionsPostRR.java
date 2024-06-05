@@ -1044,7 +1044,7 @@ public class GameActionsPostRR extends AbstractRR {
                                 wolf = gameAction.getPlayer();
 
                         LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
-                        insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf));
+                        insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getAction(), wolf));
                         //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
                         updatePlayersDeath.add(updatePlayerDeath(wolf));
                     }
