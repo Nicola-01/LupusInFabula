@@ -21,6 +21,7 @@
 
 
 <body class="d-flex flex-column">
+<c:import url="/jsp/utils/loginChecker.jsp"/>
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <div id="username_requested" style="display: none;"><%= request.getAttribute("player")%>

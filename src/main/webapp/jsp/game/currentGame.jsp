@@ -21,6 +21,7 @@
 </head>
 
 <body class="d-flex flex-column">
+<c:import url="/jsp/utils/loginChecker.jsp"/>
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
 <main class="container flex-grow-1">

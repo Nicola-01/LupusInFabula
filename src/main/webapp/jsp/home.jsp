@@ -10,6 +10,7 @@
     <c:import url="/jsp/include/head.jsp"/>
 </head>
 <body class="d-flex flex-column">
+<c:import url="/jsp/utils/loginChecker.jsp"/>
 
 <iframe id="background" src="${pageContext.request.contextPath}/jsp/utils/homeBackground.html" class="background-iframe"
         frameborder="0"></iframe>
@@ -20,11 +21,6 @@
         <span>Welcome back, </span>
         <c:if test="${not empty sessionScope.user}">
             <span id="username" class="fw-bold">${sessionScope.user.getUsername()}</span>
-        </c:if>
-        <c:if test="${empty sessionScope.user}">
-            <script>
-                window.location.href = window.location.origin + "/lupus/login";
-            </script>
         </c:if>
     </h1>
 

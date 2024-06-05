@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">
 </head>
 <body>
+<c:import url="/jsp/utils/loginChecker.jsp"/>
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
