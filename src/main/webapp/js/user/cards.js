@@ -42,7 +42,7 @@ function loadImages()
         }
         else
         {
-            if(imageName === "fantasy1.png")
+            if(imageName === imageFiles[0])
                 img.classList.add('selected-card');
         }
 
