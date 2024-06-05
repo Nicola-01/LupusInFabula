@@ -97,10 +97,13 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
 
                     rs = pstmt.executeQuery();
 
-                    if (rs.next())
-                        this.outputParam = !rs.getString("role").equals(GameRoleAction.JESTER.getName());
-                    else
-                        this.outputParam = true;
+                    this.outputParam = true;
+
+                    while (rs.next())
+                        if(rs.getString("role").equals(GameRoleAction.JESTER.getName())) {
+                            this.outputParam = false;
+                            break;
+                        }
                 }
 
             }

@@ -652,6 +652,7 @@ function fillDayActions(list) {
                 break;
             case "plague": // is Plague spreader
                 plagueSpreaderPlayer = list[i]['actionTarget'].player;
+                playersOrder = []
 
                 let tmpList = list[i]['actionTarget']['possibleTargets'];
                 for (let j = 0; j < tmpList.length; j++)
