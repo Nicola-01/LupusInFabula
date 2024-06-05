@@ -161,39 +161,3 @@
     display: flex;
     flex-direction: column;
 }
-
-.card-container {
-    perspective: 1000px;
-}
-
-.card {
-    width: 200px;
-    height: 280px;
-    position: relative;
-    transform-style: preserve-3d;
-    transition: transform 1s;
-    border: none;
-}
-
-.card-face {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    backface-visibility: hidden;
-}
-
-.card-front {
-    background-size: cover;
-    background-position: center;
-}
-
-.card-back {
-    background-size: cover;
-    background-position: center;
-    background-image: url('../../media/cards/card_back/fantasy1.png');
-    transform: rotateY(180deg);
-}
-
-.is-flipped {
-    transform: rotateY(180deg);
-}

@@ -14,11 +14,10 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/css/game/currentGame/gameActions.css">
-    <link rel="stylesheet" type="text/css"
-          href="${pageContext.request.contextPath}/css/game/currentGame/playersStatus.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameActions.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/playersStatus.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameLog.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/cards.css">
 </head>
 
 <body class="d-flex flex-column">

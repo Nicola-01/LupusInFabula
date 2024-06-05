@@ -269,6 +269,9 @@ public class PossibleGameActions {
                 if (role.equals(GameRoleAction.SHERIFF.getName()))
                     targets.add(0, "No shot");
             }
+            else if (role.equals(GameRoleAction.WOLF.getName())) // if the player is dead ant it's a wolf, igrnore it
+                continue;
+
             // if the player have a role that could have an action but in dead, insert anyway in the list,
             // but without targets
 
