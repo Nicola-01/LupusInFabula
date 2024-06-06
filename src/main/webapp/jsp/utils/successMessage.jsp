@@ -1,9 +1,9 @@
-<div id="successMessage" class="message" style="display: none">
+<div class="message successMessage" style="display: none">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    <h4><strong id="successTitle" class="messageTitle"></strong></h4>
-    <p id="successMessageDetails" class="messageDetails"></p>
-    <button id="successShowMore" class="showMore mb-0">
-        <span id="successShowMoreText" class="showMoreText m-auto">Show more</span>
+    <h4><strong class="messageTitle successTitle"></strong></h4>
+    <p class="messageDetails successMessageDetails"></p>
+    <button class="showMore successShowMore mb-0">
+        <span class="showMoreText successShowMoreText m-auto">Show more</span>
     </button>
-    <p id="successMoreDetails" class="moreDetails" style="display: none"></p>
+    <p class="moreDetails successMoreDetails" style="display: none"></p>
 </div>

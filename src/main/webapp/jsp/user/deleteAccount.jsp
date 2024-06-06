@@ -37,7 +37,7 @@
             </button>
         </div>
 
-        <div class="button-container mb-0 mt-5">
+        <div class="button-container mb-0 mt-5\">
             <button type="button" class="gradientButton" id="deleteButton" disabled>
                 <span>Delete Account</span>
             </button>

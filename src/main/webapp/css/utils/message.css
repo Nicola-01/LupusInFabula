@@ -48,80 +48,80 @@
 
 /*ERROR MESSAGE POPUP*/
 
-#errorMessage{
+.errorMessage{
     background: var(--bs-danger-bg-subtle);
     color: var(--bs-danger-text-emphasis);
     border-color: var(--bs-danger-border-subtle);
 }
 
-#errorShowMore {
+.errorShowMore {
     background: var(--bs-danger-border-subtle);
 }
 
-#errorMessage > .closebtn {
+.errorMessage > .closebtn {
     color: var(--bs-danger-text-emphasis);
 }
 
-#errorMessage > .closebtn:hover {
+.errorMessage > .closebtn:hover {
     color: var(--bs-danger-border-subtle);
 }
 
 /*INFO MESSAGE POPUP*/
 
-#infoMessage {
+.infoMessage {
     background: var(--bs-info-bg-subtle);
     color: var(--bs-info-text-emphasis);
     border-color: var(--bs-info-border-subtle);
 }
 
-#infoShowMore {
+.infoShowMore {
     background: var(--bs-info-border-subtle);
 }
 
-#infoMessage > .closebtn {
+.infoMessage > .closebtn {
     color: var(--bs-info-text-emphasis);
 }
 
-#infoMessage > .closebtn:hover {
+.infoMessage > .closebtn:hover {
     color: var(--bs-info-border-subtle);
 }
 
 /*WARNING MESSAGE POPUP*/
 
-#warningMessage {
+.warningMessage {
     background: var(--bs-warning-bg-subtle);
     color: var(--bs-warning-text-emphasis);
     border-color: var(--bs-warning-border-subtle);
 }
 
-#warningShowMore {
+.warningShowMore {
     background: var(--bs-warning-border-subtle);
 }
 
-#warningMessage > .closebtn {
+.warningMessage > .closebtn {
     color: var(--bs-warning-text-emphasis);
 }
 
-#warningMessage > .closebtn:hover {
+.warningMessage > .closebtn:hover {
     color: var(--bs-warning-border-subtle);
 }
 
 /*SUCCESS POPUP*/
 
-#successMessage {
+.successMessage {
     background: var(--bs-success-bg-subtle);
     color: var(--bs-success-text-emphasis);
     border-color: var(--bs-success-border-subtle);
 }
 
-#successShowMore {
+.successShowMore {
     background: var(--bs-success-border-subtle);
 }
 
-#successMessage > .closebtn {
+.successMessage > .closebtn {
     color: var(--bs-success-text-emphasis);
 }
 
-#successMessage > .closebtn:hover {
+.successMessage > .closebtn:hover {
     color: var(--bs-success-border-subtle);
 }
