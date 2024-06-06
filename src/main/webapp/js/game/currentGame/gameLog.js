@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function (event)
     // var lastSegment = url.substring(url.lastIndexOf("/") + 1);
     // endsWithMaster = lastSegment === "master" || lastSegment === "master/";
 
+
     logElementsReload();
 });
 
@@ -254,10 +255,10 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
             nm = data[i][firstDataKey[0]][secondDataKey[0]]
 
             //choose the color for the log
-            if(action!=="vote" && (action==="dead" || getRoleType(getRole(nm))==="evil"))
-                col = rolesColors.get("evil")
-            else if (action==="vote")
+            if (action==="vote")
                 col = rolesColors.get("vote")
+            else if(action==="dead" || getRoleType(getRole(nm))==="evil")
+                col = rolesColors.get("evil")
             else if (action==="plague" || action==="block")
                 col = rolesColors.get("neutral")
             else
