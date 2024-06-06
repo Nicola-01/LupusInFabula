@@ -116,6 +116,7 @@ const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "mediu
  * @type {string[]}
  */
 const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
+const evilAction = ["rage", "point", "explore", "maul", "dead"];
 
 /**
  * An array of roles that can steal victory.
@@ -128,6 +129,7 @@ const victoryStealerRoles = ["hamster", "jester"];
  * @type {string[]}
  */
 const neutralRoles = ["illusionist", "plague spreader"];
+const neutralAction = ["plague", "block"];
 
 document.addEventListener('DOMContentLoaded', function (event) {
     contextPath = window.location.origin + "/lupus/";

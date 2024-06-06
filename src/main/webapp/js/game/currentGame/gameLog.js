@@ -205,25 +205,6 @@ function createCont(ContAction)
 }
 
 /**
- * Function that permit to identify the role for the user nm, need the exe of playerStatus.js before of gameLogs.js
- * @param nm name of user
- * @returns {string|null|string|*|string} information about user
- */
-function getRole(nm)
-{
-    let i =0
-
-    while(i< playerRole.length)
-    {
-        if(playerRole[i].username===nm)
-            return playerRole[i].role
-        i++
-    }
-
-    return ""
-}
-
-/**
  * function to create the data to insert after in the logs space
  * @param data data that represent the request
  * @param firstDataKey key for the first identification for data
@@ -257,9 +238,9 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
             //choose the color for the log
             if (action==="vote")
                 col = rolesColors.get("vote")
-            else if(action==="dead" || getRoleType(getRole(nm))==="evil")
+            else if(evilAction.includes(action))
                 col = rolesColors.get("evil")
-            else if (action==="plague" || action==="block")
+            else if (neutralAction.includes(action))
                 col = rolesColors.get("neutral")
             else
                 col = rolesColors.get("good")
