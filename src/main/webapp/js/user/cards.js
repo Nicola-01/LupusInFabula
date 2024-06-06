@@ -13,7 +13,7 @@ function loadImages()
         var img = document.createElement("img");
         img.src = imagesFolder + imageName;
         img.alt = imageName;
-        img.classList.add("img-fluid", "p-1", "m-auto", "internalCard");
+        img.classList.add("img-fluid", "p-2", "m-auto", "internalCard");
 
         var radioBtn = document.createElement("input");
         radioBtn.type = "radio";

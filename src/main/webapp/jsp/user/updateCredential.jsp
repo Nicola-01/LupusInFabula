@@ -16,24 +16,18 @@
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
-        <br>
-        <hr>
-        <br>
+        <hr class="my-4">
 
         <div class="form-group">
             <input id="currentEmail" type="text" name="CurrentEmail" class="form-control" placeholder="">
             <label class="control-label">Current E-mail</label>
         </div>
-        <br>
-        <br>
 
         <div class="form-group">
             <input id="newEmail" type="text" name="NewEmail" class="form-control" placeholder="">
             <label class="control-label">New E-mail</label>
         </div>
-        <br>
-        <hr>
-        <br>
+        <hr class="my-4">
 
         <div class="form-group">
             <input type="password" name="CurrentPassword" id="oldPassword" class="form-control" placeholder="">
@@ -42,8 +36,6 @@
                 <i id="oldPassword_eyeIcon" class="fas fa-eye"></i>
             </button>
         </div>
-        <br>
-        <br>
 
         <div id="passwordComplex" class="p-2 px-3 d-none">
             The password must contain:
@@ -62,8 +54,6 @@
                 <i id="newPassword_eyeIcon" class="fas fa-eye"></i>
             </button>
         </div>
-        <br>
-        <br>
 
         <div class="form-group">
             <input type="password" name="ConfirmPassword" id="confirm-password" class="form-control" placeholder="">
@@ -72,9 +62,8 @@
                 <i id="confirm-password_eyeIcon" class="fas fa-eye"></i>
             </button>
         </div>
-        <br>
 
-        <div class="button-container mb-0">
+        <div class="button-container mb-0 mt-5">
             <button type="button" class="gradientButton" id="updateButton" disabled>
                 <span>Update Credentials</span>
             </button>

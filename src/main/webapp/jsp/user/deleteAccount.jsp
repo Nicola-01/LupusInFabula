@@ -22,16 +22,12 @@
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
-        <br>
-        <hr>
-        <br>
+        <hr  class="my-4">
 
         <div class="form-group">
             <input id="email" type="text" name="email" class="form-control" placeholder="">
             <label class="control-label">E-mail</label>
         </div>
-        <br>
-        <br>
 
         <div class="form-group">
             <input type="password" name="password" id="password" class="form-control" placeholder="">
@@ -40,9 +36,8 @@
                 <i id="password_eyeIcon" class="fas fa-eye"></i>
             </button>
         </div>
-        <br>
 
-        <div class="button-container mb-0">
+        <div class="button-container mb-0 mt-5">
             <button type="button" class="gradientButton" id="deleteButton" disabled>
                 <span>Delete Account</span>
             </button>
