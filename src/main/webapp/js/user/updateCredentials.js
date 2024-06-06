@@ -72,6 +72,7 @@ function updatePutStatus(req) {
                             errorDetails += "<br>" + message['error-details'];
                     }
                     appendAlert(msgs, 'danger', 'PUT');
+                    // populateErrorMessage("#changeCredentialsPage .errorMessage", msgs, errorCodes, errorDetails)
                 }
             }
         }

@@ -55,6 +55,7 @@ function updateDeleteStatus(req) {
                             errorDetails += "<br>" + message['error-details'];
                     }
                     appendAlert(msgs, 'danger', 'DELETE');
+                    // populateErrorMessage("#deleteAccountPage .errorMessage", msgs, errorCodes, errorDetails)
                 }
             }
         }

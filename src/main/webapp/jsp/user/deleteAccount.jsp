@@ -13,6 +13,8 @@
     <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
     <div id="liveAlertPlaceholderDelete"></div>
+    <c:import url="/jsp/utils/successMessage.jsp"/>
+    <c:import url="/jsp/utils/errorMessage.jsp"/>
 
     <form id="deleteForm">
         <div class="form-group">
