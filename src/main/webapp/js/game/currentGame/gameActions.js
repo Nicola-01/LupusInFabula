@@ -307,7 +307,7 @@ function enableButtons() {
                 } else {
                     if (i + 1 < maxPhase) {
                         document.getElementById("voteRadio_" + (i + 1)).disabled = false
-                        populateWarningMessage("#warningMessage", "Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
+                        populateWarningMessage(".warningMessage", "Ballot " + (i + 1) + " required", "Insert the votes of the " + (i + 1) + " ballot.")
                     }
                     disable = true
                 }
@@ -1113,7 +1113,7 @@ function sendActions() {
 function actionsResponse(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            hideMessagePopup("#warningMessage"); // hide ballot popup
+            hideMessagePopup(".warningMessage"); // hide ballot popup
             let actionResults;
             let phase;
             let deadPlayers;
@@ -1130,7 +1130,7 @@ function actionsResponse(req) {
                 phaseInfo = phaseInfo.substring(0, phaseInfo.length - 2);
 
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                populateInfoMessage("#infoMessage", message, phaseInfo)
+                populateInfoMessage(".infoMessage", message, phaseInfo)
                 location.reload()
             } else {
                 // Game is ongoing
@@ -1184,13 +1184,13 @@ function actionsResponse(req) {
                     }
                 }
                 window.scrollTo({top: 0, behavior: 'smooth'})
-                populateInfoMessage("#infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
+                populateInfoMessage(".infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
                 elementsReload()
             }
         } else {
             // Error handling
             let message = getMessage(req)
-            populateErrorMessage("#errorMessage", message.message, message.errorCode, message.errorDetails);
+            populateErrorMessage(".errorMessage", message.message, message.errorCode, message.errorDetails);
         }
     }
 }

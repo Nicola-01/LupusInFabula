@@ -74,6 +74,6 @@ document.getElementById("updateCard").addEventListener("click", function(event)
 
     setCookie("selectedCard", selectedCard)
     var msg = "Card backing successfully updated to "+selectedCard.split('.').slice(0, -1).join('.');
-    populateInfoMessage("#playerCardsPage #infoMessage", "Card backing changed", msg);
+    populateInfoMessage("#playerCardsPage .infoMessage", "Card backing changed", msg);
     window.scrollTo({top: 0, behavior: 'smooth'})
 });

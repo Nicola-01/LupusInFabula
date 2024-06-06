@@ -153,12 +153,12 @@ function searchThePlayer() {
                     removeFriendsTableHint();
                     addToFriendsTable(friend.username, friend.commonGame, friend.friendship_date);
                     var msg = friend.username + " added to your friends";
-                    populateSuccessMessage("#successMessage", "Friend added", msg);
+                    populateSuccessMessage(".successMessage", "Friend added", msg);
                 } else {
                     // Handle error case
                     var msg = getMessage(xhr);
                     console.error("Error adding friend:", xhr.status);
-                    populateErrorMessage("#errorMessage", msg.message, msg.errorCode, msg.errorDetails);
+                    populateErrorMessage(".errorMessage", msg.message, msg.errorCode, msg.errorDetails);
                 }
             }
         };

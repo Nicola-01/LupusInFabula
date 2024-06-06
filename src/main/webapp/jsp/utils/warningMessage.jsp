@@ -1,9 +1,9 @@
-<div id="warningMessage" class="message" style="display: none">
+<div class="message warningMessage" style="display: none">
     <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    <h4><strong id="warningTitle" class="messageTitle"></strong></h4>
-    <p id="warningMessageDetails" class="messageDetails"></p>
-    <button id="warningShowMore" class="showMore mb-0">
-        <span id="warningShowMoreText" class="showMoreText m-auto">Show more</span>
+    <h4><strong class="messageTitle warningTitle"></strong></h4>
+    <p class="messageDetails warningMessageDetails"></p>
+    <button class="showMore warningShowMore mb-0">
+        <span class="showMoreText warningShowMoreText m-auto">Show more</span>
     </button>
-    <p id="warningMoreDetails" class="moreDetails" style="display: none"></p>
+    <p class="moreDetails warningMoreDetails" style="display: none"></p>
 </div>
