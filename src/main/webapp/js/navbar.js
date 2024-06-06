@@ -113,12 +113,20 @@ document.addEventListener('DOMContentLoaded', function () {
     //Remove of the created theme elements when i click outside
     document.addEventListener('click', handleClickOutside);
 
+    /**
+     * Removes dynamically created theme elements.
+     */
     function removeThemeElements() {
         const newItems = document.querySelectorAll('.menu-item-new');
         newItems.forEach(item => item.remove());
         circlesCreated = false;
     }
 
+    /**
+     * Handles click events outside the theme button and its elements.
+     *
+     * @param {MouseEvent} event - The click event.
+     */
     function handleClickOutside(event) {
         // const themeButton = document.getElementById('theme-button');
         const createdThemeElements = document.querySelectorAll(".menu-item-new");
@@ -130,10 +138,9 @@ document.addEventListener('DOMContentLoaded', function () {
             removeThemeElements();
         }
     }
-
 });
 
-
+// Adds event listeners to theme selection elements in the responsive menu.
 const responsiveThemeElements = document.querySelectorAll("#theme a");
 
 responsiveThemeElements.forEach(function (a) {

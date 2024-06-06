@@ -3,6 +3,11 @@ document.addEventListener('DOMContentLoaded', function (event) {
     genericGETRequest(contextPath + 'game/list', setHomeMessage)
 });
 
+/**
+ * Sets the home message based on the response of the GET request.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function setHomeMessage(req)
 {
     if (req.readyState === XMLHttpRequest.DONE)
