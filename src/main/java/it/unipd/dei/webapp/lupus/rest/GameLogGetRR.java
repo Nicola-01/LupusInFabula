@@ -138,13 +138,16 @@ public class GameLogGetRR extends AbstractRR
                     i++;
             }
 
-        for (Action j :d)
+        for (Action deadAct :d)
         {
             find = false;
-            for (Action jj : r)
-                find = jj.getTypeAction().equals(GameRoleAction.PLAGUE_SPREADER.getAction()) && j.getPlayer().equals(jj.getTarget());
-            if(!find) add.add(j);
+            i = -1;
+            while (++i<r.size() && !find)
+                find = r.get(i).getTypeAction().equals(GameRoleAction.PLAGUE_SPREADER.getAction()) && deadAct.getPlayer().equals(r.get(i).getTarget());
+
+            if(!find) add.add(deadAct);
         }
+
         r.addAll(add);
         r.sort(Action::compareTo);
 
