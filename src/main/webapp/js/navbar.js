@@ -32,10 +32,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const menuOpenCheckboxElements = document.querySelectorAll('.menu-item');
     // If themes buttons are displayed = true, otherwise = false
     let circlesCreated = false;
-    // Set theme
-    const theme = getCookie("theme");
 
     themeButton.addEventListener('click', function () {
+
+        // get theme
+        const theme = getCookie("theme");
+        this.classList.add('active')
+
         if (!circlesCreated) {
             for (let i = 0; i < 4; i++) {
                 const newItem = document.createElement('a');
@@ -93,8 +96,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Add "active" class to the clicked anchor element
                     a.classList.add("active");
 
+                    // change small screen active class in the correct element
+                    const mobileThemeButtons = document.querySelectorAll("#theme .dropdown-item")
+                    mobileThemeButtons.forEach(function (item){
+                        item.classList.remove("active")
+                        if(item.getAttribute("theme") === a.getAttribute("theme"))
+                            item.classList.add("active")
+                    });
+
                     // Set the theme cookie based on the clicked anchor element's theme attribute
-                    document.cookie = "theme=" + a.getAttribute("theme") + ";path=/;SameSite=Lax;";
+                    setCookie("theme", a.getAttribute("theme"))
 
                     // Reload the theme
                     loadTheme();
@@ -126,6 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * Removes dynamically created theme elements.
      */
     function removeThemeElements() {
+        document.getElementById('theme-button').classList.remove("active")
         const newItems = document.querySelectorAll('.menu-item-new');
         newItems.forEach(item => item.remove());
         circlesCreated = false;

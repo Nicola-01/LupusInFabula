@@ -306,6 +306,10 @@
     transform: translate3d(-220px, 120px, 0);
 }
 
-a.menu-item.menu-item-new.active {
+a.menu-item.menu-item-new.active, .menu .active, #theme .active {
     background: var(--navbar-inverted-bg);
+}
+
+.nav-item.dropdown .dropdown-item:active {
+    background-color: var(--navbar-third-bg);
 }
