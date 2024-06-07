@@ -30,6 +30,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 function handleKeyPressDeleteAccount(event) {
     if (event.key === "Enter") {
         event.preventDefault();
+        if(document.getElementById('deleteButton').disabled)
+            return;
         sendDeleteUpdate();
     }
 }
@@ -38,9 +40,6 @@ function handleKeyPressDeleteAccount(event) {
  * Sends a DELETE request to update user information.
  */
 function sendDeleteUpdate() {
-
-    if(document.getElementById('deleteButton').disabled)
-        return;
 
     const form = document.getElementById('deleteForm');
     const formData = new FormData(form);
@@ -57,7 +56,6 @@ function sendDeleteUpdate() {
 
     // Send DELETE request
     genericDELETERequest(contextPath + "user/me", JSON.stringify(json), updateDeleteStatus);
-    form.reset();
 
 }
 
@@ -69,10 +67,13 @@ function sendDeleteUpdate() {
 function updateDeleteStatus(req) {
 
     let message = getMessage(req);
+    const form = document.getElementById('deleteForm');
+
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             // appendAlert("DELETE DONE: " + message.message, 'success', 'DELETE');
             populateSuccessMessage("#deleteAccountPage .successMessage", "DELETE DONE:", message.message);
+            form.reset();
         } else {
             if (message != null)
                 populateErrorMessage("#deleteAccountPage .errorMessage", message.message, message.errorCode, message.errorDetails)
@@ -97,6 +98,7 @@ function updateDeleteStatus(req) {
                 }
             }
         }
+        checkFormCompletionDelete();
     }
 }
 

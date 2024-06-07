@@ -49,6 +49,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
 function handleKeyPressCredentialsUpdate(event) {
     if (event.key === "Enter") {
         event.preventDefault();
+        if(document.getElementById('updateButton').disabled)
+            return;
         sendPutUpdate();
     }
 }
@@ -58,9 +60,6 @@ function handleKeyPressCredentialsUpdate(event) {
  * Sends a PUT request to update user information.
  */
 function sendPutUpdate() {
-
-    if(document.getElementById('updateButton').disabled)
-        return;
 
     const form = document.getElementById('updateForm');
     const formData = new FormData(form);
@@ -77,7 +76,7 @@ function sendPutUpdate() {
 
     // Send PUT request
     genericPUTRequest(contextPath + "user/me", JSON.stringify(json), updatePutStatus);
-    form.reset();
+
 
 }
 
@@ -88,11 +87,13 @@ function sendPutUpdate() {
  */
 function updatePutStatus(req) {
 
+    const form = document.getElementById('updateForm');
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             // appendAlert("UPDATE DONE: " + message.message, 'success', 'PUT');
             populateSuccessMessage("#changeCredentialsPage .successMessage", "UPDATE DONE:", message.message);
+            form.reset();
         } else {
             if (message != null) {
                 // appendAlert(message.message, 'danger', 'PUT');
@@ -117,6 +118,7 @@ function updatePutStatus(req) {
                 }
             }
         }
+        checkFormCompletionPut();
     }
 }
 
