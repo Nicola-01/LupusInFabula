@@ -319,8 +319,6 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                 } else {
                     // activate a session to keep the user data
                     HttpSession session = request.getSession();
-                    response.setStatus(HttpServletResponse.SC_CREATED);
-                    session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
 
                     int gameID = new GetGameIdByPlayerUsernameDAO(getConnection(), p.getUsername()).access().getOutputParam();
                     if (gameID > 0) {
@@ -337,6 +335,8 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     } else
                         session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
 
+                    response.setStatus(HttpServletResponse.SC_OK);
+                    session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
                     response.sendRedirect(request.getContextPath() + "/home");
                 }

@@ -5,12 +5,11 @@
 
     <%--    <c:import url="/jsp/utils/infoMessage.jsp"/>--%>
 
+    <div id="liveAlertPlaceholderPut"></div>
+    <c:import url="/jsp/utils/successMessage.jsp"/>
+    <c:import url="/jsp/utils/errorMessage.jsp"/>
+
     <form id="updateForm">
-
-        <div id="liveAlertPlaceholderPut"></div>
-        <c:import url="/jsp/utils/successMessage.jsp"/>
-        <c:import url="/jsp/utils/errorMessage.jsp"/>
-
         <div class="form-group">
             <label>Username</label>
             <div class="form-input">
