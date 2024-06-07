@@ -96,19 +96,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     // Add "active" class to the clicked anchor element
                     a.classList.add("active");
 
-                    // change small screen active class in the correct element
-                    const mobileThemeButtons = document.querySelectorAll("#theme .dropdown-item")
-                    mobileThemeButtons.forEach(function (item){
-                        item.classList.remove("active")
-                        if(item.getAttribute("theme") === a.getAttribute("theme"))
-                            item.classList.add("active")
-                    });
-
                     // Set the theme cookie based on the clicked anchor element's theme attribute
                     setCookie("theme", a.getAttribute("theme"))
 
                     // Reload the theme
                     loadTheme();
+                    updateSmallScreenThemeButtons();
                 })
             })
 
@@ -188,10 +181,24 @@ responsiveThemeElements.forEach(function (a) {
 
         // Reload the theme
         loadTheme();
+        updateSmallScreenThemeButtons()
     })
 })
 
-loadTheme();
+/**
+ * Updates the active class of theme buttons for small screens based on the theme set by the user.
+ */
+function updateSmallScreenThemeButtons(){
+    // Retrieve the theme from cookies
+    const theme = getCookie("theme")
+    // Select all theme buttons for small screens
+    const mobileThemeButtons = document.querySelectorAll("#theme .dropdown-item")
+    mobileThemeButtons.forEach(function (item){
+        item.classList.remove("active")
+        if(item.getAttribute("theme") === theme)
+            item.classList.add("active")
+    });
+}
 
 /**
  * Loads the selected theme based on the theme cookie or system preference.
@@ -236,3 +243,7 @@ function loadTheme() {
         };
     }
 }
+
+
+loadTheme();
+updateSmallScreenThemeButtons()
