@@ -21,16 +21,18 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    //Buttons theme creation
+    // Buttons theme creation
     const themeButton = document.getElementById('theme-button');
-    //Login and Logout buttons
+    // Login and Logout buttons
     const logoutLink = document.getElementById('logout');
     const loginLink = document.getElementById('login');
-    //Hamburger menu element (the input tag)
+    // Hamburger menu element (the input tag)
     const menuOpenCheckbox = document.getElementById('menu-open');
-    //If themes buttons are displayed = true, otherwise = false
+    // Hamburger menu elements (menu item elements)
+    const menuOpenCheckboxElements = document.querySelectorAll('.menu-item');
+    // If themes buttons are displayed = true, otherwise = false
     let circlesCreated = false;
-    //Set theme
+    // Set theme
     const theme = getCookie("theme");
 
     themeButton.addEventListener('click', function () {
@@ -39,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const newItem = document.createElement('a');
                 newItem.classList.add('menu-item', 'menu-item-new');
 
-                //Creation of the 4 links for theme selection
+                // Creation of the 4 links for theme selection
                 switch (i) {
                     case 3:
                         newItem.setAttribute('theme', 'dynamic');
@@ -67,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         break;
                 }
 
-                //Adding the themes created elements after the login or logout element
+                // Adding the themes created elements after the login or logout element
                 if (logoutLink !== null)
                     logoutLink.parentNode.insertBefore(newItem, logoutLink.nextSibling);
                 if (loginLink !== null)
@@ -98,20 +100,23 @@ document.addEventListener('DOMContentLoaded', function () {
             circlesCreated = true;
 
         } else {
-            //Remove of the created theme elements
+            // Remove the created theme elements
             removeThemeElements();
         }
     });
 
-    menuOpenCheckbox.addEventListener('click', function () {
+    // Add a document event listener for closing the theme and hamburger menu elements
+    document.addEventListener('click', function (event) {
+        // If both theme and hamburger menu elements are displayed, i need two clicks if i want to remove them from the screen
+        // When the theme elements are displayed, with one click i remove them
         if (circlesCreated) {
-            //Remove of the created theme elements
-            removeThemeElements();
+            handleClickOutsideTheme(event);
+        }
+        // When the theme elements are not displayed, with one click i remove the hamburger menu elements
+        else {
+            handleClickOutsideMenu(event);
         }
     });
-
-    //Remove of the created theme elements when i click outside
-    document.addEventListener('click', handleClickOutside);
 
     /**
      * Removes dynamically created theme elements.
@@ -127,24 +132,32 @@ document.addEventListener('DOMContentLoaded', function () {
      *
      * @param {MouseEvent} event - The click event.
      */
-    function handleClickOutside(event) {
-        // const themeButton = document.getElementById('theme-button');
-        const createdThemeElements = document.querySelectorAll(".menu-item-new");
+    function handleClickOutsideTheme(event) {
+        const themeButtonClicked = themeButton.contains(event.target);
+        const clickedInsideNewItem = event.target.closest('.menu-item-new') !== null;
 
-        const isClickInsideThemeButton = themeButton.contains(event.target);
-        const isClickInsideThemeElement = Array.from(createdThemeElements).some(item => item.contains(event.target));
-
-        if (!isClickInsideThemeButton && !isClickInsideThemeElement) {
+        if (!themeButtonClicked && !clickedInsideNewItem) {
             removeThemeElements();
         }
     }
+
+    /**
+     * Handles click events outside the hamburger menu elements.
+     *
+     * @param {MouseEvent} event - The click event.
+     */
+    function handleClickOutsideMenu(event) {
+        if (!menuOpenCheckbox.contains(event.target) && !event.target.matches('#menu-open') && !event.target.closest('.menu-item')) {
+            menuOpenCheckbox.checked = false;
+        }
+    }
+
 });
 
 // Adds event listeners to theme selection elements in the responsive menu.
 const responsiveThemeElements = document.querySelectorAll("#theme a");
 
 responsiveThemeElements.forEach(function (a) {
-
     a.addEventListener('click', function () {
         // Remove "active" class from all anchor elements
         responsiveThemeElements.forEach(function (item) {

@@ -155,7 +155,7 @@
     <div class="slideshow-container evilRoles">
         <h2 class="text-center mb-4"><strong>EVIL</strong></h2>
         <div class="rolesDescription">
-            Pack of wolves that want to maul the villagers
+            Pack of wolves that want to maul the villagers.
         </div>
         <c:if test="${not empty roles}">
             <c:forEach var="roleList" items="${roles}">
@@ -196,7 +196,7 @@
     <div class="slideshow-container victoryStealerRoles">
         <h2 class="text-center mb-4"><strong>VICTORY STEALER</strong></h2>
         <div class="rolesDescription">
-            Villagers who play for themselves without caring about other villagers
+            Villagers who play for themselves without caring about other villagers.
         </div>
         <c:if test="${not empty roles}">
             <c:forEach var="roleList" items="${roles}">
@@ -237,7 +237,7 @@
     <div class="slideshow-container neutralRoles">
         <h2 class="text-center mb-4"><strong>NEUTRAL ROLES</strong></h2>
         <div class="rolesDescription">
-            Roles that play with the villagers or the pack of wolves, and that can cause chaos between any type of role
+            Roles that play with the villagers or the pack of wolves, and that can cause chaos between any type of role.
         </div>
         <c:if test="${not empty roles}">
             <c:forEach var="roleList" items="${roles}">
