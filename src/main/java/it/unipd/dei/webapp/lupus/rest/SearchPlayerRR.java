@@ -14,6 +14,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
+/**
+ * RR for searching a player.
+ */
 public class SearchPlayerRR extends AbstractRR {
 
     private final String username;
@@ -30,6 +33,11 @@ public class SearchPlayerRR extends AbstractRR {
         this.username = username;
     }
 
+    /**
+     * Serves the REST resource.
+     *
+     * @throws IOException if an I/O error occurs while serving the resource
+     */
     @Override
     protected void doServe() throws IOException {
         Message m = null;

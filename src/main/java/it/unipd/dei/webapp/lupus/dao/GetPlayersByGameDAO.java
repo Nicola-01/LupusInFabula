@@ -12,6 +12,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO class to retrieve a list of players by game ID.
+ * This class handles the database query to list all the players and their roles playing in a specified game.
+ */
 public class GetPlayersByGameDAO extends AbstractDAO<List<String>> {
 
     /**

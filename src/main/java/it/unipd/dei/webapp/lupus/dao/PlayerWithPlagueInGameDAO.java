@@ -8,6 +8,9 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DAO for retrieving players with the plague in a specific game and round.
+ */
 public class PlayerWithPlagueInGameDAO extends AbstractDAO<String> {
     /**
      * The SQL statement to be executed.
@@ -23,12 +26,24 @@ public class PlayerWithPlagueInGameDAO extends AbstractDAO<String> {
      */
     private final int round;
 
+    /**
+     * Constructs a new PlayerWithPlagueInGameDAO.
+     *
+     * @param con    the database connection
+     * @param gameID the ID of the game
+     * @param round  the round of the game
+     */
     public PlayerWithPlagueInGameDAO(Connection con, int gameID, int round) {
         super(con);
         this.gameID = gameID;
         this.round = round;
     }
 
+    /**
+     * Executes the database access logic to retrieve players with the plague.
+     *
+     * @throws Exception if an error occurs during database access
+     */
     @Override
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
