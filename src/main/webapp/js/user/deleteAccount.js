@@ -17,12 +17,30 @@ document.addEventListener('DOMContentLoaded', function (event) {
         event.preventDefault();
         showPassword("password");
     });
+
+    document.getElementById("email").addEventListener('keypress', handleKeyPressDeleteAccount)
+    document.getElementById("password").addEventListener('keypress', handleKeyPressDeleteAccount)
+    document.getElementById("deleteButton").addEventListener('keypress', handleKeyPressDeleteAccount)
 });
+
+/**
+ *  Handles the 'Enter' key press event for the delete account form.
+ *  @param {KeyboardEvent} event - The key press event.
+ */
+function handleKeyPressDeleteAccount(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendDeleteUpdate();
+    }
+}
 
 /**
  * Sends a DELETE request to update user information.
  */
 function sendDeleteUpdate() {
+
+    if(document.getElementById('deleteButton').disabled)
+        return;
 
     const form = document.getElementById('deleteForm');
     const formData = new FormData(form);

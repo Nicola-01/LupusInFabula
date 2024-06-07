@@ -34,12 +34,33 @@ document.addEventListener('DOMContentLoaded', function (event) {
         event.preventDefault();
         showPassword("confirm-password");
     });
+
+    document.getElementById("currentEmail").addEventListener('keypress', handleKeyPressCredentialsUpdate)
+    document.getElementById("newEmail").addEventListener('keypress', handleKeyPressCredentialsUpdate)
+    document.getElementById("oldPassword").addEventListener('keypress', handleKeyPressCredentialsUpdate)
+    document.getElementById("newPassword").addEventListener('keypress', handleKeyPressCredentialsUpdate)
+    document.getElementById("confirm-password").addEventListener('keypress', handleKeyPressCredentialsUpdate)
 });
+
+/**
+ *  Handles the 'Enter' key press event for the credential update form.
+ *  @param {KeyboardEvent} event - The key press event.
+ */
+function handleKeyPressCredentialsUpdate(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        sendPutUpdate();
+    }
+}
+
 
 /**
  * Sends a PUT request to update user information.
  */
 function sendPutUpdate() {
+
+    if(document.getElementById('updateButton').disabled)
+        return;
 
     const form = document.getElementById('updateForm');
     const formData = new FormData(form);
