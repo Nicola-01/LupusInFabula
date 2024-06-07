@@ -112,23 +112,33 @@ const GamePhase = {
 const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "medium", "sam", "seer", "sheriff"];
 
 /**
- * An array of roles that are considered "evil".
+ * An array of evil roles.
  * @type {string[]}
  */
 const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
+
+/**
+* An array of evil actions.
+* @type {string[]}
+*/
 const evilAction = ["rage", "point", "explore", "maul", "dead"];
 
 /**
- * An array of roles that can steal victory.
+ * An array of steal victory roles.
  * @type {string[]}
  */
 const victoryStealerRoles = ["hamster", "jester"];
 
 /**
- * An array of roles that are considered "neutral".
+ * An array of neutral roles.
  * @type {string[]}
  */
 const neutralRoles = ["illusionist", "plague spreader"];
+
+/**
+ * An array of neutral actions.
+ * @type {string[]}
+ */
 const neutralAction = ["plague", "block"];
 
 document.addEventListener('DOMContentLoaded', function (event) {
