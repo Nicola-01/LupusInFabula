@@ -18,7 +18,7 @@
         <li><a href="#test">Test</a></li>
       </ul>
     </li>
-    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#frontend">Front-End</a></li>
 	<li><a href="#group-members">Group members</a></li>
   </ol>
 
@@ -75,6 +75,15 @@ To execute the tests for the RestAPI it's needed to execute the two .sql file:
 - populate_db_optional.aaa
 
 The first file inserts into the database all the possible roles; the second, instead, insert one complete game with all actions and also insert some games to test the logs and the statistics of an user.
+
+## Front-End
+
+The game can be accessed at http://localhost:8080/lupus/ and requires an account to play. Upon login, the home page is displayed, providing access to the `Habitant` and `Village` sections.
+- Habitant: This section allows users to manage their account (friends, change credentials, or delete the account), view personal statistics and history, as well as the stats and history of other players.
+- Village: In this section, users can create a new village, add friends, and select the roles used in the game. If already in a game, clicking 'Join your village' will display the current game.
+
+To view the rules and roles of the game, visit http://localhost:8080/lupus/rules. No login is required.
+
 ## Group members
 
 | *Last Name* | *First Name* | *Number* |
