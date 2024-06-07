@@ -1096,9 +1096,6 @@ public class GameActionsPostRR extends AbstractRR {
 
             }
 
-            nightActionsResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
-            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
-
             for (Action action : insertActions)
                 new InsertIntoActionDAO(ds.getConnection(), action).access();
 
@@ -1106,6 +1103,9 @@ public class GameActionsPostRR extends AbstractRR {
                 new UpdateDeathOfPlayerInTheGameDAO(ds.getConnection(), playsAsIn).access();
                 nightActionsResults.addDeadPlayer(playsAsIn.getPlayerUsername());
             }
+
+            nightActionsResults.setDorkyIsWolf(new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
+            nightActionsResults.setPuppyIsWolf(new IsPuppyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam());
 
         } catch (SQLException | IOException e) {
 
@@ -1619,7 +1619,7 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0) || notVote)
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0) || notVote)
             return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
 
         if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0 && !hamster.isEmpty())

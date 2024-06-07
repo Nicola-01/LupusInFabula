@@ -3,7 +3,7 @@
 
 .form-group {
     position: relative;
-    margin-bottom: 1.5em;
+    margin-bottom: 1.85em;
 }
 
 .form-control {
@@ -17,7 +17,7 @@
 }
 
 .control-label {
-    color: #999;
+    color: lightslategray;
     font-size: 18px;
     font-weight: normal;
     position: absolute;

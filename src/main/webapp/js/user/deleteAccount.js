@@ -1,3 +1,12 @@
+/**
+ * Handle the delete account page
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+// Sets up event listeners for delete button, email, password input fields, and show password button.
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("deleteButton").addEventListener("click", sendDeleteUpdate);
 
@@ -10,11 +19,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
     });
 });
 
+/**
+ * Sends a DELETE request to update user information.
+ */
 function sendDeleteUpdate() {
 
     const form = document.getElementById('deleteForm');
     const formData = new FormData(form);
-
+    // Create JSON object for the delete request
     const json = {
         "userUpdate": {
             "oldEmail": formData.get('email'),
@@ -25,11 +37,17 @@ function sendDeleteUpdate() {
         }
     };
 
+    // Send DELETE request
     genericDELETERequest(contextPath + "user/me", JSON.stringify(json), updateDeleteStatus);
     form.reset();
 
 }
 
+/**
+ * Updates the status of the delete request.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function updateDeleteStatus(req) {
 
     let message = getMessage(req);
@@ -55,19 +73,23 @@ function updateDeleteStatus(req) {
                             errorDetails += "<br>" + message['error-details'];
                     }
                     appendAlert(msgs, 'danger', 'DELETE');
+                    // populateErrorMessage("#deleteAccountPage .errorMessage", msgs, errorCodes, errorDetails)
                 }
             }
         }
     }
 }
 
+/**
+ * Checks the form completion status and enables/disables the delete button accordingly.
+ */
 function checkFormCompletionDelete() {
 
     const deleteButton = document.getElementById('deleteButton');
-
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
+    // Enable delete button only if both email and password fields are non-empty
     deleteButton.disabled = !(email.trim() !== '' && password.trim() !== '');
 
 }

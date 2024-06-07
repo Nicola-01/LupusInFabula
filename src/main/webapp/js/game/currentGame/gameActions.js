@@ -1164,7 +1164,7 @@ function actionsResponse(req) {
 
                     // Determine if any players were voted out during the day
                     if (actionResults.votedPlayer !== "")
-                        deadPlayers = actionResults.votedPlayer + " was voted out:";
+                        deadPlayers = actionResults.votedPlayer + " was voted out";
                     else
                         deadPlayers = "No players were voted out.";
 

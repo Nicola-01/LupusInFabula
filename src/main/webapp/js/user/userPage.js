@@ -9,6 +9,10 @@ const radioInputs = document.querySelectorAll('.radio-inputs input[type="radio"]
 
 loadPage()
 
+/**
+ * Loads the page based on the URL parameter 'page'.
+ * Hides all pages initially and displays the selected page.
+ */
 function loadPage() {
     let params = new URLSearchParams(window.location.search);
     const page = params.get('page');
@@ -38,9 +42,11 @@ function loadPage() {
             return;
     }
 
+    // Check the corresponding radio button
     document.querySelector("input[type='radio'][value=" + page + "]").checked = true
 }
 
+// Add change event listeners to the radio buttons
 radioInputs.forEach(input => {
     input.addEventListener('change', function () {
 
@@ -48,34 +54,20 @@ radioInputs.forEach(input => {
         url.searchParams.set('page', this.value);
         window.location.href = url;
 
-
-        // // Toggle display based on selected radio button
-        // friendsPage.style.display = 'none';
-        // changeCredentialsPage.style.display = 'none';
-        // deleteAccountPage.style.display = 'none';
-        // playerCardsPage.style.display = 'none';
-        //
-        // switch (this.value) {
-        //     case 'friends':
-        //         friendsPage.style.display = 'block';
-        //         break;
-        //     case 'changeCredentials':
-        //         changeCredentialsPage.style.display = 'block';
-        //         break;
-        //     case 'deleteAccount':
-        //         deleteAccountPage.style.display = 'block';
-        //         break;
-        //     case 'playerCards':
-        //         playerCardsPage.style.display = 'block';
-        //         break;
-        // }
-
     });
 });
 
+// Reference to the alert placeholders for delete and put actions.
 const alertPlaceholderDelete = document.getElementById('liveAlertPlaceholderDelete');
 const alertPlaceholderPut = document.getElementById('liveAlertPlaceholderPut');
 
+/**
+ * Appends an alert to the specified alert placeholder.
+ *
+ * @param {string} message - The alert message.
+ * @param {string} type - The type of alert (e.g., 'success', 'danger').
+ * @param {string} action - The action that triggered the alert (e.g., 'DELETE', 'PUT').
+ */
 const appendAlert = (message, type, action) => {
     const wrapper = document.createElement('div');
     wrapper.innerHTML = [

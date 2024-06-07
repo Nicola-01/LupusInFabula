@@ -103,8 +103,12 @@ function getStringLog(gamePhase, user, typeOfAction, target, color)
 {
     let s = ''+user
 
-    if(typeOfAction === 'dead')
-        return s +' is ' + colText(typeOfAction, color)
+    if(typeOfAction === 'dead') {
+        if(gamePhase === "night")
+            return s +' is ' + colText(typeOfAction, color)
+        else
+            return s +' is at the ' + colText('stake', color)
+    }
     else if (typeOfAction === "last chance")
         return s +' use ' + colText(typeOfAction, color)
     else if (typeOfAction === "plague"){

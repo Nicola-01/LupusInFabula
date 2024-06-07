@@ -1,3 +1,12 @@
+/**
+ * Handle the update credentials page
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+// Sets up event listeners for update button, email and password input fields, and show password buttons.
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("updateButton").addEventListener("click", sendPutUpdate);
 
@@ -12,7 +21,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     newPasswordHint.addEventListener('focus', () => showPasswordHint(true));
     newPasswordHint.addEventListener('blur', () => showPasswordHint(false));
 
-    // Show password
+    // Add click event listeners to show password buttons
     document.getElementById("newPassword_ShowPassword").addEventListener('click', event => {
         event.preventDefault();
         showPassword("newPassword");
@@ -27,11 +36,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
     });
 });
 
+/**
+ * Sends a PUT request to update user information.
+ */
 function sendPutUpdate() {
 
     const form = document.getElementById('updateForm');
     const formData = new FormData(form);
-
+    // Create JSON object for the update request
     const json = {
         "userUpdate": {
             "oldEmail": formData.get('CurrentEmail'),
@@ -42,11 +54,17 @@ function sendPutUpdate() {
         }
     };
 
+    // Send PUT request
     genericPUTRequest(contextPath + "user/me", JSON.stringify(json), updatePutStatus);
     form.reset();
 
 }
 
+/**
+ * Updates the status of the put request.
+ *
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object.
+ */
 function updatePutStatus(req) {
 
     let message = getMessage(req);
@@ -72,12 +90,16 @@ function updatePutStatus(req) {
                             errorDetails += "<br>" + message['error-details'];
                     }
                     appendAlert(msgs, 'danger', 'PUT');
+                    // populateErrorMessage("#changeCredentialsPage .errorMessage", msgs, errorCodes, errorDetails)
                 }
             }
         }
     }
 }
 
+/**
+ * Checks the form completion status and enables/disables the update button accordingly.
+ */
 function checkFormCompletionPut() {
 
     const updateButton = document.getElementById('updateButton');
@@ -88,6 +110,7 @@ function checkFormCompletionPut() {
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirm-password').value;
 
+    // Enable update button if all required fields are filled correctly accordingly with the following rules:
     // all email inputs are filled, while all password inputs are not
     if ((currentEmail.trim() !== '' && newEmail.trim() !== '')
         && (oldPassword.trim() === '' && newPassword.trim() === '' && confirmPassword.trim() === '')) {
