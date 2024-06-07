@@ -836,6 +836,7 @@ public class GameActionsPostRR extends AbstractRR {
             Map<String, Map<String, Boolean>> actionsMap = getActionsMap(gameActions, playersRole);
             int number_of_wolves = wolfCount();
             int berserker_count = 0;
+            boolean isKamikazeBlocked = false;
 
             // check of the actions
             for (GameAction gameAction : gameActions) {
@@ -864,8 +865,12 @@ public class GameActionsPostRR extends AbstractRR {
                     String illusionist = illusionistAction.getPlayer();
                     String targetRole = playersRole.get(target);
 
-                    GameAction targetOfTargetAction = getPlayerByRole(gameActions, targetRole);
+                    if (targetRole.equals(GameRoleAction.KAMIKAZE.getName()))
+                        isKamikazeBlocked = true;
 
+                    //if the target of the illusionist is the kamikaze, the following variable will be null
+                    GameAction targetOfTargetAction = getPlayerByRole(gameActions, targetRole);
+                    //not executed when the target of the illusionist is the kamikaze
                     if (targetOfTargetAction != null) {
                         String targetOfTarget = targetOfTargetAction.getTarget();
                         Map<String, Boolean> tmp = actionsMap.get(targetOfTarget);
@@ -1026,9 +1031,9 @@ public class GameActionsPostRR extends AbstractRR {
                     // (if the target is the kamikaze and the action is true, the kamikaze kill himself and the wolf)
                     if (playersRole.get(target).equals(GameRoleAction.KAMIKAZE.getName())
                             && (actionPlayerMap.get(GameRoleAction.WOLF.getAction())
-                            || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
-                            || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())
-                            || actionPlayerMap.get(GameRoleAction.PUPPY.getAction()))) {
+                                    || actionPlayerMap.get(GameRoleAction.BERSERKER.getAction())
+                                    || actionPlayerMap.get(GameRoleAction.EXPLORER.getAction())
+                                    || actionPlayerMap.get(GameRoleAction.PUPPY.getAction()))) {
 
                         String wolf = "";
                         for (GameAction gameAction : gameActions)
@@ -1040,10 +1045,12 @@ public class GameActionsPostRR extends AbstractRR {
                                                     && new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam())))
                                 wolf = gameAction.getPlayer();
 
-                        LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
-                        insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getAction(), wolf));
-                        //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
-                        updatePlayersDeath.add(updatePlayerDeath(wolf));
+                        if (!isKamikazeBlocked) {
+                            LOGGER.info("The target " + target + " is blown up with the wolf " + wolf);
+                            insertActions.add(new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getAction(), wolf));
+                            //new InsertIntoActionDAO(ds.getConnection(), new Action(gameID, target, currentRound, currentPhase, 0, GameRoleAction.KAMIKAZE.getName(), wolf)).access();
+                            updatePlayersDeath.add(updatePlayerDeath(wolf));
+                        }
                     }
 
                     // check for the "plague" action --> PLAGUE SPREADER
