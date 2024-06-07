@@ -738,14 +738,13 @@ function fillDayActions(list) {
                 text = "Who does <u style='color: " + rolesColors.get("sam") + ";'> Sam </u> want to kill?";
                 samDiv.appendChild(getActionWrapper(list[i]['actionTarget'], text, GamePhase.DAY));
 
-                let samSB = document.querySelector(".samDiv select")
+                let samSB = document.querySelector(".samDiv select");
                 samSB.id = "sam_SB";
 
-                samDiv.style.display = "none"
+                samDiv.style.display = "none";
                 break;
             case "plague":// Plague spreading action
                 plagueSpreaderPlayer = list[i]['actionTarget'].player;
-                playersOrder = []
 
                 let tmpList = list[i]['actionTarget']['possibleTargets'];
                 for (let j = 0; j < tmpList.length; j++)
@@ -753,7 +752,7 @@ function fillDayActions(list) {
                 let plaguedPlayer = playersOrder[0];
 
                 // the plagueSpreader did not infect anyone
-                if (plaguedPlayer == null) break
+                if (plaguedPlayer == null) break;
 
                 // Remove the first player, which is the one with the plague
                 playersOrder.splice(0, 1);
@@ -1183,9 +1182,10 @@ function actionsResponse(req) {
                         phaseInfo = phaseInfo.substring(0, phaseInfo.length - 2);
                     }
                 }
-                window.scrollTo({top: 0, behavior: 'smooth'})
-                populateInfoMessage(".infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo)
-                elementsReload()
+                window.scrollTo({top: 0, behavior: 'smooth'});
+                populateInfoMessage(".infoMessage", "Results of the " + phase + "!", deadPlayers + phaseInfo);
+                variableResets();
+                elementsReload();
             }
         } else {
             // Error handling
@@ -1193,4 +1193,17 @@ function actionsResponse(req) {
             populateErrorMessage(".errorMessage", message.message, message.errorCode, message.errorDetails);
         }
     }
+}
+
+/**
+ * Resets game variables to their initial values.
+ */
+function variableResets() {
+    wolfPack = [];
+    gameRound = -1;
+    gamePhase = -1;
+    currentVoteSection = -1
+    playersOrder = [];
+    samPlayer = "";
+    plagueSpreaderPlayer = "";
 }

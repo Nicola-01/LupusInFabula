@@ -101,7 +101,7 @@ function deleteFriend(username) {
                 removeFromFriendsTable(username);
                 addFriendsTableHint();
                 var msg = username + " removed from your friends";
-                populateInfoMessage("#infoMessage", "Friend deleted", msg);
+                populateInfoMessage("#friendsPage .infoMessage", "Friend deleted", msg);
             } else {
                 // Handle error case
                 console.error("Error deleting friend:", xhr.status);
@@ -153,12 +153,12 @@ function searchThePlayer() {
                     removeFriendsTableHint();
                     addToFriendsTable(friend.username, friend.commonGame, friend.friendship_date);
                     var msg = friend.username + " added to your friends";
-                    populateSuccessMessage(".successMessage", "Friend added", msg);
+                    populateSuccessMessage("#friendsPage .successMessage", "Friend added", msg);
                 } else {
                     // Handle error case
                     var msg = getMessage(xhr);
                     console.error("Error adding friend:", xhr.status);
-                    populateErrorMessage(".errorMessage", msg.message, msg.errorCode, msg.errorDetails);
+                    populateErrorMessage("#friendsPage .errorMessage", msg.message, msg.errorCode, msg.errorDetails);
                 }
             }
         };

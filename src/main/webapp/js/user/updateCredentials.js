@@ -70,10 +70,12 @@ function updatePutStatus(req) {
     let message = getMessage(req);
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            appendAlert("UPDATE DONE: " + message.message, 'success', 'PUT');
+            // appendAlert("UPDATE DONE: " + message.message, 'success', 'PUT');
+            populateSuccessMessage("#changeCredentialsPage .successMessage", "UPDATE DONE:", message.message)
         } else {
             if (message != null) {
-                appendAlert(message.message, 'danger', 'PUT');
+                // appendAlert(message.message, 'danger', 'PUT');
+                populateErrorMessage("#changeCredentialsPage .errorMessage", message.message, message.errorCode, message.errorDetails)
             } else {
                 let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
                 let msgs = ""
@@ -89,8 +91,8 @@ function updatePutStatus(req) {
                         if (!errorDetails.includes(message['error-details']))
                             errorDetails += "<br>" + message['error-details'];
                     }
-                    appendAlert(msgs, 'danger', 'PUT');
-                    // populateErrorMessage("#changeCredentialsPage .errorMessage", msgs, errorCodes, errorDetails)
+                    // appendAlert(msgs, 'danger', 'PUT');
+                    populateErrorMessage("#changeCredentialsPage .errorMessage", msgs, errorCodes, errorDetails)
                 }
             }
         }
