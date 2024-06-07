@@ -51,7 +51,7 @@ main {
     transition: 300ms;
 }
 
-.box button:hover {
+#logoutBT:hover, .box button:hover {
     background-color: var(--navbar-inverted-second-bg);
 }
 
