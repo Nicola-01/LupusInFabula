@@ -119,6 +119,8 @@ public class GameLogGetRR extends AbstractRR
         boolean isPlugueAction;
         boolean isEvilUs;
         int i=0;
+        boolean find = false;
+        ArrayList<Action> add = new ArrayList<>();
 
         if(!this.isMaster && !r.isEmpty())
             while (i<r.size())
@@ -136,7 +138,14 @@ public class GameLogGetRR extends AbstractRR
                     i++;
             }
 
-        r.addAll(d);
+        for (Action j :d)
+        {
+            find = false;
+            for (Action jj : r)
+                find = jj.getTypeAction().equals(GameRoleAction.PLAGUE_SPREADER.getAction()) && j.getPlayer().equals(jj.getTarget());
+            if(!find) add.add(j);
+        }
+        r.addAll(add);
         r.sort(Action::compareTo);
 
         return r;
