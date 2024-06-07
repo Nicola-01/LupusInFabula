@@ -13,7 +13,7 @@
 
 <jsp:include page="/jsp/include/navbar.jsp"/>
 
-<div class="container-fluid">
+<main class="container-fluid">
     <h1>RULES</h1>
     <ol class="list" style="--length: 7" role="list">
         <li class="rules" style="--i: 0">
@@ -280,7 +280,7 @@
         <a class="prev" onclick="plusSlides(-1, 3)">❮</a>
         <a class="next" onclick="plusSlides(1, 3)">❯</a>
     </div>
-</div>
+</main>
 
 <c:import url="/jsp/include/footer.jsp"/>
 <script src="${pageContext.request.contextPath}/js/rules.js"></script>
