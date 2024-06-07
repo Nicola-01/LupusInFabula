@@ -71,7 +71,7 @@ function updatePutStatus(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             // appendAlert("UPDATE DONE: " + message.message, 'success', 'PUT');
-            populateSuccessMessage("#changeCredentialsPage .successMessage", "UPDATE DONE:", message.message)
+            populateSuccessMessage("#changeCredentialsPage .successMessage", "UPDATE DONE:", message.message);
         } else {
             if (message != null) {
                 // appendAlert(message.message, 'danger', 'PUT');

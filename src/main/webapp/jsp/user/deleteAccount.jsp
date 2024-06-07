@@ -24,11 +24,12 @@
                        value="${sessionScope.user.getUsername()}" disabled>
             </div>
         </div>
-        <hr  class="my-4">
+        <hr class="my-4">
 
         <div class="form-group">
-            <input id="email" type="text" name="email" class="form-control" placeholder="">
-            <label class="control-label">E-mail</label>
+            <label>E-mail</label>
+            <input id="email" type="text" name="email" class="form-control" placeholder=""
+                   value="${sessionScope.user.getEmail()}" disabled>
         </div>
 
         <div class="form-group">
