@@ -79,8 +79,12 @@ body {
 .custom-input {
     background: #e0dede;
     display: flex;
-    margin: 1.5em auto;
+    margin: 1.3em auto;
     padding: 10px;
+}
+
+.form-group {
+    margin-bottom: 0 !important;
 }
 
 input[type="submit"] {

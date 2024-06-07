@@ -23,7 +23,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
     /**
      * The SQL statement for selecting targets of "point" action in a game.
      */
-    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = 'point'";
+    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = ?";
 
     /**
      * The ID of the game to check.
@@ -67,6 +67,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
 
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, gameId);
+            pstmt.setString(2, GameRoleAction.DORKY.getAction());
             rs = pstmt.executeQuery();
 
             while (rs.next()) {

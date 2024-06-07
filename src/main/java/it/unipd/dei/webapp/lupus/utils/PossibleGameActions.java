@@ -285,8 +285,9 @@ public class PossibleGameActions {
                 wolfAlreadyInsert = true;
             }
 
-            if (role.equals(GameRoleAction.MEDIUM.getName()) && targets.isEmpty())
-                continue;
+            if (role.equals(GameRoleAction.MEDIUM.getName()))
+                if(!deadPlayers.get(player) && targets.isEmpty())
+                    continue;
 
             LOGGER.info("Targets: " + String.join(", ", targets));
             actionTargets.add(new ActionTarget(role, playerWithRole(role),

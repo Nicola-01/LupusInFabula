@@ -32,7 +32,7 @@
 /* active state */
 .form-control:focus ~ .control-label,
 .form-control:not(:placeholder-shown) ~ .control-label {
-    top: -23px;
+    top: -25px;
     font-size: 16px;
     color: var(--navbar-inverted-bg);
 }
