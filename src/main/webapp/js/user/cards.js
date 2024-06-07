@@ -1,4 +1,12 @@
 /**
+ * This script manages the cards inside the user's personal area.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+
+/**
  * function that loads all the cards to show them in user personal area
  */
 function loadImages()
