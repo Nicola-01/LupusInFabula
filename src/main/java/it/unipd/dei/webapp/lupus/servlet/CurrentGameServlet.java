@@ -15,18 +15,39 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-public class CurrentGameServlet extends AbstractDatabaseServlet {
+/**
+ * Servlet that manages the "current game" section.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
+public class CurrentGameServlet extends AbstractDatabaseServlet
+{
+    /**
+     * Handles a GET request for "current game" section of the webapp.
+     * Current game shows a match between players, which is managed by a master.
+     *
+     * @param req the HTTP request.
+     * @param resp the HTTP response.
+     * @throws ServletException if any server side errors occur.
+     * @throws IOException to handle I/O errors.
+     */
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException
     {
+        // if the user isn't logged in, redirect to login page
         if(req.getSession(false) == null)
             resp.sendRedirect(req.getContextPath() + "/login");
         else {
+            // check if user is a master of some match
             String gameMaster = (String) req.getSession().getAttribute("gamemaster");
             String[] urlParts = req.getRequestURI().split("/");
 
             // if the url is /lupus/village
             // so there's no public game ID
+            // redirect the user to its game if the game exists
+            // otherwise redirect him/her to the homepage
             if (urlParts.length == 3) {
                 String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
                 try {
@@ -49,6 +70,7 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
                 }
             }
 
+            // if the url contains a public game ID
             String gameId;
             if (req.getRequestURI().endsWith("/master"))
                 gameId = urlParts[urlParts.length - 2];
@@ -62,6 +84,7 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
                     req.getRequestDispatcher("/jsp/pageNotFound.jsp").forward(req, resp);
                     return;
                 }
+                // set this attribute if the game is over
                 if (game.getWho_win() >= 0)
                     req.setAttribute("gameOver", game.getWho_win());
             } catch (SQLException e) {
@@ -73,6 +96,7 @@ public class CurrentGameServlet extends AbstractDatabaseServlet {
                 req.setAttribute("message", m);
             }
 
+            // handle master page / user page
             // if the user is master and it's not requesting currentGame in master mode
             if (!req.getRequestURI().endsWith("/master") && gameId.equals(gameMaster)) {
                 resp.sendRedirect(req.getRequestURI() + "/master");
