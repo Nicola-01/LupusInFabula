@@ -263,7 +263,6 @@ public class GameActionsPostRR extends AbstractRR {
 
             if(ballotPlayers.size() == 1){
                 votedPlayer = ballotPlayers.get(0);
-                updateDayResult(votedPlayer);
             }else {
                 // First ballot
                 if(!correctnessOfBallotVotes(votes_1, ballotPlayers))
@@ -274,7 +273,6 @@ public class GameActionsPostRR extends AbstractRR {
 
                 if(ballotPlayers_1.size() == 1){
                     votedPlayer = ballotPlayers_1.get(0);
-                    updateDayResult(votedPlayer);
                 }else {
                     //Second ballot if needed
                     if(!correctnessOfBallotVotes(votes_2, ballotPlayers_1))
@@ -285,7 +283,6 @@ public class GameActionsPostRR extends AbstractRR {
 
                     if(ballotPlayers_2.size() == 1){
                         votedPlayer = ballotPlayers_2.get(0);
-                        updateDayResult(votedPlayer);
                     }else{
                         notVote = true;
                         return true;
@@ -354,6 +351,18 @@ public class GameActionsPostRR extends AbstractRR {
                 return false;
             }
 
+            for(PlaysAsIn p: updatePlayersDeath){
+                if(p.getPlayerUsername().equals(votedPlayer)) {
+                    LOGGER.error("ERROR: not valid vote, the player already die from plague");
+                    ErrorCode ec = ErrorCode.VOTE_LIST_NOT_VALID;
+                    m = new Message("ERROR: not valid vote, the player already die from plague", ec.getErrorCode(), ec.getErrorMessage());
+                    res.setStatus(ec.getHTTPCode());
+                    m.toJSON(res.getOutputStream());
+                    return false;
+                }
+            }
+
+            updateDayResult(votedPlayer);
 
             for (Action action : insertActions) {
                 new InsertIntoActionDAO(ds.getConnection(), action).access();
