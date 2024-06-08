@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
      * @param {MouseEvent} event - The click event.
      */
     function handleClickOutsideMenu(event) {
-        if (!menuOpenCheckbox.contains(event.target) && !event.target.matches('#menu-open') && !event.target.closest('.menu-item')) {
+        if (!document.querySelector(".menu .menu-open-button").contains(event.target) && !event.target.matches('#menu-open') && !event.target.closest('.menu-item')) {
             menuOpenCheckbox.checked = false;
         }
     }
@@ -188,14 +188,14 @@ responsiveThemeElements.forEach(function (a) {
 /**
  * Updates the active class of theme buttons for small screens based on the theme set by the user.
  */
-function updateSmallScreenThemeButtons(){
+function updateSmallScreenThemeButtons() {
     // Retrieve the theme from cookies
     const theme = getCookie("theme")
     // Select all theme buttons for small screens
     const mobileThemeButtons = document.querySelectorAll("#theme .dropdown-item")
-    mobileThemeButtons.forEach(function (item){
+    mobileThemeButtons.forEach(function (item) {
         item.classList.remove("active")
-        if(item.getAttribute("theme") === theme)
+        if (item.getAttribute("theme") === theme)
             item.classList.add("active")
     });
 }
