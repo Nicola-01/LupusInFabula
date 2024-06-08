@@ -80,12 +80,12 @@
     </c:choose>
 
     <div class="row">
-        <div id="playersStatusExternal" class="col-md-6 mb-sm-4 mb-md-0 p-1">
-            <h2 style="height: 35px;">HABITANTS STATUS</h2>
+        <div id="playersStatusExternal" class="col-md-6 mb-3 mb-md-0 p-1">
+            <h2>HABITANTS STATUS</h2>
             <div id="playersStatus" class="row p-2"></div>
         </div>
         <div id="gameLogExternal" class="col-md-6 p-1">
-            <h2 style="height: 35px;">VILLAGE LOGS</h2>
+            <h2>VILLAGE LOGS</h2>
             <div id="gameLog" class="row p-2"></div>
         </div>
     </div>

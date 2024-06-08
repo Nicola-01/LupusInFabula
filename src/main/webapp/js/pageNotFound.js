@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function (event) {
-
+    loadTheme();
 
     $(".patch").each((i) => {
         let b = i + 1;

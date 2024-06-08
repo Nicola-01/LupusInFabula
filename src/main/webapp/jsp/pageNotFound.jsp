@@ -14,7 +14,7 @@
 
 <jsp:include page="include/navbar.jsp"/>
 
-<main>
+<main id="pageNotFound">
     <div class="stars">
         <c:forEach var="i" begin="1" end="150">
             <div class='star'></div>

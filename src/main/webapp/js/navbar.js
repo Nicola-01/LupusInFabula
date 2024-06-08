@@ -229,6 +229,9 @@ function loadTheme() {
         else
             themeToSet = "light";
     }
+    // 404 page
+    if (document.getElementById("pageNotFound"))
+        themeToSet = "dark";
 
     document.body.setAttribute("data-bs-theme", themeToSet);
 
