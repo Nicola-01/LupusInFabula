@@ -24,7 +24,12 @@ public enum WinFaction {
     /**
      * The Jester faction.
      */
-    JESTER(3, "jester");
+    JESTER(3, "jester"),
+
+    /**
+     * The game is a draw.
+     */
+    DRAW(10, "draw");
 
 
     /**

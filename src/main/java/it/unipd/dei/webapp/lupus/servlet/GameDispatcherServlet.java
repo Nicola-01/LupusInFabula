@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * Servlet that manages the REST calls for the game section.
@@ -214,12 +215,21 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
-        if (!(requestURI.equals("status") || requestURI.equals("configuration")
-                || requestURI.equals("players") || requestURI.equals("logs"))) {
+        String[] acceptURL = {"status", "configuration", "settings", "players", "logs"};
+        if (!Arrays.asList(acceptURL).contains(requestURI))
             return false;
+
+        boolean invalid = false;
+
+        if (requestURI.equals("settings")) {
+            if (method.equals("POST")){
+                new GameSettingsUpdateRR(req, res, getDataSource(), gameID).serve();
+                return true;
+            }
+            invalid = true;
         }
 
-        if (!method.equals("GET")) {
+        if (!method.equals("GET") || invalid) {
             LOGGER.warn("Unsupported operation for URI /game/%s: %s.", requestURI, method);
 
             ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
