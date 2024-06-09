@@ -162,7 +162,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         // ->
         // GET  /status/{gameID}
-        // GET  /status/{gameID}/master
+        // GET  /configuration/{gameID}
         // GET  /players/{gameID}
         // GET  /players/{gameID}/master
         // GET  /logs/{gameID}
@@ -214,7 +214,8 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
-        if (!(requestURI.equals("status") || requestURI.equals("players") || requestURI.equals("logs"))) {
+        if (!(requestURI.equals("status") || requestURI.equals("configuration")
+                || requestURI.equals("players") || requestURI.equals("logs"))) {
             return false;
         }
 
@@ -238,6 +239,9 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         switch (requestURI) {
             case "status":
                 new GameStatusRR(req, res, getDataSource(), gameID).serve();
+                break;
+            case "configuration":
+                new GameConfigurationGet(req, res, getDataSource(), gameID).serve();
                 break;
             case "players":
                 new GamePlayersRR(req, res, getDataSource(), gameID, isMaster || gameIsOver).serve();

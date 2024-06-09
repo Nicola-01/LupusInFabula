@@ -106,6 +106,11 @@ public final class Actions {
     public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
 
     /**
+     * GET game configuration.
+     */
+    public static final String GET_GAME_CONFIGURATION = "GET_GAME_CONFIGURATION";
+
+    /**
      * GET request of game status.
      */
     public static final String GET_GAME_STATUS_ACTION = "GET_GAME_STATUS_ACTION";
