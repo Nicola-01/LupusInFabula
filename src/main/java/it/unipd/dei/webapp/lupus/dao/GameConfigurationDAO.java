@@ -9,7 +9,17 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Access Object (DAO) for retrieving the game configuration.
+ * This DAO is responsible for querying the database to get the roles
+ * and their details for a specific game, excluding the master role.
+ *
+ * @author LupusInFabula Group
+ * @version 1.0
+ * @since 1.0
+ */
 public class GameConfigurationDAO extends AbstractDAO<List<Role>> {
+
     /**
      * The SQL statement to be executed
      */

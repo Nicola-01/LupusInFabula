@@ -6,6 +6,8 @@ import it.unipd.dei.webapp.lupus.dao.UpdateGameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.utils.ErrorCode;
+import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.WinFaction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -67,22 +69,26 @@ public class GameSettingsUpdateRR extends AbstractRR {
         switch (value) {
             case "endGame":
                 if (!endGame()) {
-                    Message message = new Message("Game already ended", "ERR", "");
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    ErrorCode ec = ErrorCode.GAME_IS_OVER;
+                    res.setStatus(ec.getHTTPCode());
+                    Message message = new Message("Game already ended", ec.getErrorCode(), ec.getErrorMessage());
                     message.toJSON(res.getOutputStream());
                 }
 
                 break;
             case "previousRound":
                 if (!previousRound()) {
-                    Message message = new Message("Game already ended or just started", "ERR", "");
-                    res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                    ErrorCode ec = ErrorCode.INVALID_GAME_SETTINGS;
+                    res.setStatus(ec.getHTTPCode());
+                    Message message = new Message("Game already ended or just started", ec.getErrorCode(),
+                            "If the game has ended or if you are in the first night, you cannot go to the previous phase.");
                     message.toJSON(res.getOutputStream());
                 }
                 break;
             default:
-                Message message = new Message("Invalid setting", "ERR", "");
-                res.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                ErrorCode ec = ErrorCode.INVALID_GAME_SETTINGS;
+                res.setStatus(ec.getHTTPCode());
+                Message message = new Message("Invalid setting", ec.getErrorCode(), "The setting " + value + " is invalid.");
                 message.toJSON(res.getOutputStream());
                 break;
         }
@@ -117,15 +123,16 @@ public class GameSettingsUpdateRR extends AbstractRR {
      */
     private boolean previousRound() throws SQLException {
         Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-        int phase = game.getPhase() - 1;
         int round = game.getRounds() == 0 ? 1 : game.getRounds();
+
+        if (game.getPhase() > GamePhase.DAY.getId() || (round == 1 && game.getPhase() == GamePhase.NIGHT.getId()))
+            return false;
+
+        int phase = game.getPhase() - 1;
         if (phase < 0) {
             round--;
-            phase = 1;
+            phase = GamePhase.DAY.getId();
         }
-
-        if (game.getPhase() > 0 || (round == 1 && phase == 0))
-            return false;
 
         new UpdateGameDAO(ds.getConnection(), gameID, phase, round).access();
         new ResetGameToDAO(ds.getConnection(), ds, gameID, phase, round).access();
