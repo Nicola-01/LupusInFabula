@@ -53,8 +53,8 @@
                                     <i id="settingsIcon" class="fas fa-gear"></i>
                                 </button>
                                 <div id="settingsContainer" class="row d-none py-3 px-2">
-                                    <button id="endGameBT" class="mb-2 gradientButton" value="endGame">End game</button>
-                                    <button id="previousRoundBT" class="gradientButton" value="previousRound">Previous phase</button>
+                                    <button id="previousRoundBT" class="gradientButton mb-2" value="previousRound">Previous phase</button>
+                                    <button id="endGameBT" class="gradientButton" value="endGame">End game</button>
                                 </div>
                             </div>
                         </c:when>

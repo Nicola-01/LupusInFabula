@@ -19,7 +19,7 @@ function sendGameSettings(event) {
 function settingsCallback(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
-            elementsReload();
+            location.reload();
         }
     }
 }

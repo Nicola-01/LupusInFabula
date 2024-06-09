@@ -87,10 +87,10 @@ CREATE TABLE Game
     public_ID     CHARACTER VARYING UNIQUE NOT NULL,
     start         TIMESTAMP(0)             NOT NULL,
     game_duration TIME,
-    who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3) ) DEFAULT -1,
-    rounds        SMALLINT CHECK ( rounds >= 0)                   DEFAULT 0,
-    phase         SMALLINT CHECK ( phase IN (0, 1) )              DEFAULT 0,
-    subphase      SMALLINT CHECK ( subphase IN (0, 1, 2, 3) )     DEFAULT 0,
+    who_wins      SMALLINT CHECK ( who_wins IN (-1, 0, 1, 2, 3, 10) ) DEFAULT -1,
+    rounds        SMALLINT CHECK ( rounds >= 0)                       DEFAULT 0,
+    phase         SMALLINT CHECK ( phase IN (0, 1) )                  DEFAULT 0,
+    subphase      SMALLINT CHECK ( subphase IN (0, 1, 2, 3) )         DEFAULT 0,
     CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
 
@@ -198,7 +198,7 @@ DROP ROLE IF EXISTS lupus_sql;
 -- Recreate the lupus_sql role with the specified permissions
 CREATE ROLE lupus_sql LOGIN PASSWORD 'wolf';
 
-GRANT SELECT, INSERT , UPDATE ON action, game, player, plays_as_in TO lupus_sql;
-GRANT SELECT, INSERT, UPDATE, DELETE ON is_friend_with TO lupus_sql;
+GRANT SELECT, INSERT, UPDATE ON game, player, plays_as_in TO lupus_sql;
+GRANT SELECT, INSERT, UPDATE, DELETE ON action, is_friend_with TO lupus_sql;
 GRANT SELECT ON role TO lupus_sql;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;

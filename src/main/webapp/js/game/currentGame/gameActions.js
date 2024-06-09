@@ -129,13 +129,16 @@ function setGameOver(game) {
 
     if (win_faction_div !== null && gameTime !== null) {
         win_faction_div.innerHTML = "The ";
-        const faction_div = document.createElement('span');
-        faction_div.id = "faction_name";
-        faction_div.innerHTML = factions[game.who_win];
-        faction_div.style.color = factions_color[game.who_win];
-        win_faction_div.appendChild(faction_div);
-
-        win_faction_div.innerHTML += " win" + s + "!";
+        if (game.who_win !== 10) { // the game is a draw
+            const faction_div = document.createElement('span');
+            faction_div.id = "faction_name";
+            faction_div.innerHTML = factions[game.who_win];
+            faction_div.style.color = factions_color[game.who_win];
+            win_faction_div.appendChild(faction_div);
+            win_faction_div.innerHTML += " win" + s + "!";
+        }
+        else
+            win_faction_div.innerHTML = "The game ended in a draw!";
 
         // Format and display game start time and duration
         const gameStart = (((game.start).split(".")[0])).split(" ")
