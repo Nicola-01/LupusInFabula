@@ -54,7 +54,7 @@
                                 </button>
                                 <div id="settingsContainer" class="row d-none py-3 px-2">
                                     <button id="endGameBT" class="mb-2 gradientButton" value="endGame">End game</button>
-                                    <button id="previousRoundBT" class="gradientButton" value="previousRound">Previous round</button>
+                                    <button id="previousRoundBT" class="gradientButton" value="previousRound">Previous phase</button>
                                 </div>
                             </div>
                         </c:when>
