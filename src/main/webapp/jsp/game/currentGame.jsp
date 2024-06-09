@@ -14,8 +14,10 @@
     <c:import url="/jsp/include/head.jsp"/>
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameActions.css">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/playersStatus.css">
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/css/game/currentGame/gameActions.css">
+    <link rel="stylesheet" type="text/css"
+          href="${pageContext.request.contextPath}/css/game/currentGame/playersStatus.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/currentGame/gameLog.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/cards.css">
 </head>
@@ -74,6 +76,27 @@
                 </c:when>
                 <c:otherwise>
                     <jsp:include page="currentGame/playerRole.jsp"/>
+
+
+                    <div class="row mb-3">
+                        <div class="m-auto d-flex justify-content-center">
+                            <button id="gameConfBT" class="learn-more">
+                                <span class="circle" aria-hidden="true">
+                                    <span class="icon arrow"></span>
+                                </span>
+                                <span class="button-text">Show Roles</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="gameConf" class="col-11 col-sm-10 col-xl-8 m-auto d-none p-3 mb-5">
+                            <div id="gameConfEvil" class="evilRoles mb-1 d-none"></div>
+                            <div id="gameConfNeutral" class="neutralRoles mb-1 d-none"></div>
+                            <div id="gameConfGood" class="goodRoles mb-1 d-none"></div>
+                            <div id="gameConfVictoryStealer" class="victoryStealerRoles mb-1 d-none"></div>
+                        </div>
+                    </div>
                 </c:otherwise>
             </c:choose>
         </c:otherwise>

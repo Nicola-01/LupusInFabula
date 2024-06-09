@@ -67,18 +67,6 @@ public class Role extends AbstractResource {
     }
 
     /**
-     * Constructs a Role object with the specified name, type, with_who_wins, max_number and description.
-     *
-     * @param name          The name of the role.
-     * @param type          The type of the role.
-     * @param with_who_wins The faction with which the role can win the game.
-     * @param maxNumber     The max number of that role in a game.
-     */
-    public Role(String name, int type, int with_who_wins, int maxNumber) {
-        this(name, type, with_who_wins, maxNumber, "");
-    }
-
-    /**
      * Gets the name of the role.
      *
      * @return the name of the role.

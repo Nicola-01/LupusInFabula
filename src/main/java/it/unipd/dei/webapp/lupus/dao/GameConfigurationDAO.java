@@ -13,10 +13,10 @@ public class GameConfigurationDAO extends AbstractDAO<List<Role>> {
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT pai.role, r.type, r.with_who_wins, count(pai.role) " +
+    private static final String STATEMENT = "SELECT pai.role, r.type, r.with_who_wins, r.description, count(pai.role) " +
             "FROM plays_as_in pai join role r on r.name = pai.role " +
             "WHERE game_id = ? and role != ? " +
-            "GROUP BY pai.role, r.type, r.with_who_wins " +
+            "GROUP BY pai.role, r.type, r.with_who_wins, r.description " +
             "ORDER BY r.type, pai.role";
 
     /**
@@ -49,7 +49,7 @@ public class GameConfigurationDAO extends AbstractDAO<List<Role>> {
 
             while (rs.next()) {
                 roles.add(new Role(rs.getString("role"), rs.getInt("type"), rs.getInt("with_who_wins"),
-                        rs.getInt("count")));
+                        rs.getInt("count"), rs.getString("description")));
             }
         } finally {
             if (rs != null) {

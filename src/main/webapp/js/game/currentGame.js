@@ -48,6 +48,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
     if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").style.display = "none";
         document.getElementById("sendActions").addEventListener("click", sendActions);
+    } else {
+        genericGETRequest(contextPath + "game/configuration/" + gameID, fillGameConf);
+        document.getElementById("gameConfBT").addEventListener('click', showGameConf)
     }
 
     elementsReload();
@@ -69,6 +72,65 @@ function elementsReload() {
     genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
 }
+
+/**
+ * Fill the popup with the game configuration.
+ */
+function fillGameConf(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            let gameConfGood = document.getElementById("gameConfGood");
+            let gameConfEvil = document.getElementById("gameConfEvil");
+            let gameConfNeutral = document.getElementById("gameConfNeutral");
+            let gameConfVictoryStealer = document.getElementById("gameConfVictoryStealer");
+
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
+
+            for (let i = 0; i < list.length; i++) {
+                let role = list[i]['role'];
+                // Choose the div element based on the role type
+                let targetDiv;
+                // console.log(role.name + " " + role.type);
+                switch (role.type) {
+                    case 0:
+                        targetDiv = gameConfGood;
+                        break;
+                    case 1:
+                        targetDiv = gameConfEvil;
+                        break;
+                    case 2:
+                        targetDiv = gameConfVictoryStealer;
+                        break;
+                    case 3:
+                        targetDiv = gameConfNeutral;
+                        break;
+                    default:
+                        continue;
+                }
+
+                targetDiv.classList.remove("d-none");
+                let text = capitalizeFirstLetter(role.name);
+                if (role.max_number > 1) {
+                    text += " (" + role.max_number + ")";
+                }
+                targetDiv.innerHTML += text + "<br>";
+
+            }
+        }
+    }
+}
+
+/**
+ * Show popup with the game configuration (set roles).
+ */
+function showGameConf() {
+    let added = document.getElementById("gameConf").classList.toggle("d-none");
+    document.querySelector("#gameConfBT .button-text").innerText = (added) ? "Show Roles" : "Hide Roles"
+    document.querySelector("#gameConfBT .circle").classList.toggle("show", !added)
+    document.querySelector("#gameConfBT .circle .icon.arrow").classList.toggle("show", !added)
+    document.querySelector("#gameConfBT .button-text").classList.toggle("show", !added)
+}
+
 
 /**
  * Handles the resizing of elements on the page.
