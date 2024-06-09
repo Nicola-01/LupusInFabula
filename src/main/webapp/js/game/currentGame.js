@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").style.display = "none";
         document.getElementById("sendActions").addEventListener("click", sendActions);
-    } else {
+    } else if (document.getElementById("gameConfBT")) {
         genericGETRequest(contextPath + "game/configuration/" + gameID, fillGameConf);
         document.getElementById("gameConfBT").addEventListener('click', showGameConf)
     }
