@@ -186,32 +186,28 @@
     text-align: center;
 }
 
-#playerRole
-{
+#playerRole {
     font-size: 2em;
     text-align: center;
 }
 
-#playerImage
-{
+#playerImage {
     width: 100%;
 }
 
-@media (min-width: 768px)
-{
+@media (min-width: 768px) {
     #playerImage {
         width: 75%;
     }
 }
 
-@media (min-width: 992px)
-{
+@media (min-width: 992px) {
     #playerImage {
         width: 50%;
     }
 }
 
-#toggleButton {
+#toggleButton, #gameSettings {
     width: 45px;
     height: 45px;
     background-color: var(--navbar-inverted-bg);
@@ -219,8 +215,27 @@
     transition: .3s all;
 }
 
-#toggleButton:hover {
+#toggleButton:hover, #gameSettings:hover {
     background-color: var(--navbar-inverted-second-bg);
+}
+
+#settingsContainer {
+    background-color: var(--navbar-inverted-second-bg);
+    width: 200px;
+    position: absolute;
+    z-index: 10;
+    transform: translateY(50px);
+    border-radius: .8em;
+}
+
+#settingsContainer > button {
+    background-image: none;
+    background-color: #880808;
+    height: 40px;
+}
+
+#settingsContainer > button:hover {
+    background-color: #a20f12;
 }
 
 .blur-name {
@@ -249,8 +264,7 @@
     background-color: rgb(159, 159, 159) !important;
 }
 
-.circular-player, .grid-player
-{
+.circular-player, .grid-player {
     display: flex;
     flex-direction: column;
 }
