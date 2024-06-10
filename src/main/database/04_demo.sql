@@ -19,13 +19,13 @@ VALUES ('DemoMaster', 'Nick', '2024-06-10'),
        ('DemoMaster', 'Japopo', '2024-06-10');
 
 
-INSERT INTO game (id, public_id, start, game_duration, who_wins, rounds, phase, subphase)
-VALUES (1, 'jester-puppy-explorer', '2024-06-10 11:27:38', '00:01:13', 1, 3, 1, 0),
-       (2, 'hamster-kamikaze-knight', '2024-06-10 11:32:01', '00:00:13', 0, 1, 1, 0),
-       (3, 'medium-kamikaze-illusionist', '2024-06-10 11:35:23', '00:00:30', 1, 2, 1, 0),
-       (4, 'carpenter-jester-explorer', '2024-06-10 11:36:35', '00:00:27', 0, 1, 1, 0),
-       (5, 'carpenter-kamikaze-jester', '2024-06-10 11:41:52', '00:00:04', 0, 1, 1, 0),
-       (6, 'berserker-farmer-wolf', '2024-06-10 11:44:07', '00:00:25', 1, 1, 1, 0);
+INSERT INTO game (public_id, start, game_duration, who_wins, rounds, phase, subphase)
+VALUES ('jester-puppy-explorer', '2024-06-10 11:27:38', '00:01:13', 1, 3, 1, 0),
+       ('hamster-kamikaze-knight', '2024-06-10 11:32:01', '00:00:13', 0, 1, 1, 0),
+       ('medium-kamikaze-illusionist', '2024-06-10 11:35:23', '00:00:30', 1, 2, 1, 0),
+       ('carpenter-jester-explorer', '2024-06-10 11:36:35', '00:00:27', 0, 1, 1, 0),
+       ('carpenter-kamikaze-jester', '2024-06-10 11:41:52', '00:00:04', 0, 1, 1, 0),
+       ('berserker-farmer-wolf', '2024-06-10 11:44:07', '00:00:25', 1, 1, 1, 0);
 
 INSERT INTO plays_as_in (player_username, game_id, role, order_in_game, round_of_death, phase_of_death, duration_of_life)
 VALUES ('DemoMaster', 1, 'master', 0, null, null, null),
