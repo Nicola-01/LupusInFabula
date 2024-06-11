@@ -4,8 +4,7 @@ divLogs = null
 /*
 * Add the event listener to the page
 * */
-document.addEventListener('DOMContentLoaded', function (event)
-{
+document.addEventListener('DOMContentLoaded', function (event) {
     let url = window.location.href;
 
     // extract gameID
@@ -23,16 +22,15 @@ document.addEventListener('DOMContentLoaded', function (event)
 });
 
 /**
-* Permit to reload the log information
-* */
-function logElementsReload()
-{
+ * Permit to reload the log information
+ * */
+function logElementsReload() {
     // reset of variables and state
     logs = []
     divLogs = document.getElementById("gameLog")
     divLogs.innerHTML = ""
 
-    var masterlog = endsWithMaster? "/master" : "";
+    var masterlog = endsWithMaster ? "/master" : "";
     genericGETRequest(contextPath + "game/logs/" + gameID + masterlog, fillGameLog);
 }
 
@@ -40,12 +38,9 @@ function logElementsReload()
  * Permit to fill the log ul with the data from the request
  * @param req request make to the api
  */
-function fillGameLog(req)
-{
-    if (req.readyState === XMLHttpRequest.DONE)
-    {
-        if (req.status === HTTP_STATUS_OK)
-        {
+function fillGameLog(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
             logs = JSON.parse(req.responseText)[JSON_resource_list]
             createUl(logs)
         }
@@ -88,7 +83,9 @@ function createButtonRoundExpand(round, text, phase)
  * @param color color for text
  * @returns {string} string with text in color color
  */
-function colText(text, color) {return '<span style="color:'+ color + '">'+text+'</span>'}
+function colText(text, color) {
+    return '<span style="color:' + color + '">' + text + '</span>'
+}
 
 /**
  * function to create the string that represent the text for log
@@ -99,31 +96,26 @@ function colText(text, color) {return '<span style="color:'+ color + '">'+text+'
  * @param color  color for log
  * @returns {string} string that represent the text for log
  */
-function getStringLog(gamePhase, user, typeOfAction, target, color)
-{
-    let s = ''+user
+function getStringLog(gamePhase, user, typeOfAction, target, color) {
+    let s = '' + user
 
-    if(typeOfAction === 'dead') {
-        if(gamePhase === "night")
-            return s +' is ' + colText(typeOfAction, color)
+    if (typeOfAction === 'dead') {
+        if (gamePhase === "night")
+            return s + ' is ' + colText(typeOfAction, color)
         else
-            return s +' is at the ' + colText('stake', color)
-    }
-    else if (typeOfAction === "last chance")
-        return s +' use ' + colText(typeOfAction, color)
-    else if (typeOfAction === "plague"){
-        if (gamePhase === "night"){
-            if(endsWithMaster)
-                return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target;
+            return s + ' is at the ' + colText('stake', color)
+    } else if (typeOfAction === "last chance")
+        return s + ' use ' + colText(typeOfAction, color)
+    else if (typeOfAction === "plague") {
+        if (gamePhase === "night") {
+            if (endsWithMaster)
+                return s + ' ' + colText(typeOfAction + 's', color) + ' ' + target;
             else
                 return target + ' is ' + colText('infected', color);
-        }
-        else
+        } else
             return target + ' died of ' + colText('plague', color);
-    }
-
-    else
-        return s + ' ' + colText(typeOfAction+'s', color) + ' ' + target
+    } else
+        return s + ' ' + colText(typeOfAction + 's', color) + ' ' + target
 }
 
 /**
@@ -217,22 +209,19 @@ function createCont(ContAction)
  * @param ret return value
  * @returns {*} dict that contain r*dict that have the key {dayExt, daySum, nightSum, nightExt} that represent the data for day expand, day summary, night expand, night summary
  */
-function makeData(data, firstDataKey, secondDataKey, r, ret)
-{
+function makeData(data, firstDataKey, secondDataKey, r, ret) {
     let phase = ""
     let action = ""
-    let subphase= ""
+    let subphase = ""
     let nm = ""
     let i = 0
     let col = null
     let s = ""
     let gamePhase = "";
-    ret.push({dayExt:"", daySum:"", nightSum:"", nightExt:""})
+    ret.push({dayExt: "", daySum: "", nightSum: "", nightExt: ""})
 
-    while (i < data.length && data[i][firstDataKey[0]][secondDataKey[1]]<=r)
-    {
-        if (data[i][firstDataKey[0]][secondDataKey[1]] === r)
-        {
+    while (i < data.length && data[i][firstDataKey[0]][secondDataKey[1]] <= r) {
+        if (data[i][firstDataKey[0]][secondDataKey[1]] === r) {
             phase = data[i][firstDataKey[0]][secondDataKey[2]]
             gamePhase = phase;
             action = data[i][firstDataKey[0]][secondDataKey[4]]
@@ -240,9 +229,9 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
             nm = data[i][firstDataKey[0]][secondDataKey[0]]
 
             //choose the color for the log
-            if (action==="vote")
+            if (action === "vote")
                 col = rolesColors.get("vote")
-            else if(evilAction.includes(action))
+            else if (evilAction.includes(action))
                 col = rolesColors.get("evil")
             else if (neutralAction.includes(action))
                 col = rolesColors.get("neutral")
@@ -250,59 +239,51 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
                 col = rolesColors.get("good")
 
             //modify the phase of log
-            switch (subphase)
-            {
+            switch (subphase) {
                 case 0:
-                    phase = phase==="day" ?
-                                    "Vote" :
-                                    "Action"
-                break;
+                    phase = (phase === "day") ? "Vote" : "Action";
+                    break;
                 case 1:
                     phase = "1° ballot"
-                break;
+                    break;
                 default:
-                    phase =  action==="vote" ?
-                                    "2° ballot" :
-                                    action==="dead" ?
-                                        "Dead" :
-                                        "Action"
-                    phase = (action === "plague") ? "Dead" : phase
-                break;
+                    if (action === "vote")
+                        phase = "2° ballot";
+                    else if (action === "dead" || action === "plague")
+                        phase = "Dead";
+                    else
+                        phase = "Action";
+                    break;
             }
 
             s = createActionBlock(gamePhase, phase, subphase, action, nm, data[i][firstDataKey[0]][secondDataKey[5]], col)
 
             //contro if the real phase is day or night
-            if (data[i][firstDataKey[0]][secondDataKey[2]] === "day")
-            {
+            if (data[i][firstDataKey[0]][secondDataKey[2]] === "day") {
                 //action vote not go in summary
-                if(action!=="vote")
-                    ret[r-1].daySum =  ret[r-1].daySum.concat(s)
+                if (action !== "vote")
+                    ret[r - 1].daySum = ret[r - 1].daySum.concat(s)
                 //total action
-                ret[r-1].dayExt = ret[r-1].dayExt.concat(s)
-            }
-            else
-            {
+                ret[r - 1].dayExt = ret[r - 1].dayExt.concat(s)
+            } else {
                 //action plague e dead go in summary
-                if(action==="plague" || action==="dead")
-                    ret[r-1].nightSum =  ret[r-1].nightSum.concat(s)
+                if (action === "plague" || action === "dead")
+                    ret[r - 1].nightSum = ret[r - 1].nightSum.concat(s)
                 //total action
-                ret[r-1].nightExt = ret[r-1].nightExt.concat(s)
+                ret[r - 1].nightExt = ret[r - 1].nightExt.concat(s)
             }
         }
         i++
     }
 
     //load the data in the return value
-    if(ret[r-1].dayExt!=="")
-    {
-        ret[r-1].daySum = createRowBlock("day", r, 'Expand').concat(ret[r-1].daySum)
-        ret[r-1].dayExt = createRowBlock("day", r, 'Reduce').concat(ret[r-1].dayExt)
+    if (ret[r - 1].dayExt !== "") {
+        ret[r - 1].daySum = createRowBlock("day", r, 'Expand').concat(ret[r - 1].daySum)
+        ret[r - 1].dayExt = createRowBlock("day", r, 'Reduce').concat(ret[r - 1].dayExt)
     }
-    if(ret[r-1].nightExt!=="")
-    {
-        ret[r-1].nightSum = createRowBlock("night", r, 'Expand').concat(ret[r-1].nightSum)
-        ret[r-1].nightExt = createRowBlock("night", r, 'Reduce').concat(ret[r-1].nightExt)
+    if (ret[r - 1].nightExt !== "") {
+        ret[r - 1].nightSum = createRowBlock("night", r, 'Expand').concat(ret[r - 1].nightSum)
+        ret[r - 1].nightExt = createRowBlock("night", r, 'Reduce').concat(ret[r - 1].nightExt)
     }
 
     return ret
@@ -312,20 +293,18 @@ function makeData(data, firstDataKey, secondDataKey, r, ret)
  * Function that permit to create all container for the logs and add all the action lister to all the button
  * @param data data that represent the request
  */
-function createUl(data)
-{
+function createUl(data) {
     let bs = ''
     let secondDataKey = ["player", "round", "phase", "subphase", "typeAction", "target"]
     let firstDataKey = data.length > 0 ? Object.keys(data[0]) : [0]
-    let roundMax = data.length-1 >= 0 ? data[data.length-1][firstDataKey[0]][secondDataKey[1]] : 0
+    let roundMax = data.length - 1 >= 0 ? data[data.length - 1][firstDataKey[0]][secondDataKey[1]] : 0
     let ulData = []
     let swRound = []
     let swExpDay = []
     let swExpNight = []
 
 
-    for (let r = 1; r<=roundMax; r++)
-    {
+    for (let r = 1; r <= roundMax; r++) {
         //add button
         bs = bs.concat(createContActionButton(r))
         //make data r for logs
@@ -337,47 +316,43 @@ function createUl(data)
     //fill the container for round buttons
     divLogs.innerHTML = createCont(bs)
 
-    for (let r = 1; r<=roundMax; r++)
-    {
-        document.getElementById('round-' + r + '-tab')?.addEventListener("click", function ()
-        {
-            let nightContent = document.getElementById('round-'+r+'-night')
-            let dayContent = document.getElementById('round-'+r+'-day')
-            let fDay = function ()
-                {
-                    //write on the switch for button day the inverse of it and after that i contro if add data summary or extend
-                    if (!(swExpDay[r-1]=!swExpDay[r-1])) dayContent.innerHTML = ulData[r-1].dayExt
-                    else                                 dayContent.innerHTML = ulData[r-1].daySum
-                    //add the action listener to the expand button
-                    document.getElementById('round-' + r + '-expand-day')?.addEventListener("click", fDay)
-                }
-            let fNight = function ()
-            {
+    for (let r = 1; r <= roundMax; r++) {
+        document.getElementById('round-' + r + '-tab')?.addEventListener("click", function () {
+            let nightContent = document.getElementById('round-' + r + '-night')
+            let dayContent = document.getElementById('round-' + r + '-day')
+            let fDay = function () {
                 //write on the switch for button day the inverse of it and after that i contro if add data summary or extend
-                if (!(swExpNight[r-1]=!swExpNight[r-1])) nightContent.innerHTML = ulData[r-1].nightExt
-                else                                     nightContent.innerHTML = ulData[r-1].nightSum
+                if (!(swExpDay[r - 1] = !swExpDay[r - 1])) dayContent.innerHTML = ulData[r - 1].dayExt
+                else dayContent.innerHTML = ulData[r - 1].daySum
+                //add the action listener to the expand button
+                document.getElementById('round-' + r + '-expand-day')?.addEventListener("click", fDay)
+            }
+            let fNight = function () {
+                //write on the switch for button day the inverse of it and after that i contro if add data summary or extend
+                if (!(swExpNight[r - 1] = !swExpNight[r - 1])) nightContent.innerHTML = ulData[r - 1].nightExt
+                else nightContent.innerHTML = ulData[r - 1].nightSum
                 //add the action listener to the expand button
                 document.getElementById('round-' + r + '-expand-night')?.addEventListener("click", fNight)
             }
 
             //true add the data after the round button false remove all
-            nightContent.innerHTML = swRound[r-1] ?
-                                        (swExpNight[r-1] ?
-                                            ulData[r-1].nightSum :
-                                            ulData[r-1].nightExt) :
-                                        ""
+            nightContent.innerHTML = swRound[r - 1] ?
+                (swExpNight[r - 1] ?
+                    ulData[r - 1].nightSum :
+                    ulData[r - 1].nightExt) :
+                ""
             //true add the data after the round button false remove all
-            dayContent.innerHTML = swRound[r-1] ?
-                                        (swExpDay[r-1] ?
-                                            ulData[r-1].daySum :
-                                            ulData[r-1].dayExt) :
-                                        ""
+            dayContent.innerHTML = swRound[r - 1] ?
+                (swExpDay[r - 1] ?
+                    ulData[r - 1].daySum :
+                    ulData[r - 1].dayExt) :
+                ""
             //add the action listener to the 2 expands buttons with the
             document.getElementById('round-' + r + '-expand-day')?.addEventListener("click", fDay)
             document.getElementById('round-' + r + '-expand-night')?.addEventListener("click", fNight)
 
             //switch the var for the button round view
-            swRound[r-1]=!swRound[r-1]
+            swRound[r - 1] = !swRound[r - 1]
         })
     }
     //active the button for last round
