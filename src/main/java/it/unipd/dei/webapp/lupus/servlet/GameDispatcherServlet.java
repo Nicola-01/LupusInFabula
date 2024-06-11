@@ -13,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 /**
  * Servlet that manages the REST calls for the game section.
@@ -162,7 +163,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         // ->
         // GET  /status/{gameID}
-        // GET  /status/{gameID}/master
+        // GET  /configuration/{gameID}
         // GET  /players/{gameID}
         // GET  /players/{gameID}/master
         // GET  /logs/{gameID}
@@ -214,11 +215,21 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
-        if (!(requestURI.equals("status") || requestURI.equals("players") || requestURI.equals("logs"))) {
+        String[] acceptURL = {"status", "configuration", "settings", "players", "logs"};
+        if (!Arrays.asList(acceptURL).contains(requestURI))
             return false;
+
+        boolean invalid = false;
+
+        if (requestURI.equals("settings")) {
+            if (method.equals("POST")){
+                new GameSettingsUpdateRR(req, res, getDataSource(), gameID).serve();
+                return true;
+            }
+            invalid = true;
         }
 
-        if (!method.equals("GET")) {
+        if (!method.equals("GET") || invalid) {
             LOGGER.warn("Unsupported operation for URI /game/%s: %s.", requestURI, method);
 
             ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
@@ -238,6 +249,9 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         switch (requestURI) {
             case "status":
                 new GameStatusRR(req, res, getDataSource(), gameID).serve();
+                break;
+            case "configuration":
+                new GameConfigurationGet(req, res, getDataSource(), gameID).serve();
                 break;
             case "players":
                 new GamePlayersRR(req, res, getDataSource(), gameID, isMaster || gameIsOver).serve();

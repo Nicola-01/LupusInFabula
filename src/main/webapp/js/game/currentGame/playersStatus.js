@@ -63,9 +63,9 @@ function fillPlayersStatus(req) {
                             cardBack.style.backgroundImage = "url('../media/cards/card_back/"+selectedBack+"')";
 
 
-                        const toggleButton = document.getElementById("toggleButton");
-                        if(toggleButton !== null)
-                            toggleButton.style.display = "inline-block";
+                        // const toggleButton = document.getElementById("toggleButton");
+                        // if(toggleButton !== null)
+                        //     toggleButton.style.display = "inline-block";
 
                         isPlayerInGame = true;
                     }

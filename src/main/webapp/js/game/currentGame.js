@@ -48,6 +48,8 @@ document.addEventListener('DOMContentLoaded', function (event) {
     if (document.getElementById("sendActions") !== null) {
         document.getElementById("sendActions").style.display = "none";
         document.getElementById("sendActions").addEventListener("click", sendActions);
+    } else if (document.getElementById("gameConfBT")) {
+        genericGETRequest(contextPath + "game/configuration/" + gameID, fillGameConf);
     }
 
     elementsReload();
@@ -68,6 +70,53 @@ function elementsReload() {
     const master = endsWithMaster ? "/master" : "";
     genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
+}
+
+/**
+ * Fill the popup with the game configuration.
+ */
+function fillGameConf(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            let gameConfGood = document.getElementById("gameConfGood");
+            let gameConfEvil = document.getElementById("gameConfEvil");
+            let gameConfNeutral = document.getElementById("gameConfNeutral");
+            let gameConfVictoryStealer = document.getElementById("gameConfVictoryStealer");
+
+            let list = JSON.parse(req.responseText)[JSON_resource_list];
+
+            for (let i = 0; i < list.length; i++) {
+                let role = list[i]['role'];
+                // Choose the div element based on the role type
+                let targetDiv;
+                // console.log(role.name + " " + role.type);
+                switch (role.type) {
+                    case 0:
+                        targetDiv = gameConfGood;
+                        break;
+                    case 1:
+                        targetDiv = gameConfEvil;
+                        break;
+                    case 2:
+                        targetDiv = gameConfVictoryStealer;
+                        break;
+                    case 3:
+                        targetDiv = gameConfNeutral;
+                        break;
+                    default:
+                        continue;
+                }
+
+                targetDiv.classList.remove("d-none");
+                let text = capitalizeFirstLetter(role.name);
+                if (role.max_number > 1) {
+                    text += " (" + role.max_number + ")";
+                }
+                targetDiv.innerHTML += text + "<br>";
+
+            }
+        }
+    }
 }
 
 /**

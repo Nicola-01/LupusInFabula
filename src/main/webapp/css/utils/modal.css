@@ -1,0 +1,29 @@
+#modal {
+    margin-top: 10em;
+}
+
+#modalCancel, #modalConfirm, #closeRolesModal {
+    width: 100px;
+}
+
+#modalConfirm {
+    background-color: #880808;
+    border-color: transparent;
+}
+
+#modalConfirm:hover {
+    background-color: #a20f12;
+}
+
+#closeRolesModal {
+    background-color: var(--navbar-inverted-bg);
+    border-color: transparent;
+}
+
+#closeRolesModal:hover {
+    background: var(--navbar-inverted-second-bg);
+}
+
+.modal-title {
+    padding-left: 32px;
+}
