@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function (event) {
         document.getElementById("sendActions").addEventListener("click", sendActions);
     } else if (document.getElementById("gameConfBT")) {
         genericGETRequest(contextPath + "game/configuration/" + gameID, fillGameConf);
-        document.getElementById("gameConfBT").addEventListener('click', showGameConf)
     }
 
     elementsReload();
@@ -119,18 +118,6 @@ function fillGameConf(req) {
         }
     }
 }
-
-/**
- * Show popup with the game configuration (set roles).
- */
-function showGameConf() {
-    let added = document.getElementById("gameConf").classList.toggle("d-none");
-    document.querySelector("#gameConfBT .button-text").innerText = (added) ? "Show Roles" : "Hide Roles"
-    document.querySelector("#gameConfBT .circle").classList.toggle("show", !added)
-    document.querySelector("#gameConfBT .circle .icon.arrow").classList.toggle("show", !added)
-    document.querySelector("#gameConfBT .button-text").classList.toggle("show", !added)
-}
-
 
 /**
  * Handles the resizing of elements on the page.

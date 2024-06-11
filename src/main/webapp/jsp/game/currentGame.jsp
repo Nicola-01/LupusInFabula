@@ -48,13 +48,18 @@
 
                     <c:choose>
                         <c:when test="${isMaster}">
+                            <c:import url="/jsp/utils/modal.jsp"/>
                             <div class="col-4 p-0 d-flex justify-content-center">
                                 <button id="gameSettings" class="btn btn-primary rounded-circle">
                                     <i id="settingsIcon" class="fas fa-gear"></i>
                                 </button>
                                 <div id="settingsContainer" class="row d-none py-3 px-2">
-                                    <button id="previousRoundBT" class="gradientButton mb-2" value="previousRound">Previous phase</button>
-                                    <button id="endGameBT" class="gradientButton" value="endGame">End game</button>
+                                    <button id="previousRoundBT" class="gradientButton mb-2" value="previousRound"
+                                            data-bs-toggle="modal" data-bs-target="#modal">Previous phase
+                                    </button>
+                                    <button id="endGameBT" class="gradientButton" value="endGame"
+                                            data-bs-toggle="modal" data-bs-target="#modal">End game
+                                    </button>
                                 </div>
                             </div>
                         </c:when>
@@ -98,7 +103,8 @@
 
                     <div class="row mb-3">
                         <div class="m-auto d-flex justify-content-center">
-                            <button id="gameConfBT" class="learn-more">
+                            <button id="gameConfBT" class="learn-more" data-bs-toggle="modal"
+                                    data-bs-target="#rolesModal">
                                 <span class="circle" aria-hidden="true">
                                     <span class="icon arrow"></span>
                                 </span>
@@ -107,14 +113,8 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div id="gameConf" class="col-11 col-sm-10 col-xl-8 m-auto d-none p-3 mb-5">
-                            <div id="gameConfEvil" class="evilRoles mb-1 d-none"></div>
-                            <div id="gameConfNeutral" class="neutralRoles mb-1 d-none"></div>
-                            <div id="gameConfGood" class="goodRoles mb-1 d-none"></div>
-                            <div id="gameConfVictoryStealer" class="victoryStealerRoles mb-1 d-none"></div>
-                        </div>
-                    </div>
+                    <c:import url="/jsp/game/currentGame/rolesModal.jsp"/>
+
                 </c:otherwise>
             </c:choose>
         </c:otherwise>

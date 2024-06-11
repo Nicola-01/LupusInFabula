@@ -207,7 +207,11 @@ function updateSmallScreenThemeButtons() {
  */
 function loadTheme() {
     // Get the theme from the cookie
-    const theme = getCookie("theme");
+    let theme = getCookie("theme");
+    if (!theme) { // default theme
+        setCookie("theme", "dynamic");
+        theme = "dynamic";
+    }
 
     let themeToSet
 
