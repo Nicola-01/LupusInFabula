@@ -109,6 +109,10 @@
         <filter-name>GameMasterFilter</filter-name>
         <filter-class>it.unipd.dei.webapp.lupus.filter.GameMasterFilter</filter-class>
     </filter>
+    <filter>
+        <filter-name>PagesFilter</filter-name>
+        <filter-class>it.unipd.dei.webapp.lupus.filter.PagesFilter</filter-class>
+    </filter>
 
     <filter-mapping>
         <filter-name>UserFilter</filter-name>
@@ -119,6 +123,13 @@
     <filter-mapping>
         <filter-name>GameMasterFilter</filter-name>
         <url-pattern>/game/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>PagesFilter</filter-name>
+        <url-pattern>/home</url-pattern>
+        <url-pattern>/habitant/*</url-pattern>
+        <url-pattern>/newVillage</url-pattern>
+        <url-pattern>/village/*</url-pattern>
     </filter-mapping>
 
     <error-page>

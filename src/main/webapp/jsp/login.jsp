@@ -14,7 +14,7 @@
     <title>Lupus in Fabula - Login</title>
 </head>
 
-<body>
+<body data-bs-theme="light">
 <main class="container mb-5 p-0">
 
     <div class="fireflies">
@@ -104,7 +104,24 @@
                         <%--<div class="additional-options">--%>
                         <%--<a href="#" class="forgot-password">Forgot password?</a>--%>
                         <%--</div>--%>
-                        <input type="submit" id="login_submit" class="mt-4" value="Login">
+                        <div class="checkbox-wrapper d-flax my-2">
+                            <input type="checkbox" id="keepLogged"
+                                   class="inp-cbx" name="keepLogged" checked>
+                            <label class="cbx" for="keepLogged">
+                                <span>
+                                    <svg width="12px" height="10px">
+                                        <use xlink:href="#check-4"></use>
+                                    </svg>
+                                </span>
+                                <span>Keep me logged in</span>
+                            </label>
+                            <svg class="inline-svg">
+                                <symbol id="check-4" viewBox="0 0 12 10">
+                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                </symbol>
+                            </svg>
+                        </div>
+                        <input type="submit" id="login_submit" class="mt-3" value="Login">
                     </div>
                 </form>
             </div>

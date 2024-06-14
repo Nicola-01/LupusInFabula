@@ -118,9 +118,9 @@ const goodRoles = ["carpenter", "farmer", "hobbit", "kamikaze", "knight", "mediu
 const evilRoles = ["berserker", "dorky", "explorer", "giuda", "puppy", "wolf"];
 
 /**
-* An array of evil actions.
-* @type {string[]}
-*/
+ * An array of evil actions.
+ * @type {string[]}
+ */
 const evilAction = ["rage", "point", "explore", "maul", "dead"];
 
 /**
@@ -226,7 +226,7 @@ function genericPUTRequest(url, json, callback) {
  * @param {function} callback - The function to invoke when the servlet answers.
  * @returns {boolean} False if the request was not created.
  */
-function genericDELETERequest(url, json, callback){
+function genericDELETERequest(url, json, callback) {
     const httpRequest = new XMLHttpRequest();
 
     if (!httpRequest) {
@@ -325,11 +325,10 @@ function getCookie(name) {
  * @param {string} value - The value of the cookie.
  * @param {number} exdays - The number of days until the cookie expires.
  */
-function setCookie(name, value, exdays=365) {
+function setCookie(name, value, exdays = 365) {
     const d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    let expires = "expires="+ d.toUTCString();
-    document.cookie = name + "=" + value + ";path=/;";
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    document.cookie = name + "=" + value + ";expires=" + d.toUTCString() + ";path=/;";
 }
 
 /**
@@ -342,7 +341,7 @@ function setCookie(name, value, exdays=365) {
 function storeData(key, value, seconds) {
     const date = new Date();
     date.setTime(date.getTime() + (seconds * 1000));
-    document.cookie = key + "=" + JSON.stringify(value) + ";expires=" + date.toUTCString() + ";path=/";
+    document.cookie = key + "=" + btoa(JSON.stringify(value)) + ";expires=" + date.toUTCString() + ";path=/";
 }
 
 /**
@@ -357,7 +356,7 @@ function retrieveData(key) {
     for (let i = 0; i < cookies.length; i++) {
         let c = cookies[i].trim();
         if (c.indexOf(nameEQ) === 0)
-            return JSON.parse(c.substring(nameEQ.length, c.length));
+            return JSON.parse(atob(c.substring(nameEQ.length, c.length)));
     }
     return null;
 }

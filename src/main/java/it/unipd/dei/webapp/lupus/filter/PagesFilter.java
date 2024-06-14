@@ -1,9 +1,10 @@
 package it.unipd.dei.webapp.lupus.filter;
 
 import it.unipd.dei.webapp.lupus.dao.AuthenticateTokenDAO;
-import it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet;
-import it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet.*;
-import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.resource.Actions;
+import it.unipd.dei.webapp.lupus.resource.LogContext;
+import it.unipd.dei.webapp.lupus.resource.Message;
+import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
@@ -30,11 +31,11 @@ import static it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet.LoginToken;
  * @version 1.0
  * @since 1.0
  */
-public class UserFilter implements Filter {
+public class PagesFilter implements Filter {
     /**
      * A LOGGER available for all the subclasses.
      */
-    protected static final Logger LOGGER = LogManager.getLogger(UserFilter.class,
+    protected static final Logger LOGGER = LogManager.getLogger(PagesFilter.class,
             StringFormatterMessageFactory.INSTANCE);
 
 
@@ -112,17 +113,12 @@ public class UserFilter implements Filter {
                     LOGGER.warn("Authentication required to access resource %s with method %s.", req.getRequestURI(),
                             req.getMethod());
 
-                    ErrorCode ec = ErrorCode.NOT_LOGGED;
-                    res.setStatus(ec.getHTTPCode());
-                    Message m = new Message("Authentication required", ec.getErrorCode(), ec.getErrorMessage());
-
-                    m.toJSON(res.getOutputStream());
-
+                    res.sendRedirect(req.getContextPath() + "/login");
                     return;
                 }
 
                 HttpSession newSession = req.getSession();
-                newSession.setAttribute(UserFilter.USER_ATTRIBUTE, p);
+                newSession.setAttribute(PagesFilter.USER_ATTRIBUTE, p);
 
 
             } else {
@@ -135,22 +131,12 @@ public class UserFilter implements Filter {
                         // invalidate the session
                         session.invalidate();
 
-                        LOGGER.warn(
-                                "Authentication required to access resource %s with method %s. Session %s exists but no user found in session. Session invalidated.",
-                                req.getRequestURI(), req.getMethod(), session.getId());
-
-                        ErrorCode ec = ErrorCode.NOT_LOGGED;
-                        res.setStatus(ec.getHTTPCode());
-                        Message m = new Message("Authentication required, not logged in", ec.getErrorCode(), ec.getErrorMessage());
-
-                        m.toJSON(res.getOutputStream());
-
-                        res.sendRedirect(req.getContextPath() + "/jsp/login.jsp");
+                        res.sendRedirect(req.getContextPath() + "/login");
                         return;
                     }
 
                     HttpSession newSession = req.getSession();
-                    newSession.setAttribute(UserFilter.USER_ATTRIBUTE, p);
+                    newSession.setAttribute(PagesFilter.USER_ATTRIBUTE, p);
                 }
             }
 

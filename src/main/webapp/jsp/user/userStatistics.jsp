@@ -58,7 +58,9 @@
 
         <div id="block_container">
 
-            <h2>Statistics <a title="You can sort the table clicking on the name of the column">&#9432</a></h2>
+            <h2>Statistics
+                <%--<a title="You can sort the table clicking on the name of the column">&#9432</a>--%>
+            </h2>
 
             <div>
                 <div class="row">
@@ -80,8 +82,7 @@
                                 <th>Wins</th>
                                 <th>Loss</th>
                                 <th>Rate
-                                    <a id="info_rate"
-                                       title="The percentage of games played as over the total played">&#9432</a>
+<%--                                    <a id="info_rate" title="The percentage of games played as over the total played">&#9432</a>--%>
                                 </th>
                             </tr>
                             <%--                            </thead>--%>
@@ -99,7 +100,8 @@
         <br>
 
         <div id="block_container2" class="overflow-auto">
-            <h2>History <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>
+            <h2>History
+<%--                <a id="info_logs" title="You can sort the table clicking on the name of the column">&#9432</a>--%>
             </h2>
 
 

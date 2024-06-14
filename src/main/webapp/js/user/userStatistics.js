@@ -287,12 +287,12 @@ function getGeneralStats(req) {
                 var cell0 = row.insertCell(0);
                 cell0.innerHTML = couple[i][0];
 
-                if (couple[i][0] === "Ratio") {
-                    cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
-                }
-                if (couple[i][0] === "Games Played") {
-                    cell0.innerHTML += ' <a title="If the number is different from the sum of games won and loss it means that there are pending games">&#9432</a>';
-                }
+                // if (couple[i][0] === "Ratio") {
+                //     cell0.innerHTML += ' <a id="info_ratio" title="The percentage of games won over the total played">&#9432</a>';
+                // }
+                // if (couple[i][0] === "Games Played") {
+                //     cell0.innerHTML += ' <a title="If the number is different from the sum of games won and loss it means that there are pending games">&#9432</a>';
+                // }
 
                 var cell1 = row.insertCell(1);
                 cell1.innerHTML = couple[i][1];

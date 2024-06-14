@@ -7,6 +7,7 @@ DROP TABLE IF EXISTS PLAYS_AS_IN;
 DROP TABLE IF EXISTS Game;
 DROP TABLE IF EXISTS Role;
 DROP TABLE IF EXISTS IS_FRIEND_WITH;
+DROP TABLE IF EXISTS User_tokens;
 DROP TABLE IF EXISTS Player;
 
 
@@ -30,6 +31,29 @@ COMMENT ON COLUMN Player.username IS 'The unique username of the player.';
 COMMENT ON COLUMN Player.email IS 'The email address of the player.';
 COMMENT ON COLUMN Player.password IS 'The password of the player.';
 COMMENT ON COLUMN Player.registration_date IS 'The date when the player registered.';
+
+
+-- #################################################################################################
+-- ## Creation of the table user_tokens                                                                ##
+-- #################################################################################################
+--
+-- This table represents the tokens associated with user sessions, allowing multiple devices to stay
+-- logged in simultaneously for a single user. Each token is uniquely generated and stored along with
+-- the user ID and the timestamp of its creation. This facilitates the validation of user sessions
+-- across different devices.
+
+CREATE TABLE User_tokens
+(
+    token           CHAR(36) PRIMARY KEY,
+    player_username VARCHAR(20),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (player_username) REFERENCES Player (username)
+);
+
+COMMENT ON TABLE User_tokens IS 'Stores tokens for user sessions to allow persistent login across multiple devices.';
+COMMENT ON COLUMN User_tokens.player_username IS 'The unique identifier (username) of the player to whom the token belongs.';
+COMMENT ON COLUMN User_tokens.token IS 'The unique token string used for session validation.';
+COMMENT ON COLUMN User_tokens.created_at IS 'The timestamp when the token was created. It defaults to the current timestamp at the time of insertion.';
 
 
 -- #################################################################################################
@@ -200,5 +224,23 @@ CREATE ROLE lupus_sql LOGIN PASSWORD 'wolf';
 
 GRANT SELECT, INSERT, UPDATE ON game, player, plays_as_in TO lupus_sql;
 GRANT SELECT, INSERT, UPDATE, DELETE ON action, is_friend_with TO lupus_sql;
+GRANT SELECT, INSERT, DELETE ON user_tokens TO lupus_sql;
 GRANT SELECT ON role TO lupus_sql;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;
+
+-- Create a scheduled job to delete expired tokens every day at midnight
+CREATE OR REPLACE FUNCTION delete_expired_tokens()
+    RETURNS VOID AS $$
+BEGIN
+    DELETE FROM User_tokens
+    WHERE created_at < NOW() - INTERVAL '365 days'; -- Delete tokens older than 30 days
+END;
+$$ LANGUAGE plpgsql;
+
+-- Schedule the job to run daily at midnight
+CREATE OR REPLACE FUNCTION schedule_delete_job()
+    RETURNS VOID AS $$
+BEGIN
+    PERFORM pg_schedule_cron_job('delete_expired_tokens', '0 0 * * *');
+END;
+$$ LANGUAGE plpgsql;

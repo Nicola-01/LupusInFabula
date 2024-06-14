@@ -10,6 +10,7 @@ import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -17,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 
+import java.util.Objects;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -66,6 +69,12 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
      */
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
+    /**
+     * Constant representing the name of the login token cookie.
+     * This constant is used to identify and manipulate the session token cookie in HTTP requests and responses.
+     */
+    public static String LoginToken = "loginToken";
+
 
     /**
      * Method to handles GET request, the method will invalidate the session and return the login jsp page
@@ -94,10 +103,19 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             LOGGER.info("the PLAYER %s logged out", p.getUsername());
             LogContext.removeUser();
         }
+
         request.getSession().invalidate();
+        try {
+            invalidateToken(request, response);
+        } catch (SQLException e) {
+            ErrorCode er = ErrorCode.INTERNAL_ERROR;
+            response.setStatus(er.getHTTPCode());
+            LOGGER.error("stacktrace:", e);
+        }
+
         LogContext.removeIPAddress();
         LogContext.removeAction();
-        if(op.startsWith("logout"))
+        if (op.startsWith("logout"))
             response.sendRedirect(request.getContextPath() + "/login");
         else
             request.getRequestDispatcher("/jsp/login.jsp").forward(request, response);
@@ -335,6 +353,9 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                     } else
                         session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
 
+                    if (Objects.equals(request.getParameter("keepLogged"), "on"))
+                        keepLoggedUser(response, user);
+
                     response.setStatus(HttpServletResponse.SC_OK);
                     session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
@@ -362,5 +383,53 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
             LogContext.removeAction();
             LogContext.removeUser();
         }
+    }
+
+    /**
+     * Generates and sets a session token cookie for the logged-in user.
+     *
+     * @param response the HttpServletResponse object to manipulate the response to the client.
+     * @param user     the username of the logged-in user.
+     * @throws SQLException if a database access error occurs.
+     */
+    private void keepLoggedUser(HttpServletResponse response, String user) throws SQLException {
+        String token = UUID.randomUUID().toString();
+        new AddUserTokenDAO(getConnection(), user, token).access();
+
+        LOGGER.info("Added token ", token);
+
+        // Create a cookie to store the token
+        Cookie loginCookie = new Cookie(LoginToken, token);
+        loginCookie.setMaxAge(60 * 60 * 24 * 365); // 365 days
+        loginCookie.setPath("/");
+
+        response.addCookie(loginCookie);
+    }
+
+    /**
+     * Invalidates (deletes) the session token stored in the request cookies.
+     * This method deletes the token from the database, effectively logging out the user.
+     *
+     * @param request  the HttpServletRequest object containing the incoming request.
+     * @param response the HttpServletResponse object to manipulate the response to the client.
+     * @throws SQLException if a database access error occurs.
+     */
+    public void invalidateToken(HttpServletRequest request, HttpServletResponse response) throws SQLException {
+        String token = "";
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null)
+            for (Cookie cookie : cookies)
+                if (LoginToken.equals(cookie.getName())) {
+                    token = cookie.getValue();
+                    break;
+                }
+
+        Cookie cookie = new Cookie(LoginToken, "");
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        new InvalidateTokenDAO(getConnection(), token).access();
     }
 }

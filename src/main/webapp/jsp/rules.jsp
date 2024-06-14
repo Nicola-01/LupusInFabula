@@ -235,7 +235,7 @@
     <br>
 
     <div class="slideshow-container neutralRoles">
-        <h2 class="text-center mb-4"><strong>NEUTRAL ROLES</strong></h2>
+        <h2 class="text-center mb-4"><strong>NEUTRAL</strong></h2>
         <div class="rolesDescription">
             Roles that play with the villagers or the pack of wolves, and that can cause chaos between any type of role.
         </div>

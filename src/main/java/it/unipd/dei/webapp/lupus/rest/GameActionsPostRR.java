@@ -1635,8 +1635,8 @@ public class GameActionsPostRR extends AbstractRR {
 
         // Check victory conditions and return the appropriate VictoryMessage
 
-        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0) || notVote)
-            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
+        if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
+            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getId());
 
         if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0 && !hamster.isEmpty())
             return new VictoryMessage("The HAMSTER wins the game", winnerPlayers.get(WinFaction.HAMSTER.getId()), WinFaction.HAMSTER.getId());
@@ -1644,8 +1644,8 @@ public class GameActionsPostRR extends AbstractRR {
         if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles == 0)
             return new VictoryMessage("The FARMERS pack win the game", winnerPlayers.get(WinFaction.FARMERS.getId()), WinFaction.FARMERS.getId());
 
-        if (!jester.isEmpty() && new IsJesterVotedOutDAO(ds.getConnection(), ds, gameID).access().getOutputParam())
-            return new VictoryMessage("The JESTER wins the game", winnerPlayers.get(WinFaction.JESTER.getId()), WinFaction.JESTER.getId());
+        if (roleTypeCardinality.getOrDefault(WinFaction.WOLVES.getId(), 0) - notCountedEvilRoles >= totalRoles - roleTypeCardinality.getOrDefault(RoleType.EVIL.getType(), 0) || notVote)
+            return new VictoryMessage("The WOLVES pack win the game", winnerPlayers.get(WinFaction.WOLVES.getId()), WinFaction.WOLVES.getId());
 
         // No victory condition met
         return null;
