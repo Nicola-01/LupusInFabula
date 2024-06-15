@@ -29,9 +29,9 @@
 <main class="container flex-grow-1" id="main_class" style="display: none">
 
     <div class="row justify-content-center my-4">
-        <div class="col-9 mt-5" style="position:relative">
+        <div class="col-12 col-md-9 mt-5" style="position:relative">
             <div class="search m-2">
-                <input id="playerUsername" placeholder=" Search a player to see its statics..." type="text"
+                <input id="playerUsername" placeholder=" Search a player..." type="text"
                        data-1p-ignore data-bwignore
                        data-lpignore="true" data-form-type="other">
                 <button id="addPlayer" class="searchUser">Search!</button>
