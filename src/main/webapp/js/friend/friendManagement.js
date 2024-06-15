@@ -256,14 +256,14 @@ function updateFriendAvailability(req) {
                         rows[i].cells[1].innerHTML = "";
                         let link = document.createElement("a");
                         link.href = contextPath + "newVillage";
-                        link.innerHTML = "&#128994; free";
+                        link.innerHTML = "&#128994; Free";
                         link.classList.add("newGame-link");
                         rows[i].cells[1].appendChild(link);
                     } else {
                         rows[i].cells[1].innerHTML = "";
                         let link = document.createElement("a");
                         link.href = contextPath + "village/" + players.get(rows[i].cells[0].textContent.toLowerCase());
-                        link.innerHTML = "&#128308; in game";
+                        link.innerHTML = "&#128308; In game";
                         link.classList.add("game-link");
                         rows[i].cells[1].appendChild(link);
                     }

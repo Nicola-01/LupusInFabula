@@ -15,16 +15,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
 });
 
 /**
-* Manage the title (h1) of the page.
-*
-*/
-function setHeading(username){
+ * Manage the title (h1) of the page.
+ *
+ */
+function setHeading(username) {
     var heading = document.getElementById("title");
 
-    if (username === document.getElementById("username_logged").innerText){
+    if (username === document.getElementById("username_logged").innerText) {
         heading.innerHTML = 'Your statistics and history'
-    }
-    else{
+    } else {
         heading.innerHTML = 'Statistics and history of <b>' + username + '</b>';
     }
 
@@ -100,7 +99,7 @@ function getLogs(req) {
                 row.classList.add("item");
 
                 var cell0 = row.insertCell(0);
-                cell0.innerHTML = log.start;
+                cell0.innerHTML = log.start.split(".")[0];
 
                 var cell1 = row.insertCell(1);
                 cell1.innerHTML = log.public_id;
@@ -119,8 +118,16 @@ function getLogs(req) {
                 }
 
                 var cell5 = row.insertCell(5);
-                if (log.name !== "master" && log.is_game_finished) {
-                    cell5.innerHTML = log.has_won ? "Victory" : "Defeat";
+                if (log.is_game_finished) {
+                    if (log.name !== "master") {
+                        if (log.who_wins === "draw")
+                            cell5.innerHTML = "Draw";
+                        else
+                            cell5.innerHTML = log.has_won ? "Victory" : "Defeat";
+                    } else { // log.name === "master"
+                        cell5.innerHTML = capitalizeFirstLetter(log.who_wins);
+                    }
+
                 } else {
                     cell5.innerHTML = "-";
                 }
@@ -211,7 +218,9 @@ function getStatsRole(req) {
                     cell3.innerHTML = String(stats.countName - stats.countWins).padStart(sizeCountName);
 
                     var cell4 = row.insertCell(4);
-                    cell4.innerHTML = ((stats.countName / ((size === 0) ? 1 : size)).toFixed(3) * 100) + "%";
+                    var percentage = (stats.countName / ((size === 0) ? 1 : size)) * 100;
+                    var roundedPercentage = Math.round(percentage * 10) / 10;
+                    cell4.innerHTML = ((roundedPercentage % 1 === 0) ? roundedPercentage.toFixed(0) : roundedPercentage.toFixed(1)) + "%";
                 }
             }
 
@@ -273,7 +282,9 @@ function getGeneralStats(req) {
             }
 
             var totalGamesPlayed = list.length - totalGamesAsMaster - totalPendingGame;
-            var ratio = ((totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed).toFixed(3) * 100) + "%";
+            var percentage = ((totalGamesPlayed === 0) ? 0 : (totalGamesWon / totalGamesPlayed)) * 100;
+            var roundedPercentage = Math.round(percentage * 10) / 10;
+            var ratio = ((roundedPercentage % 1 === 0) ? roundedPercentage.toFixed(0) : roundedPercentage.toFixed(1)) + "%";
 
             let couple = [["Total time played", totalPlayTime], ["Games Played", totalGamesPlayed + totalPendingGame],
                 ["Games Won", totalGamesWon], ["Games Lost", totalGamesPlayed - totalGamesWon],
@@ -346,7 +357,7 @@ function completePieChart(pairs) {
     const ctx = document.getElementById('myChart');
     let names = pairs.map(pair => pair[0]);
     let rates = pairs.map(pair => pair[1]);
-    let label_name = 'Times of games played as';
+    let label_name = ' Times';
 
     if (pairs.length === 0) {
         names = ["Not played"];

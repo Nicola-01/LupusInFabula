@@ -1,10 +1,12 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import it.unipd.dei.webapp.lupus.utils.WinFaction;
 
 import java.io.OutputStream;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 /**
  * Represents a joined entity containing information about a game and a player's participation.
@@ -47,6 +49,11 @@ public class PlaysJoinGame extends AbstractResource {
     private final String name;
 
     /**
+     * The faction that won;
+     */
+    private final String who_wins;
+
+    /**
      * Indicates whether the player has won the game.
      */
     private final boolean has_won;
@@ -75,6 +82,7 @@ public class PlaysJoinGame extends AbstractResource {
         this.game_duration = game_duration;
         this.number_of_rounds = number_of_rounds;
         this.name = name;
+        this.who_wins = WinFaction.getWinFactionById(who_wins).getName();
         this.has_won = with_who_wins == who_wins;
         this.is_game_finished = who_wins != -1;
     }
@@ -171,6 +179,7 @@ public class PlaysJoinGame extends AbstractResource {
         jg.writeNumberField("number_of_rounds", number_of_rounds);
         String role_name = is_game_finished ? name : "****";
         jg.writeStringField("name", role_name);
+        jg.writeStringField("who_wins", who_wins);
         jg.writeBooleanField("has_won", has_won);
         jg.writeBooleanField("is_game_finished", is_game_finished);
         jg.writeEndObject();

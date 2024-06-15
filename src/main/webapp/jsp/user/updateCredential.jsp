@@ -38,17 +38,17 @@
             </button>
         </div>
 
-        <div id="passwordComplex" class="p-2 px-3 d-none">
-            The password must contain:
-            <ul class="m-0">
-                <li id="passwordLength" class="invalid">From 8 to 20 characters.</li>
-                <li id="passwordUppercase" class="invalid">An uppercase letter.</li>
-                <li id="passwordLowercase" class="invalid">A lowercase letter.</li>
-                <li id="passwordNumber" class="invalid">A number.</li>
-                <li id="passwordSymbol" class="invalid">A symbol (!@#$%^&*)</li>
-            </ul>
-        </div>
         <div class="form-group">
+            <div id="passwordComplex" class="p-2 px-3 d-none">
+                The password must contain:
+                <ul class="m-0">
+                    <li id="passwordLength" class="invalid">From 8 to 20 characters.</li>
+                    <li id="passwordUppercase" class="invalid">An uppercase letter.</li>
+                    <li id="passwordLowercase" class="invalid">A lowercase letter.</li>
+                    <li id="passwordNumber" class="invalid">A number.</li>
+                    <li id="passwordSymbol" class="invalid">A symbol (!@#$%^&*)</li>
+                </ul>
+            </div>
             <input type="password" name="NewPassword" id="newPassword" class="form-control" placeholder="">
             <label class="control-label">New Password</label>
             <button id="newPassword_ShowPassword" class="showPassword" tabindex="-1">

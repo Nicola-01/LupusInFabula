@@ -9,18 +9,27 @@ package it.unipd.dei.webapp.lupus.utils;
  * @since 1.0
  */
 public enum WinFaction {
+
+    /**
+     * Game not finish yet.
+     */
+    NOT_FINISH(-1, "not finish"),
+
     /**
      * The Farmers faction.
      */
     FARMERS(0, "farmers"),
+
     /**
      * The Wolves faction.
      */
     WOLVES(1, "wolves"),
+
     /**
      * The Hamster faction.
      */
     HAMSTER(2, "hamster"),
+
     /**
      * The Jester faction.
      */
@@ -70,5 +79,18 @@ public enum WinFaction {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Retrieves a WinFaction by its ID.
+     *
+     * @param id the ID of the faction to retrieve
+     * @return the WinFaction associated with the given ID, or null if no such faction exists
+     */
+    public static WinFaction getWinFactionById(int id) {
+        for (WinFaction wf : WinFaction.values())
+            if (wf.getId() == id)
+                return wf;
+        return null;
     }
 }

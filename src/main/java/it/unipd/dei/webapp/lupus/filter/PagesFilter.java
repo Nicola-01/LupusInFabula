@@ -167,13 +167,12 @@ public class PagesFilter implements Filter {
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null)
-            for (Cookie cookie : cookies) {
-                LOGGER.info("cookie: " + cookie.getName() + " " + cookie.getValue());
+            for (Cookie cookie : cookies)
                 if (LoginToken.equals(cookie.getName())) {
+                    LOGGER.info(LoginToken + ": " + cookie.getValue());
                     token = cookie.getValue();
                     break;
                 }
-            }
 
         if (token.isEmpty())
             return null; // Return null if loginToken cookie is not found

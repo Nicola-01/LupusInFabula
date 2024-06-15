@@ -59,13 +59,13 @@ const rolesSeeAsEvil = ["berserker", "dorky", "explorer", "wolf"]
  * List of factions in the game.
  * @type {string[]}
  */
-const factions = ["farmers", "wolf pack", "hamster", "jester"];
+const factions = ["farmers", "wolf pack", "hamster", "jester", "", "", "", "", "", "", "draw"];
 
 /**
  * Corresponding colors for each faction.
  * @type {string[]}
  */
-const factions_color = ["green", "red", "#ffcc00", "#ffcc00"];
+const factions_color = ["green", "red", "#ffcc00", "#ffcc00", "", "", "", "", "", "", "#7b7b7b"];
 
 /**
  * Handles the response from the game status GET request.
@@ -128,24 +128,28 @@ function setGameOver(game) {
     const gameTime = document.getElementById("gameTime")
 
     if (win_faction_div !== null && gameTime !== null) {
-        win_faction_div.innerHTML = "The ";
-        if (game.who_win !== 10) { // the game is a draw
-            const faction_div = document.createElement('span');
-            faction_div.id = "faction_name";
-            faction_div.innerHTML = factions[game.who_win];
-            faction_div.style.color = factions_color[game.who_win];
+        const faction_div = document.createElement('span');
+        faction_div.id = "faction_name";
+        faction_div.innerHTML = factions[game.who_win];
+        faction_div.style.color = factions_color[game.who_win];
+
+
+        if (game.who_win === 10) {// the game is a draw
+            win_faction_div.innerHTML = "The game ended in a ";
+            win_faction_div.appendChild(faction_div);
+            win_faction_div.innerHTML += "!";
+        } else {
+            win_faction_div.innerHTML = "The ";
             win_faction_div.appendChild(faction_div);
             win_faction_div.innerHTML += " win" + s + "!";
         }
-        else
-            win_faction_div.innerHTML = "The game ended in a draw!";
 
         // Format and display game start time and duration
         const gameStart = (((game.start).split(".")[0])).split(" ")
         const gameDuration = (game.game_duration).split(":").map(Number)
         gameTime.innerHTML = "The game started on " + gameStart[0] + " at " + gameStart[1] + " and lasted for " + game.rounds + " round" + (game.rounds > 1 ? "s" : "") + ".<br>Total duration of "
 
-        let timeStamp = gameDuration[1] + " minutes, and " + gameDuration[2] + " seconds."
+        let timeStamp = gameDuration[1] + " minutes and " + gameDuration[2] + " seconds."
         if (gameDuration[0] !== 0)
             timeStamp = gameDuration[0] + " hours, " + timeStamp
 

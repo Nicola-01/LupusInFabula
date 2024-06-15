@@ -31,7 +31,7 @@
     <div class="row justify-content-center my-4">
         <div class="col-9 mt-5" style="position:relative">
             <div class="search m-2">
-                <input id="playerUsername" placeholder="Search a player to see its statics..." type="text"
+                <input id="playerUsername" placeholder=" Search a player to see its statics..." type="text"
                        data-1p-ignore data-bwignore
                        data-lpignore="true" data-form-type="other">
                 <button id="addPlayer" class="searchUser">Search!</button>
@@ -91,7 +91,7 @@
 
                     <%--    Pie chart for roles--%>
                     <div class="col-12 col-md-6 col-lg-4 p-2">
-                        <canvas id="myChart"></canvas>
+                        <canvas id="myChart" class="m-auto"></canvas>
                     </div>
                 </div>
             </div>
@@ -110,9 +110,9 @@
                 <%--                <thead class="sticky-top top-0">--%>
                 <tr>
                     <th>Date and time</th>
-                    <th>GameId</th>
+                    <th>Village</th>
                     <th>Duration</th>
-                    <th>Number of rounds</th>
+                    <th>Rounds</th>
                     <th>Role played</th>
                     <th>Outcome</th>
                     <th>Game history</th>
