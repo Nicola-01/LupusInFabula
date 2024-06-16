@@ -65,7 +65,7 @@
             <div>
                 <div class="row">
                     <%--        General statistics--%>
-                    <div class="col-12 col-md-12 col-lg-4 p-2 px-md-4 px-xl-5">
+                    <div class="col-12 col-md-12 col-lg-4 p-2 px-lg-4 px-xl-5">
                         <%--            <p id=gen_stats></p>--%>
                         <table id="general_stats" class="general_statics w-100">
                             <%--                style="border-style: hidden;"--%>
