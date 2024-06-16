@@ -21,7 +21,7 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?)";
+    private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?) ORDER BY LOWER(friend_username)";
 
     /**
      * The SQL statement to calculate the common game.
