@@ -1,13 +1,13 @@
 insert into public.player (username, email, password, registration_date)
-values ('Pippo_baudo', 'stocazzo@gmail.com', md5('JapoC1own!'), '2024-05-30'),
-       ('aiorT', 'aaa@aaa.ccc', md5('JapoC1own!'), '2024-05-30'),
-       ('Matteo', 'zugujapo@gmail.com', md5('JapoC1own!'), '2024-05-30'),
-       ('Hare_Segz', 'orgia_omosex@gmail.sex', md5('JapoC1own!'), '2024-05-30'),
-       ('Rickm', 'rickm@game.com', md5('JapoC1own!'), '2024-05-30'),
-       ('Bubis', 'margherita.gnocato@outlook.com', md5('JapoC1own!'), '2024-05-30'),
-       ('Japo', 'sono.proprio_un@clown.popipopi', md5('1m4C!0wN'), '2024-05-30'),
-       ('Polterino', 'pisello@duro.com', md5('JapoC1own!'), '2024-05-30'),
-       ('Sofi', 'sesso.duro@gmail.com', md5('JapoC1own!'), '2024-05-30');
+values ('Pippo_baudo', 'stocazzo@gmail.com', md5('Lupus123!'), '2024-05-30'),
+       ('aiorT', 'aaa@aaa.ccc', md5('Lupus123!'), '2024-05-30'),
+       ('Matteo', 'zugujapo@gmail.com', md5('Lupus123!'), '2024-05-30'),
+       ('Hare_Segz', 'orgia_omosex@gmail.sex', md5('Lupus123!'), '2024-05-30'),
+       ('Rickm', 'rickm@game.com', md5('Lupus123!'), '2024-05-30'),
+       ('Bubis', 'margherita.gnocato@outlook.com', md5('Lupus123!'), '2024-05-30'),
+       ('Japo', 'sono.proprio.un@clown.popipopi', md5('1m4C!0wN'), '2024-05-30'),
+       ('Polterino', 'pisello@duro.com', md5('NonSoNemmenoIoComeFaccioAdAvereTuttoQuestoCulo!'), '2024-05-30'),
+       ('Sofi', 'sesso.duro@gmail.com', md5('Lupus123!'), '2024-05-30');
 
 insert into public.is_friend_with (player_username, friend_username, date)
 values ('Hare_Segz', 'Bubis', '2024-05-30'),
