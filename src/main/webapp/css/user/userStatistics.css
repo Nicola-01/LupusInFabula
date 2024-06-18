@@ -10,7 +10,7 @@
 /*    !*transform: translate(-50%, -50%);*!*/
 /*}*/
 
-#main_class{
+#main_class {
     position: relative;
 }
 
@@ -26,7 +26,7 @@ table.general_statics tr {
     /*border: none;*/
 }
 
-#general_stats{
+#general_stats {
     margin: auto;
     color: var(--text-color-fixed);
     background-color: var(--navbar-second-bg);
@@ -51,7 +51,7 @@ table.general_statics tr {
     min-height: calc(100vh - 150px); /* Adjust based on the approximate height of navbar, footer, and foot */
 }
 
-#friendActionButton{
+#friendActionButton {
     display: block;
     background-color: var(--navbar-second-bg);;
     color: var(--text-color-fixed);
@@ -68,11 +68,11 @@ table.general_statics tr {
     background-color: var(--red-color) !important;
 }
 
-#friendActionButton:hover{
+#friendActionButton:hover {
     transform: scale(1.05);
 }
 
-#friendButtonContainer{
+#friendButtonContainer {
     height: 45px;
     flex: fit-content;
 }
@@ -82,4 +82,12 @@ table.general_statics tr {
     width: 100% !important;
     max-width: 350px;
     max-height: 350px;
+}
+
+#roles_table_container {
+    max-height: 330px;
+}
+
+#logs_table_container {
+    max-height: 420px;
 }

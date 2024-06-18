@@ -19,8 +19,8 @@
         <table id="my_friends" class="sortable table table-striped mb-0">
             <thead class="sticky-top top-0">
             <tr>
-                <th style="width:35%">Username</th>
-                <th style="width:10%">Available</th>
+                <th style="width:30%">Username</th>
+                <th style="width:15%">Available</th>
                 <th style="width:20%">Games together</th>
                 <th style="width:20%">Since</th>
                 <th style="width:15%"></th>

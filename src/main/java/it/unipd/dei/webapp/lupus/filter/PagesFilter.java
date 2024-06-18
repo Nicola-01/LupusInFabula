@@ -1,11 +1,12 @@
 package it.unipd.dei.webapp.lupus.filter;
 
 import it.unipd.dei.webapp.lupus.dao.AuthenticateTokenDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
+import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
+import it.unipd.dei.webapp.lupus.dao.PlayerInGameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
-import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
-import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -117,10 +118,7 @@ public class PagesFilter implements Filter {
                     return;
                 }
 
-                HttpSession newSession = req.getSession();
-                newSession.setAttribute(PagesFilter.USER_ATTRIBUTE, p);
-
-
+                setSessionAttribute(ds, req, p);
             } else {
                 final Player player = (Player) session.getAttribute(USER_ATTRIBUTE);
 
@@ -135,8 +133,7 @@ public class PagesFilter implements Filter {
                         return;
                     }
 
-                    HttpSession newSession = req.getSession();
-                    newSession.setAttribute(PagesFilter.USER_ATTRIBUTE, p);
+                    setSessionAttribute(ds, req, p);
                 }
             }
 
@@ -178,6 +175,33 @@ public class PagesFilter implements Filter {
             return null; // Return null if loginToken cookie is not found
 
         return new AuthenticateTokenDAO(ds.getConnection(), token).access().getOutputParam();
+    }
+
+    /**
+     * Sets session attributes based on player information and game state.
+     *
+     * @param ds  the DataSource to retrieve database connections
+     * @param req the HttpServletRequest object to retrieve session information
+     * @param p   the Player object representing the current player
+     */
+    public void setSessionAttribute(DataSource ds, HttpServletRequest req, Player p) throws SQLException {
+        HttpSession newSession = req.getSession();
+        newSession.setAttribute(PagesFilter.USER_ATTRIBUTE, p);
+
+        int gameID = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
+        if (gameID > 0) {
+            String publicGameID = new PlayerInGameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
+            String gameMaster = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
+
+            LOGGER.info(gameMaster.equals(p.getUsername()));
+            LOGGER.info(publicGameID);
+
+            if (gameMaster.equals(p.getUsername()))
+                newSession.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);
+            else
+                newSession.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
+        } else
+            newSession.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
     }
 
     @Override

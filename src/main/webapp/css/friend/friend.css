@@ -71,7 +71,7 @@
     color: rgba(0, 200, 0, 1);
 }
 
-.newGame-link:hover {
+.newGame-link:hover, .game-link:hover {
     /*font-size: larger;*/
     font-weight: bold;
 }
@@ -79,9 +79,4 @@
 .game-link{
     text-decoration: none;
     color: rgba(200, 0, 0, 1);
-}
-
-.game-link:hover {
-    font-size: larger;
-    font-weight: bold;
 }

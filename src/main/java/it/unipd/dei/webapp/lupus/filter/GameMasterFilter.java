@@ -101,6 +101,7 @@ public class GameMasterFilter implements Filter {
 
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
+            path = path.substring(path.indexOf("/lupus/game"));
 
             // this filter accept only request that start with /game/* and end with /master
             if (path.startsWith("/lupus/game") && (path.endsWith("/master") || path.contains("/actions/")) ) {
