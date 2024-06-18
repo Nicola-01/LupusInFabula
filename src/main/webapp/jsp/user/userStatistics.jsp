@@ -73,20 +73,22 @@
                     </div>
 
                     <%--        Statistics for role--%>
-                    <div class="col-12 col-md-6 col-lg-4 p-2 overflow-auto">
-                        <table class="sortable table table-striped w-100" id="roles_table">
-                            <%--                            <thead class="sticky-top top-0">--%>
-                            <tr>
-                                <th>Role</th>
-                                <th>Times</th>
-                                <th>Wins</th>
-                                <th>Loss</th>
-                                <th>Rate
-<%--                                    <a id="info_rate" title="The percentage of games played as over the total played">&#9432</a>--%>
-                                </th>
-                            </tr>
-                            <%--                            </thead>--%>
-                        </table>
+                    <div class="col-12 col-md-6 col-lg-4 p-2">
+                        <div id="roles_table_container" class="overflow-auto">
+                            <table class="sortable table table-striped w-100" id="roles_table">
+                                <%--                            <thead class="sticky-top top-0">--%>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Times</th>
+                                    <th>Wins</th>
+                                    <th>Loss</th>
+                                    <th>Rate
+                                        <%--                                    <a id="info_rate" title="The percentage of games played as over the total played">&#9432</a>--%>
+                                    </th>
+                                </tr>
+                                <%--                            </thead>--%>
+                            </table>
+                        </div>
                     </div>
 
                     <%--    Pie chart for roles--%>
@@ -105,21 +107,23 @@
             </h2>
 
 
-            <table class="sortable table table-striped mb-0" id="logs_table" align="center">
+            <div id="logs_table_container" class="overflow-auto">
+                <table class="sortable table table-striped mb-0" id="logs_table">
 
-                <%--                <thead class="sticky-top top-0">--%>
-                <tr>
-                    <th>Date and time</th>
-                    <th>Village</th>
-                    <th>Duration</th>
-                    <th>Rounds</th>
-                    <th>Role played</th>
-                    <th>Outcome</th>
-                    <th>Game history</th>
-                </tr>
-                <%--                </thead>--%>
+                    <%--                <thead class="sticky-top top-0">--%>
+                    <tr>
+                        <th>Date and time</th>
+                        <th>Village</th>
+                        <th>Duration</th>
+                        <th>Rounds</th>
+                        <th>Role played</th>
+                        <th>Outcome</th>
+                        <th>Game history</th>
+                    </tr>
+                    <%--                </thead>--%>
 
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 </main>
