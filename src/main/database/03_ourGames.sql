@@ -6,7 +6,7 @@ values ('Pippo_baudo', 'stocazzo@gmail.com', md5('Lupus123!'), '2024-05-30'),
        ('Rickm', 'rickm@game.com', md5('Lupus123!'), '2024-05-30'),
        ('Bubis', 'margherita.gnocato@outlook.com', md5('Lupus123!'), '2024-05-30'),
        ('Japo', 'sono.proprio.un@clown.popipopi', md5('1m4C!0wN'), '2024-05-30'),
-       ('Polterino', 'pisello@duro.com', md5('NonSoNemmenoIoComeFaccioAdAvereTuttoQuestoCulo!'), '2024-05-30'),
+       ('Polterino', 'pisello@duro.com', md5('piselloGrande0.'), '2024-05-30'),
        ('Sofi', 'sesso.duro@gmail.com', md5('Lupus123!'), '2024-05-30');
 
 insert into public.is_friend_with (player_username, friend_username, date)
