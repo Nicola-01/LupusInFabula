@@ -354,7 +354,7 @@ public class LoginSignupServlet extends AbstractDatabaseServlet {
                         session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
 
                     if (Objects.equals(request.getParameter("keepLogged"), "on"))
-                        keepLoggedUser(response, user);
+                        keepLoggedUser(response, p.getUsername());
 
                     response.setStatus(HttpServletResponse.SC_OK);
                     session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
