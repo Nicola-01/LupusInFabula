@@ -24,6 +24,8 @@
 
 ## Overview
 
+This project is part of the Web Application course in the Master's degree program in Cybersecurity at the Università degli Studi di Padova.
+
 The project aims to develop a web application to facilitate the role of the game-master during the game "Lupus in
 Fabula". The game-master orchestrates the game, narrating events and facilitating discussion among players. This
 application assists the game-master in managing game events, such as tracking player roles, nighttime actions (such as
