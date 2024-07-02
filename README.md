@@ -48,8 +48,8 @@ Follow these steps to build and run the application:
 
 - Build the project using `mvn clean package`
 - Generate the Java documentation with `mvn javadoc:javadoc`
-- Start the application using `docker-compose up`
-- Stop the application with `docker-compose down`
+- Start the application using `docker compose up`
+- Stop the application with `docker compose down`
 - To view the web application logs, access the terminal of the web
   container: `docker exec -it webapp-lupus-web-1 /bin/bash`. Navigate to the directory
   `/webapps/my-logs`, and use `cat lupus.log` to view the logs.
