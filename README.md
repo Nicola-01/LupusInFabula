@@ -13,7 +13,7 @@
       <a href="#getting-started">Getting started</a>
       <ul>
         <li><a href="#requirements">Requirements</a></li>
-        <li><a href="#build-and-run">Build and Run</a></li>
+        <li><a href="#building-and-running">Building and Running</a></li>
         <li><a href="#database">Database</a></li>
         <li><a href="#test">Test</a></li>
       </ul>
@@ -23,6 +23,8 @@
   </ol>
 
 ## Overview
+
+This project is part of the Web Application course in the Master's degree program in Cybersecurity at the Università degli Studi di Padova.
 
 The project aims to develop a web application to facilitate the role of the game-master during the game "Lupus in
 Fabula". The game-master orchestrates the game, narrating events and facilitating discussion among players. This
@@ -86,11 +88,9 @@ To view the rules and roles of the game, visit http://localhost:8080/lupus/rules
 
 ## Group members
 
-| *Last Name* | *First Name* | *Number* |
-|-------------|--------------|:--------:|
-| Busato      | Nicola       | 2119291  |
-| Cini        | Jacopo       | 2125757  |
-| Gusella     | Michele      | 2122861  |
-| Miele       | Riccardo     | 2116946  |
-| Momesso     | Jacopo       | 2123874  |
-| Pozzo       | Nicola       | 2125382  |
+| **[Nicola Busato](https://github.com/Nicola-01)**| **[Jacopo Momesso](https://github.com/JapoMomi1)** | **[Michele Gusella](https://github.com/Polterino)** |
+| :---: |:---:|:---:|
+| <a href="https://github.com/Nicola-01"><img src="https://avatars1.githubusercontent.com/u/96294696?s=200&v=4" alt="Nicola Busato" width="200"/></a> | <a href="https://github.com/JapoMomi1"><img src="https://avatars1.githubusercontent.com/u/127385689?s=200&v=4" alt="Jacopo Momesso" width="200"/></a> | <a href="https://github.com/Polterino"><img src="https://avatars.githubusercontent.com/u/56081741?s=200&v=4" alt="Michele Gusella" width="200"/></a> |
+|  | | |
+| **[Riccardo Miele](https://github.com/rickm01)** | **[Nicola Pozzo](https://github.com/NicolaPozzo)** | **[Jacopo Cini](https://github.com/jack00024060)** |
+| <a href="https://github.com/rickm01"><img src="https://avatars.githubusercontent.com/u/96297774?s=200&v=4" alt="Riccardo Miele" width="200"/></a> | <a href="https://github.com/NicolaPozzo"><img src="https://avatars.githubusercontent.com/u/166592185?s=200&v=4" alt="Nicola Pozzo" width="200"/></a> | <a href="https://github.com/jack00024060"><img src="https://avatars.githubusercontent.com/u/73614712?s=200&v=4" alt="Jacopo Cini" width="200"/></a> |
