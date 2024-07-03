@@ -74,6 +74,7 @@ rolesColors.set('kamikaze', 'var(--role-color-kamikaze)');
 rolesColors.set('sam', 'var(--role-color-sam)');
 rolesColors.set('carpenter', 'var(--role-color-carpenter)');
 rolesColors.set('hobbit', 'var(--role-color-hobbit)');
+rolesColors.set('mason', 'var(--role-color-mason)');
 
 rolesColors.set('berserker', 'var(--role-color-berserker)');
 rolesColors.set('dorky', 'var(--role-color-dorky)');
