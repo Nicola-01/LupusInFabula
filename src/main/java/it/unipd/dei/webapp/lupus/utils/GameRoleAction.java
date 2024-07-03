@@ -40,6 +40,11 @@ public enum GameRoleAction {
     KNIGHT(RoleType.GOOD,"knight", "protect"),
 
     /**
+     * The MASON role.
+     */
+    MASON(RoleType.GOOD,"mason", null),
+
+    /**
      * The MEDIUM role.
      */
     MEDIUM(RoleType.GOOD,"medium", "look"),

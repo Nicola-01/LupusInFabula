@@ -50,6 +50,7 @@
     --role-color-sam: #257925;
     --role-color-carpenter: #2A832A;
     --role-color-hobbit: #308D30;
+    --role-color-mason: #419e41;
 
     /*https://coolors.co/gradient-palette/6c0e0e-b30000?number=6*/
     --role-color-berserker: #6C0E0E;
@@ -114,6 +115,7 @@
     --role-color-sam: #9BDD9B;
     --role-color-carpenter: #A6E0A6;
     --role-color-hobbit: #B2E2B2;
+    --role-color-mason: #CAEFCA;
 
     /*https://coolors.co/gradient-palette/e86464-ec9ea2?number=6*/
     --role-color-berserker: #E86464;

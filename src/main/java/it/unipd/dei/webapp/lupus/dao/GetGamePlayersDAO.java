@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
+import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -111,14 +112,17 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                     boolean isDorkyActive = new IsDorkyAWolfDAO(ds.getConnection(), ds, gameID).access().getOutputParam();
 
                     boolean bothWolves = Arrays.asList(wolfFaction).contains(this.role) && Arrays.asList(wolfFaction).contains(playerRole);
-                    boolean imDorky = this.role.equals("dorky") && isDorkyActive && Arrays.asList(wolfFaction).contains(playerRole);
-                    boolean heIsDorky = Arrays.asList(wolfFaction).contains(this.role) && playerRole.equals("dorky") && isDorkyActive;
+                    boolean imDorky = this.role.equals(GameRoleAction.DORKY.getName()) && isDorkyActive && Arrays.asList(wolfFaction).contains(playerRole);
+                    boolean heIsDorky = Arrays.asList(wolfFaction).contains(this.role) && playerRole.equals(GameRoleAction.DORKY.getName()) && isDorkyActive;
+
+                    boolean isAMason = this.role.equals(GameRoleAction.MASON.getName()) && playerRole.equals(GameRoleAction.MASON.getName());
 
                     if (!(
                             this.playerUsername.equals(sentUsername) ||
                             bothWolves ||
                             imDorky ||
                             heIsDorky ||
+                            isAMason ||
                             playerRole.equals("master")
                     )) { playerRole = ""; }
                     // Wolf - explorer - berserker  - puppy see each other
