@@ -54,6 +54,9 @@
                                     <i id="settingsIcon" class="fas fa-gear"></i>
                                 </button>
                                 <div id="settingsContainer" class="row d-none py-3 px-2">
+                                    <button id="skipDayBT" class="gradientButton mb-2" value="skipDay"
+                                            data-bs-toggle="modal" data-bs-target="#modal">Skip first day
+                                    </button>
                                     <button id="previousRoundBT" class="gradientButton mb-2" value="previousRound"
                                             data-bs-toggle="modal" data-bs-target="#modal">Previous phase
                                     </button>

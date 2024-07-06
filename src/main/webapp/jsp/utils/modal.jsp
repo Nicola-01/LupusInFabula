@@ -59,4 +59,23 @@
         return document.getElementById("modalBodyText").innerText;
     }
 
+
+    /**
+     * Sets the value attribute for the modal button.
+     *
+     * @param {string} value - The value to be set for the modal button.
+     */
+    function setModalButtonValue(value) {
+        document.getElementsByClassName("modal-content")[0].setAttribute("value", value);
+    }
+
+    /**
+     * Gets the value attribute of the modal button.
+     *
+     * @returns {string} The current value of the modal button.
+     */
+    function getModalButtonValue() {
+        return document.getElementsByClassName("modal-content")[0].getAttribute("value");
+    }
+
 </script>

@@ -54,8 +54,8 @@ public class GameSettingsUpdateRR extends AbstractRR {
      * The method reads the request body to determine the action to be performed (e.g., end game or previous round)
      * and processes the request accordingly.
      *
-     * @throws IOException   if an I/O error occurs while reading the request or writing the response.
-     * @throws SQLException  if a database access error occurs.
+     * @throws IOException  if an I/O error occurs while reading the request or writing the response.
+     * @throws SQLException if a database access error occurs.
      */
     @Override
     protected void doServe() throws IOException, SQLException {
@@ -67,15 +67,27 @@ public class GameSettingsUpdateRR extends AbstractRR {
         res.setStatus(HttpServletResponse.SC_OK);
 
         switch (value) {
+            case "skipDay":
+                if (!skipDay()) {
+                    ErrorCode ec = ErrorCode.INVALID_GAME_SETTINGS;
+                    res.setStatus(ec.getHTTPCode());
+                    Message message = new Message("Game is not in the first night", ec.getErrorCode(),
+                            "If you are not in the first night, you cannot go to the next phase.");
+                    message.toJSON(res.getOutputStream());
+                    LOGGER.error(message);
+                }
+                break;
+
             case "endGame":
                 if (!endGame()) {
                     ErrorCode ec = ErrorCode.GAME_IS_OVER;
                     res.setStatus(ec.getHTTPCode());
                     Message message = new Message("Game already ended", ec.getErrorCode(), ec.getErrorMessage());
                     message.toJSON(res.getOutputStream());
+                    LOGGER.error(message);
                 }
-
                 break;
+
             case "previousRound":
                 if (!previousRound()) {
                     ErrorCode ec = ErrorCode.INVALID_GAME_SETTINGS;
@@ -83,15 +95,30 @@ public class GameSettingsUpdateRR extends AbstractRR {
                     Message message = new Message("Game already ended or just started", ec.getErrorCode(),
                             "If the game has ended or if you are in the first night, you cannot go to the previous phase.");
                     message.toJSON(res.getOutputStream());
+                    LOGGER.error(message);
                 }
                 break;
+
             default:
                 ErrorCode ec = ErrorCode.INVALID_GAME_SETTINGS;
                 res.setStatus(ec.getHTTPCode());
                 Message message = new Message("Invalid setting", ec.getErrorCode(), "The setting " + value + " is invalid.");
                 message.toJSON(res.getOutputStream());
+                LOGGER.error(message);
                 break;
         }
+    }
+
+    private boolean skipDay() throws SQLException {
+        Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
+        int currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
+        int currentPhase = game.getPhase();
+
+        if (currentRound > 1 || currentPhase == GamePhase.NIGHT.getId())
+            return false;
+
+        new UpdateGameDAO(ds.getConnection(), gameID, GamePhase.NIGHT.getId(), 2).access();
+        return true;
     }
 
     /**
@@ -106,7 +133,7 @@ public class GameSettingsUpdateRR extends AbstractRR {
         int currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
         int currentPhase = game.getPhase();
 
-        if (game.getPhase() > 0)
+        if (currentPhase > 0)
             return false;
 
         new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, WinFaction.DRAW.getId()).access();

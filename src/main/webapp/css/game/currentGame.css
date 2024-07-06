@@ -238,6 +238,18 @@
     background-color: #a20f12;
 }
 
+#settingsContainer > button:disabled {
+    background-color: #797878 !important;
+}
+
+#skipDayBT {
+    background-color: #2c6c88 !important;
+}
+
+#skipDayBT:hover {
+    background-color: #17749e !important;
+}
+
 .blur-name {
     filter: blur(10px);
 }
