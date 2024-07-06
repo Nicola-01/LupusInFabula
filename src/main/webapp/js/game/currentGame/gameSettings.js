@@ -2,8 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const gameSettings = document.getElementById("gameSettings");
     if (gameSettings) {
         gameSettings.addEventListener('click', showSettings)
-        document.getElementById("endGameBT").addEventListener('click', sendGameSettings);
-        document.getElementById("previousRoundBT").addEventListener('click', sendGameSettings);
+        $("#settingsContainer > button").on('click', sendGameSettings);
     }
 })
 
@@ -22,9 +21,27 @@ function showSettings() {
  * @param {Event} event - The event object representing the button click.
  */
 function sendGameSettings(event) {
-    const text = (event.target.value === "endGame") ? "Confirm to end the game." : "Confirm to return to previous phase.";
+    let text;
+    switch (event.target.value) {
+        case "skipDay":
+            text = "Confirm to skip first Day.";
+            break;
+
+        case "previousRound":
+            text = "Confirm to return to previous phase.";
+            break;
+        case "endGame":
+            text = "Confirm to end the game.";
+            break;
+        default:
+            text = "Not valid value.";
+            break;
+    }
+
+    // const text = (event.target.value === "endGame") ? "Confirm to end the game." : "";
     setModalTitle("Confirmation required");
     setModalText(text);
+    setModalButtonValue(event.target.value);
 }
 
 /**
@@ -32,9 +49,7 @@ function sendGameSettings(event) {
  * Sends the appropriate game settings request to the server based on the modal body text.
  */
 function modalConfirmEvent() {
-    let button = (getModalText() === "Confirm to end the game.") ? "endGameBT" : "previousRoundBT";
-    let value = document.getElementById(button).value;
-    genericPOSTRequest(`${contextPath}game/settings/${gameID}`, JSON.stringify({"settings": value}), settingsCallback)
+    genericPOSTRequest(`${contextPath}game/settings/${gameID}`, JSON.stringify({"settings": getModalButtonValue()}), settingsCallback)
 }
 
 /**
