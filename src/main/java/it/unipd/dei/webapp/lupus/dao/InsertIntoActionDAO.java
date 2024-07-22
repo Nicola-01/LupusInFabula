@@ -17,7 +17,7 @@ public class InsertIntoActionDAO extends AbstractDAO{
     /**
      * The SQL statement to insert an Action into the database.
      */
-    private static final String STATEMENT = "INSERT INTO action VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO action VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     /**
      * The Action object to be inserted into the database.
@@ -56,6 +56,7 @@ public class InsertIntoActionDAO extends AbstractDAO{
             //pstmt.setString(6, action.getDescription());
             pstmt.setString(6, action.getTypeAction());
             pstmt.setString(7, action.getTarget());
+            pstmt.setBoolean(8, action.getBlocked());
             //LOGGER.info("Insert into action");
             pstmt.execute();
             //LOGGER.info("Insert into action ok");

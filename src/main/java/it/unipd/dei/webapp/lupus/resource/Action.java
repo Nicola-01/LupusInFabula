@@ -16,8 +16,7 @@ import java.sql.SQLException;
  * @version 1.0
  * @since 1.0
  */
-public class Action extends AbstractResource implements Comparable
-{
+public class Action extends AbstractResource implements Comparable {
     /**
      * Represents a JSON file name.
      */
@@ -63,20 +62,24 @@ public class Action extends AbstractResource implements Comparable
      */
     private final String target;
 
+    /**
+     * If the action was blocked
+     */
+    private boolean blocked;
+
 
     /**
      * Constructor for the class
      *
-     * @param  typeAction  rapresent the name of the type of action
-     * @param  subphase subphase where it was the action
-     * @param  phase  phase where it was the action
-     * @param  round  round where it was the action
-     * @param  player player that make the action
-     * @param  target player that suffers the action
-     * @param  gameId numeric identifier for the game
+     * @param gameId     numeric identifier for the game
+     * @param player     player that make the action
+     * @param round      round where it was the action
+     * @param phase      phase where it was the action
+     * @param subphase   subphase where it was the action
+     * @param typeAction represent the name of the type of action
+     * @param target     player that suffers the action
      */
-    public Action(int gameId, String player, int round, int phase, int subphase , String typeAction, String target)
-    {
+    public Action(int gameId, String player, int round, int phase, int subphase, String typeAction, String target) {
         this.gameId = gameId;
         this.player = player;
         this.round = round;
@@ -84,8 +87,38 @@ public class Action extends AbstractResource implements Comparable
         this.subphase = subphase;
         this.typeAction = typeAction;
         this.target = target;
+        blocked = false;
     }
-    public Action(int gameId, String player, int round, int phase, String typeAction) {this(gameId, player, round, phase, 3, typeAction, null);}
+
+    /**
+     * Constructor for the class
+     *
+     * @param gameId     numeric identifier for the game
+     * @param player     player that make the action
+     * @param round      round where it was the action
+     * @param phase      phase where it was the action
+     * @param typeAction represent the name of the type of action
+     */
+    public Action(int gameId, String player, int round, int phase, String typeAction) {
+        this(gameId, player, round, phase, 0, typeAction, null);
+    }
+
+    /**
+     * Constructor for the class
+     *
+     * @param gameId     numeric identifier for the game
+     * @param player     player that make the action
+     * @param round      round where it was the action
+     * @param phase      phase where it was the action
+     * @param subphase   subphase where it was the action
+     * @param typeAction represent the name of the type of action
+     * @param target     player that suffers the action
+     * @param blocked    if the action was blocked
+     */
+    public Action(int gameId, String player, int round, int phase, int subphase, String typeAction, String target, boolean blocked) {
+        this(gameId, player, round, phase, subphase, typeAction, target);
+        this.blocked = blocked;
+    }
 
     /**
      * Constructs an Action object using the result set of a database query.
@@ -93,15 +126,14 @@ public class Action extends AbstractResource implements Comparable
      * @param r the result set representing the action data retrieved from the database
      * @throws SQLException if a database access error occurs
      */
-    public Action(ResultSet r) throws SQLException
-    {
+    public Action(ResultSet r) throws SQLException {
         this(r.getInt("game_id"),
-             r.getString("player_username"),
-             r.getInt("round"),
-             r.getInt("phase"),
-             r.getInt("subphase"),
-             r.getString("type_of_action"),
-             r.getString("target"));
+                r.getString("player_username"),
+                r.getInt("round"),
+                r.getInt("phase"),
+                r.getInt("subphase"),
+                r.getString("type_of_action"),
+                r.getString("target"));
     }
 
     /**
@@ -109,50 +141,72 @@ public class Action extends AbstractResource implements Comparable
      *
      * @return The gameId.
      */
-    public int getGameId() { return gameId; }
+    public int getGameId() {
+        return gameId;
+    }
 
     /**
      * Functions to get the player.
      *
      * @return The player.
      */
-    public String getPlayer() { return player; }
+    public String getPlayer() {
+        return player;
+    }
 
     /**
      * Functions to get the round.
      *
      * @return The round.
      */
-    public int getRound() { return round; }
+    public int getRound() {
+        return round;
+    }
 
     /**
      * Functions to get the phase.
      *
      * @return The phase.
      */
-    public int getPhase() { return phase; }
+    public int getPhase() {
+        return phase;
+    }
 
     /**
      * Functions to get the subphase.
      *
      * @return The subphase.
      */
-    public int getSubphase() { return subphase; }
+    public int getSubphase() {
+        return subphase;
+    }
 
     /**
      * Functions to get the typeAction.
      *
      * @return The typeAction.
      */
-    public String getTypeAction() { return typeAction; }
+    public String getTypeAction() {
+        return typeAction;
+    }
 
     /**
      * Functions to get the target.
      *
      * @return The target.
      */
-    public String getTarget() { return target; }
+    public String getTarget() {
+        return target;
+    }
 
+    /**
+     * Return if the action was blocked.
+     *
+     * @return if blocked.
+     */
+    public boolean getBlocked() {
+        return blocked;
+    }
 
 
     /**
@@ -161,16 +215,15 @@ public class Action extends AbstractResource implements Comparable
      * @param out the stream to which the JSON representation of the {@code Resource} has to be written.
      */
     @Override
-    protected void writeJSON(OutputStream out) throws Exception
-    {
+    protected void writeJSON(OutputStream out) throws Exception {
         JsonGenerator jg = JSON_FACTORY.createGenerator(out);
         jg.writeStartObject();
         jg.writeFieldName(JSON_NAME);
         jg.writeStartObject();
 
-        for(Field i : this.getClass().getDeclaredFields())
-            if(!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
-                if(i.getName().equals("phase"))
+        for (Field i : this.getClass().getDeclaredFields())
+            if (!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
+                if (i.getName().equals("phase"))
                     jg.writeObjectField(i.getName(), i.getInt(this) == GamePhase.NIGHT.getId() ? GamePhase.NIGHT.getName() : GamePhase.DAY.getName());
                 else
                     jg.writeObjectField(i.getName(), i.get(this));
@@ -182,20 +235,18 @@ public class Action extends AbstractResource implements Comparable
 
     /**
      * permit to compare 2 action
+     *
      * @param o another object to compile
-     * */
+     */
     @Override
-    public int compareTo(Object o)
-    {
-        if(o instanceof Action)
-        {
+    public int compareTo(Object o) {
+        if (o instanceof Action) {
             Action i = (Action) o;
             int r = Integer.compare(this.getRound(), i.getRound());
             int p = Integer.compare(this.getPhase(), i.getPhase()) * (-1);
             int sp = Integer.compare(this.getSubphase(), i.getSubphase());
 
             return r != 0 ? r : p != 0 ? p : sp;
-        }
-        else return -1;
+        } else return -1;
     }
 }
