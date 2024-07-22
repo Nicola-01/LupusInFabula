@@ -16,15 +16,14 @@ import java.util.ArrayList;
  * @version 1.0
  * @since 1.0
  */
-public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
-{
+public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT * "                                                     +
-                                            "FROM  action a "+
-                                            "WHERE a.game_id = ? "                                          +
-                                            "ORDER BY a.round ASC, a.phase DESC, a.subphase ASC";
+    private static final String STATEMENT = "SELECT * " +
+            "FROM  action a " +
+            "WHERE a.game_id = ? and a.blocked = false " +
+            "ORDER BY a.round ASC, a.phase DESC, a.subphase ASC";
     /**
      * The ID of the game to retrieve
      */
@@ -36,8 +35,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
      * @param con    the connection to the database.
      * @param gameID the ID of the game to retrieve.
      */
-    public GetActionByIdGameDAO(final Connection con, final int gameID)
-    {
+    public GetActionByIdGameDAO(final Connection con, final int gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -48,25 +46,21 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>>
      * @throws SQLException if there is an error executing the SQL statement
      */
     @Override
-    public final void doAccess() throws SQLException
-    {
+    public final void doAccess() throws SQLException {
         PreparedStatement query = null;
         ResultSet rs = null;
-        ArrayList<Action> r  = new ArrayList<>();
+        ArrayList<Action> r = new ArrayList<>();
 
-        try
-        {
+        try {
             query = con.prepareStatement(STATEMENT);
             query.setInt(1, gameID);
 
             rs = query.executeQuery();
 
             while (rs.next()) r.add(new Action(rs));
-        }
-        finally
-        {
+        } finally {
             if (query != null) query.close();
-            if (rs != null)    rs.close();
+            if (rs != null) rs.close();
         }
         LOGGER.info(String.format("Found for game with id %d, %d logs.", gameID, r.size()));
         this.outputParam = r;

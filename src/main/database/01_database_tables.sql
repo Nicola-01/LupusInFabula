@@ -46,7 +46,7 @@ CREATE TABLE User_tokens
 (
     token           CHAR(36) PRIMARY KEY,
     player_username VARCHAR(20),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (player_username) REFERENCES Player (username)
 );
 
@@ -172,6 +172,7 @@ CREATE TABLE Action
     subphase        SMALLINT                                 NOT NULL,
     type_of_action  VARCHAR(20)                              NOT NULL,
     target          VARCHAR(20) REFERENCES Player (username) NOT NULL,
+    blocked         BOOLEAN DEFAULT FALSE                    NOT NULL,
     PRIMARY KEY (game_id, player_username, round, phase, subphase, target),
     CHECK ((phase = 0 AND subphase = 0) OR (phase = 1 AND subphase >= 0))
 );
@@ -230,16 +231,19 @@ GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;
 
 -- Create a scheduled job to delete expired tokens every day at midnight
 CREATE OR REPLACE FUNCTION delete_expired_tokens()
-    RETURNS VOID AS $$
+    RETURNS VOID AS
+$$
 BEGIN
-    DELETE FROM User_tokens
+    DELETE
+    FROM User_tokens
     WHERE created_at < NOW() - INTERVAL '365 days'; -- Delete tokens older than 30 days
 END;
 $$ LANGUAGE plpgsql;
 
 -- Schedule the job to run daily at midnight
 CREATE OR REPLACE FUNCTION schedule_delete_job()
-    RETURNS VOID AS $$
+    RETURNS VOID AS
+$$
 BEGIN
     PERFORM pg_schedule_cron_job('delete_expired_tokens', '0 0 * * *');
 END;
