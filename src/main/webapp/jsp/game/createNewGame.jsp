@@ -24,10 +24,10 @@
 <main class="container">
     <h1>SELECT THE HABITANTS</h1>
     <div class="row">
-        <div class="col-sm-12 col-md-6 p-1 order-2 order-md-1">
+        <div class="col-sm-12 col-md-6 p-1 position-relative order-2 order-md-1">
             <div id="players" class="p-2 mb-5">
                 <h2 class="text-center my-2">HABITANTS IN GAME</h2>
-                <div class="playersTableContainer">
+                <div class="playersTableContainer mb-3">
                     <table id="players_tb" class="table table-striped mb-0">
                         <thead class="sticky-top top-0">
                         <tr>
@@ -41,12 +41,13 @@
                         </tbody>
                     </table>
                 </div>
+                <div id="playersCount">Total number of habitants: <span></span></div>
             </div>
         </div>
         <div class="col-sm-12 col-md-6 p-1 position-relative order-1 order-md-2">
             <div id="friends" class="p-2 mb-5">
                 <h2 class="text-center my-2">YOUR FRIENDS</h2>
-                <div class="friendsTableContainer">
+                <div class="friendsTableContainer mb-3">
                     <table id="friends_tb" class="table table-striped mb-0">
                         <thead class="sticky-top top-0">
                         <tr>
@@ -59,14 +60,13 @@
                         </tbody>
                     </table>
                 </div>
-                <br>
                 <jsp:include page="/jsp/utils/searchPlayer.jsp"/>
             </div>
         </div>
 
     </div>
     <h1 class="mt-4">SELECT THE ROLES</h1>
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-sm-12 col-md-6 col-lg-3 p-1">
             <div id="goodRoles" class="goodRoles p-3">
                 <h2>GOOD</h2>
@@ -87,8 +87,9 @@
                 <h2>VICTORY STEALER</h2>
             </div>
         </div>
+
+        <div id="rolesCount" class="col-12">Total number of roles: <span></span></div>
     </div>
-    <br>
     <c:import url="/jsp/utils/errorMessage.jsp"/>
     <div class="button-container">
         <button id="sendSettings" class="gradientButton">

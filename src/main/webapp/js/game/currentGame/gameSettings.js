@@ -68,3 +68,16 @@ function settingsCallback(req) {
         }
     }
 }
+
+// Add a document event listener for closing the settings
+document.addEventListener('click', function (event) {
+    // If there is a click outside settingsContainer and settingsContainer is visible, close it
+    if(event.target.id === "gameSettings" || event.target.parentElement.id === "gameSettings")
+        return;
+
+    if(event.target.id === "settingsContainer" || event.target.parentElement.id === "settingsContainer" )
+        return;
+
+    if (!document.getElementById("settingsContainer").classList.contains("d-none"))
+        document.getElementById("settingsContainer").classList.add("d-none")
+});
