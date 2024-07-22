@@ -224,7 +224,7 @@ function addToFriendsTable(username, commonGame, friendshipDate) {
 /**
  * Sends a request every 30 seconds to check friend availability.
  */
-setInterval(sendFriendAvailabilityRequest, 30000);
+// setInterval(sendFriendAvailabilityRequest, 30000);
 
 /**
  * Sends a GET request to check the availability of friends.

@@ -42,9 +42,11 @@ function HTML_switch(name) {
  */
 function HTML_number_input(name, max) {
     return "<div class='number_container'>\n" +
-        "  <button type='button' class='minus'><svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M6 12L18 12' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg></button>\n" +
-        "  <input type='number' class='number' id='" + name + "_roleCard_num' value='0' min='0' max='" + max + "' disabled>\n" +
-        "  <button type='button' class='add'><svg viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'><g id='SVGRepo_bgCarrier' stroke-width='0'></g><g id='SVGRepo_tracerCarrier' stroke-linecap='round' stroke-linejoin='round'></g><g id='SVGRepo_iconCarrier'> <path d='M6 12H18M12 6V18' stroke='#000000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'></path> </g></svg></button>\n" +
+        "  <div class='minus numberDisabled'><span class='minusSymbol'></span></div>\n" +
+        "  <div class='plus'><span class='plusSymbol'></span></div>\n" +
+        "  <div class='number'>\n" +
+        "    <span id='" + name + "_roleCard_num' class='numberDisabled' min='0' max='" + max + "'>0</span>\n" +
+        "  </div>\n" +
         "</div>"
 }
 
@@ -117,7 +119,7 @@ function fillFriends(req) {
 }
 
 // Sets an interval to send a request every 30 seconds to check player availability.
-setInterval(sendAvailabilityRequest, 30000);
+// setInterval(sendAvailabilityRequest, 30000);
 
 /**
  * Sends a GET request to retrieve player availability.
@@ -232,8 +234,8 @@ function fillGameSettings(req) {
                 numberContainers.forEach(container => {
                     // Get buttons and input field within the container
                     const minusButton = container.querySelector('.minus');
-                    const plusButton = container.querySelector('.add');
-                    const numberInput = container.querySelector('.number');
+                    const plusButton = container.querySelector('.plus');
+                    const numberInput = container.querySelector('.number span');
 
                     // Get maximum and minimum values from HTML attribute
                     const max = parseInt(numberInput.getAttribute('max'));
@@ -242,14 +244,28 @@ function fillGameSettings(req) {
                     // Add event listeners for plus and minus buttons
                     minusButton.addEventListener('click', () => {
                         // Decrease value of input field if greater than minimum
-                        if (parseInt(numberInput.value) > min)
-                            numberInput.value = parseInt(numberInput.value) - 1;
+                        if (parseInt(numberInput.innerText) > min) {
+                            numberInput.innerText = parseInt(numberInput.innerText) - 1;
+                            plusButton.classList.remove("numberDisabled");
+                        }
+                        if (parseInt(numberInput.innerText) === min) { // else not works properly
+                            minusButton.classList.add("numberDisabled");
+                            numberInput.classList.add("numberDisabled");
+                            container.classList.remove("numberSelected");
+                        }
                         enableButton()
                     });
                     plusButton.addEventListener('click', () => {
                         // Increase value of input field if less than maximum
-                        if (parseInt(numberInput.value) < max)
-                            numberInput.value = parseInt(numberInput.value) + 1;
+                        if (parseInt(numberInput.innerText) < max) {
+                            numberInput.innerText = parseInt(numberInput.innerText) + 1;
+                            minusButton.classList.remove("numberDisabled");
+                            numberInput.classList.remove("numberDisabled")
+                            container.classList.add("numberSelected");
+                        }
+                        if (parseInt(numberInput.innerText) === max)
+                            plusButton.classList.add("numberDisabled");
+
                         enableButton()
                     });
                 });
@@ -274,7 +290,7 @@ function enableButton() {
 
     for (let i = 0; i < role_card.length; i++) {
         if (role_card[i].id.includes("_num"))
-            totRoles += parseInt(role_card[i].value);
+            totRoles += parseInt(role_card[i].innerText);
         else
             totRoles += role_card[i].checked ? 1 : 0;
     }
@@ -298,7 +314,7 @@ function sendSettings() {
         if (role_card[i].id.includes("_num")) {
             // Extract role and cardinality from numerical input fields
             role = role_card[i].id.replace('_roleCard_num', '');
-            cardinality = parseInt(role_card[i].value);
+            cardinality = parseInt(role_card[i].innerText);
         } else {
             // Extract role and cardinality from switch input fields
             role = role_card[i].id.replace('_roleCard_switch', '');
@@ -338,7 +354,7 @@ function gameCreation(req) {
             // Handle errors and display error messages
             let message = getMessage(req)
             if (message != null)
-                populateErrorMessage(".errorMessage",message.message, message.errorCode, message.errorDetails);
+                populateErrorMessage(".errorMessage", message.message, message.errorCode, message.errorDetails);
             else {
                 // Parse and display multiple error messages
                 let listMsg = JSON.parse(req.responseText)[JSON_resource_list];
@@ -384,7 +400,7 @@ function addPlayerTableHint() {
 function removePlayersTableHint() {
     const tbody = document.getElementById("players_tb").querySelector("tbody")
     const rows = tbody.rows;
-    if(rows.length === 0)
+    if (rows.length === 0)
         return;
     if (rows[0].hasAttribute('noPlayers'))
         rows[0].remove()
