@@ -285,8 +285,11 @@ function fillGameSettings(req) {
 function enableButton() {
     const role_card = document.querySelectorAll('[id*="_roleCard"]');
     let totRoles = 0;
+    let totPlayer = 0;
 
-    let totPlayer = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
+    if(!document.querySelectorAll('#players_tb tr')[1].hasAttribute("noplayers"))
+        totPlayer = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
+
 
     for (let i = 0; i < role_card.length; i++) {
         if (role_card[i].id.includes("_num"))
@@ -294,6 +297,9 @@ function enableButton() {
         else
             totRoles += role_card[i].checked ? 1 : 0;
     }
+
+    document.querySelector("#playersCount span").innerText = totPlayer;
+    document.querySelector("#rolesCount span").innerText = totRoles;
 
     document.getElementById("sendSettings").disabled = !(totPlayer >= 5 && totPlayer === totRoles);
 }

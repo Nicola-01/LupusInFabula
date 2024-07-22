@@ -4,6 +4,12 @@ h2:not(#players h2):not(#friends h2) {
     height: 75px;
 }
 
+@media (max-width: 992px) {
+    h2:not(#players h2):not(#friends h2) {
+        height: 40px;
+    }
+}
+
 #players, #friends {
     background-color: var(--bg-second-color);
     width: 100%;
@@ -22,6 +28,20 @@ h2:not(#players h2):not(#friends h2) {
     overflow: auto;
 }
 
+#rolesCount, #playersCount {
+    font-size: 1.3em;
+    text-align: center;
+    margin-top: 8px;
+}
+
+#rolesCount span, #playersCount span {
+    font-weight: bold;
+}
+
+#playersCount {
+    position: absolute;
+    width: calc(100% - 16px);
+}
 
 /*remove player*/
 .removePlayer {
