@@ -2,6 +2,7 @@ package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
+import it.unipd.dei.webapp.lupus.rest.GameCreationPostRR;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -12,7 +13,7 @@ import java.util.List;
 
 /**
  * Represents a role and its associated cardinality.<br>
- * Is used to store information about a role and its cardinality, used in {@link it.unipd.dei.webapp.lupus.rest.GameSettingsPostRR}.
+ * Is used to store information about a role and its cardinality, used in {@link GameCreationPostRR}.
  *
  * @author LupusInFabula Group
  * @version 1.0

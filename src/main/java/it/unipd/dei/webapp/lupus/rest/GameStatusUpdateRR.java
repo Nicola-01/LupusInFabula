@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import org.json.JSONObject;
 
 /**
- * Handles the game settings update REST request.
+ * Handles the game status update REST request.
  * This class is responsible for handling HTTP requests that update game settings,
  * such as ending the game or reverting to the previous round.
  *
@@ -28,7 +28,7 @@ import org.json.JSONObject;
  * @version 1.0
  * @since 1.0
  */
-public class GameSettingsUpdateRR extends AbstractRR {
+public class GameStatusUpdateRR extends AbstractRR {
 
     /**
      * The ID of the game.
@@ -43,7 +43,7 @@ public class GameSettingsUpdateRR extends AbstractRR {
      * @param ds     the dataSource for the connection.
      * @param gameID the ID of the game
      */
-    public GameSettingsUpdateRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
+    public GameStatusUpdateRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
         super(Actions.GET_GAME_CONFIGURATION, req, res, ds);
 
         this.gameID = gameID;
@@ -84,7 +84,7 @@ public class GameSettingsUpdateRR extends AbstractRR {
                     res.setStatus(ec.getHTTPCode());
                     Message message = new Message("Game already ended", ec.getErrorCode(), ec.getErrorMessage());
                     message.toJSON(res.getOutputStream());
-                    LOGGER.error(message);
+                    LOGGER.error(message.getMessage());
                 }
                 break;
 
@@ -95,7 +95,7 @@ public class GameSettingsUpdateRR extends AbstractRR {
                     Message message = new Message("Game already ended or just started", ec.getErrorCode(),
                             "If the game has ended or if you are in the first night, you cannot go to the previous phase.");
                     message.toJSON(res.getOutputStream());
-                    LOGGER.error(message);
+                    LOGGER.error(message.getMessage());
                 }
                 break;
 
@@ -104,7 +104,7 @@ public class GameSettingsUpdateRR extends AbstractRR {
                 res.setStatus(ec.getHTTPCode());
                 Message message = new Message("Invalid setting", ec.getErrorCode(), "The setting " + value + " is invalid.");
                 message.toJSON(res.getOutputStream());
-                LOGGER.error(message);
+                LOGGER.error(message.getMessage());
                 break;
         }
     }
@@ -130,13 +130,10 @@ public class GameSettingsUpdateRR extends AbstractRR {
      */
     private boolean endGame() throws SQLException {
         Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
-        int currentRound = game.getRounds() == 0 ? 1 : game.getRounds();
-        int currentPhase = game.getPhase();
-
-        if (currentPhase > 0)
+        if (game.getWho_win() != WinFaction.NOT_FINISH.getId())
             return false;
 
-        new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, WinFaction.DRAW.getId()).access();
+        new UpdateGameDAO(ds.getConnection(), gameID, game.getPhase(), game.getRounds(), WinFaction.DRAW.getId()).access();
         return true;
     }
 

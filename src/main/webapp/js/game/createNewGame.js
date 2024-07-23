@@ -10,7 +10,7 @@
 // when the DOM content is fully loaded.
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("sendSettings").addEventListener("click", sendSettings);
-    genericGETRequest(contextPath + "game/settings", fillGameSettings)
+    genericGETRequest(contextPath + "game/create", fillGameSettings)
     genericGETRequest(contextPath + "user/me/friend", fillFriends)
 
     document.getElementById("sendSettings").disabled = true;
@@ -341,7 +341,7 @@ function sendSettings() {
 
     // Create JSON object containing role cardinalities and player usernames
     const json = {roleCardinality, player};
-    genericPOSTRequest(contextPath + "game/settings", JSON.stringify(json), gameCreation)
+    genericPOSTRequest(contextPath + "game/create", JSON.stringify(json), gameCreation)
 }
 
 /**

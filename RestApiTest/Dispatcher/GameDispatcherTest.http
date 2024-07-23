@@ -16,14 +16,14 @@ password = ciao
 POST http://localhost:8080/lupus/logout HTTP/1.1
 
 ###
-GET http://localhost:8080/lupus/game/settings
+GET http://localhost:8080/lupus/game/create
 
 ###
-POST http://localhost:8080/lupus/game/settings
+POST http://localhost:8080/lupus/game/create
 Content-Type: application/json
 
 ###
-PUT http://localhost:8080/lupus/game/settings
+PUT http://localhost:8080/lupus/game/create
 Content-Type: application/json
 
 ### REQUIRED populate_db_optional.aaa

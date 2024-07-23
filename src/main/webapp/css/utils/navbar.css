@@ -193,7 +193,7 @@
 .hamburger {
     width: 20px;
     height: 2px;
-    background: white;
+    background: var(--bs-navbar-active-color);
     display: block;
     position: absolute;
     top: 50%;

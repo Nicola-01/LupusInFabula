@@ -10,7 +10,7 @@
 <html lang="en">
 
 <head>
-    <title>LiF - New village</title>
+    <title>Lupus - New village</title>
     <c:import url="/jsp/include/head.jsp"/>
 
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/game/createNewGame.css">
