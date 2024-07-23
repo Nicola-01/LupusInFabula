@@ -44,7 +44,7 @@ public class GameStatusUpdateRR extends AbstractRR {
      * @param gameID the ID of the game
      */
     public GameStatusUpdateRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
-        super(Actions.GET_GAME_CONFIGURATION, req, res, ds);
+        super(Actions.GAME_STATUS_UPDATE, req, res, ds);
 
         this.gameID = gameID;
     }

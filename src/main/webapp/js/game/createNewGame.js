@@ -10,7 +10,8 @@
 // when the DOM content is fully loaded.
 document.addEventListener('DOMContentLoaded', function (event) {
     document.getElementById("sendSettings").addEventListener("click", sendSettings);
-    genericGETRequest(contextPath + "game/create", fillGameSettings)
+    genericGETRequest(contextPath + "game/create", fillGameRoles)
+    genericGETRequest(contextPath + "game/settings", fillGameSettings)
     genericGETRequest(contextPath + "user/me/friend", fillFriends)
 
     document.getElementById("sendSettings").disabled = true;
@@ -27,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
  */
 function HTML_switch(name) {
     return "<label class='toggle-switch'>" +
-        "  <input type='checkbox' id='" + name + "_roleCard_switch'>" +
+        "  <input type='checkbox' id='" + name + "'>" +
         "  <div class='toggle-switch-background'>" +
         "    <div class='toggle-switch-handle'></div>" +
         "  </div>\n" +
@@ -177,10 +178,10 @@ function checkBoxPress(checkbox) {
 }
 
 /**
- * Fills the game settings form with data from the server response.
+ * Fills the game roles form with data from the server response.
  * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the server response.
  */
-function fillGameSettings(req) {
+function fillGameRoles(req) {
     if (req.readyState === XMLHttpRequest.DONE) {
         if (req.status === HTTP_STATUS_OK) {
             let list = JSON.parse(req.responseText)[JSON_resource_list]
@@ -225,7 +226,7 @@ function fillGameSettings(req) {
 
                     // Populate the div element with role data
                     if (role.max_number === 1)
-                        targetDiv.innerHTML += "<div class='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name) + "</div>";
+                        targetDiv.innerHTML += "<div class='role'>" + capitalizeFirstLetter(role.name) + HTML_switch(role.name + "_roleCard_switch") + "</div>";
                     else
                         targetDiv.innerHTML += "<div class='role'>" + capitalizeFirstLetter(role.name) + HTML_number_input(role.name, role.max_number) + "</div>";
                 }
@@ -279,6 +280,40 @@ function fillGameSettings(req) {
 }
 
 /**
+ * Fills the game settings form with data from the server response.
+ * @param {XMLHttpRequest} req - The XMLHttpRequest object containing the server response.
+ */
+function fillGameSettings(req) {
+    if (req.readyState === XMLHttpRequest.DONE) {
+        if (req.status === HTTP_STATUS_OK) {
+            let list = JSON.parse(req.responseText)[JSON_resource_list]
+
+            if (list == null) {
+                alert("No game settings available");
+                return;
+            }
+
+            const otherGameSettings = document.getElementById("otherGameSettings");
+
+            for (let i = 0; i < list.length; i++) {
+                let setting = list[i]['setting'];
+                let container = document.createElement("div");
+                container.classList.add("role", "p-0");
+
+                let span = document.createElement("span");
+                span.innerText = setting.description;
+
+                container.innerHTML = HTML_switch(setting.setting_name + "_setting");
+                container.prepend(span);
+
+                otherGameSettings.appendChild(container);
+            }
+
+        }
+    }
+}
+
+/**
  * Enables or disables the "sendSettings" button based on the number of players and roles.
  * The button is enabled if there are at least 5 players and the total number of roles matches the number of players.
  */
@@ -287,7 +322,7 @@ function enableButton() {
     let totRoles = 0;
     let totPlayer = 0;
 
-    if(!document.querySelectorAll('#players_tb tr')[1].hasAttribute("noplayers"))
+    if (!document.querySelectorAll('#players_tb tr')[1].hasAttribute("noplayers"))
         totPlayer = document.getElementById('players_tb').querySelectorAll('tr').length - 1;
 
 
@@ -339,8 +374,19 @@ function sendSettings() {
         player.push({username});
     }
 
+    // recover settings
+    const otherGameSettings = document.querySelectorAll('[id*="_setting"]');
+    const gameSettings = [];
+
+    for (let i = 0; i < otherGameSettings.length; i++) {
+        // Extract role and cardinality from switch input fields
+        let setting = otherGameSettings[i].id.replace('_setting', '');
+        let status = otherGameSettings[i].checked;
+        gameSettings.push({setting, status});
+    }
+
     // Create JSON object containing role cardinalities and player usernames
-    const json = {roleCardinality, player};
+    const json = {roleCardinality, player, gameSettings};
     genericPOSTRequest(contextPath + "game/create", JSON.stringify(json), gameCreation)
 }
 
