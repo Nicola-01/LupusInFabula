@@ -78,6 +78,6 @@ document.addEventListener('click', function (event) {
     if(event.target.id === "settingsContainer" || event.target.parentElement.id === "settingsContainer" )
         return;
 
-    if (!document.getElementById("settingsContainer").classList.contains("d-none"))
+    if (document.getElementById("settingsContainer") && !document.getElementById("settingsContainer").classList.contains("d-none"))
         document.getElementById("settingsContainer").classList.add("d-none")
 });

@@ -8,7 +8,7 @@
     <script src="${pageContext.request.contextPath}/js/pageNotFound.js"></script>
 
     <c:import url="/jsp/include/head.jsp"/>
-    <title>Lupus - page not found</title>
+    <title>Lif - Page not found</title>
 </head>
 <body>
 

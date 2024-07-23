@@ -1,9 +1,10 @@
 SET TIME ZONE 'Europe/Rome';
 
 DROP TABLE IF EXISTS Action;
-DROP TABLE IF EXISTS TYPE_ACTION;
-DROP TABLE IF EXISTS HAS_ROLES;
 DROP TABLE IF EXISTS PLAYS_AS_IN;
+DROP TABLE IF EXISTS GAME_ROLES;
+DROP TABLE IF EXISTS SETTINGS_IN_GAME;
+DROP TABLE IF EXISTS game_settings;
 DROP TABLE IF EXISTS Game;
 DROP TABLE IF EXISTS Role;
 DROP TABLE IF EXISTS IS_FRIEND_WITH;
@@ -158,6 +159,28 @@ COMMENT ON COLUMN PLAYS_AS_IN.duration_of_life IS 'The duration of of life of th
 
 
 -- #################################################################################################
+-- ## Creation of the table GAME_ROLES                                                            ##
+-- #################################################################################################
+--
+-- This table represents the roles assigned to each game
+
+CREATE TABLE GAME_ROLES
+(
+    game_id         SERIAL REFERENCES Game (ID),
+    role            VARCHAR(20) REFERENCES Role (name),
+    min_cardinality SMALLINT,
+    max_cardinality SMALLINT,
+    PRIMARY KEY (game_id, role)
+);
+
+COMMENT ON TABLE GAME_ROLES IS 'Represents the roles assigned to each game.';
+COMMENT ON COLUMN GAME_ROLES.game_id IS 'The ID of the game.';
+COMMENT ON COLUMN GAME_ROLES.role IS 'The name of the role assigned to the game.';
+COMMENT ON COLUMN GAME_ROLES.min_cardinality IS 'The minimum number of players required for this role in the game.';
+COMMENT ON COLUMN GAME_ROLES.max_cardinality IS 'The maximum number of players allowed for this role in the game.';
+
+
+-- #################################################################################################
 -- ## Creation of the table Action                                                                ##
 -- #################################################################################################
 --
@@ -187,6 +210,41 @@ COMMENT ON COLUMN Action.type_of_action IS 'The type of action performed by the 
 COMMENT ON COLUMN Action.target IS 'The username of the target player of the action.';
 
 
+-- #################################################################################################
+-- ## Creation of the table Game_settings                                                         ##
+-- #################################################################################################
+--
+-- This table represents the settings available in the game
+
+CREATE TABLE Game_settings
+(
+    setting_name VARCHAR(20) PRIMARY KEY,
+    description  CHARACTER VARYING
+);
+
+COMMENT ON TABLE Game_settings IS 'Represents the settings available in the game.';
+COMMENT ON COLUMN Game_settings.setting_name IS 'The name of the setting.';
+COMMENT ON COLUMN Game_settings.description IS 'A description of the setting.';
+
+
+-- #################################################################################################
+-- ## Creation of the table SETTINGS_IN_GAME                                                      ##
+-- #################################################################################################
+--
+-- This table represents the settings applied to each game
+
+CREATE TABLE SETTINGS_IN_GAME
+(
+    game_id SERIAL REFERENCES Game (ID),
+    setting VARCHAR(20) REFERENCES Game_settings (setting_name),
+    enable  BOOLEAN DEFAULT FALSE
+);
+
+COMMENT ON TABLE SETTINGS_IN_GAME IS 'Represents the settings applied to each game.';
+COMMENT ON COLUMN SETTINGS_IN_GAME.game_id IS 'The ID of the game.';
+COMMENT ON COLUMN SETTINGS_IN_GAME.setting IS 'The name of the setting applied to the game.';
+COMMENT ON COLUMN SETTINGS_IN_GAME.enable IS 'Indicates whether the setting is enabled for the game (TRUE) or not (FALSE).';
+
 
 -- #################################################################################################
 -- ## Create a user used by the webapp                                                            ##
@@ -210,6 +268,8 @@ $$
             REVOKE ALL PRIVILEGES ON TABLE game FROM lupus_sql;
             REVOKE ALL PRIVILEGES ON TABLE player FROM lupus_sql;
             REVOKE ALL PRIVILEGES ON TABLE plays_as_in FROM lupus_sql;
+            REVOKE ALL PRIVILEGES ON TABLE user_tokens FROM lupus_sql;
+            REVOKE ALL PRIVILEGES ON TABLE GAME_ROLES FROM lupus_sql;
 
             -- Drop the lupus_sql role
             DROP ROLE lupus_sql;
@@ -226,7 +286,8 @@ CREATE ROLE lupus_sql LOGIN PASSWORD 'wolf';
 GRANT SELECT, INSERT, UPDATE ON game, player, plays_as_in TO lupus_sql;
 GRANT SELECT, INSERT, UPDATE, DELETE ON action, is_friend_with TO lupus_sql;
 GRANT SELECT, INSERT, DELETE ON user_tokens TO lupus_sql;
-GRANT SELECT ON role TO lupus_sql;
+GRANT SELECT ON role, game_settings TO lupus_sql;
+GRANT SELECT, INSERT ON GAME_ROLES, SETTINGS_IN_GAME TO lupus_sql;
 GRANT USAGE, SELECT, UPDATE ON SEQUENCE game_id_seq TO lupus_sql;
 
 -- Create a scheduled job to delete expired tokens every day at midnight

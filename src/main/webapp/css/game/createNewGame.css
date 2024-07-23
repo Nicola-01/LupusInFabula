@@ -10,11 +10,11 @@ h2:not(#players h2):not(#friends h2) {
     }
 }
 
-#players, #friends {
+#players, #friends, #otherGameSettings {
     background-color: var(--bg-second-color);
-    width: 100%;
+    /*width: 100%;*/
     height: 100%;
-    border-radius: 0.5rem;
+    border-radius: 1rem;
 }
 
 /*tables*/
@@ -296,6 +296,7 @@ input::-webkit-inner-spin-button {
 }
 
 .goodRoles > .role:not(:last-child), .evilRoles > .role:not(:last-child),
-.neutralRoles > .role:not(:last-child), .victoryStealerRoles > .role:not(:last-child) {
+.neutralRoles > .role:not(:last-child), .victoryStealerRoles > .role:not(:last-child),
+#otherGameSettings > .role:not(:last-child) {
     margin-bottom: .7em;
 }
