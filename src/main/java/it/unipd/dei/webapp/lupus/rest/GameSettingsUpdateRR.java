@@ -19,7 +19,7 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-/*
+/**
  * Handles the game settings update REST request.
  * This class is responsible for handling HTTP requests that update game settings,
  * such as ending the game or reverting to the previous round.

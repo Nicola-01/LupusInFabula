@@ -5,7 +5,7 @@
 <html lang="en">
 
 <head>
-    <title>Lupus In Fabula - Logs and Statistics of user</title>
+    <title>LiF - Logs&Stats</title>
     <c:import url="/jsp/include/head.jsp"/>
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/user/userStatistics.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/utils/searchPlayer.css">

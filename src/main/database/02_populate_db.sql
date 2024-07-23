@@ -20,3 +20,8 @@ VALUES ('master', -1, -1, 1, 'The player who runs the game'),
        ('jester', 2, 3, 1, 'The Jester wins, alone, if he is burnt at the stake.'),
        ('illusionist', 3, 1, 1, 'He chooses a player during the night and blocks his power for that night.'),
        ('plague spreader', 3, 0, 1, 'He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right).');
+
+INSERT INTO game_settings
+VALUES ('master-free', 'Master-Free: No player is the master, each user chooses the target autonomously'),
+       ('illusionistBlock', 'Illusionist block: If a player is blocked by the illusionist he does not know it'),
+       ('largerRoleNumber', 'Insert more roles than players, to give more randomness');

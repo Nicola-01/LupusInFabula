@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>User</title>
+    <title>LiF - Personal Area</title>
     <c:import url="/jsp/include/head.jsp"/>
 
     <link type="text/css" rel="stylesheet" href="${pageContext.request.contextPath}/css/user/user.css">
