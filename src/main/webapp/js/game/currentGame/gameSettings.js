@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     const gameSettings = document.getElementById("gameSettings");
     if (gameSettings) {
         gameSettings.addEventListener('click', showSettings)
-        $("#settingsContainer > button").on('click', sendGameSettings);
+        $("#settingsContainer > button").on('click', sendGameStatusUpdate);
     }
 })
 
@@ -20,7 +20,7 @@ function showSettings() {
  *
  * @param {Event} event - The event object representing the button click.
  */
-function sendGameSettings(event) {
+function sendGameStatusUpdate(event) {
     let text;
     switch (event.target.value) {
         case "skipDay":
@@ -49,7 +49,7 @@ function sendGameSettings(event) {
  * Sends the appropriate game settings request to the server based on the modal body text.
  */
 function modalConfirmEvent() {
-    genericPOSTRequest(`${contextPath}game/settings/${gameID}`, JSON.stringify({"settings": getModalButtonValue()}), settingsCallback)
+    genericPUTRequest(`${contextPath}game/update/${gameID}`, JSON.stringify({"settings": getModalButtonValue()}), settingsCallback)
 }
 
 /**

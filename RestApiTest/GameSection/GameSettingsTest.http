@@ -7,7 +7,7 @@ password = newGame
 
 ### PLAYER NOT EXIST
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -67,7 +67,7 @@ Content-Type: application/json
 
 ### NOT VALID JSON
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -127,7 +127,7 @@ Content-Type: application/json
 
 ### ROLE NOT EXIST
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -187,7 +187,7 @@ Content-Type: application/json
 
 ### NUMBERS OF PLAYERS AND ROLES NOT CORRESPONDS
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -247,7 +247,7 @@ Content-Type: application/json
 
 ### INCORRECT CARDINALITY
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -307,7 +307,7 @@ Content-Type: application/json
 
 ### PLAYER ALREADY IN GAME
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -367,7 +367,7 @@ Content-Type: application/json
 
 ### CORRECT GAME
 
-POST http://localhost:8080/lupus/game/settings HTTP/1.1
+POST http://localhost:8080/lupus/game/create HTTP/1.1
 Content-Type: application/json
 
 {
@@ -426,4 +426,4 @@ Content-Type: application/json
 }
 
 ###
-GET http://localhost:8080/lupus/game/settings HTTP/1.1
+GET http://localhost:8080/lupus/game/create HTTP/1.1

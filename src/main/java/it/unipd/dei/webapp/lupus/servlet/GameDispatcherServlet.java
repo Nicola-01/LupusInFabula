@@ -3,7 +3,6 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
-import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
@@ -96,8 +95,8 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return false;
 
         // supported links:
-        // GET  /game/settings
-        // POST /game/settings
+        // GET  /game/create
+        // POST /game/create
 
         // POST /game/actions/{gameID}
         // GET /game/status/{gameID}
@@ -109,22 +108,22 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
 
         path = path.substring(path.lastIndexOf("/game") + 5);
 
-        // GET  /game/settings
-        // POST /game/settings
+        // GET  /game/create
+        // POST /game/create
         // -> /setting
-        if (path.equals("/settings")) {
+        if (path.equals("/create")) {
             switch (method) {
                 case "GET":
-                    new GameSettingsGetRR(req, res, getDataSource()).serve();
+                    new GameCreationGetRR(req, res, getDataSource()).serve();
                     break;
                 case "POST":
-                    new GameSettingsPostRR(req, res, getDataSource()).serve();
+                    new GameCreationPostRR(req, res, getDataSource()).serve();
                     break;
                 default:
-                    LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method);
+                    LOGGER.warn("Unsupported operation for URI /game/create: %s.", method);
 
                     ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
-                    m = new Message("Unsupported operation for URI /game/settings.", ec.getErrorCode(),
+                    m = new Message("Unsupported operation for URI /game/create.", ec.getErrorCode(),
                             String.format("Requested operation %s, but required GET or POST.", method));
                     res.setStatus(ec.getHTTPCode());
 
@@ -215,15 +214,15 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
-        String[] acceptURL = {"status", "configuration", "settings", "players", "logs"};
+        String[] acceptURL = {"status", "configuration", "update", "players", "logs"};
         if (!Arrays.asList(acceptURL).contains(requestURI))
             return false;
 
         boolean invalid = false;
 
-        if (requestURI.equals("settings")) {
-            if (method.equals("POST")){
-                new GameSettingsUpdateRR(req, res, getDataSource(), gameID).serve();
+        if (requestURI.equals("update")) {
+            if (method.equals("PUT")){
+                new GameStatusUpdateRR(req, res, getDataSource(), gameID).serve();
                 return true;
             }
             invalid = true;

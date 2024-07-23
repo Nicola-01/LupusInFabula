@@ -10,18 +10,17 @@ import jakarta.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Handles the GET request for /game/settings.
+ * Handles the GET request for /game/create.
  * Returns all the roles that can be used into a game.
  *
  * @author LupusInFabula Group
  * @version 1.0
  * @since 1.0
  */
-public class GameSettingsGetRR extends AbstractRR {
+public class GameCreationGetRR extends AbstractRR {
 
     /**
      * Creates a new GameSettingsGet REST resource.
@@ -30,7 +29,7 @@ public class GameSettingsGetRR extends AbstractRR {
      * @param res the HTTP response.
      * @param ds the dataSource for the connection.
      */
-    public GameSettingsGetRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+    public GameCreationGetRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.GET_SETTINGS_ACTION, req, res, ds);
     }
 

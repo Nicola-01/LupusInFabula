@@ -20,14 +20,14 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * Handles the POST request for /game/settings.
+ * Handles the POST request for /game/create.
  * Get the game setting, i.e., the players and the number of roles, check if they are correct, and if so, create the game.
  *
  * @author LupusInFabula Group
  * @version 1.0
  * @since 1.0
  */
-public class GameSettingsPostRR extends AbstractRR {
+public class GameCreationPostRR extends AbstractRR {
 
     /**
      * Creates a new GameSettingsPost REST resource.
@@ -36,7 +36,7 @@ public class GameSettingsPostRR extends AbstractRR {
      * @param res the HTTP response.
      * @param ds  the dataSource for the connection.
      */
-    public GameSettingsPostRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+    public GameCreationPostRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
         super(Actions.POST_SETTINGS_ACTION, req, res, ds);
     }
 
@@ -164,7 +164,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     m.toJSON(res.getOutputStream());
 
                     LOGGER.warn("Not enough players, player number: %d minimum required 5", totalPlayers);
-//                    request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, res);
+//                    request.getRequestDispatcher("/jsp/game/create.jsp").forward(request, res);
                 }
                 // check if role setting respect the cardinality
                 else if (!isValidRolesCardinality(selectedRoles, realRoles).isEmpty()) {
@@ -237,7 +237,7 @@ public class GameSettingsPostRR extends AbstractRR {
                     messages.get(0).toJSON(res.getOutputStream());
                 else
                     new ResourceList<>(messages).toJSON(res.getOutputStream());
-//                request.getRequestDispatcher("/jsp/game/settings.jsp").forward(request, response);
+//                request.getRequestDispatcher("/jsp/game/create.jsp").forward(request, response);
             }
         } catch (IOException e) {
             ErrorCode ec = ErrorCode.INVALID_JSON_FORMAT;
