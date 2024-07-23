@@ -93,33 +93,6 @@
 
     <h1 class="mt-4">OTHER GAME SETTINGS</h1>
     <div id="otherGameSettings" class="row mb-3 p-3">
-        <div class="role col-12 col-lg-6 p-0 p-lg-2">
-            <span>Master-free (not implemented yet)</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="masterFree_setting">
-                <div class="toggle-switch-background">
-                    <div class="toggle-switch-handle"></div>
-                </div>
-            </label>
-        </div>
-
-        <div class="role col-12 col-lg-6 p-0 p-lg-2">
-            <span>Who was blocked by the illusionist knows it</span>
-            <label class="toggle-switch"> <input type="checkbox" id="illusionist_setting">
-                <div class="toggle-switch-background">
-                    <div class="toggle-switch-handle"></div>
-                </div>
-            </label>
-        </div>
-
-        <div class="role col-12 col-lg-6 p-0 p-lg-2">
-            <span>Number of roles greater than the number of habitants</span>
-            <label class="toggle-switch"> <input type="checkbox" id="number_setting">
-                <div class="toggle-switch-background">
-                    <div class="toggle-switch-handle"></div>
-                </div>
-            </label>
-        </div>
     </div>
 
     <c:import url="/jsp/utils/errorMessage.jsp"/>

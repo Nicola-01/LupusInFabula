@@ -114,7 +114,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         if (path.equals("/create")) {
             switch (method) {
                 case "GET":
-                    new GameCreationGetRR(req, res, getDataSource()).serve();
+                    new GameRolesGetRR(req, res, getDataSource()).serve();
                     break;
                 case "POST":
                     new GameCreationPostRR(req, res, getDataSource()).serve();
@@ -128,6 +128,24 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
                     res.setStatus(ec.getHTTPCode());
 
                     m.toJSON(res.getOutputStream());
+            }
+            return true;
+        }
+
+        // GET  /game/settings
+        // -> /setting
+        if (path.equals("/settings")) {
+            if (method.equals("GET")) {
+                new GameSettingsGetRR(req, res, getDataSource()).serve();
+            } else {
+                LOGGER.warn("Unsupported operation for URI /game/settings: %s.", method);
+
+                ErrorCode ec = ErrorCode.METHOD_NOT_ALLOWED;
+                m = new Message("Unsupported operation for URI /game/settings.", ec.getErrorCode(),
+                        String.format("Requested operation %s, but required GET.", method));
+                res.setStatus(ec.getHTTPCode());
+
+                m.toJSON(res.getOutputStream());
             }
             return true;
         }

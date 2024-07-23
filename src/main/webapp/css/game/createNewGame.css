@@ -92,10 +92,13 @@ h2:not(#players h2):not(#friends h2) {
 }
 
 .addCheckbox:checked + .checkbox-label {
-    background-color: #afd3e8;
+    /*background-color: #afd3e8;*/
     transform: rotate(45deg);
 }
 
+.addCheckbox:checked + .checkbox-label .addButton {
+    stroke: var(--red-color);
+}
 
 /*ARROWS*/
 .arrows-container {

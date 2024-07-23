@@ -96,14 +96,14 @@ public final class Actions {
     public static final String SIGNUP_ACTION = "SIGNUP_ACTION";
 
     /**
-     * GET request of game settings.
+     * GET request of game rpòes.
      */
-    public static final String GET_SETTINGS_ACTION = "GET_SETTINGS_ACTION";
+    public static final String GET_ROLES = "GET_ROLES";
 
     /**
-     * POST request of game settings.
+     * POST request of game creation.
      */
-    public static final String POST_SETTINGS_ACTION = "POST_SETTINGS_ACTION";
+    public static final String POST_GAME_CREATION = "POST_GAME_CREATION";
 
     /**
      * GET game configuration.
@@ -111,9 +111,14 @@ public final class Actions {
     public static final String GET_GAME_CONFIGURATION = "GET_GAME_CONFIGURATION";
 
     /**
+     * PUT update game status.
+     */
+    public static final String GAME_STATUS_UPDATE = "GAME_STATUS_UPDATE";
+
+    /**
      * POST game settings.
      */
-    public static final String GAME_SETTINGS = "GAME_SETTINGS";
+    public static final String GET_SETTINGS = "GET_SETTINGS";
 
 
     /**

@@ -37,7 +37,7 @@ public class GameCreationPostRR extends AbstractRR {
      * @param ds  the dataSource for the connection.
      */
     public GameCreationPostRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
-        super(Actions.POST_SETTINGS_ACTION, req, res, ds);
+        super(Actions.POST_GAME_CREATION, req, res, ds);
     }
 
     @Override
@@ -75,6 +75,11 @@ public class GameCreationPostRR extends AbstractRR {
             stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
             List<String> givenPlayers = Player.fromJSON(stream);
             List<String> selectedPlayers = new ArrayList<>();
+
+            stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
+            List<Setting> givenSettings = Setting.fromJSON(stream);
+            givenSettings.removeIf(setting -> !setting.isEnable());
+            // todo : to finish
 
             // recover all roles, and remove the master
             List<Role> realRoles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();

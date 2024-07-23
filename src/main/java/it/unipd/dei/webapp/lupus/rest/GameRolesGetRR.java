@@ -20,7 +20,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-public class GameCreationGetRR extends AbstractRR {
+public class GameRolesGetRR extends AbstractRR {
 
     /**
      * Creates a new GameSettingsGet REST resource.
@@ -29,8 +29,8 @@ public class GameCreationGetRR extends AbstractRR {
      * @param res the HTTP response.
      * @param ds the dataSource for the connection.
      */
-    public GameCreationGetRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
-        super(Actions.GET_SETTINGS_ACTION, req, res, ds);
+    public GameRolesGetRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds) {
+        super(Actions.GET_ROLES, req, res, ds);
     }
 
     @Override
