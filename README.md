@@ -86,6 +86,10 @@ The game can be accessed at http://localhost:8080/lupus/ and requires an account
 
 To view the rules and roles of the game, visit http://localhost:8080/lupus/rules. No login is required.
 
+## Final presentation
+
+[View final presentation](https://www.canva.com/design/DAGGtwG2F-Q/GuPJxNoLhdx8NREAYKNYAg/view?utm_content=DAGGtwG2F-Q&utm_campaign=designshare&utm_medium=link&utm_source=editor)
+
 ## Group members
 
 | **[Nicola Busato](https://github.com/Nicola-01)**| **[Jacopo Momesso](https://github.com/JapoMomi1)** | **[Michele Gusella](https://github.com/Polterino)** |
