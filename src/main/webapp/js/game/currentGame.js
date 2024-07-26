@@ -70,6 +70,13 @@ function elementsReload() {
     const master = endsWithMaster ? "/master" : "";
     genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayersStatus);
     genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
+
+    genericGETRequest(contextPath + "game/settings/" + gameID, empty);
+}
+
+// todo
+function empty() {
+    console.log("todo");
 }
 
 /**

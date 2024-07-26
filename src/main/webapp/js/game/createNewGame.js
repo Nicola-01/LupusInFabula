@@ -416,7 +416,7 @@ function gameCreation(req) {
                 if (listMsg != null) {
                     for (let i = 0; i < listMsg.length; i++) {
                         let message = listMsg[i]['message'];
-                        console.log(listMsg[i])
+                        // console.log(listMsg[i])
                         msgs += message.message + "<br>";
                         if (!errorCodes.includes(message['error-code']))
                             errorCodes += ", " + message['error-code'];

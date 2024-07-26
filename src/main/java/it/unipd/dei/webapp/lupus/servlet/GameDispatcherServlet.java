@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.servlet;
 import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
+import it.unipd.dei.webapp.lupus.dao.GetGameSettingsDAO;
 import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.rest.*;
@@ -105,6 +106,7 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
         // GET /game/players/{gameID}/master
         // GET /game/logs/{gameID}
         // GET /game/logs/{gameID}/master
+        // GET /game/settings/{gameID}
 
         path = path.substring(path.lastIndexOf("/game") + 5);
 
@@ -232,14 +234,14 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
             return true;
         }
 
-        String[] acceptURL = {"status", "configuration", "update", "players", "logs"};
+        String[] acceptURL = {"status", "configuration", "update", "players", "logs", "settings"};
         if (!Arrays.asList(acceptURL).contains(requestURI))
             return false;
 
         boolean invalid = false;
 
         if (requestURI.equals("update")) {
-            if (method.equals("PUT")){
+            if (method.equals("PUT")) {
                 new GameStatusUpdateRR(req, res, getDataSource(), gameID).serve();
                 return true;
             }
@@ -275,6 +277,9 @@ public class GameDispatcherServlet extends AbstractDatabaseServlet {
                 break;
             case "logs":
                 new GameLogGetRR(gameID, isMaster || gameIsOver, req, res, getDataSource()).serve();
+                break;
+            case "settings":
+                new SettingsOfGameGetRR(req, res, getDataSource(), gameID).serve();
                 break;
         }
         return true;

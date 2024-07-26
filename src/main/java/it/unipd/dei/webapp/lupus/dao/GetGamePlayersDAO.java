@@ -25,18 +25,22 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
      * The SQL statement to be executed.
      */
     private static final String STATEMENT = "SELECT * FROM plays_as_in WHERE plays_as_in.game_id = ? ORDER BY order_in_game";
+
     /**
      * The private ID of the game.
      */
     private final int gameID;
+
     /**
      * Whether the URI contained a /master at the end.
      */
     private final boolean URIisMaster;
+
     /**
      * The username of the player who made the request.
      */
     private final String playerUsername;
+
     /**
      * The role of the player who made the request.
      */
