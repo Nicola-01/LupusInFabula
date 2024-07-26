@@ -78,8 +78,9 @@ public class GameCreationPostRR extends AbstractRR {
 
             stream = new ByteArrayInputStream(JSON.getBytes(StandardCharsets.UTF_8));
             List<Setting> givenSettings = Setting.fromJSON(stream);
-            givenSettings.removeIf(setting -> !setting.isEnable());
-            // todo : to finish
+            Map<String, Boolean> selectedSettings = new HashMap<>();
+            for (Setting s : givenSettings)
+                selectedSettings.put(s.getSettingName(), s.isEnable());
 
             // recover all roles, and remove the master
             List<Role> realRoles = new SelectRoleDAO(ds.getConnection()).access().getOutputParam();
@@ -193,49 +194,9 @@ public class GameCreationPostRR extends AbstractRR {
                     LOGGER.warn("Player number %d does not match the number of roles %d", totalPlayers, totalRoles);
                 }
                 //
-                else {
-                    // All checked, create the game
-                    Game createdGame = new CreateGameDAO(ds.getConnection(), ds).access().getOutputParam();
+                else
+                    createNewGame(gameMaster, session, selectedRoles, totalPlayers, selectedPlayers, givenSettings);
 
-                    // obtain the private gameID (a progressive integer) and
-                    // obtain the public gameID (a random combination of three roles to create a string used in the URL),
-                    // e.g. /seer-wolf-farmer
-                    int gameID = createdGame.getId();
-                    String publicID = createdGame.getPublic_ID();
-                    LogContext.setGame(publicID);
-                    LOGGER.info("GAME created, gameID: (%d, %s), game master %s", gameID, publicID, gameMaster.getUsername());
-
-                    // set the gamemaster role to the player who created the game
-                    PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
-                    new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
-
-                    // add a session attribute to the user corresponding to the private game ID
-                    session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
-
-                    // Assign a random role to each player
-
-                    selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
-
-                    // generate the random generator only one time
-                    Random rand = new Random();
-
-                    for (int i = 0; i < totalPlayers; i++) {
-                        // Select a random role for the player
-                        String selectedRole = randomRole(selectedRoles, rand);
-
-                        // Get the ID of the selected role from the database
-//                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
-
-                        // Create a PlaysAsIn for the player with the selected role and game ID, and insert into the database
-                        PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
-                        new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn, i + 1).access();
-
-                        LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), selectedRole);
-                    }
-                    // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
-                    res.setStatus(HttpServletResponse.SC_CREATED);
-                    createdGame.toJSON(res.getOutputStream());
-                }
             } else { // there was an error during player or role validation
                 // return the message(s)
                 if (messages.size() == 1)
@@ -263,6 +224,67 @@ public class GameCreationPostRR extends AbstractRR {
             LogContext.removeIPAddress();
             LogContext.removeGame();
         }
+    }
+
+    /**
+     * Create new game and assigns roles to players.
+     *
+     * @param gameMaster      The GameMaster object that controls the game logic.
+     * @param session         The Session object representing the current game session.
+     * @param selectedRoles   A list of roles that have been selected for this game.
+     * @param totalPlayers    The total number of players participating in the game.
+     * @param selectedPlayers A list of players who have been selected to play specific roles.
+     * @param settings        A list of settings of the game.s
+     * @throws SQLException If a database access error occurs.
+     * @throws IOException  If an input or output exception occurs.
+     */
+    private void createNewGame(Player gameMaster, HttpSession session, Map<String, Integer> selectedRoles, int totalPlayers, List<String> selectedPlayers, List<Setting> settings) throws SQLException, IOException {
+        // All checked, create the game
+        Game createdGame = new CreateGameDAO(ds.getConnection(), ds).access().getOutputParam();
+
+        // obtain the private gameID (a progressive integer) and
+        // obtain the public gameID (a random combination of three roles to create a string used in the URL),
+        // e.g. /seer-wolf-farmer
+        int gameID = createdGame.getId();
+        String publicID = createdGame.getPublic_ID();
+        LogContext.setGame(publicID);
+        LOGGER.info("GAME created, gameID: (%d, %s), game master %s", gameID, publicID, gameMaster.getUsername());
+
+        // set the gamemaster role to the player who created the game
+        PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
+        new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
+
+        // add a session attribute to the user corresponding to the private game ID
+        session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
+
+        // Assign a random role to each player
+
+        selectedRoles.entrySet().removeIf(entry -> entry.getValue() == 0);
+
+        // generate the random generator only one time
+        Random rand = new Random();
+
+        for (int i = 0; i < totalPlayers; i++) {
+            // Select a random role for the player
+            String selectedRole = randomRole(selectedRoles, rand);
+
+            // Get the ID of the selected role from the database
+//                        int selectedRoleID = new SearchRoleByNameDAO(ds.getConnection(), selectedRole).access().getOutputParam().getId();
+
+            // Create a PlaysAsIn for the player with the selected role and game ID, and insert into the database
+            PlaysAsIn playsAsIn = new PlaysAsIn(selectedPlayers.get(i), gameID, selectedRole);
+            new InsertIntoPlayAsInDAO(ds.getConnection(), playsAsIn, i + 1).access();
+
+            LOGGER.info("Player %s assigned role ID %s", selectedPlayers.get(i), selectedRole);
+        }
+
+        for (Setting s : settings)
+            new AddGameSettingDAO(ds.getConnection(), gameID, s).access();
+
+
+        // Return a JSON object containing game information such as gameID (both private and public), creation time, etc.
+        res.setStatus(HttpServletResponse.SC_CREATED);
+        createdGame.toJSON(res.getOutputStream());
     }
 
     /**
@@ -316,9 +338,9 @@ public class GameCreationPostRR extends AbstractRR {
 
         if (type.get(RoleType.GOOD.getType()) < minGood)
             message += "The GOOD role must be at minimum " + minGood + ", but provided " + type.get(RoleType.GOOD.getType()) + "; ";
-        if(type.get(RoleType.EVIL.getType()) > maxEvil)
+        if (type.get(RoleType.EVIL.getType()) > maxEvil)
             message += "The EVIL role must be at maximum " + maxEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
-        if(type.get(RoleType.EVIL.getType()) < minEvil)
+        if (type.get(RoleType.EVIL.getType()) < minEvil)
             message += "The EVIL role must be at minimum " + minEvil + ", but  provided " + type.get(RoleType.EVIL.getType()) + "; ";
 
         return message;

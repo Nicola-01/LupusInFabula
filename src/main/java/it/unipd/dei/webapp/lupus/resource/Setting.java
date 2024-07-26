@@ -30,7 +30,7 @@ public class Setting extends AbstractResource {
     /**
      * The name of the setting.
      */
-    private final String setting_name;
+    private final String settingName;
 
     /**
      * A description of the setting.
@@ -45,22 +45,22 @@ public class Setting extends AbstractResource {
     /**
      * Constructs a Setting object with the specified name and description.
      *
-     * @param setting_name the name of the setting
-     * @param description  the description of the setting
+     * @param settingName the name of the setting
+     * @param description the description of the setting
      */
-    public Setting(String setting_name, String description) {
-        this.setting_name = setting_name;
+    public Setting(String settingName, String description) {
+        this.settingName = settingName;
         this.description = description;
     }
 
     /**
      * Constructs a Setting object with the specified name and description.
      *
-     * @param setting_name the name of the setting
-     * @param enable       the status of the setting
+     * @param settingName the name of the setting
+     * @param enable      the status of the setting
      */
-    public Setting(String setting_name, Boolean enable) {
-        this.setting_name = setting_name;
+    public Setting(String settingName, Boolean enable) {
+        this.settingName = settingName;
         this.enable = enable;
     }
 
@@ -69,8 +69,8 @@ public class Setting extends AbstractResource {
      *
      * @return the name of the setting
      */
-    public String getSetting_name() {
-        return setting_name;
+    public String getSettingName() {
+        return settingName;
     }
 
     /**
@@ -104,8 +104,9 @@ public class Setting extends AbstractResource {
         jg.writeStartObject();
         jg.writeFieldName("setting");
         jg.writeStartObject();
-        jg.writeStringField("setting_name", setting_name);
+        jg.writeStringField("setting_name", settingName);
         jg.writeStringField("description", description);
+        jg.writeBooleanField("enable", enable);
         jg.writeEndObject();
         jg.writeEndObject();
         jg.flush();

@@ -97,7 +97,7 @@ function gameStatus(req) {
                     logElementsReload()
                 }
 
-                if(document.getElementById("skipDayBT"))
+                if (document.getElementById("skipDayBT"))
                     document.getElementById("skipDayBT").disabled = gameRound > 1 || gamePhase === GamePhase.NIGHT;
 
 
