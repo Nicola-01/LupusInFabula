@@ -125,17 +125,17 @@ public class GameLogGetRR extends AbstractRR
         if(!this.isMaster && !r.isEmpty())
             while (i<r.size())
             {
-                // if the player is not the receiver AND the phase is Night
+                // the log player is the subject of the log
+                boolean logPlayerIsEvil = GameRoleAction.valueOfName(String.valueOf(pl.get(r.get(i).getPlayer()))).getRoleType().equals(RoleType.EVIL);
+                // the receiver player is the player who's playing
+                boolean receiverPlayerIsEvil = GameRoleAction.valueOfName(String.valueOf(pl.get(nmPlayer))).getRoleType().equals(RoleType.EVIL);
+                
+                // if the log player is not the receiver AND the phase is Night
                 nmDivNig =  !(r.get(i).getPlayer().equals(nmPlayer)) &&
                         r.get(i).getPhase()==GamePhase.NIGHT.ordinal();
 
                 // if the action is the plague
                 isPlugueAction = r.get(i).getTypeAction().equals(GameRoleAction.PLAGUE_SPREADER.getAction());
-
-                // the log player is the subject of the log
-                boolean logPlayerIsEvil = GameRoleAction.valueOfName(String.valueOf(pl.get(r.get(i).getPlayer()))).getRoleType().equals(RoleType.EVIL);
-                // the receiver player is the player who's playing
-                boolean receiverPlayerIsEvil = GameRoleAction.valueOfName(String.valueOf(pl.get(nmPlayer))).getRoleType().equals(RoleType.EVIL);
 
                 // if the receiver has evil role AND the player corresponding to the log is evil
                 isEvilUs = receiverPlayerIsEvil && logPlayerIsEvil;
