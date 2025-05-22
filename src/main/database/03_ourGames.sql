@@ -4,13 +4,13 @@ values ('Pippo_baudo', 'stocazzo@gmail.com', md5('Lupus123!'), '2024-05-30'),
        ('Matteo', 'zugujapo@gmail.com', md5('Lupus123!'), '2024-05-30'),
        ('Hare_Segz', 'orgia_omosex@gmail.sex', md5('Lupus123!'), '2024-05-30'),
        ('Rickm', 'rickm@game.com', md5('Lupus123!'), '2024-05-30'),
-       ('Bubis', 'margherita.gnocato@outlook.com', md5('Lupus123!'), '2024-05-30'),
+       ('Bubis', 'marg@game.com', md5('Lupus123!'), '2024-05-30'),
        ('Japo', 'sono.proprio.un@clown.popipopi', md5('1m4C!0wN'), '2024-05-30'),
        ('Polterino', 'pisello@duro.com', md5('piselloGrande0.'), '2024-05-30'),
        ('Sofi', 'sesso.duro@gmail.com', md5('Lupus123!'), '2024-05-30'),
-       ('Nipozzo', 'nipozzo@gmail.com', md5('Lupus123!'), '2024-07-06'),
-       ('Kevin', 'kevinrigon25@gmail.com', md5('Lupus123!'), '2024-07-06'),
-       ('Patagata', 'emmina2001@gmail.com', md5('Lupus123!'), '2024-07-06');
+       ('Nick', 'nick@game.com', md5('Lupus123!'), '2024-07-06'),
+       ('Kevin', 'Kevin@game.com', md5('Lupus123!'), '2024-07-06'),
+       ('Patagata', 'Patagata@game.com', md5('Lupus123!'), '2024-07-06');
 
 insert into public.is_friend_with (player_username, friend_username, date)
 values ('Hare_Segz', 'Bubis', '2024-05-30'),
