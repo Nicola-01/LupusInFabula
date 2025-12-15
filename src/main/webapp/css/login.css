@@ -6,7 +6,7 @@ body {
     align-items: center;
     min-height: 100vh;
     font-family: 'Jost', sans-serif;
-    background-image: url('../media/forest_background.jpeg');
+    background-image: url('../media/forest_background.png');
     background-position: center;
     background-size: cover;
 }
