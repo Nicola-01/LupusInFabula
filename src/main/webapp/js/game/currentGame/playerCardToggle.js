@@ -26,12 +26,31 @@ if(document.getElementById("toggleButton"))
  * Function that hides the role of the logged in player
  *
  */
-function toggleCard()
-{
+function toggleCard(skipAnimation = false) {
     const card = document.getElementById("card");
+
+    if (skipAnimation === true)
+        card.style.transition = "none";
+    else
+        card.style.transition = "";
+
     card.classList.toggle("is-flipped");
     const playerRole = document.getElementById("playerRole");
     playerRole.classList.toggle("blur-name");
+
+    const roleBoldTag = document.querySelector("#playerRole b");
+
+    if (roleBoldTag) {
+        if (!roleBoldTag.dataset.originalRole) {
+            roleBoldTag.dataset.originalRole = roleBoldTag.innerText;
+        }
+
+        if (roleBoldTag.innerText === "****") {
+            roleBoldTag.innerText = roleBoldTag.dataset.originalRole;
+        } else {
+            roleBoldTag.innerText = "****";
+        }
+    }
 
     const eyeIcon = document.getElementById("eyeIcon");
 

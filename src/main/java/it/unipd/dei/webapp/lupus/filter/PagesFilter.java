@@ -193,8 +193,8 @@ public class PagesFilter implements Filter {
             String publicGameID = new PlayerInGameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
             String gameMaster = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-            LOGGER.info(gameMaster.equals(p.getUsername()));
-            LOGGER.info(publicGameID);
+//            LOGGER.info(gameMaster.equals(p.getUsername()));
+//            LOGGER.info(publicGameID);
 
             if (gameMaster.equals(p.getUsername()))
                 newSession.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);

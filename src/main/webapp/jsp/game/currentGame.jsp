@@ -144,6 +144,7 @@
 <script src="${pageContext.request.contextPath}/js/game/currentGame/playersStatus.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/gameLog.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame/gameSettings.js"></script>
+<script src="${pageContext.request.contextPath}/js/game/currentGame/gameWebSocket.js"></script>
 <script src="${pageContext.request.contextPath}/js/game/currentGame.js"></script>
 
 </body>

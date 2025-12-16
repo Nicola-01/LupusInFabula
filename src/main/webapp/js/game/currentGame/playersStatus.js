@@ -95,7 +95,7 @@ function fillPlayersStatus(req) {
                     const toggleElement = document.getElementById("toggleButton");
 
                     if (toggleElement.style.display !== "none") {
-                        toggleCard();
+                        toggleCard(true);
                     }
                 }
             }
@@ -122,6 +122,7 @@ function createUserDiv(playerRole, className){
     }
     player.className = className;
     player.id = playerRole.username + "_status";
+    player.setAttribute("username", playerRole.username);
     player.style.backgroundColor = rolesColors.get(playerRole.role);
     if(className === "circular-player")
         player.style.position = 'absolute';

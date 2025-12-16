@@ -28,12 +28,9 @@ function enterChat() {
     };
 
     socket.onmessage = function(event) {
-        var fullMessage = event.data; // Formato "Mittente: Messaggio"
-        var separatorIndex = fullMessage.indexOf(":");
-
-        var sender = fullMessage.substring(0, separatorIndex);
-        var content = fullMessage.substring(separatorIndex + 2);
-
+        const msg = event.data.split(":");
+        var sender = msg[0];
+        var content = msg[1];
         addMessageToScreen(sender, content);
     };
 
