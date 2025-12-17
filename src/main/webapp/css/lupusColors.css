@@ -76,6 +76,8 @@
     --role-color-neutral: #444444;
     /*--role-color-victoryStealer: #9f9f9f;*/
     --vote-color: #0f364e;
+
+    --border-highlight: #FEC601;
 }
 
 [data-bs-theme="dark"] {
@@ -141,4 +143,6 @@
     --role-color-neutral: #908b8b;
     /*--role-color-victoryStealer: #9f9f9f;*/
     --vote-color: #84b8db;
+
+    --border-highlight: #FFBA08;
 }

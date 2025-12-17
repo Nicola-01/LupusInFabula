@@ -20,7 +20,7 @@ public enum RoleType {
     GOOD(0, "good"),
 
     /**
-     * Represents a evil role.
+     * Represents an evil role.
      */
     EVIL(1, "evil"),
 

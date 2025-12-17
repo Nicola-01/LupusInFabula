@@ -3,8 +3,12 @@ services:
     image: tomcat:11.0
     ports:
       - "8080:8080"
+      - "5005:5005"
     environment:
       - TZ=Europe/Rome
+      - JPDA_ADDRESS=*:5005
+      - JPDA_TRANSPORT=dt_socket
+    command: ["catalina.sh", "jpda", "run"]
     depends_on:
       db:
         condition: service_healthy

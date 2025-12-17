@@ -32,6 +32,11 @@ public class GameActionsGetRR extends AbstractRR {
     private final PossibleGameActions possibleGameActions;
 
     /**
+     * The ID of the game.
+     */
+    private final int gameID;
+
+    /**
      * Constructs a new GameActionsGetRR object with the specified game ID, request, response, and data source.
      *
      * @param gameID The ID of the game.
@@ -43,19 +48,31 @@ public class GameActionsGetRR extends AbstractRR {
     public GameActionsGetRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.GET_GAME_ACTIONS_ACTION, req, res, ds);
 
-        possibleGameActions = new PossibleGameActions(ds,gameID);
+        this.gameID = gameID;
+        possibleGameActions = new PossibleGameActions(ds, gameID);
     }
 
     @Override
     protected void doServe() throws IOException, SQLException {
+        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        LogContext.setUser(username);
+        LogContext.setIPAddress(req.getRemoteAddr());
+
+        String role = new GetRoleByGameIdAndPlayerUsernameDAO(ds.getConnection(), gameID, username).access().getOutputParam();
+
         Message m = possibleGameActions.populateList();
         if (m != null) {
             res.setStatus(Objects.requireNonNull(ErrorCode.getErrorCode(m.getErrorCode())).getHTTPCode());
             m.toJSON(res.getOutputStream());
-        }
-        else {
+        } else {
             res.setStatus(HttpServletResponse.SC_OK);
-            new ResourceList<>(possibleGameActions.getListOfActions()).toJSON(res.getOutputStream());
+            List<ActionTarget> actions = possibleGameActions.getListOfActions();
+            if (role.equals(GameRoleAction.MASTER.getName())) {
+                new ResourceList<>(actions).toJSON(res.getOutputStream());
+                return;
+            }
+            List<ActionTarget> filtered = actions.stream().filter(a -> a.getRole().equals(role)).toList();
+            new ResourceList<>(filtered).toJSON(res.getOutputStream());
         }
     }
 

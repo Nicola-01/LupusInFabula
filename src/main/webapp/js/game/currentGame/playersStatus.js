@@ -164,6 +164,9 @@ function circularPlayersStatus() {
         player.style.left = (Math.sin(angle - epsilon_angle) * 50 + 50) + '%'; // X position of the player
         player.style.top = (-Math.cos(angle - epsilon_angle) * 50 + 50) + '%'; // Y position of the player
     }
+
+    // if TODO: check game settings
+    genericGETRequest(contextPath + "game/actions/" + gameID, targetHighlight);
 }
 
 /**
@@ -180,5 +183,32 @@ function gridPlayersStatus() {
 
         playerRoleDiv.appendChild(player);
         playersStatusDiv.appendChild(playerRoleDiv);
+    }
+
+    genericGETRequest(contextPath + "game/actions/" + gameID, targetHighlight);
+}
+
+
+function targetHighlight(req) {
+    if (!endsWithMaster && req.readyState === XMLHttpRequest.DONE && req.status === HTTP_STATUS_OK) {
+        // Parse the response to get the list of actions
+        let list = JSON.parse(req.responseText)[JSON_resource_list];
+        if (list != null) {
+            if (gamePhase === GamePhase.NIGHT)
+                for (let i = 0; i < list.length; i++) {
+                    let actionTarget = list[i]['actionTarget'];
+                    let possibleTargets = actionTarget['possibleTargets'];
+
+                    for (let j = 0; j < possibleTargets.length; j++) {
+                        let targetDiv = document.getElementById(possibleTargets[j].player + "_status");
+                        targetDiv.classList.add("playerTargetHighlight");
+                    }
+                }
+
+
+//                fillNightActions(list);
+//            else
+//                fillDayActions(list);
+        }
     }
 }

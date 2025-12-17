@@ -76,7 +76,7 @@ function elementsReload() {
 
 // todo
 function empty() {
-    console.log("todo");
+//    console.log("todo: gameSettings");
 }
 
 /**

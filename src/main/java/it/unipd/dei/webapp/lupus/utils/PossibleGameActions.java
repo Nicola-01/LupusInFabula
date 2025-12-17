@@ -135,14 +135,14 @@ public class PossibleGameActions {
             LogContext.setGame(publicGameID);
 
             if (game.getWho_win() == -1) {
-                LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is Night " + isNightPhase);
+//                LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is Night " + isNightPhase);
                 if (isNightPhase)
                     handleNightPhase();
                 else
                     handleDayPhase();
             } else {
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
-                LOGGER.warn("The game is over");
+//                LOGGER.warn("The game is over");
                 return new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
             }
 

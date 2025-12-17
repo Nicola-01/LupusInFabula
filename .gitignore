@@ -52,3 +52,4 @@ Thumbs.db
 data/db/*
 
 docker-compose.yml
+.run/docker-compose.yml_ Compose Deployment.run.xml

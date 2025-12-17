@@ -61,3 +61,7 @@
 .circular-player:hover {
     z-index: 1; /* Bring button to the forefront on hover */
 }
+
+.playerTargetHighlight {
+    border: solid var(--border-highlight);
+}

@@ -22,7 +22,7 @@ function enterGame(){
     var host = window.location.host;
     var path = window.location.pathname.substring(0, window.location.pathname.indexOf("/", 1)); // /lupus
 
-    var wsUrl = protocol + host + path + "/gameWS/" + room + "/" + user;
+    var wsUrl = protocol + host + path + "/gameWS/" + room;
     console.log(wsUrl)
 
     socket = new WebSocket(wsUrl);
@@ -30,15 +30,13 @@ function enterGame(){
     socket.onopen = function() {};
 
     socket.onmessage = function(event) {
-        console.log("Server: " + event.data);
-
         const msg = event.data.split(":");
         addSelection(msg[0], msg[1]);
     };
 
     socket.onclose = function() {
         console.log("TODO")
-        location.reload();
+//        location.reload();
     };
 
 }
