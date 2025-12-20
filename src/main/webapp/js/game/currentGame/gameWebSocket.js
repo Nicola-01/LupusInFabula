@@ -2,9 +2,7 @@ var socket;
 
 console.log("LOADED");
 
-function enterGame(){
-    var user = localStorage.getItem("playerName");
-
+function initGameWS(){
     const currentUrl = window.location.href;
     const regex = /(?<room>\w+-\w+-\w+)/;
     const match = currentUrl.match(regex);
@@ -41,12 +39,10 @@ function enterGame(){
 
 }
 
-enterGame()
-
 document.addEventListener('click', function(event) {
     const targetDiv = event.target.closest('.circular-player');
 
-    if (targetDiv) {
+    if (targetDiv && !!document.getElementById("eyeIcon") && document.getElementById("eyeIcon").classList.contains("fa-eye")) { // the role is visible
         const username = targetDiv.getAttribute('username');
         if (username && socket && socket.readyState === WebSocket.OPEN) {
             socket.send(username);

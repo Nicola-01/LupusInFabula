@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
 
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+
 /**
  * Handles the HTTP POST request to handle game actions.
  * It contains methods to handle both day and night phases of the game.
@@ -194,6 +196,8 @@ public class GameActionsPostRR extends AbstractRR {
                     currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
                     LOGGER.info("The game finished, winner(s): " + vm.getMessage());
+
+                    // freeGameWebSocket(gameID);
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, vm.getFaction()).access();
                 } else {
                     res.setStatus(HttpServletResponse.SC_OK);

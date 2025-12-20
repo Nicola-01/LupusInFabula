@@ -115,7 +115,7 @@ function fillPlayersStatus(req) {
 function createUserDiv(playerRole, className){
     const player = document.createElement('div');
 
-    player.innerHTML = playerRole.username + "<br><div id='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole.role)+"</div>";
+    player.innerHTML = playerRole.username + "<br><div class='playerRole_internalDiv'>" + capitalizeFirstLetter(playerRole.role)+"</div>";
     if (playerRole.isDead) {
         player.innerHTML += " (dead)";
         player.style.filter = `saturate(25%)`;
@@ -167,6 +167,7 @@ function circularPlayersStatus() {
 
     // if TODO: check game settings
     genericGETRequest(contextPath + "game/actions/" + gameID, targetHighlight);
+    initGameWS()
 }
 
 /**
@@ -186,6 +187,7 @@ function gridPlayersStatus() {
     }
 
     genericGETRequest(contextPath + "game/actions/" + gameID, targetHighlight);
+    initGameWS()
 }
 
 
@@ -201,14 +203,15 @@ function targetHighlight(req) {
 
                     for (let j = 0; j < possibleTargets.length; j++) {
                         let targetDiv = document.getElementById(possibleTargets[j].player + "_status");
-                        targetDiv.classList.add("playerTargetHighlight");
+                        if (!!targetDiv)
+                            targetDiv.classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
+                        else if (possibleTargets[j].player === "No shot") {
+                            var user = localStorage.getItem("playerName");
+                            document.getElementById(user + "_status").classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
+                            document.getElementById(user + "_status").getElementsByClassName("playerRole_internalDiv")[0].innerHTML += "<br><b>(No shot)</b>"
+                        }
                     }
                 }
-
-
-//                fillNightActions(list);
-//            else
-//                fillDayActions(list);
         }
     }
 }
