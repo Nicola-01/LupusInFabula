@@ -74,9 +74,9 @@ o reset the database, you have two options:
 
 To execute the tests for the RestAPI it's needed to execute the two .sql file:
 - 02_populate_db.sql
-- populate_db_optional.aaa
+- populate_db_optional.sql
 
-The first file inserts into the database all the possible roles; the second, instead, insert one complete game with all actions and also insert some games to test the logs and the statistics of an user.
+The first file inserts into the database all the possible roles; the second one inserts one complete game with all actions and also inserts some games to test the logs and the statistics of a user.
 
 ## Front-End
 
