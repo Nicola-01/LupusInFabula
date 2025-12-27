@@ -42,7 +42,7 @@
 }
 
 .vote-container_Hide {
-    display: none;
+    /*display: none; TODO:to fix for day phase, problemi ricaricando la pagina idk*/
 }
 
 .vote-label {

@@ -2,7 +2,9 @@ package it.unipd.dei.webapp.lupus.webSocket;
 
 import it.unipd.dei.webapp.lupus.dao.*;
 import it.unipd.dei.webapp.lupus.resource.ActionTarget;
+import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
+import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import it.unipd.dei.webapp.lupus.utils.PossibleGameActions;
 import jakarta.websocket.*;
@@ -41,6 +43,10 @@ public class GameWebSocket {
 
 
     private static final Map<String, Set<Session>> rooms = new ConcurrentHashMap<>();
+    private static final Map<String, Integer> gameIdMap = new ConcurrentHashMap<>();
+    private static final Map<Integer, String> gamePhaseMap = new ConcurrentHashMap<>();
+
+
     private static final Map<Integer, List<WebSocketLog>> webSocketLogs = new ConcurrentHashMap<>();
 
     /**
@@ -56,6 +62,7 @@ public class GameWebSocket {
      * This structure allows efficient O(1) retrieval of a specific player's history within a specific game.
      */
     private static final Map<Integer, Map<String, List<PlaysAsIn>>> gameStateCache = new ConcurrentHashMap<>();
+    private static final Map<Integer, List<ActionTarget>> gameActionCache = new ConcurrentHashMap<>();
 
     private static DataSource ds;
 
@@ -69,10 +76,16 @@ public class GameWebSocket {
         rooms.computeIfAbsent(room, k -> new CopyOnWriteArraySet<>()).add(session);
 
         try {
-            int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), room).access().getOutputParam();
+            int gameID = gameIdMap.getOrDefault(room, new GetGameIdFormPublicGameIdDAO(getConnection(), room).access().getOutputParam());
+            gameIdMap.putIfAbsent(room, gameID);
+            initGamePhaseCache(gameID);
             initGameStateCache(gameID);
+            initGameActionCache(gameID);
+
+            boolean isDay = gamePhaseMap.get(gameID).equals(GamePhase.DAY.getName());
+
             for (WebSocketLog wsl : webSocketLogs.getOrDefault(gameID, Collections.emptyList()))
-                sendMessage(session, wsl.sender, wsl.target, gameID);
+                sendMessage(session, wsl.sender, wsl.target, gameID, isDay);
 
         } catch (SQLException | NamingException e) {
             LOGGER.warn("Error in retrieve game actions", e);
@@ -108,34 +121,43 @@ public class GameWebSocket {
     }
 
     private void broadcast(String sender, String target, String room) {
-
-        PossibleGameActions possibleGameActions;
         try {
-            int gameID = new GetGameIdFormPublicGameIdDAO(getConnection(), room).access().getOutputParam();
-            possibleGameActions = new PossibleGameActions(getDataSource(), gameID);
-            possibleGameActions.populateList();
+            int gameID = gameIdMap.get(room);
             Set<Session> roomSessions = rooms.get(room);
             if (roomSessions == null)
                 return;
 
-            List<ActionTarget> actions = possibleGameActions.getListOfActions();
+            List<ActionTarget> actions = gameActionCache.get(gameID);
 
             boolean found = false;
             for (ActionTarget at : actions) {
-                if (at.getPlayers().contains(sender) && (at.getTargets().contains(target) || (at.getAction().equals(GameRoleAction.SHERIFF.getAction()) && sender.equals(target)))) {
+                if ((at.getPlayer() != null && at.getPlayer().equals(sender))
+                        || (at.getPlayers() != null && at.getPlayers().contains(sender) && (at.getTargets().contains(target))
+                        || ((at.getAction().equals(GameRoleAction.SHERIFF.getAction()) && sender.equals(target)
+                )))) {
                     found = true;
                     break;
                 }
             }
             if (!found) return;
+            List<PlaysAsIn> gsc = gameStateCache.get(gameID).get(sender);
+            String senderRole = null;
 
-            String senderRole = new GetRoleByGameIdAndPlayerUsernameDAO(getConnection(), gameID, sender).access().getOutputParam();
+            for (PlaysAsIn psi : gsc) {
+                if (psi.getPlayerUsername().equals(sender)) {
+                    senderRole = psi.getRole();
+                    break;
+                }
+            }
+
+            assert senderRole != null;
             if (senderRole.equals(GameRoleAction.MASTER.getName())) return;
 
             saveMessage(sender, target, gameID);
+            boolean isDay = gamePhaseMap.get(gameID).equals(GamePhase.DAY.getName());
             for (Session s : roomSessions) {
                 if (!s.isOpen()) return;
-                sendMessage(s, sender, target, gameID);
+                sendMessage(s, sender, target, gameID, isDay);
             }
 
         } catch (SQLException | NamingException e) {
@@ -145,16 +167,16 @@ public class GameWebSocket {
         }
     }
 
-    private void sendMessage(Session s, String sender, String target, int gameID) throws SQLException, NamingException, IOException {
+    private void sendMessage(Session s, String sender, String target, int gameID, boolean isDay) throws SQLException, NamingException, IOException {
         String sessionUser = s.getUserProperties().get("username").toString();
         List<PlaysAsIn> playsAs = gameStateCache.get(gameID).get(sessionUser);
         for (PlaysAsIn p : playsAs) {
-            if (p.getPlayerUsername().equals(sender) && !p.getRole().isEmpty() && !p.getRole().equals(GameRoleAction.MASTER.getName()))
+            if ((isDay && !sender.equals(target)) || (!isDay && p.getPlayerUsername().equals(sender) && !p.getRole().isEmpty() && !p.getRole().equals(GameRoleAction.MASTER.getName())))
                 s.getBasicRemote().sendText(sender + ":" + target);
         }
     }
 
-    private void saveMessage(String sender, String target, int gameID){
+    private void saveMessage(String sender, String target, int gameID) {
         List<WebSocketLog> logs = webSocketLogs.computeIfAbsent(gameID, k -> new CopyOnWriteArrayList<>());
 
         boolean updated = false;
@@ -182,15 +204,36 @@ public class GameWebSocket {
         return getDataSource().getConnection();
     }
 
-    public static void freeGameWebSocket(int gameID, boolean end){
+    public static void freeGameWebSocket(int gameID, boolean end) {
         LOGGER.info(String.format("Free webSocketLogs for %d", gameID));
         webSocketLogs.remove(gameID);
         gameStateCache.remove(gameID);
-        if (!end)
+        gameActionCache.remove(gameID);
+        gamePhaseMap.remove(gameID);
+        if (!end) {
             initGameStateCache(gameID);
+            initGameActionCache(gameID);
+            initGamePhaseCache(gameID);
+        } else
+            gameIdMap.entrySet().removeIf(entry -> entry.getValue() == gameID);
     }
 
-    public static void initGameStateCache(int gameID){
+    public static void initGamePhaseCache(int gameID) {
+        if (gamePhaseMap.containsKey(gameID))
+            return;
+        try {
+            Game game = new GetGameByGameIdDAO(getConnection(), gameID).access().getOutputParam();
+            if (game.getPhase() == GamePhase.NIGHT.getId())
+                gamePhaseMap.put(gameID, GamePhase.NIGHT.getName());
+            else
+                gamePhaseMap.put(gameID, GamePhase.DAY.getName());
+        } catch (SQLException | NamingException e) {
+            LOGGER.warn("Error in getting game phase in WebSocket", e);
+        }
+
+    }
+
+    public static void initGameStateCache(int gameID) {
         if (gameStateCache.containsKey(gameID))
             return;
         try {
@@ -205,6 +248,19 @@ public class GameWebSocket {
             }
         } catch (SQLException | NamingException e) {
             LOGGER.warn("Error in recreate playersAs in WebSocket", e);
+        }
+    }
+
+    public static void initGameActionCache(int gameID) {
+        if (gameActionCache.containsKey(gameID))
+            return;
+        try {
+            PossibleGameActions possibleGameActions = new PossibleGameActions(getDataSource(), gameID);
+            possibleGameActions.populateList();
+            gameActionCache.put(gameID, possibleGameActions.getListOfActions());
+
+        } catch (SQLException | NamingException e) {
+            LOGGER.warn("Error in recreate action list in WebSocket", e);
         }
     }
 }

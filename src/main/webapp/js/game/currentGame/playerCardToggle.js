@@ -90,9 +90,10 @@ function toggleCard(skipAnimation = false) {
         element.classList.toggle("playerTargetHighlight_Hide")
     });
 
-    const voteContainers = document.querySelectorAll('.vote-container');
-    voteContainers.forEach(function (element) {
-        element.classList.toggle("vote-container_Hide")
-    });
+    // TODO:to fix for day phase, problemi ricaricando la pagina idk
+    // const voteContainers = document.querySelectorAll('.vote-container');
+    // voteContainers.forEach(function (element) {
+    //     element.classList.toggle("vote-container_Hide")
+    // });
 
 }

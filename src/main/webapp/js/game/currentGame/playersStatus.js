@@ -42,8 +42,19 @@ function fillPlayersStatus(req) {
                 const loggedUser = localStorage.getItem('playerName');
                 let isPlayerInGame = false;
 
+                const rolesMap = new Map(
+                    list.map(item => [
+                        item.playsAsIn.username, // Chiave
+                        item.playsAsIn.role      // Valore
+                    ])
+                );
+                const mapAsArray = Array.from(rolesMap.entries());
+                const jsonString = JSON.stringify(mapAsArray);
+                localStorage.setItem("playsAsInList", jsonString);
+
                 for (let i = 0; i < list.length; i++)
                 {
+
                     let playsAsIn = list[i]['playsAsIn']; // Use let instead of var to create a new scope for friend
 
                     // when receiving the logged-in users' role
@@ -196,22 +207,21 @@ function targetHighlight(req) {
         // Parse the response to get the list of actions
         let list = JSON.parse(req.responseText)[JSON_resource_list];
         if (list != null) {
-            if (gamePhase === GamePhase.NIGHT)
-                for (let i = 0; i < list.length; i++) {
-                    let actionTarget = list[i]['actionTarget'];
-                    let possibleTargets = actionTarget['possibleTargets'];
+            for (let i = 0; i < list.length; i++) {
+                let actionTarget = list[i]['actionTarget'];
+                let possibleTargets = actionTarget['possibleTargets'];
 
-                    for (let j = 0; j < possibleTargets.length; j++) {
-                        let targetDiv = document.getElementById(possibleTargets[j].player + "_status");
-                        if (!!targetDiv)
-                            targetDiv.classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
-                        else if (possibleTargets[j].player === "No shot") {
-                            var user = localStorage.getItem("playerName");
-                            document.getElementById(user + "_status").classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
-                            document.getElementById(user + "_status").getElementsByClassName("playerRole_internalDiv")[0].innerHTML += "<br><b>(No shot)</b>"
-                        }
+                for (let j = 0; j < possibleTargets.length; j++) {
+                    let targetDiv = document.getElementById(possibleTargets[j].player + "_status");
+                    if (!!targetDiv)
+                        targetDiv.classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
+                    else if (possibleTargets[j].player === "No shot") {
+                        var user = localStorage.getItem("playerName");
+                        document.getElementById(user + "_status").classList.add("playerTargetHighlight", "playerTargetHighlight_Hide");
+                        document.getElementById(user + "_status").getElementsByClassName("playerRole_internalDiv")[0].innerHTML += "<br><b>(No shot)</b>"
                     }
                 }
+            }
         }
     }
 }
