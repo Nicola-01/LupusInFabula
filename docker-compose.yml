@@ -1,6 +1,7 @@
 services:
   web:
     image: tomcat:11.0
+    restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
@@ -13,6 +14,7 @@ services:
 
   db:
     image: postgres
+    restart: unless-stopped
     ports:
       - "5432:5432"
     environment:
@@ -31,7 +33,7 @@ services:
   pgadmin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
-    restart: always
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin
