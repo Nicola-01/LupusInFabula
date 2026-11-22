@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>background</title>
+    <style>
+        /* Day is the default when the host sets no data-bs-theme. */
+        :root, [data-bs-theme="light"] {
+            --sky-top: #cddcd8;
+            --sky-bottom: #f3e4c3;
+            --sun: #f6cf6a;
+            --sun-halo: rgba(246, 207, 106, .35);
+            --moon-op: 0;
+            --sun-op: 1;
+            --star-op: 0;
+            --cloud: #fbf4e4;
+            --cloud-op: .9;
+            --hill-far: #b3bf8e;
+            --hill-mid: #9db27c;
+            --ground: #8fa86f;
+            --dirt: #d9c69e;
+            --dirt-edge: #c8b285;
+            --tree: #3f7a4d;
+            --tree-dark: #2f5d3a;
+            --trunk: #6b4527;
+            --plaster: #f4e9d1;
+            --timber: #5a3d26;
+            --thatch: #cfa64c;
+            --thatch-line: #a9822f;
+            --stone: #b9aa8f;
+            --stone-dark: #8d7d63;
+            --stone-top: #d2c4a8;
+            --tile: #a24d2f;
+            --tile-line: #7d3820;
+            --wood: #7a5232;
+            --wood-dark: #5a3d26;
+            --wood-end: #d1a86d;
+            --metal: #5f5a52;
+            --bucket: #7a5232;
+            --window: #7b8d8f;
+            --window-frame: #5a3d26;
+            --win-glow-op: 0;
+            --win-anim: none;
+            --smoke: #444;
+            --chimney-smoke: #6b5d4c;
+            --fire-glow: rgba(255, 255, 255, .7);
+            --fire-light-op: .25;
+            --firefly-op: 0;
+            --flame-yellow: #FDE26C;
+            --flame-orange: #FDA263;
+            --flame-core: #fff8e6;
+            --shadow: rgba(60, 40, 20, .18);
+        }
+
+        [data-bs-theme="dark"] {
+            --sky-top: #0c1119;
+            --sky-bottom: #2a2119;
+            --moon-op: 1;
+            --sun-op: 0;
+            --star-op: 1;
+            --cloud-op: 0;
+            --hill-far: #1c241f;
+            --hill-mid: #1a221c;
+            --ground: #1f281e;
+            --dirt: #352a1f;
+            --dirt-edge: #2c2219;
+            --tree: #1a2a1f;
+            --tree-dark: #132018;
+            --trunk: #2b1d12;
+            --plaster: #5c5040;
+            --timber: #2b1d12;
+            --thatch: #5a4626;
+            --thatch-line: #443419;
+            --stone: #4a443b;
+            --stone-dark: #35302a;
+            --stone-top: #5a5348;
+            --tile: #4f2b1f;
+            --tile-line: #3a1e15;
+            --wood: #46301d;
+            --wood-dark: #2b1d12;
+            --wood-end: #7a5d3b;
+            --metal: #8a8274;
+            --bucket: #7a5d3b;
+            --window: #ffcf6b;
+            --window-frame: #2b1d12;
+            --win-glow-op: 1;
+            --win-anim: winflicker;
+            --smoke: #FFF;
+            --chimney-smoke: #cfc3ad;
+            --fire-glow: rgba(253, 162, 99, .55);
+            --fire-light-op: 1;
+            --firefly-op: 1;
+            --flame-yellow: #FDE26CAA;
+            --flame-orange: #FDA263DD;
+            --flame-core: #fff3c4;
+            --shadow: rgba(0, 0, 0, .35);
+        }
+
+        html, body {
+            margin: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        body {
+            background: linear-gradient(var(--sky-top), var(--sky-bottom) 75%);
+        }
+
+        /* Focal group stays in the lower middle, between the home panels; everything outside the
+           viewBox (ground, hills, trees, sky details, smoke) spills over via overflow:visible. */
+        .scene {
+            position: absolute;
+            left: 50%;
+            bottom: 7vh;
+            width: min(100vw, 500px);
+            transform: translateX(-50%);
+            overflow: visible;
+        }
+
+        .sun { fill: var(--sun); opacity: var(--sun-op); }
+        .sun-halo { fill: var(--sun-halo); opacity: var(--sun-op); }
+        .moon { opacity: var(--moon-op); }
+        .stars { opacity: var(--star-op); fill: #f3e6c8; }
+        .clouds { opacity: var(--cloud-op); fill: var(--cloud); }
+        .hill-far { fill: var(--hill-far); }
+        .hill-mid { fill: var(--hill-mid); }
+        .ground { fill: var(--ground); }
+        .dirt { fill: var(--dirt); }
+        .dirt-edge { fill: var(--dirt-edge); }
+        .tree { fill: var(--tree); }
+        .tree-dark { fill: var(--tree-dark); }
+        .trunk { fill: var(--trunk); }
+        .plaster { fill: var(--plaster); }
+        .timber { fill: none; stroke: var(--timber); stroke-width: 4; stroke-linecap: square; }
+        .timber-fill { fill: var(--timber); }
+        .thatch { fill: var(--thatch); }
+        .thatch-line { fill: none; stroke: var(--thatch-line); stroke-width: 2; stroke-linecap: round; }
+        .stone { fill: var(--stone); }
+        .stone-dark { fill: var(--stone-dark); }
+        .stone-top { fill: var(--stone-top); }
+        .stone-line { fill: none; stroke: var(--stone-dark); stroke-width: 1.5; stroke-linecap: round; }
+        .tile { fill: var(--tile); }
+        .tile-line { fill: none; stroke: var(--tile-line); stroke-width: 2; }
+        .wood { fill: var(--wood); }
+        .wood-dark { fill: var(--wood-dark); }
+        .wood-end { fill: var(--wood-end); stroke: var(--wood-dark); stroke-width: 1.5; }
+        .rope { stroke: var(--wood-dark); stroke-width: 1.5; }
+        .door { fill: var(--wood); stroke: var(--wood-dark); stroke-width: 2; }
+        .plank { stroke: var(--wood-dark); stroke-width: 1; }
+        .metal-fill { fill: var(--metal); }
+        .bucket { fill: var(--bucket); }
+        .band, .bucket-handle, .crank { fill: none; stroke: var(--metal); stroke-width: 1.4; stroke-linecap: round; }
+        .crank { stroke: var(--wood-dark); stroke-width: 2; }
+        .shadow { fill: var(--shadow); }
+
+        .win {
+            fill: var(--window);
+            stroke: var(--window-frame);
+            stroke-width: 2.5;
+            animation: var(--win-anim) 4s ease-in-out infinite alternate;
+        }
+        .win-bar { stroke: var(--window-frame); stroke-width: 2; }
+        .win-glow { opacity: var(--win-glow-op); }
+        .w2 { animation-delay: -1.3s; animation-duration: 5s; }
+        .w3 { animation-delay: -2.6s; animation-duration: 3.4s; }
+        @keyframes winflicker {
+            0%, 100% { opacity: 1; }
+            40% { opacity: .82; }
+            70% { opacity: .95; }
+        }
+
+        /* Campfire: same flames as homeBackground.html (three stacked diamonds + flicker). */
+        .fire-glow-c { fill: url(#fireGlow); }
+        .fire-light { opacity: var(--fire-light-op); animation: pulse 3s ease-in-out infinite alternate; }
+        @keyframes pulse {
+            from { opacity: calc(var(--fire-light-op) * .8); }
+            to { opacity: var(--fire-light-op); }
+        }
+        .fire { transform: rotate(-5deg); animation: flicker 3s ease alternate infinite; }
+        .flame-1 { fill: var(--flame-yellow); opacity: .4; }
+        .flame-2 { fill: var(--flame-orange); opacity: .8; }
+        .flame-3 { fill: var(--flame-core); opacity: .9; }
+        @keyframes flicker {
+            0% { transform: rotate(-1deg); }
+            20% { transform: rotate(1deg); }
+            40% { transform: rotate(-1deg); }
+            60% { transform: rotate(1deg) scale(1.1); }
+            80% { transform: rotate(-2deg) scale(1); }
+            100% { transform: rotate(1deg); }
+        }
+
+        .smoke {
+            fill: none;
+            stroke: var(--smoke);
+            opacity: .3;
+            stroke-width: 5px;
+            stroke-dasharray: 500 100;
+            stroke-linecap: round;
+            animation: dash 3s linear infinite;
+        }
+        @keyframes dash {
+            from { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: 600; }
+        }
+        .chimney-smoke {
+            fill: none;
+            stroke: var(--chimney-smoke);
+            opacity: .35;
+            stroke-width: 3px;
+            stroke-dasharray: 60 20;
+            stroke-linecap: round;
+            animation: dash-small 4s linear infinite;
+        }
+        .chimney-smoke.c2 { animation-duration: 5s; }
+        @keyframes dash-small {
+            from { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: 160; }
+        }
+
+        .spark { fill: var(--flame-orange); opacity: 0; animation: rise 2.4s ease-out infinite; }
+        .spark:nth-child(2) { animation-delay: -.6s; animation-duration: 2.9s; }
+        .spark:nth-child(3) { animation-delay: -1.2s; animation-duration: 2.2s; }
+        .spark:nth-child(4) { animation-delay: -1.8s; animation-duration: 3.1s; }
+        @keyframes rise {
+            0% { transform: translate(0, 0); opacity: 0; }
+            15% { opacity: 1; }
+            100% { transform: translate(8px, -70px); opacity: 0; }
+        }
+
+        .fireflies { opacity: var(--firefly-op); fill: #f7e08a; }
+        .fly { animation: drift 7s ease-in-out infinite alternate; }
+        .fly:nth-child(2) { animation-delay: -2s; animation-duration: 9s; }
+        .fly:nth-child(3) { animation-delay: -4s; animation-duration: 6s; }
+        .fly:nth-child(4) { animation-delay: -1s; animation-duration: 8s; }
+        .fly:nth-child(5) { animation-delay: -5s; animation-duration: 10s; }
+        @keyframes drift {
+            0% { transform: translate(0, 0); opacity: .2; }
+            50% { transform: translate(10px, -8px); opacity: 1; }
+            100% { transform: translate(-6px, -14px); opacity: .3; }
+        }
+
+        .twinkle { animation: twinkle 4s ease-in-out infinite alternate; }
+        .twinkle:nth-child(3n) { animation-delay: -1.5s; }
+        .twinkle:nth-child(3n+1) { animation-delay: -3s; }
+        @keyframes twinkle {
+            from { opacity: 1; }
+            to { opacity: .35; }
+        }
+
+        .clouds g { animation: float 40s ease-in-out infinite alternate; }
+        .clouds g + g { animation-duration: 55s; animation-direction: alternate-reverse; }
+        @keyframes float {
+            from { transform: translateX(-20px); }
+            to { transform: translateX(20px); }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; }
+            .spark { display: none; }
+        }
+    </style>
+</head>
+<body id="backgroundHome">
+<svg class="scene" viewBox="0 0 540 320" aria-hidden="true">
+    <defs>
+        <radialGradient id="fireGlow">
+            <stop offset="0" style="stop-color:var(--fire-glow)"/>
+            <stop offset="1" style="stop-color:var(--fire-glow)" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="fireLight">
+            <stop offset="0" stop-color="#fda263" stop-opacity=".45"/>
+            <stop offset=".6" stop-color="#fda263" stop-opacity=".12"/>
+            <stop offset="1" stop-color="#fda263" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="winGlow">
+            <stop offset="0" stop-color="#ffcf6b" stop-opacity=".45"/>
+            <stop offset="1" stop-color="#ffcf6b" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="moonHalo">
+            <stop offset=".35" stop-color="#efe2c4" stop-opacity=".25"/>
+            <stop offset="1" stop-color="#efe2c4" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="smokeFade" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset=".3" stop-color="#fff"/>
+            <stop offset="1" stop-color="#000"/>
+        </linearGradient>
+        <mask id="smokeMask" maskUnits="userSpaceOnUse" x="150" y="-340" width="320" height="610">
+            <rect x="150" y="-340" width="320" height="610" fill="url(#smokeFade)"/>
+        </mask>
+        <linearGradient id="chimneyFade" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#fff"/>
+            <stop offset="1" stop-color="#000"/>
+        </linearGradient>
+        <mask id="chimneyMask" maskUnits="userSpaceOnUse" x="-100" y="-120" width="740" height="260">
+            <rect x="-100" y="-120" width="740" height="260" fill="url(#chimneyFade)"/>
+        </mask>
+        <!-- pine tree, 40 x 90, origin at top-left -->
+        <symbol id="pine" viewBox="0 0 40 90" overflow="visible">
+            <rect class="trunk" x="17" y="72" width="6" height="18"/>
+            <polygon class="tree" points="20,0 38,46 2,46"/>
+            <polygon class="tree" points="20,22 40,76 0,76"/>
+            <polygon class="tree-dark" points="20,22 40,76 20,76"/>
+            <polygon class="tree-dark" points="20,0 38,46 20,46"/>
+        </symbol>
+    </defs>
+
+    <!-- sky: sun by day, moon + stars by night, a couple of drifting clouds -->
+    <circle class="sun-halo" cx="370" cy="40" r="46"/>
+    <circle class="sun" cx="370" cy="40" r="26"/>
+    <g class="moon">
+        <circle cx="370" cy="40" r="60" fill="url(#moonHalo)"/>
+        <circle cx="370" cy="40" r="22" fill="#efe2c4"/>
+        <circle cx="362" cy="34" r="4" fill="#d9caa6"/>
+        <circle cx="377" cy="47" r="5" fill="#d9caa6"/>
+        <circle cx="378" cy="31" r="2.5" fill="#d9caa6"/>
+    </g>
+    <g class="stars">
+        <circle class="twinkle" cx="20" cy="20" r="1.6"/>
+        <circle class="twinkle" cx="210" cy="-10" r="1.2"/>
+        <circle class="twinkle" cx="330" cy="30" r="1.8"/>
+        <circle class="twinkle" cx="420" cy="-30" r="1.3"/>
+        <circle class="twinkle" cx="505" cy="60" r="1.6"/>
+        <circle class="twinkle" cx="-60" cy="80" r="1.4"/>
+        <circle class="twinkle" cx="-180" cy="10" r="1.8"/>
+        <circle class="twinkle" cx="-320" cy="90" r="1.3"/>
+        <circle class="twinkle" cx="-430" cy="-40" r="1.6"/>
+        <circle class="twinkle" cx="620" cy="10" r="1.5"/>
+        <circle class="twinkle" cx="740" cy="90" r="1.8"/>
+        <circle class="twinkle" cx="860" cy="-20" r="1.3"/>
+        <circle class="twinkle" cx="960" cy="70" r="1.6"/>
+        <circle class="twinkle" cx="270" cy="95" r="1.1"/>
+        <circle class="twinkle" cx="460" cy="110" r="1.2"/>
+        <circle class="twinkle" cx="60" cy="120" r="1.1"/>
+    </g>
+    <g class="clouds">
+        <g><path d="M30 70 a16 16 0 0 1 28 -10 a20 20 0 0 1 36 6 a12 12 0 0 1 4 24 h-62 a10 10 0 0 1 -6 -20z"/></g>
+        <g><path d="M-140 40 a14 14 0 0 1 24 -8 a18 18 0 0 1 32 6 a10 10 0 0 1 2 20 h-54 a9 9 0 0 1 -4 -18z"/>
+           <path d="M640 30 a14 14 0 0 1 24 -8 a18 18 0 0 1 32 6 a10 10 0 0 1 2 20 h-54 a9 9 0 0 1 -4 -18z"/></g>
+    </g>
+
+    <!-- land: far hills, mid hills, ground (extend far beyond the viewBox) -->
+    <path class="hill-far" d="M-2000 225 Q-700 140 -120 190 Q60 150 230 196 Q420 150 640 190 Q1200 140 2540 215 V2000 H-2000 Z"/>
+    <use href="#pine" x="-330" y="130" width="30" height="68"/>
+    <use href="#pine" x="-290" y="120" width="36" height="80"/>
+    <use href="#pine" x="830" y="125" width="34" height="76"/>
+    <use href="#pine" x="870" y="138" width="28" height="62"/>
+    <path class="hill-mid" d="M-2000 240 Q-500 190 0 222 Q270 205 540 222 Q1100 190 2540 240 V2000 H-2000 Z"/>
+    <path class="ground" d="M-2000 250 Q-300 232 270 238 Q840 232 2540 250 V2000 H-2000 Z"/>
+
+    <!-- trees at the edges of the village -->
+    <use href="#pine" x="-110" y="140" width="48" height="108"/>
+    <use href="#pine" x="-70" y="160" width="40" height="90"/>
+    <use href="#pine" x="-200" y="150" width="44" height="100"/>
+    <use href="#pine" x="0" y="175" width="28" height="64"/>
+    <use href="#pine" x="512" y="172" width="30" height="68"/>
+    <use href="#pine" x="560" y="150" width="46" height="104"/>
+    <use href="#pine" x="610" y="168" width="38" height="84"/>
+    <use href="#pine" x="690" y="145" width="44" height="100"/>
+
+    <!-- back house (small, stone, tiled roof) -->
+    <rect class="stone" x="190" y="196" width="60" height="40"/>
+    <path class="stone-line" d="M196 208 h12 M214 214 h14 M234 206 h10 M200 226 h10 M228 228 h14"/>
+    <polygon class="tile" points="182,199 220,166 258,199"/>
+    <path class="tile-line" d="M196 187 h48 M206 178 h28"/>
+    <rect class="stone-dark" x="230" y="166" width="9" height="18"/>
+    <circle class="win-glow" cx="220" cy="216" r="16" fill="url(#winGlow)"/>
+    <rect class="win w3" x="213" y="209" width="14" height="13" rx="1"/>
+    <path class="win-bar" d="M220 209 v13"/>
+    <path class="chimney-smoke c2" mask="url(#chimneyMask)" d="M240 50 C228 80 252 100 238 128 S232 150 234 164"/>
+
+    <!-- left cottage: timber frame + thatched roof -->
+    <rect class="shadow" x="30" y="248" width="128" height="6" rx="3"/>
+    <rect class="plaster" x="38" y="180" width="112" height="70"/>
+    <path class="timber" d="M38 180 h112 v70 h-112 z M38 206 h112 M88 180 v70 M38 206 l24 -26 M150 206 l-24 -26"/>
+    <rect class="stone-dark" x="122" y="124" width="14" height="40"/>
+    <rect class="stone" x="119" y="120" width="20" height="7"/>
+    <path class="thatch" d="M24 188 Q26 180 36 172 L94 118 L152 172 Q162 180 164 188 Q94 196 24 188 Z"/>
+    <path class="thatch-line" d="M50 170 l10 14 M70 152 l8 20 M94 134 v26 M118 152 l-8 20 M138 170 l-10 14 M36 184 Q94 191 152 184"/>
+    <path class="door" d="M54 250 V227 A9 9 0 0 1 72 227 V250 Z"/>
+    <path class="plank" d="M60 219 V250 M66 219 V250"/>
+    <circle class="metal-fill" cx="68.5" cy="237" r="1.4"/>
+    <circle class="win-glow" cx="117" cy="227" r="30" fill="url(#winGlow)"/>
+    <rect class="win" x="98" y="216" width="18" height="18" rx="1"/>
+    <rect class="win w2" x="122" y="216" width="18" height="18" rx="1"/>
+    <path class="win-bar" d="M107 216 v18 M98 225 h18 M131 216 v18 M122 225 h18"/>
+    <path class="chimney-smoke" mask="url(#chimneyMask)" d="M132 -20 C116 20 146 50 128 80 S124 106 129 120"/>
+
+    <!-- right cottage: stone walls + tiled roof -->
+    <rect class="shadow" x="372" y="248" width="134" height="6" rx="3"/>
+    <rect class="stone" x="380" y="178" width="118" height="72"/>
+    <path class="stone-line" d="M386 192 h16 M408 198 h18 M440 190 h14 M470 196 h20 M384 236 h14 M458 232 h16 M480 242 h12 M450 212 h10"/>
+    <rect class="stone-dark" x="460" y="118" width="14" height="40"/>
+    <rect class="stone" x="457" y="114" width="20" height="7"/>
+    <path class="tile" d="M368 184 L394 138 L484 138 L510 184 Z"/>
+    <path class="tile-line" d="M380 166 h118 M388 152 h102"/>
+    <rect class="timber-fill" x="366" y="182" width="146" height="5"/>
+    <path class="door" d="M398 250 V224 A10 10 0 0 1 418 224 V250 Z"/>
+    <path class="plank" d="M404.7 215 V250 M411.3 215 V250"/>
+    <circle class="metal-fill" cx="414.5" cy="236" r="1.5"/>
+    <circle class="win-glow" cx="462" cy="220" r="28" fill="url(#winGlow)"/>
+    <rect class="win w3" x="436" y="208" width="20" height="20" rx="10" ry="8"/>
+    <rect class="win w2" x="466" y="208" width="20" height="20" rx="10" ry="8"/>
+    <path class="win-bar" d="M446 208 v20 M436 218 h20 M476 208 v20 M466 218 h20"/>
+    <path class="chimney-smoke c2" mask="url(#chimneyMask)" d="M470 -30 C482 10 452 40 472 76 S470 100 467 114"/>
+
+    <!-- village square -->
+    <ellipse class="dirt-edge" cx="270" cy="290" rx="236" ry="36"/>
+    <ellipse class="dirt" cx="270" cy="289" rx="226" ry="31"/>
+    <ellipse cx="270" cy="286" rx="170" ry="40" fill="url(#fireLight)" class="fire-light"/>
+
+    <!-- well: free-standing on the front right of the square, bucket hanging from the crank -->
+    <ellipse class="shadow" cx="452" cy="318" rx="30" ry="5"/>
+    <rect class="wood" x="431" y="256" width="5" height="40"/>
+    <rect class="wood" x="468" y="256" width="5" height="40"/>
+    <path class="tile" d="M422 263 L452 243 L482 263 Z"/>
+    <path class="tile-line" d="M432 257 h40"/>
+    <rect class="wood-dark" x="433" y="266" width="38" height="3.5" rx="1.5"/>
+    <path class="crank" d="M473 267.5 h6 v6"/>
+    <line class="rope" x1="452" y1="269" x2="452" y2="273.5"/>
+    <path class="bucket-handle" d="M446.5 277 Q452 271 457.5 277"/>
+    <path class="bucket" d="M446 277 h12 l-1.5 10 h-9 z"/>
+    <path class="band" d="M446.4 279.5 h11.2 M447.3 284.5 h9.4"/>
+    <rect class="stone" x="430" y="294" width="44" height="22"/>
+    <ellipse class="stone" cx="452" cy="316" rx="22" ry="5"/>
+    <path class="stone-line" d="M430 305 h44 M441 294 v11 M463 294 v11 M436 305 v13 M452 305 v14 M468 305 v13"/>
+    <ellipse class="stone-top" cx="452" cy="294" rx="22" ry="5.5"/>
+    <ellipse class="wood-dark" cx="452" cy="294" rx="16" ry="3.5"/>
+
+    <!-- seat logs, back ones first -->
+    <g>
+        <rect class="wood" x="214" y="262" width="56" height="14" rx="7" transform="rotate(-8 242 269)"/>
+        <ellipse class="wood-end" cx="216" cy="273" rx="5" ry="7" transform="rotate(-8 242 269)"/>
+        <rect class="wood" x="282" y="262" width="56" height="14" rx="7" transform="rotate(8 310 269)"/>
+        <ellipse class="wood-end" cx="336" cy="269" rx="5" ry="7" transform="rotate(8 310 269)"/>
+    </g>
+
+    <!-- campfire: stones, sticks, glow, flames, sparks, smoke -->
+    <circle cx="270" cy="282" r="44" class="fire-glow-c"/>
+    <rect class="wood-dark" x="252" y="286" width="36" height="6" rx="3" transform="rotate(18 270 289)"/>
+    <rect class="wood" x="252" y="286" width="36" height="6" rx="3" transform="rotate(-18 270 289)"/>
+    <g class="stone">
+        <ellipse cx="248" cy="294" rx="6" ry="4"/>
+        <ellipse cx="259" cy="298" rx="6" ry="4"/>
+        <ellipse cx="272" cy="299" rx="6" ry="4"/>
+        <ellipse cx="285" cy="297" rx="6" ry="4"/>
+        <ellipse cx="294" cy="292" rx="6" ry="4"/>
+    </g>
+    <g transform="translate(271 270) scale(1.5)">
+        <g class="fire">
+            <polygon class="flame-1" points="-1,-41 9,-7 -1,9 -11,-7"/>
+            <polygon class="flame-2" points="-1,-11 3,1 -1,9 -5,1"/>
+            <polygon class="flame-3" points="-1,0 0,4 -1,8 -2,4"/>
+        </g>
+    </g>
+    <g>
+        <circle class="spark" cx="268" cy="262" r="1.6"/>
+        <circle class="spark" cx="273" cy="258" r="1.3"/>
+        <circle class="spark" cx="266" cy="266" r="1.2"/>
+        <circle class="spark" cx="275" cy="264" r="1.5"/>
+    </g>
+    <g mask="url(#smokeMask)">
+        <path class="smoke" transform="translate(220 -330)" d="M 150 0 Q 200 100 100 250 C 0 450 120 400 50 600"/>
+    </g>
+
+    <!-- front log -->
+    <rect class="shadow" x="236" y="316" width="72" height="5" rx="2.5"/>
+    <rect class="wood" x="238" y="302" width="68" height="15" rx="7.5"/>
+    <ellipse class="wood-end" cx="303" cy="309.5" rx="5.5" ry="7.5"/>
+
+    <!-- fireflies (night only) -->
+    <g class="fireflies">
+        <circle class="fly" cx="60" cy="270" r="1.6"/>
+        <circle class="fly" cx="170" cy="300" r="1.4"/>
+        <circle class="fly" cx="350" cy="306" r="1.6"/>
+        <circle class="fly" cx="500" cy="280" r="1.4"/>
+        <circle class="fly" cx="-40" cy="290" r="1.6"/>
+    </g>
+</svg>
+</body>
+</html>

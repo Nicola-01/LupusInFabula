@@ -1,0 +1,39 @@
+# PROD: image built by CI on GHCR, server only pulls and starts it. Values come from .env (see .env.example).
+services:
+  web:
+    image: ghcr.io/${GHCR_OWNER}/lupusinfabula:${APP_TAG:-prod}
+    restart: always
+    ports:
+      - "${WEB_PORT:-9090}:9090"
+    environment:
+      TZ: Europe/Rome
+      DB_URL: jdbc:postgresql://db:5432/postgres
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      APP_VERSION: ${APP_VERSION:-dev}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18
+    restart: always
+    environment:
+      TZ: Europe/Rome
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      DB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      # init scripts run only on an empty volume; no test data (03_ourGames.sql, extra/) in prod
+      - ./src/main/database/01_database_tables.sql:/docker-entrypoint-initdb.d/01_database_tables.sql:ro
+      - ./src/main/database/02_populate_db.sql:/docker-entrypoint-initdb.d/02_populate_db.sql:ro
+      - ./deploy/03_app_password.sh:/docker-entrypoint-initdb.d/03_app_password.sh:ro
+      # named volume, never a folder in the runner workspace (the checkout wipes it)
+      - lupus_db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 10s
+      retries: 50
+
+volumes:
+  lupus_db:

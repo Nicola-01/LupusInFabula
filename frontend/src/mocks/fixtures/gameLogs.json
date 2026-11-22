@@ -1,0 +1,292 @@
+{
+    "resource-list": [
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Polterino",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Rickm",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Sofi",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Matteo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "aiorT",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Matteo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Bubis",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Hare_Segz",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Bubis",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Matteo",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Pippo_baudo",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "vote",
+                "target": "Matteo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Sofi",
+                "round": 1,
+                "phase": "day",
+                "subphase": 0,
+                "typeAction": "dead",
+                "target": null,
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Bubis",
+                "round": 1,
+                "phase": "day",
+                "subphase": 1,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Polterino",
+                "round": 1,
+                "phase": "day",
+                "subphase": 1,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Rickm",
+                "round": 1,
+                "phase": "day",
+                "subphase": 1,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "aiorT",
+                "round": 1,
+                "phase": "day",
+                "subphase": 1,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Hare_Segz",
+                "round": 1,
+                "phase": "day",
+                "subphase": 1,
+                "typeAction": "vote",
+                "target": "Sofi",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Sofi",
+                "round": 1,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "maul",
+                "target": "Pippo_baudo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Rickm",
+                "round": 1,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "plague",
+                "target": "Pippo_baudo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Polterino",
+                "round": 1,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "protect",
+                "target": "Polterino",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Pippo_baudo",
+                "round": 1,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "investigate",
+                "target": "Matteo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Matteo",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "shot",
+                "target": "aiorT",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Polterino",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "protect",
+                "target": "Bubis",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Rickm",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "plague",
+                "target": "Hare_Segz",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "aiorT",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "explore",
+                "target": "Matteo",
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "aiorT",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "dead",
+                "target": null,
+                "blocked": false
+            }
+        },
+        {
+            "Action": {
+                "gameId": 1,
+                "player": "Matteo",
+                "round": 2,
+                "phase": "night",
+                "subphase": 0,
+                "typeAction": "dead",
+                "target": null,
+                "blocked": false
+            }
+        }
+    ]
+}

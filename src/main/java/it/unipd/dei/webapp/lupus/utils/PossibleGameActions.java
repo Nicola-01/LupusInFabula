@@ -135,14 +135,14 @@ public class PossibleGameActions {
             LogContext.setGame(publicGameID);
 
             if (game.getWho_win() == -1) {
-                LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is Night " + isNightPhase);
+//                LOGGER.info("In the game " + publicGameID + ", the current round is " + currentRound + ", the current phase is Night " + isNightPhase);
                 if (isNightPhase)
                     handleNightPhase();
                 else
                     handleDayPhase();
             } else {
                 ErrorCode ec = ErrorCode.GAME_IS_OVER;
-                LOGGER.warn("The game is over");
+//                LOGGER.warn("The game is over");
                 return new Message("ERROR: the game is over", ec.getErrorCode(), ec.getErrorMessage());
             }
 
@@ -241,7 +241,7 @@ public class PossibleGameActions {
      * @throws SQLException If a SQL exception occurs while accessing the database.
      */
     private void handleNightPhase() throws IOException, SQLException {
-        LOGGER.info("Handling night phase.");
+//        LOGGER.info("Handling night phase.");
 
         boolean wolfAlreadyInsert = false;
 
@@ -250,7 +250,7 @@ public class PossibleGameActions {
 
             String player = pr.getKey();
             String role = pr.getValue();
-            LOGGER.info("Actions for player: " + player + "; with role: " + role);
+//            LOGGER.info("Actions for player: " + player + "; with role: " + role);
 
             // if the role don't have nightAction or if the player is death
             if (!nightAction.containsKey(role))
@@ -289,7 +289,7 @@ public class PossibleGameActions {
                 if(!deadPlayers.get(player) && targets.isEmpty())
                     continue;
 
-            LOGGER.info("Targets: " + String.join(", ", targets));
+//            LOGGER.info("Targets: " + String.join(", ", targets));
             actionTargets.add(new ActionTarget(role, playerWithRole(role),
                     getNightAction(role), targets));
 
@@ -301,7 +301,7 @@ public class PossibleGameActions {
             }
         }
 
-        LOGGER.info("Returning the actions of night phase.");
+//        LOGGER.info("Returning the actions of night phase.");
     }
 
     /**

@@ -8,7 +8,6 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.postgresql.shaded.com.ongres.scram.common.message.ServerFinalMessage;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -54,7 +53,7 @@ public class GameStatusRR extends AbstractRR {
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setGame(gameID);
         try {
-            LOGGER.info("Get status of game " + gameID);
+//            LOGGER.info("Get status of game " + gameID);
             Game game = new GetGameByGameIdDAO(ds.getConnection(), gameID).access().getOutputParam();
             if (game != null) {
                 res.setStatus(HttpServletResponse.SC_OK);

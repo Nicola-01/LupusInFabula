@@ -81,7 +81,7 @@ public class GameLogGetRR extends AbstractRR
                 ArrayList<Action> r = this.getLog();
                 if (r != null)
                 {
-                    LOGGER.info(String.format("Action successfully listed for game %d.", gameID));
+//                    LOGGER.info(String.format("Action successfully listed for game %d.", gameID));
                     res.setStatus(HttpServletResponse.SC_OK);
                     new ResourceList<Action>(r).toJSON(res.getOutputStream());
                 }

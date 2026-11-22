@@ -1,0 +1,91 @@
+{
+    "resource-list": [
+        {
+            "actionTarget": {
+                "role": "wolf",
+                "players": [
+                    {
+                        "player": "aiorT"
+                    },
+                    {
+                        "player": "Hare_Segz"
+                    }
+                ],
+                "action": "maul",
+                "possibleTargets": [
+                    {
+                        "player": "Bubis"
+                    },
+                    {
+                        "player": "Japo"
+                    },
+                    {
+                        "player": "Kevin"
+                    },
+                    {
+                        "player": "Matteo"
+                    }
+                ]
+            }
+        },
+        {
+            "actionTarget": {
+                "role": "seer",
+                "players": [
+                    {
+                        "player": "Kevin"
+                    }
+                ],
+                "action": "investigate",
+                "possibleTargets": [
+                    {
+                        "player": "Bubis"
+                    },
+                    {
+                        "player": "Hare_Segz"
+                    },
+                    {
+                        "player": "Japo"
+                    },
+                    {
+                        "player": "Matteo"
+                    },
+                    {
+                        "player": "aiorT"
+                    }
+                ]
+            }
+        },
+        {
+            "actionTarget": {
+                "role": "knight",
+                "players": [
+                    {
+                        "player": "Matteo"
+                    }
+                ],
+                "action": "protect",
+                "possibleTargets": [
+                    {
+                        "player": "Bubis"
+                    },
+                    {
+                        "player": "Hare_Segz"
+                    },
+                    {
+                        "player": "Japo"
+                    },
+                    {
+                        "player": "Kevin"
+                    },
+                    {
+                        "player": "Matteo"
+                    },
+                    {
+                        "player": "aiorT"
+                    }
+                ]
+            }
+        }
+    ]
+}

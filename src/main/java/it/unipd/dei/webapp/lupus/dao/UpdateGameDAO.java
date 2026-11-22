@@ -5,6 +5,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Time;
 
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+
 /**
  * Updates game-related information in the database, such as the game duration,
  * who wins the game, the number of rounds, and the current phase of the game.
@@ -103,7 +105,7 @@ public class UpdateGameDAO extends AbstractDAO {
                 pstmt.setInt(3, who_wins);
                 pstmt.setInt(4, gameId);
             }
-
+            freeGameWebSocket(gameId, who_wins >= 0);
             pstmt.executeUpdate();
         } finally {
             if (pstmt != null) {

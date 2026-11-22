@@ -1,0 +1,24 @@
+# Decisioni utente
+
+- 2026-11-22 — Direzione globale: **F = merge B + C** (font, navbar e accento verde di B; pannelli e popup a doppia cornice di C; legno di B sostituito da marroncino chiaro tenue a righe leggermente più scure). Token in `variants.md` § F.
+- 2026-11-22 — Codici errore (`error-code` dei `Message`) non mostrati nei popup: solo log in console.
+- 2026-11-22 — Procedere una schermata alla volta (niente mock in parallelo su tutte le schermate).
+- 2026-11-22 — Shell F approvata (bordo doppio 3px, sigilli piccoli e centrati nei toast). Footer rivisto: stessa barra marrone della navbar, testo Cinzel con ornamenti (da riconfermare).
+- 2026-11-22 — Le altre schermate si fanno solo in variante F (niente più A–E).
+- 2026-11-22 — Home: mantenere l'animazione attuale del falò (iframe `components/home/homeBackground.html`).
+- 2026-11-22 — Home: sfondo animato personalizzato `components/home/villageBackground.html` (falò, pozzo, tronchetti, case) al posto di `homeBackground.html` (approvato dopo ritocchi a secchio, pozzo, porte).
+- 2026-11-22 — Login: card con altezza uguale tra Login e Sign up; sfondo immersivo `components/login/loginBackground.html` (falò con un tronco verticale per ogni seduta).
+- 2026-11-22 — **Mobile first**: l'app è usata soprattutto da telefono; ogni schermata si progetta prima a 390px, poi si adatta al desktop.
+- 2026-11-22 — newGame F (3 colonne con tutti i ruoli in lista) bocciato: troppi ruoli, non si capisce. Richieste nuove proposte (F2/F3/F4).
+- 2026-11-22 — Rules F bocciato: tenere la struttura originale (Introduction, Aim, Preparation, **Game** con sottofasi Night/Day/Voting, Victory Condition), testo originale **senza modifiche**, e le carte dei singoli ruoli (immagini `/lupus/media/cards/`).
+- 2026-11-22 — Rules: ruoli come nell'originale (un blocco per fazione con carosello carta + testo + 'Wins with'), restyle **stile bacheca** (carte appuntate).
+- 2026-11-22 — Niente screenshot letti (né orchestratore né agent): costano troppo. Verifica = compilazione + console pulita; screenshot solo su richiesta.
+- 2026-11-22 — Rules: capolettera miniato solo sul titolo "Introduction to Lupus". Fazioni distinte anche da icona Font Awesome (già incluso via CDN v5.8.1 in `index.html`, classi `fas fa-*`), non solo dal colore.
+- 2026-11-22 — Rules F approvato. Profile F approvato + **colore utente**: ogni utente ha un colore derivato dall'hash del nome, personalizzabile dal profilo.
+- 2026-11-22 — Stats F approvato; "Favourite role" → "Usually plays as" (il ruolo non lo scegli tu).
+- 2026-11-22 — newGame = combo **F5**: wizard di F2; step Players = "Who's at the fire?" di F4 + elenco amici, con **ordine dei posti modificabile** (in presenza l'ordine deve corrispondere a come si è seduti); step Roles = deck builder F3 + preset di F4 salvabili; Options/Summary di F2, summary con giocatori ad anello e solo le opzioni attive.
+- 2026-11-22 — Tema: mantenere i 4 temi esistenti (cookie `theme`, `loadTheme()` in `components/Navbar.jsx`): Light, Dark, Auto (= sistema), Dynamic (default: sistema, ma in `/village/...` segue la fase di gioco, notte = dark). La 404 forza dark. Il toggle binario dei mock va sostituito con un selettore a 4 opzioni; nella Navbar nuova (Fase 2/3) riusare `loadTheme()` così com'è.
+- 2026-11-22 — newGame F5 approvato (+ 'Select all' amici; step nell'URL per nome: `?step=players|roles|options|summary`).
+- 2026-11-22 — Game: base **F2** ("il tavolo è l'interfaccia"); la vista fine partita usa il capitolo **"The End" di F3**. ⚠ Implica riscrivere in React parte del codice imperativo di gioco (azioni, cerchio giocatori, log; il WebSocket va preservato) → la Fase 3 per `CurrentGame` non è più solo restyling: va pianificata a parte con test e2e.
+- 2026-11-22 — Ogni ruolo ha un'**icona Font Awesome** (v5.8.1, mappa `ROLE_ICONS` nel kit F), mostrata ovunque compaia il ruolo (es. "Roles in game").
+- 2026-11-22 — notFound F approvato. Login: ridisegnare il lupo (riconoscibile, più piccolo), alberi sparsi su più piani, 3 proposte di tronchetti (`?stumps=a|b|c`).

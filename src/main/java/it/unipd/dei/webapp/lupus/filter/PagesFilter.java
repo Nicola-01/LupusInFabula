@@ -16,14 +16,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 
-import static it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet.LoginToken;
+import static it.unipd.dei.webapp.lupus.controller.LoginSignupController.LoginToken;
 
 /**
  * Filter to manage access to the protected resources.
@@ -60,6 +58,15 @@ public class PagesFilter implements Filter {
      */
     private DataSource ds;
 
+    /**
+     * Creates the filter with the Spring-managed DataSource.
+     *
+     * @param ds the connection pool to the database.
+     */
+    public PagesFilter(DataSource ds) {
+        this.ds = ds;
+    }
+
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
@@ -74,19 +81,6 @@ public class PagesFilter implements Filter {
         Here we could pass configuration parameters to the filter, if needed.
          */
 
-        // the JNDI lookup context
-        InitialContext cxt;
-
-        try {
-            cxt = new InitialContext();
-            ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/lupusdb");
-        } catch (NamingException e) {
-            ds = null;
-
-            LOGGER.error("Unable to acquire the connection pool to the database.", e);
-
-            throw new ServletException("Unable to acquire the connection pool to the database", e);
-        }
     }
 
     @Override
@@ -193,8 +187,8 @@ public class PagesFilter implements Filter {
             String publicGameID = new PlayerInGameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
             String gameMaster = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
 
-            LOGGER.info(gameMaster.equals(p.getUsername()));
-            LOGGER.info(publicGameID);
+//            LOGGER.info(gameMaster.equals(p.getUsername()));
+//            LOGGER.info(publicGameID);
 
             if (gameMaster.equals(p.getUsername()))
                 newSession.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);

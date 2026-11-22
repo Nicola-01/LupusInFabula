@@ -16,8 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -59,6 +57,15 @@ public class GameMasterFilter implements Filter {
      */
     private DataSource ds;
 
+    /**
+     * Creates the filter with the Spring-managed DataSource.
+     *
+     * @param ds the connection pool to the database.
+     */
+    public GameMasterFilter(DataSource ds) {
+        this.ds = ds;
+    }
+
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
@@ -69,18 +76,6 @@ public class GameMasterFilter implements Filter {
         }
         this.config = config;
 
-        // the JNDI lookup context
-        InitialContext cxt;
-
-        try {
-            cxt = new InitialContext();
-            ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/lupusdb");
-        } catch (NamingException e) {
-            ds = null;
-
-            LOGGER.error("Unable to acquire the connection pool to the database.", e);
-            throw new ServletException("Unable to acquire the connection pool to the database", e);
-        }
     }
 
     @Override
@@ -101,10 +96,10 @@ public class GameMasterFilter implements Filter {
 
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
-            path = path.substring(path.indexOf("/lupus/game"));
+            path = path.substring(req.getContextPath().length());
 
             // this filter accept only request that start with /game/* and end with /master
-            if (path.startsWith("/lupus/game") && (path.endsWith("/master") || path.contains("/actions/")) ) {
+            if (path.startsWith("/game") && (path.endsWith("/master")) ) {
                 // if the path contain /master check if the user is the master in the game
 
                 final HttpSession session = req.getSession(false);

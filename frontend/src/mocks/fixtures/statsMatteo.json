@@ -1,0 +1,32 @@
+{
+    "resource-list": [
+        {
+            "StatsRole": {
+                "name": "dorky",
+                "countName": 1,
+                "countWins": 0
+            }
+        },
+        {
+            "StatsRole": {
+                "name": "sam",
+                "countName": 1,
+                "countWins": 1
+            }
+        },
+        {
+            "StatsRole": {
+                "name": "sheriff",
+                "countName": 1,
+                "countWins": 0
+            }
+        },
+        {
+            "StatsRole": {
+                "name": "wolf",
+                "countName": 1,
+                "countWins": 1
+            }
+        }
+    ]
+}

@@ -1,0 +1,52 @@
+{
+    "resource-list": [
+        {
+            "playsAsIn": {
+                "username": "aiorT",
+                "gameID": 6,
+                "role": "wolf",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Bubis",
+                "gameID": 6,
+                "role": "farmer",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Hare_Segz",
+                "gameID": 6,
+                "role": "wolf",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Japo",
+                "gameID": 6,
+                "role": "farmer",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Kevin",
+                "gameID": 6,
+                "role": "seer",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Matteo",
+                "gameID": 6,
+                "role": "knight",
+                "isDead": false
+            }
+        }
+    ]
+}

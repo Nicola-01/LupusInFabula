@@ -1,0 +1,56 @@
+{
+    "resource-list": [
+        {
+            "PlaysJoinGame": {
+                "game_id": 1,
+                "public_id": "farmer-kamikaze-medium",
+                "start": "2024-05-30 22:33:35.0",
+                "game_duration": "00:25:17",
+                "number_of_rounds": 2,
+                "name": "sheriff",
+                "who_wins": "hamster",
+                "has_won": false,
+                "is_game_finished": true
+            }
+        },
+        {
+            "PlaysJoinGame": {
+                "game_id": 2,
+                "public_id": "carpenter-seer-hobbit",
+                "start": "2024-05-30 23:16:53.0",
+                "game_duration": "00:16:10",
+                "number_of_rounds": 1,
+                "name": "wolf",
+                "who_wins": "wolves",
+                "has_won": true,
+                "is_game_finished": true
+            }
+        },
+        {
+            "PlaysJoinGame": {
+                "game_id": 3,
+                "public_id": "plaguespreader-berserker-puppy",
+                "start": "2024-05-30 23:39:28.0",
+                "game_duration": "00:29:24",
+                "number_of_rounds": 2,
+                "name": "sam",
+                "who_wins": "farmers",
+                "has_won": true,
+                "is_game_finished": true
+            }
+        },
+        {
+            "PlaysJoinGame": {
+                "game_id": 4,
+                "public_id": "plaguespreader-hobbit-kamikaze",
+                "start": "2024-05-31 00:19:24.0",
+                "game_duration": "00:14:08",
+                "number_of_rounds": 1,
+                "name": "dorky",
+                "who_wins": "jester",
+                "has_won": false,
+                "is_game_finished": true
+            }
+        }
+    ]
+}

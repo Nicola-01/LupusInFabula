@@ -19,6 +19,8 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+
 /**
  * Handles the game status update REST request.
  * This class is responsible for handling HTTP requests that update game settings,
@@ -133,6 +135,7 @@ public class GameStatusUpdateRR extends AbstractRR {
         if (game.getWho_win() != WinFaction.NOT_FINISH.getId())
             return false;
 
+        // freeGameWebSocket(gameID);
         new UpdateGameDAO(ds.getConnection(), gameID, game.getPhase(), game.getRounds(), WinFaction.DRAW.getId()).access();
         return true;
     }

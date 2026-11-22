@@ -1,0 +1,34 @@
+/*
+ * 404 page scene (ported from mocks/notFound/F.jsx). Scoped under .lf-nf. The 404 page always forces the
+ * dark theme (Navbar loadTheme), so only the night palette is defined.
+ */
+.lf-nf {
+  --nf-top: #0c0a18; --nf-mid: #221d38; --nf-hor: #4a3b5c; --nf-moon: #efe2c4; --nf-glow: #efe2c4;
+  --nf-hill: #1d1a2e; --nf-pine: #0b170f; --nf-pine2: #13241a; --nf-ground: #120d09;
+  --nf-stone: #3b3346; --nf-wood: #6b4a2e; --nf-wood2: #4d3420; --nf-star: #efe2c4;
+  --nf-404: #efe2c4; --nf-eyes: #ffd27a; --nf-lantern: #ffb35c; --nf-fog: rgba(200, 190, 230, .10);
+}
+.lf-nf .nf-pine { fill: var(--nf-pine); }
+.lf-nf .nf-pine2 { fill: var(--nf-pine2); }
+.lf-nf .nf-hill { fill: var(--nf-hill); }
+.lf-nf .nf-ground { fill: var(--nf-ground); }
+.lf-nf .nf-stone { fill: var(--nf-stone); }
+.lf-nf .nf-wood { fill: var(--nf-wood); }
+.lf-nf .nf-wood2 { fill: var(--nf-wood2); }
+.lf-nf .nf-moon { fill: var(--nf-moon); }
+.lf-nf .nf-glow { fill: var(--nf-glow); opacity: .14; }
+.lf-nf .nf-star { fill: var(--nf-star); }
+.lf-nf .nf-fog { fill: var(--nf-fog); }
+.lf-nf .nf-eye { fill: var(--nf-eyes); }
+.lf-nf .nf-lantern { fill: var(--nf-lantern); }
+.lf-nf .nf-lamp-glow { fill: var(--nf-lantern); opacity: .35; }
+.lf-nf .nf-404 { color: var(--nf-404); text-shadow: 0 3px 14px rgba(0, 0, 0, .45); }
+.lf-nf .nf-torn {
+  clip-path: polygon(0 3%, 6% 0, 14% 4%, 22% .5%, 31% 3.5%, 40% 0, 49% 4%, 58% 1%, 67% 4%, 76% .5%, 85% 3.5%, 93% 0, 100% 3%, 100% 100%, 0 100%);
+}
+@keyframes nf-flicker {
+  0%, 100% { opacity: .35; } 30% { opacity: .22; } 55% { opacity: .42; } 80% { opacity: .28; }
+}
+@keyframes nf-blink {
+  0%, 92%, 100% { opacity: 1; } 94%, 96% { opacity: 0; }
+}

@@ -1,0 +1,12 @@
+{
+    "game": {
+        "id": 1,
+        "public_ID": "farmer-kamikaze-medium",
+        "start": "2024-05-30 22:33:35.0",
+        "game_duration": "00:25:17",
+        "who_win": 2,
+        "rounds": 2,
+        "phase": 1,
+        "subphase": 0
+    }
+}

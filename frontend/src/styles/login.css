@@ -1,0 +1,109 @@
+/* Login/signup page (Pages/Login.jsx), scoped under .lf-login. Mobile first: a short title over the
+   campfire scene (top of the viewport), then a compact card. Plain CSS (unlayered) so it wins over the
+   Tailwind utilities of the shadcn components it restyles. */
+
+/* The scene iframe is -z-10 and fixed: isolation keeps it above the .lf-page background and below the content. */
+.lf-login { isolation: isolate; min-height: 100vh; font-family: var(--font-lf-body), Georgia, serif; color: var(--lf-ink); }
+.lf-login .lf-root { width: 100%; max-width: 28rem; margin: 0 auto; padding: 0 1rem 2rem; }
+.lf-login .lf-hero {
+  height: calc(40vh - 140px); min-height: 4.5rem; display: flex; align-items: center; justify-content: center;
+  margin: 0; font-size: 1.625rem; line-height: 2rem; text-align: center; color: var(--lf-ink);
+  text-shadow: 0 0 10px var(--lf-paper), 0 0 2px var(--lf-paper);
+}
+.lf-login .lf-head { display: none; }
+.lf-login .lf-paper { padding: 1rem; margin-top: 0; box-shadow: inset 0 0 40px rgba(120, 80, 30, .18), 0 12px 40px rgba(0, 0, 0, .4); }
+.lf-login .lf-title { margin: 0; font-size: 2.25rem; line-height: 2.5rem; text-align: center; }
+.lf-login .lf-orn { margin: .75rem auto 0; }
+
+/* Inline error (ShowMessage): one line, wax red, no fixed height and no negative margin (those are for the old layout). */
+.lf-login .lf-msg:empty { display: none; }
+.lf-login .lf-msg { margin-bottom: .75rem; }
+.lf-login .lf-msg .error {
+  margin: 0; height: auto; min-height: 2.5rem; width: 100%; padding: .375rem .5rem; gap: .5rem;
+  background: var(--lf-wax); color: var(--lf-wax-text); border-radius: 2px; box-shadow: none;
+}
+.lf-login .lf-msg .error svg path { fill: currentColor; }
+.lf-login .lf-msg .error__title { flex: 1; min-width: 0; margin: 0; color: inherit; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lf-login .lf-msg .error__icon { margin: 0; flex-shrink: 0; }
+.lf-login .lf-msg p { margin: 0 0 .5rem; color: var(--lf-rubric); font-weight: 700; }
+
+/* Tabs: equal-height tab buttons, the two panels share one grid cell. */
+.lf-login .lf-tabs { display: flex; flex-direction: column; gap: 0; }
+.lf-login .lf-tablist { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; width: 100%; height: auto; padding: 0; background: transparent; }
+.lf-login .lf-tab {
+  height: 2.75rem; background: transparent; color: var(--lf-ink); border: 2px solid var(--lf-brass); border-radius: 6px;
+  font-weight: 600; letter-spacing: .04em; font-size: .95rem; cursor: pointer;
+}
+.lf-login .lf-tab:hover { background: var(--lf-hl); }
+.lf-login .lf-tab:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-tab[data-state="active"] { background: var(--lf-felt); color: var(--lf-on-felt); border-color: var(--lf-felt); }
+.lf-login .lf-panes { display: grid; margin-top: 1rem; }
+.lf-login .lf-pane { grid-area: 1 / 1; display: flex; flex-direction: column; }
+.lf-login .lf-pane[data-state="inactive"] { visibility: hidden; }
+
+.lf-login .lf-form { flex: 1; display: flex; flex-direction: column; gap: .75rem; }
+.lf-login .lf-field { display: flex; flex-direction: column; gap: .25rem; }
+.lf-login .lf-label { font-family: var(--font-lf-heading), Georgia, serif; font-weight: 600; font-size: .875rem; letter-spacing: .05em; color: var(--lf-ink); }
+.lf-login .lf-input { height: 2.75rem; width: 100%; padding: 0 .75rem; font-size: 1rem; outline: none; color: var(--lf-ink); }
+.lf-login .lf-input:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-input:disabled { opacity: .55; }
+.lf-login .lf-input-pw { padding-right: 2.75rem; }
+.lf-login .lf-pw { position: relative; }
+.lf-login .lf-eye {
+  position: absolute; top: 50%; right: .125rem; transform: translateY(-50%); width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center; border: 0; background: transparent; color: var(--lf-ink2); cursor: pointer; font-size: 1rem;
+}
+.lf-login .lf-eye:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-eye:disabled { opacity: .4; cursor: not-allowed; }
+
+.lf-login .lf-check { display: flex; align-items: center; gap: .5rem; font-size: 15px; min-height: 2.75rem; cursor: pointer; }
+.lf-login .lf-check input { width: 1.125rem; height: 1.125rem; accent-color: var(--lf-felt); }
+
+/* Submit buttons sit at the bottom of both panels, in the same place. */
+.lf-login .lf-btn { width: 100%; height: 2.75rem; font-size: 1rem; margin-top: auto; }
+
+/* Password checklist: two columns on mobile. Met criteria are bold and ticked (data-ok set by the page). */
+.lf-login .lf-rules {
+  list-style: none; margin: 0; padding: .5rem .625rem; border: 1px dashed var(--lf-brass); border-radius: 2px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .125rem .5rem; font-size: .8125rem; line-height: 1.25rem; color: var(--lf-ink2);
+}
+.lf-login .lf-rule { display: flex; align-items: center; gap: .375rem; }
+.lf-login .lf-rule svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.lf-login .lf-rule[data-ok="true"] { color: var(--lf-seal-ok); font-weight: 700; }
+
+/* Sign up: username and email full width, the two passwords side by side, then the checklist. */
+.lf-login .lf-signup { display: grid; grid-template-columns: 1fr 1fr; column-gap: .75rem; align-content: start; }
+.lf-login .lf-signup > * { grid-column: 1 / -1; }
+.lf-login .lf-signup .lf-pass { grid-column: 1; grid-row: 3; }
+.lf-login .lf-signup .lf-repeat { grid-column: 2; grid-row: 3; }
+.lf-login .lf-signup .lf-rules { grid-row: 4; }
+.lf-login .lf-signup .lf-btn { grid-row: 5; }
+
+@media (min-width: 640px) {
+  .lf-login .lf-paper { padding: 2rem; }
+}
+
+/* Desktop: wide card with the title inside, the campfire shows below it. */
+@media (min-width: 768px) {
+  .lf-login .lf-root { max-width: 40rem; padding-top: 1.5rem; }
+  .lf-login .lf-hero { display: none; }
+  .lf-login .lf-head { display: block; margin-bottom: 1.5rem; }
+  .lf-login .lf-panes { margin-top: 1.5rem; }
+  .lf-login .lf-form { gap: 1rem; }
+  .lf-login .lf-rules { padding: .75rem; gap: .25rem .5rem; font-size: .875rem; }
+  .lf-login .lf-signup { column-gap: 1.25rem; }
+  .lf-login .lf-signup .lf-user { grid-column: 1; grid-row: 1; }
+  .lf-login .lf-signup .lf-mail { grid-column: 2; grid-row: 1; }
+  .lf-login .lf-signup .lf-pass { grid-row: 2; }
+  .lf-login .lf-signup .lf-repeat { grid-row: 2; }
+  .lf-login .lf-signup .lf-rules { grid-row: 3; }
+  .lf-login .lf-signup .lf-btn { grid-row: 4; }
+}
+
+/* Firelight from the campfire on the card (dark). */
+[data-bs-theme="dark"] .lf-login .lf-paper {
+  box-shadow: inset 0 0 40px rgba(120, 80, 30, .18), 0 12px 40px rgba(0, 0, 0, .45), 0 -16px 50px -20px rgba(253, 150, 80, .4), 0 28px 60px -20px rgba(253, 150, 80, .45);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lf-login .lf-tab { transition: background-color 200ms, color 200ms; }
+}

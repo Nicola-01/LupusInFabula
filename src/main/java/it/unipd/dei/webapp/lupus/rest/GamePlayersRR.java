@@ -68,7 +68,7 @@ public class GamePlayersRR extends AbstractRR {
             el = new GetGamePlayersDAO(ds, ds.getConnection(), gameID, URIisMaster, username, role).access().getOutputParam();
 
             if (el != null) {
-                LOGGER.info("Players successfully listed.");
+//                LOGGER.info("Players successfully listed.");
                 el.removeIf(playsAsIn -> Objects.equals(playsAsIn.getRole(), GameRoleAction.MASTER.getName()));
 
                 res.setStatus(HttpServletResponse.SC_OK);

@@ -1,12 +1,12 @@
 ### Login with the master
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = esempio &
 password = password123
 
 ### Test with players that are not in the game
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### Test with players that has not the correct role
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -54,7 +54,7 @@ Content-Type: application/json
 }
 
 ### Test with less actions
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -78,7 +78,7 @@ Content-Type: application/json
 }
 
 ### Test with too many wolves actions
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -111,7 +111,7 @@ Content-Type: application/json
 }
 
 ### Test with all Actions ok
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -140,7 +140,7 @@ Content-Type: application/json
 }
 
 ### Test for the day phase
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -189,7 +189,7 @@ Content-Type: application/json
 }
 
 ### Test with invalid knight target (protected the previous turn)
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer HTTP/1.1
+POST http://localhost:9090/game/actions/dorky-farmer-explorer HTTP/1.1
 Content-Type: application/json
 
 {
@@ -219,14 +219,14 @@ Content-Type: application/json
 
 
 ### login as master player0
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = player0 &
 password = ciao
 
 ### Test day phase no ballot
-POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+POST http://localhost:9090/game/actions/farmer-wolf-sam HTTP/1.1
 Content-Type: application/json
 
 {
@@ -280,7 +280,7 @@ Content-Type: application/json
 }
 
 ### Test day phase sam
-POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+POST http://localhost:9090/game/actions/farmer-wolf-sam HTTP/1.1
 Content-Type: application/json
 
 {
@@ -339,7 +339,7 @@ Content-Type: application/json
 }
 
 ### Test day phase carpenter
-POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+POST http://localhost:9090/game/actions/farmer-wolf-sam HTTP/1.1
 Content-Type: application/json
 
 {
@@ -393,7 +393,7 @@ Content-Type: application/json
 }
 
 ### Test day phase ballot
-POST http://localhost:8080/lupus/game/actions/farmer-wolf-sam HTTP/1.1
+POST http://localhost:9090/game/actions/farmer-wolf-sam HTTP/1.1
 Content-Type: application/json
 
 {

@@ -1,0 +1,25 @@
+{
+    "resource-list": [
+        {
+            "setting": {
+                "setting_name": "master-free",
+                "description": "Master-Free: No player is the master, each user chooses the target autonomously (not yet implemented)",
+                "enable": false
+            }
+        },
+        {
+            "setting": {
+                "setting_name": "illusionistBlock",
+                "description": "Illusionist block: If a player is blocked by the illusionist he does not know it (not yet implemented)",
+                "enable": false
+            }
+        },
+        {
+            "setting": {
+                "setting_name": "largerRoleNumber",
+                "description": "Insert more roles than players, to give more randomness (not yet implemented)",
+                "enable": false
+            }
+        }
+    ]
+}

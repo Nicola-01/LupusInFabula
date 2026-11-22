@@ -5,7 +5,6 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
@@ -14,6 +13,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.*;
+
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
 
 /**
  * Handles the HTTP POST request to handle game actions.
@@ -194,6 +195,8 @@ public class GameActionsPostRR extends AbstractRR {
                     currentPhase = GamePhase.DAY.getId(); // the game always finish during the day
 
                     LOGGER.info("The game finished, winner(s): " + vm.getMessage());
+
+                    // freeGameWebSocket(gameID);
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound, vm.getFaction()).access();
                 } else {
                     res.setStatus(HttpServletResponse.SC_OK);

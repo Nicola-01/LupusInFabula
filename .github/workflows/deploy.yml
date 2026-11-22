@@ -1,0 +1,104 @@
+name: Build & Deploy
+
+# release/vX.Y.Z -> build + push image, tag vX.Y.Z, merge into master
+# master         -> deploy the already built :prod image on the self-hosted prod runner
+on:
+  push:
+    branches: [master, 'release/*']
+  workflow_dispatch:
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/lupusinfabula
+
+jobs:
+  build:
+    if: github.ref != 'refs/heads/master'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha
+            type=ref,event=branch
+            type=raw,value=prod,enable=${{ startsWith(github.ref, 'refs/heads/release/') }}
+            type=match,pattern=release/v?(.*),group=1
+      # no unit tests in this project: the Docker build (npm build + mvn package) is the check
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          target: production
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  tag-release:
+    needs: build
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0, fetch-tags: true }
+      - name: Create tag
+        run: |
+          TAG="${GITHUB_REF_NAME#release/}"
+          if git rev-parse -q --verify "refs/tags/$TAG" >/dev/null; then
+            echo "Tag $TAG already exists, skipping"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+
+  promote-to-master:
+    needs: tag-release
+    if: startsWith(github.ref, 'refs/heads/release/')
+    runs-on: ubuntu-latest
+    steps:
+      # PAT, not GITHUB_TOKEN: a push made with GITHUB_TOKEN would not trigger the deploy on master
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT_PROMOTE }}
+      - name: Merge into master
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout master
+          git merge --no-ff "origin/$GITHUB_REF_NAME" -m "Release ${GITHUB_REF_NAME#release/}"
+          git push origin master
+
+  deploy:
+    if: github.ref == 'refs/heads/master'
+    runs-on: [self-hosted, prod]
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v5
+        with: { fetch-depth: 0, fetch-tags: true }
+      - name: Setup environment variables
+        run: |
+          cp /home/deployer/.env .
+          echo "GHCR_OWNER=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> .env
+          echo "APP_TAG=prod" >> .env
+          echo "APP_VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo dev)" >> .env
+      - run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - run: docker compose -f docker-compose.prod.yml pull web
+      - run: docker compose -f docker-compose.prod.yml up -d
+      - run: docker image prune -f

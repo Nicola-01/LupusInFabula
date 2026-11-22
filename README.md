@@ -16,6 +16,7 @@
         <li><a href="#building-and-running">Building and Running</a></li>
         <li><a href="#database">Database</a></li>
         <li><a href="#test">Test</a></li>
+        <li><a href="#deploy">Deploy</a></li>
       </ul>
     </li>
     <li><a href="#frontend">Front-End</a></li>
@@ -42,19 +43,23 @@ the [report](hw1/WebApplication_HW1_LIFGroup.pdf).
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Maven](https://maven.apache.org/)
+- [Maven](https://maven.apache.org/) and Java 17+
+- [Node.js](https://nodejs.org/) 20+ (to build the React frontend)
 
 ### Building and Running
 
+The backend is a Spring Boot application, the frontend a React + Tailwind CSS app (in `frontend/`) that is bundled into the Spring Boot jar.
+
 Follow these steps to build and run the application:
 
-- Build the project using `mvn clean package`
+- Build the frontend: `cd frontend && npm install && npm run build` (output in `src/main/resources/static`)
+- Build the backend jar: `mvn clean package` (creates `target/lupus-1.00.jar`)
 - Generate the Java documentation with `mvn javadoc:javadoc`
 - Start the application using `docker compose up`
 - Stop the application with `docker compose down`
 - To view the web application logs, access the terminal of the web
-  container: `docker exec -it webapp-lupus-web-1 /bin/bash`. Navigate to the directory
-  `/webapps/my-logs`, and use `cat lupus.log` to view the logs.
+  container: `docker exec -it webapp-lupus-web-1 /bin/bash` and use `cat /app/logs/lupus.log`.
+- Frontend development with hot reload: start the backend, then `cd frontend && npm run dev` and open http://localhost:5174/
 
 ### Database
 
@@ -63,7 +68,7 @@ The database initialization depends on the existence of the `/data/db` directory
 - If the directory `/data/db` does not exist, the database will initialize during application startup.
 - If the directory `/data/db` exists, the database initialization is skipped.
 
-o reset the database, you have two options:
+To reset the database, you have two options:
 
 - Delete the `/data/db/` directory and re-execute `docker-compose`.
 - Alternatively, access the terminal of the database container: `docker exec -it webapp-lupus-db-1 /bin/bash`, navigate to
@@ -78,13 +83,31 @@ To execute the tests for the RestAPI it's needed to execute the two .sql file:
 
 The first file inserts into the database all the possible roles; the second one inserts one complete game with all actions and also inserts some games to test the logs and the statistics of a user.
 
+### Deploy
+
+Production runs a single Docker image (`Dockerfile`: React build + Spring Boot jar) published on GHCR by
+`.github/workflows/deploy.yml`; the server only pulls it and starts `docker-compose.prod.yml` (app + PostgreSQL on a named volume).
+
+Release procedure:
+1. `git checkout -b release/vX.Y.Z` and push it. CI builds and pushes `ghcr.io/<owner>/lupusinfabula` with tags `:prod`, `:X.Y.Z`, `:sha-…`,
+   creates the git tag `vX.Y.Z` and merges the branch into `master` (`--no-ff`).
+2. The push on `master` deploys `:prod` on the self-hosted runner. The version (latest git tag) is shown in the footer.
+
+One-time setup:
+- Prod host with Docker and a [self-hosted GitHub Actions runner](https://docs.github.com/en/actions/hosting-your-own-runners)
+  with label `prod`, running as user `deployer` in the `docker` group.
+- `/home/deployer/.env` on the host, filled from `.env.example` (`POSTGRES_PASSWORD`, `DB_PASSWORD`, optional `WEB_PORT`).
+  The DB is initialized from `01_database_tables.sql`, `02_populate_db.sql` and `deploy/03_app_password.sh` only on the first start (empty volume).
+- Repo secret `PAT_PROMOTE`: a fine-grained PAT with `contents: write` on this repo (a push made with `GITHUB_TOKEN` would not trigger the deploy).
+- HTTPS / public domain: reverse proxy or tunnel in front of port `9090` (path `/`).
+
 ## Front-End
 
-The game can be accessed at http://localhost:8080/lupus/ and requires an account to play. Upon login, the home page is displayed, providing access to the `Habitant` and `Village` sections.
+The game can be accessed at http://localhost:9090/ and requires an account to play. Upon login, the home page is displayed, providing access to the `Habitant` and `Village` sections.
 - Habitant: This section allows users to manage their account (friends, change credentials, or delete the account), view personal statistics and history, as well as the stats and history of other players.
 - Village: In this section, users can create a new village, add friends, and select the roles used in the game. If already in a game, clicking 'Join your village' will display the current game.
 
-To view the rules and roles of the game, visit http://localhost:8080/lupus/rules. No login is required.
+To view the rules and roles of the game, visit http://localhost:9090/rules. No login is required.
 
 ## Final presentation
 

@@ -1,16 +1,16 @@
 ### login
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = esempio &
 password = password123
 
 ### list of friends
-GET http://localhost:8080/lupus/user/me/friend HTTP/1.1
+GET http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 ### add friend
-POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+POST http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### delete friend
-DELETE http://localhost:8080/lupus/user/me/friend HTTP/1.1
+DELETE http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {
@@ -30,7 +30,7 @@ Content-Type: application/json
 }
 
 ### login as user1
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = user1 &
@@ -38,7 +38,7 @@ password = ciao
 
 ###
 
-POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+POST http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {
@@ -49,7 +49,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+POST http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {
@@ -60,7 +60,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+POST http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {
@@ -71,7 +71,7 @@ Content-Type: application/json
 
 ###
 
-POST http://localhost:8080/lupus/user/me/friend HTTP/1.1
+POST http://localhost:9090/user/me/friend HTTP/1.1
 Content-Type: application/json
 
 {

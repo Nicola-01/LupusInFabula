@@ -1,52 +1,52 @@
 ### Correct Login
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = esempio &
 password = password123
 
 ### Correct Login
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = user1 &
 password = ciao
 
 ### Correct logout
-POST http://localhost:8080/lupus/logout HTTP/1.1
+POST http://localhost:9090/logout HTTP/1.1
 
 ###
-GET http://localhost:8080/lupus/game/create
+GET http://localhost:9090/game/create
 
 ###
-POST http://localhost:8080/lupus/game/create
+POST http://localhost:9090/game/create
 Content-Type: application/json
 
 ###
-PUT http://localhost:8080/lupus/game/create
+PUT http://localhost:9090/game/create
 Content-Type: application/json
 
 ### REQUIRED populate_db_optional.aaa
 
 ###
-GET http://localhost:8080/lupus/game/list
+GET http://localhost:9090/game/list
 
 ###
-GET http://localhost:8080/lupus/game/actions/dorky-farmer-explorer
+GET http://localhost:9090/game/actions/dorky-farmer-explorer
 Content-Type: application/json
 
 ###
-POST http://localhost:8080/lupus/game/actions/dorky-farmer-explorer
+POST http://localhost:9090/game/actions/dorky-farmer-explorer
 Content-Type: application/json
 
 ###
-POST http://localhost:8080/lupus/game/notExist/dorky-farmer-explorer
+POST http://localhost:9090/game/notExist/dorky-farmer-explorer
 Content-Type: application/json
 
 ###
-POST http://localhost:8080/lupus/game/status/dorky-farmer-explorer
+POST http://localhost:9090/game/status/dorky-farmer-explorer
 Content-Type: application/json
 
 ###
-GET http://localhost:8080/lupus/game/status/dorky-farmer-explorer
+GET http://localhost:9090/game/status/dorky-farmer-explorer
 Content-Type: application/json
