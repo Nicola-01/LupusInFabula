@@ -1,7 +1,95 @@
-/* Floating labels of the personal area forms (css/utils/inputFormAnimations.css): sibling selectors, scoped to .user-page. */
-.user-page .form-control:focus ~ .control-label,
-.user-page .form-control:not(:placeholder-shown) ~ .control-label {
-    top: -25px;
-    font-size: 16px;
-    color: var(--navbar-inverted-bg);
+/*
+ * Personal area (/habitant/me). Plain CSS for the parts Tailwind does not express well (reused by the panels, sibling
+ * states, grid/strip layouts). Colours come from the lf tokens, so light and dark follow data-bs-theme.
+ */
+.user-page .up-section { display: flex; flex-direction: column; gap: 1rem; padding: 1.25rem; }
+@media (min-width: 640px) { .user-page .up-section { padding: 2rem; } }
+
+.user-page .up-h2 { font-family: var(--font-lf-heading); font-weight: 600; font-size: 1.2rem; letter-spacing: .04em; margin: 0; color: var(--lf-ink); }
+.user-page .up-hint { font-size: 15px; color: var(--lf-ink2); margin: 0; }
+.user-page .up-empty { font-size: 15px; color: var(--lf-ink2); font-style: italic; margin: 0; }
+.user-page .up-divider { border: 0; border-top: 1px dashed var(--lf-brass); margin: .25rem 0; }
+
+.user-page .up-field { display: flex; flex-direction: column; gap: .375rem; position: relative; }
+.user-page .up-label { font-family: var(--font-lf-heading); font-weight: 600; font-size: .875rem; letter-spacing: .05em; color: var(--lf-ink); }
+.user-page .up-input {
+  height: 2.75rem; width: 100%; padding: 0 .75rem; font-size: 1rem; color: var(--lf-ink); outline: none;
 }
+.user-page .up-input:focus-visible { box-shadow: 0 0 0 3px var(--lf-focus); }
+.user-page .up-input:disabled { opacity: .75; }
+.user-page .up-pw .up-input { padding-right: 3rem; }
+.user-page .up-pw { position: relative; }
+.user-page .up-eye {
+  position: absolute; top: 50%; right: .125rem; transform: translateY(-50%); width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center; background: transparent; border: 0; color: var(--lf-ink); cursor: pointer;
+}
+.user-page .up-eye:focus-visible { box-shadow: 0 0 0 3px var(--lf-focus); }
+
+/* Password criteria: shown under the field while it has focus (showPasswordHint toggles the "hidden" class). */
+.user-page .up-rules {
+  padding: .75rem; border: 1px dashed var(--lf-brass); border-radius: 2px; background: var(--lf-hl);
+  font-size: .875rem; color: var(--lf-ink2);
+}
+.user-page .up-rules p { margin: 0 0 .25rem; }
+.user-page .up-rules ul { margin: 0; padding-left: 1.25rem; display: flex; flex-direction: column; gap: .25rem; }
+
+.user-page .up-table-wrap { width: 100%; max-height: 500px; overflow: auto; }
+.user-page .up-table { width: 100%; border-collapse: collapse; color: var(--lf-ink); font-size: 15px; }
+.user-page .up-table th, .user-page .up-table td {
+  padding: .5rem .375rem; text-align: center; vertical-align: middle; border-bottom: 1px dashed var(--lf-brass);
+}
+.user-page .up-table th { font-family: var(--font-lf-heading); font-weight: 600; font-size: .85rem; letter-spacing: .03em; position: sticky; top: 0; background: var(--lf-paper); z-index: 1; }
+.user-page .up-table tbody tr:nth-child(even) td { background: var(--lf-hl); }
+.user-page .up-table .up-name { display: inline-flex; align-items: center; gap: .5rem; text-decoration: none; color: var(--lf-ink); font-weight: 600; }
+.user-page .up-table .up-name:hover { color: var(--lf-rubric); text-decoration: underline; }
+.user-page .up-free { color: var(--lf-seal-ok); font-weight: 700; text-decoration: none; }
+.user-page .up-busy { color: var(--lf-rubric); font-weight: 700; text-decoration: none; }
+
+.user-page .up-swatches { display: flex; flex-wrap: wrap; gap: .5rem; list-style: none; margin: 0; padding: 0; }
+.user-page .up-swatch {
+  width: 2.75rem; height: 2.75rem; display: grid; place-items: center; border-radius: 9999px;
+  border: 2px solid var(--lf-brass); color: #fbf6ea; cursor: pointer; padding: 0;
+}
+.user-page .up-swatch:focus-visible { box-shadow: 0 0 0 3px var(--lf-focus); }
+.user-page .up-swatch[aria-pressed="true"] { box-shadow: 0 0 0 2px var(--lf-paper), 0 0 0 4px var(--lf-brass); }
+.user-page .up-swatch svg { width: 1.125rem; height: 1.125rem; }
+
+/* Card backs: big preview + strip of thumbnails (horizontal scroll on phones, grid from 1024px). */
+.user-page .up-cards-layout { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
+.user-page .up-preview {
+  width: min(60vw, 15rem); aspect-ratio: 5 / 7; overflow: hidden; border-radius: 14px; border: 3px solid var(--lf-brass);
+  box-shadow: 0 10px 20px rgba(40, 25, 10, .35);
+}
+.user-page .up-preview img, .user-page .up-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.user-page .up-caption { font-family: var(--font-lf-heading); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; margin: 0; color: var(--lf-ink); text-align: center; }
+.user-page .up-main { width: 100%; min-width: 0; display: flex; flex-direction: column; gap: 1rem; }
+.user-page .up-strip { display: flex; gap: .75rem; overflow-x: auto; scroll-snap-type: x mandatory; padding: .75rem .25rem; width: 100%; }
+.user-page .up-thumb {
+  position: relative; flex: 0 0 34%; scroll-snap-align: start; aspect-ratio: 5 / 7; padding: 0; overflow: hidden;
+  border: 2px solid var(--lf-brass); border-radius: 8px; background: var(--lf-paper); cursor: pointer;
+}
+.user-page .up-thumb:focus-visible { box-shadow: 0 0 0 3px var(--lf-focus); }
+.user-page .up-thumb[aria-pressed="true"] { border-color: var(--lf-felt); box-shadow: 0 0 0 2px var(--lf-paper), 0 0 0 5px var(--lf-felt); }
+.user-page .up-check {
+  position: absolute; top: .3rem; right: .3rem; width: 1.5rem; height: 1.5rem; border-radius: 9999px;
+  display: grid; place-items: center; background: var(--lf-felt); color: var(--lf-on-felt); border: 1.5px solid var(--lf-brass);
+}
+.user-page .up-check svg { width: .875rem; height: .875rem; }
+
+@media (min-width: 640px) { .user-page .up-thumb { flex-basis: 25%; } }
+@media (min-width: 1024px) {
+  .user-page .up-cards-layout { flex-direction: row; align-items: flex-start; }
+  .user-page .up-preview { width: 15rem; }
+  .user-page .up-strip { display: grid; grid-template-columns: repeat(5, 1fr); overflow: visible; padding: .5rem; }
+  .user-page .up-thumb { flex: none; }
+}
+
+/* Delete confirmation: rendered in a portal, so not scoped under .user-page. */
+.up-dialog {
+  background: var(--lf-paper); color: var(--lf-ink); border: 3px double var(--lf-brass); border-radius: 2px;
+  box-shadow: var(--lf-shadow-paper); padding: 1.5rem; max-width: 28rem; width: calc(100% - 2rem); gap: 1.25rem;
+}
+.up-dialog-title { font-family: var(--font-lf-heading); font-weight: 700; font-size: 1.15rem; letter-spacing: .03em; color: var(--lf-ink); }
+.up-dialog-desc { font-size: 15px; color: var(--lf-ink2); margin-top: .25rem; }
+.up-dialog-foot { display: flex; flex-direction: row; flex-wrap: wrap; justify-content: flex-end; gap: .5rem; }
+.up-dialog-foot > * { flex: 1 1 8rem; white-space: nowrap; }

@@ -3,6 +3,7 @@ import {
     contextPath, genericGETRequest, genericPOSTRequest, genericDELETERequest, getMessage,
     HTTP_STATUS_OK, HTTP_STATUS_CREATED, JSON_resource_list,
 } from '../../utils/utils.js';
+import { Button } from '@/components/ui/button';
 
 /*
  * Port of js/friend/friendActionButton.js: "Add friend" / "Remove friend" button of the statistics page
@@ -57,9 +58,9 @@ export default function FriendActionButton({ username }) {
 
     const isFriend = list.some((friend) => friend['friend'].username === username);
     return (
-        <button type="button" id="friendActionButton" onClick={isFriend ? removeFriend : addFriend}
-                className={`block ml-auto w-[145px] h-10 px-2.5 py-1.5 rounded-[20px] border-0 cursor-pointer text-text-color-fixed transition-all duration-300 ease-[ease] hover:scale-105 ${isFriend ? '!bg-red-color' : 'bg-navbar-second-bg'}`}>
+        <Button type="button" id="friendActionButton" variant={isFriend ? 'wax' : 'felt'} size="touch"
+                onClick={isFriend ? removeFriend : addFriend} className="ml-auto w-[145px] max-w-full">
             {isFriend ? 'Remove friend' : 'Add friend'}
-        </button>
+        </Button>
     );
 }

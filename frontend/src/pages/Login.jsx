@@ -1,29 +1,81 @@
 import { useEffect, useState } from 'react';
-import Fireflies from '../components/Fireflies.jsx';
+import { Check, Circle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Ornament, Panel } from '@/components/lupus';
 import { ShowMessage } from '../components/Messages.jsx';
-import { passwordComplexHint, showPassword, showPasswordHint } from '../utils/passwordComplexAndShowPassword.js';
+import { loadTheme } from '../components/Navbar.jsx';
+import backgroundHtml from '../components/login/loginBackground.html?raw';
+import { showPassword } from '../utils/passwordComplexAndShowPassword.js';
 import { retrieveData, storeData } from '../utils/utils.js';
 import '../styles/login.css';
 
-// Same as the old "control-label" + "custom-input" look: Bootstrap .form-control overridden by custom-input/inputFormAnimations.
-const INPUT = 'block w-full h-10 p-2 mx-auto text-[18px] text-[#212529] bg-[#e0dede] border-none outline-none rounded-[5px] focus:bg-white focus:shadow-[0_0_0_.25rem_rgba(13,110,253,.25)] disabled:bg-[#e9ecef] disabled:opacity-100';
-const FORM_GROUP = 'relative mb-0';
-const EYE_BUTTON = 'absolute top-0 right-0 h-10 w-10 border-0 border-l border-solid border-[#ccc] bg-transparent cursor-pointer';
-const SUBMIT = 'block w-full h-10 mx-auto mb-[10px] rounded-[5px] border-none outline-none text-base font-bold text-white bg-[#1F6191] cursor-pointer transition-all duration-200 ease-in hover:bg-[#134569] disabled:bg-[#ade4f8] disabled:text-[#0D324D] disabled:cursor-not-allowed';
+// Same criteria as utils/passwordComplexAndShowPassword.js (criteria), with the same element ids.
+const RULES = [
+    { id: 'passwordLength', label: 'From 8 to 20 characters.', test: (v) => /^.{8,20}$/.test(v) },
+    { id: 'passwordUppercase', label: 'An uppercase letter.', test: (v) => /[A-Z]/.test(v) },
+    { id: 'passwordLowercase', label: 'A lowercase letter.', test: (v) => /[a-z]/.test(v) },
+    { id: 'passwordNumber', label: 'A number.', test: (v) => /\d/.test(v) },
+    { id: 'passwordSymbol', label: 'A symbol (!@#$%^&*).', test: (v) => /[!@#$%^&*]/.test(v) },
+];
+
 const notBlank = (value) => value.trim() !== '';
+
+/** Password input with the show/hide eye (Font Awesome icon toggled by showPassword()). */
+function PasswordField({ id, name, label, className, children, ...rest }) {
+    return (
+        <div className={`lf-field ${className ?? ''}`}>
+            <label htmlFor={id} className="lf-label">{label}</label>
+            <div className="lf-pw">
+                <input id={id} name={name} type="password" className="lf-input lf-input-pw" {...rest} />
+                <button type="button" id={`${id}_ShowPassword`} aria-label="Show or hide password" className="lf-eye"
+                        onClick={() => showPassword(id)} disabled={rest.disabled}>
+                    <i id={`${id}_eyeIcon`} className="fas fa-eye" aria-hidden="true" />
+                </button>
+            </div>
+            {children}
+        </div>
+    );
+}
+
+/** Live checklist of the password rules (the criteria ids are kept from the old hint). */
+function PasswordRules({ value }) {
+    return (
+        <ul id="passwordComplex" aria-label="Password requirements" className="lf-rules">
+            {RULES.map((rule) => {
+                const ok = rule.test(value);
+                return (
+                    <li key={rule.id} id={rule.id} className="lf-rule" data-ok={ok}>
+                        {ok ? <Check aria-hidden="true" /> : <Circle aria-hidden="true" />}
+                        <span>{rule.label}{ok && <span className="sr-only"> (met)</span>}</span>
+                    </li>
+                );
+            })}
+        </ul>
+    );
+}
 
 /**
  * Login / signup page (port of jsp/login.jsp + js/login.js). Both /login and /signup render it:
- * the "login" panel is shown when the URL ends with /login (unless a saved attempt says otherwise).
+ * the Login tab is opened when the URL ends with /login (unless a saved attempt says otherwise).
  */
 export default function Login() {
     useEffect(() => { document.title = 'Lupus in Fabula - Login'; }, []);
+    // No Navbar on this page, so the theme is applied here (also propagates into the background iframe).
+    useEffect(() => { loadTheme(); }, []);
+
+    // The scene is a srcDoc, so it is built once; its colours follow data-bs-theme (set again by loadTheme()).
+    const [background] = useState(() => {
+        const theme = document.body.dataset.bsTheme || 'light';
+        return backgroundHtml.replace('<html lang="en">', `<html lang="en" data-bs-theme="${theme}">`);
+    });
 
     // Values of the last attempt, kept in a cookie for 15 seconds (saveField / loadSavedValues).
     const [saved] = useState(() => retrieveData('loginOBJ') || {});
     const fromSaved = (type, key) => (saved.type === type ? (saved[key] ?? '') : '');
 
-    const [isLogin, setIsLogin] = useState(() => (saved.type ? saved.type === 'login' : window.location.href.endsWith('/login')));
+    const [tab, setTab] = useState(() => (saved.type ? saved.type : (window.location.href.endsWith('/login') ? 'login' : 'signup')));
+    const isLogin = tab === 'login';
     const [loginUser, setLoginUser] = useState(() => fromSaved('login', 'user'));
     const [loginPassword, setLoginPassword] = useState(() => fromSaved('login', 'password'));
     const [signUsername, setSignUsername] = useState(() => fromSaved('signup', 'username'));
@@ -46,7 +98,7 @@ export default function Login() {
     async function handleSubmit(event) {
         event.preventDefault();
         saveField();
-        const response = await fetch(isLogin ? '/lupus/login' : '/lupus/signup', {
+        const response = await fetch(isLogin ? '/login' : '/signup', {
             method: 'POST',
             body: new URLSearchParams(new FormData(event.currentTarget)),
             credentials: 'same-origin',
@@ -60,122 +112,85 @@ export default function Login() {
     }
 
     return (
-        <div data-bs-theme="light" className="lupus-login min-h-screen flex items-center justify-center font-['Jost',sans-serif] bg-[url('/lupus/media/forest_background.png')] bg-center bg-cover">
-            <main className="w-full mb-8 p-0 min-[576px]:max-w-[540px] min-[768px]:max-w-[720px] min-[992px]:max-w-[960px] min-[1200px]:max-w-[1140px]">
-                <Fireflies count={25} />
+        <div className="lf-page lf-login">
+            <iframe
+                id="background"
+                title="background"
+                aria-hidden="true"
+                tabIndex={-1}
+                srcDoc={background}
+                className="fixed inset-0 -z-10 h-full w-full border-none"
+            />
+            <main className="lf-root">
+                {/* Mobile title over the scene; the desktop one is inside the card. Only one is displayed. */}
+                <h1 className="lf-hero font-lf-title">Lupus in Fabula</h1>
 
-                <div id="loginSignup" className="m-auto w-full max-w-[700px]">
-                    <ShowMessage message={message} />
-                    <div className="main relative h-[500px] overflow-hidden bg-[#0D324D] rounded-[10px] shadow-[5px_20px_50px_#000]">
-                        <input type="checkbox" id="loginCB" className="hidden" aria-hidden="true"
-                               checked={isLogin} onChange={(e) => setIsLogin(e.target.checked)} />
+                <Panel className="lf-panel">
+                    <header className="lf-head">
+                        <h1 className="lf-title font-lf-title">Lupus in Fabula</h1>
+                        <Ornament className="lf-orn" />
+                    </header>
 
-                        <div className="signup relative w-full h-full">
-                            <form id="signup" onSubmit={handleSubmit}>
-                                <label className="lb_signup" htmlFor="loginCB" aria-hidden="true">Sign up</label>
-                                <div className="inputs w-full max-w-[350px] my-0 mx-auto px-2">
-                                    <div className={FORM_GROUP}>
-                                        <input type="text" id="sign_username" name="username" className={`${INPUT} mt-[1.3em] mb-[1.3em]`}
-                                               placeholder="" minLength={3} maxLength={20} required
-                                               value={signUsername} onChange={(e) => setSignUsername(e.target.value)}
-                                               disabled={isLogin} />
-                                        <label className="control-label">Username</label>
-                                    </div>
-                                    <div className={FORM_GROUP}>
-                                        <input type="email" id="sign_email" name="email" className={`${INPUT} mt-[1.3em] mb-[1.3em]`}
-                                               placeholder="" required
-                                               value={signEmail} onChange={(e) => setSignEmail(e.target.value)}
-                                               disabled={isLogin} />
-                                        <label className="control-label">Email</label>
-                                    </div>
-                                    <div id="passwordComplex" className="hidden absolute w-full max-w-[calc(350px_-_1rem)] -translate-y-[115%] p-2 px-3 rounded-[.6em] bg-[#ade4f8] text-[#0D324D]">
-                                        The password must contain:
-                                        <ul className="m-0 list-disc pl-8">
-                                            <li id="passwordLength" className="text-red-600">From 8 to 20 characters.</li>
-                                            <li id="passwordUppercase" className="text-red-600">An uppercase letter.</li>
-                                            <li id="passwordLowercase" className="text-red-600">A lowercase letter.</li>
-                                            <li id="passwordNumber" className="text-red-600">A number.</li>
-                                            <li id="passwordSymbol" className="text-red-600">A symbol (!@#$%^&amp;*)</li>
-                                        </ul>
-                                    </div>
-                                    <div className={FORM_GROUP}>
-                                        <input type="password" id="sign_password" name="password" className={`${INPUT} mt-[1.3em] mb-[1.3em]`}
-                                               placeholder="" maxLength={20} minLength={1} required
-                                               value={signPassword}
-                                               onChange={(e) => { setSignPassword(e.target.value); passwordComplexHint(e.target.value); }}
-                                               onFocus={() => showPasswordHint(true)}
-                                               onBlur={() => showPasswordHint(false)}
-                                               disabled={isLogin} />
-                                        <button type="button" id="sign_password_ShowPassword" className={EYE_BUTTON} tabIndex={-1}
-                                                onClick={() => showPassword('sign_password')} disabled={isLogin}>
-                                            <i id="sign_password_eyeIcon" className="fas fa-eye" />
-                                        </button>
-                                        <label className="control-label">Password</label>
-                                    </div>
-                                    <div className={FORM_GROUP}>
-                                        <input type="password" id="sign_password_rp" name="password_rp" className={`${INPUT} mt-[1.3em] mb-1`}
-                                               placeholder="" maxLength={20} required
-                                               value={signPasswordRp} onChange={(e) => setSignPasswordRp(e.target.value)}
-                                               disabled={isLogin} />
-                                        <button type="button" id="sign_password_rp_ShowPassword" className={EYE_BUTTON} tabIndex={-1}
-                                                onClick={() => showPassword('sign_password_rp')} disabled={isLogin}>
-                                            <i id="sign_password_rp_eyeIcon" className="fas fa-eye" />
-                                        </button>
-                                        <label className="control-label">Repeat password</label>
-                                    </div>
-
-                                    {/* tabIndex -1: otherwise Tab scrolls the page down (as in the JSP). */}
-                                    <input type="submit" id="sign_submit" className={`${SUBMIT} mt-6`} value="Sign up" tabIndex={-1}
-                                           disabled={!signupFilled} />
-                                </div>
-                            </form>
-                        </div>
-
-                        <div className="login">
-                            <form id="login" onSubmit={handleSubmit}>
-                                <label className="lb_login" htmlFor="loginCB" aria-hidden="true">Login</label>
-                                <div className="inputs w-full max-w-[350px] my-0 mx-auto px-2">
-                                    <div className={FORM_GROUP}>
-                                        <input type="text" id="login_user" name="user" className={`${INPUT} mt-12 mb-[1.3em]`}
-                                               placeholder="" required minLength={3}
-                                               value={loginUser} onChange={(e) => setLoginUser(e.target.value)}
-                                               disabled={!isLogin} />
-                                        <label className="control-label">Username/Email</label>
-                                    </div>
-                                    <div className={FORM_GROUP}>
-                                        <input type="password" id="login_password" name="password" className={`${INPUT} mt-[1.3em] mb-1`}
-                                               placeholder="" maxLength={20} minLength={1} required
-                                               value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)}
-                                               disabled={!isLogin} />
-                                        <button type="button" id="login_password_ShowPassword" className={EYE_BUTTON} tabIndex={-1}
-                                                onClick={() => showPassword('login_password')} disabled={!isLogin}>
-                                            <i id="login_password_eyeIcon" className="fas fa-eye" />
-                                        </button>
-                                        <label className="control-label">Password</label>
-                                    </div>
-                                    <div className="checkbox-wrapper my-2">
-                                        <input type="checkbox" id="keepLogged" className="inp-cbx" name="keepLogged" defaultChecked />
-                                        <label className="cbx" htmlFor="keepLogged">
-                                            <span>
-                                                <svg width="12px" height="10px">
-                                                    <use href="#check-4" />
-                                                </svg>
-                                            </span>
-                                            <span>Keep me logged in</span>
-                                        </label>
-                                        <svg className="inline-svg">
-                                            <symbol id="check-4" viewBox="0 0 12 10">
-                                                <polyline points="1.5 6 4.5 9 10.5 1" />
-                                            </symbol>
-                                        </svg>
-                                    </div>
-                                    <input type="submit" id="login_submit" className={`${SUBMIT} mt-4`} value="Login"
-                                           disabled={!isLogin || !loginFilled} />
-                                </div>
-                            </form>
-                        </div>
+                    <div className="lf-msg" role="alert">
+                        <ShowMessage message={message} />
                     </div>
-                </div>
+
+                    <Tabs value={tab} onValueChange={setTab} className="lf-tabs">
+                        <TabsList className="lf-tablist">
+                            <TabsTrigger value="login" className="lf-tab font-lf-heading">Login</TabsTrigger>
+                            <TabsTrigger value="signup" className="lf-tab font-lf-heading">Sign up</TabsTrigger>
+                        </TabsList>
+
+                        <div className="lf-panes">
+                            {/* forceMount keeps both panels in one grid cell (the card keeps the taller height); inert takes the hidden one out of focus and the a11y tree. */}
+                            <TabsContent value="login" forceMount inert={!isLogin} className="lf-pane">
+                                <form id="login" aria-label="Login" action="/login" method="post" className="lf-form" onSubmit={handleSubmit}>
+                                    <div className="lf-field">
+                                        <label htmlFor="login_user" className="lf-label">Username/Email</label>
+                                        <input id="login_user" name="user" type="text" className="lf-input" required minLength={3}
+                                               autoComplete="username"
+                                               value={loginUser} onChange={(e) => setLoginUser(e.target.value)} disabled={!isLogin} />
+                                    </div>
+                                    <PasswordField id="login_password" name="password" label="Password" required minLength={1} maxLength={20}
+                                                   autoComplete="current-password"
+                                                   value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} disabled={!isLogin} />
+                                    <label className="lf-check">
+                                        <input type="checkbox" id="keepLogged" name="keepLogged" defaultChecked />
+                                        Keep me logged in
+                                    </label>
+                                    <Button type="submit" variant="felt" size="touch" id="login_submit" className="lf-btn"
+                                            disabled={!isLogin || !loginFilled}>Login</Button>
+                                </form>
+                            </TabsContent>
+
+                            <TabsContent value="signup" forceMount inert={isLogin} className="lf-pane">
+                                <form id="signup" aria-label="Sign up" action="/signup" method="post" className="lf-form lf-signup" onSubmit={handleSubmit}>
+                                    <div className="lf-field lf-user">
+                                        <label htmlFor="sign_username" className="lf-label">Username</label>
+                                        <input id="sign_username" name="username" type="text" className="lf-input" required minLength={3} maxLength={20}
+                                               autoComplete="username"
+                                               value={signUsername} onChange={(e) => setSignUsername(e.target.value)} disabled={isLogin} />
+                                    </div>
+                                    <div className="lf-field lf-mail">
+                                        <label htmlFor="sign_email" className="lf-label">Email</label>
+                                        <input id="sign_email" name="email" type="email" className="lf-input" required
+                                               autoComplete="email"
+                                               value={signEmail} onChange={(e) => setSignEmail(e.target.value)} disabled={isLogin} />
+                                    </div>
+                                    <PasswordField id="sign_password" name="password" label="Password" required minLength={1} maxLength={20}
+                                                   className="lf-pass" autoComplete="new-password" aria-describedby="passwordComplex"
+                                                   value={signPassword} onChange={(e) => setSignPassword(e.target.value)} disabled={isLogin} />
+                                    <PasswordRules value={signPassword} />
+                                    <PasswordField id="sign_password_rp" name="password_rp" label="Repeat password" required maxLength={20}
+                                                   className="lf-repeat" autoComplete="new-password"
+                                                   value={signPasswordRp} onChange={(e) => setSignPasswordRp(e.target.value)} disabled={isLogin} />
+                                    <Button type="submit" variant="felt" size="touch" id="sign_submit" className="lf-btn"
+                                            disabled={isLogin || !signupFilled}>Sign up</Button>
+                                </form>
+                            </TabsContent>
+                        </div>
+                    </Tabs>
+                </Panel>
             </main>
         </div>
     );

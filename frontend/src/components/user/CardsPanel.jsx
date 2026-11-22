@@ -1,18 +1,19 @@
 import { useState } from 'react';
+import { Check } from 'lucide-react';
 import { InfoMessage } from '../Messages.jsx';
 import { getCookie, setCookie } from '../../utils/utils.js';
 import { populateInfoMessage } from '../../utils/message.js';
-import { ROW } from './shared.js';
 import GradientButton from './GradientButton.jsx';
 
 /*
  * Port of jsp/user/cards.jsp + js/user/cards.js ("Cards" tab): choose the card back, saved in the selectedCard cookie.
+ * Restyled as the mock F: big preview of the highlighted card and a strip of thumbnails (buttons, not bare images).
  */
 const IMAGE_FILES = ["lupusBack.png", "fantasy1.png", "fantasy2.png", "yugioh.png", "standard_red.png", "standard_blue.png", "standard_blue_white_border.png", "wooden.png", "japo_lightblue.png", "japo_white.png"];
-const IMAGES_FOLDER = "/lupus/media/cards/card_back/";
+const IMAGES_FOLDER = "/media/cards/card_back/";
 
-// css/user/cards.css .selected-card (coloured frame)
-const SELECTED = 'border-[3px] border-solid border-transparent [background:linear-gradient(var(--bg-second-color),var(--bg-second-color))_padding-box,linear-gradient(145deg,#e81cff,#40c9ff)_border-box]';
+const nameOf = (file) => file.split('.').slice(0, -1).join('.');
+const labelOf = (file) => nameOf(file).replace(/_/g, ' ');
 
 export default function CardsPanel({ show }) {
     // highlighted card: the cookie one, or the first one when no cookie (same as the old loadImages)
@@ -25,29 +26,43 @@ export default function CardsPanel({ show }) {
         if (picked === null) return;
         setCookie("selectedCard", picked);
         populateInfoMessage("#playerCardsPage .infoMessage", "Card backing changed",
-            "Card backing successfully updated to " + picked.split('.').slice(0, -1).join('.'));
+            "Card backing successfully updated to " + nameOf(picked));
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     return (
-        <div id="playerCardsPage" className={show ? `${ROW}` : 'hidden'}>
+        <div id="playerCardsPage" className={show ? 'up-section' : 'hidden'}>
+            <h2 className="up-h2">Card back</h2>
+            <p className="up-hint">Choose the back of the cards shown during a game.</p>
             <InfoMessage />
 
-            <div id="imageContainer" className="flex flex-wrap w-full shrink-0 px-3 m-auto">
-                {IMAGE_FILES.map((name) => {
-                    const selected = highlight === name;
-                    return (
-                        <div key={name} className="flex shrink-0 p-2 w-full min-[576px]:w-1/2 min-[768px]:w-1/3 min-[992px]:w-1/4">
-                            <img src={IMAGES_FOLDER + name} alt={name}
-                                 onClick={() => { setHighlight(name); setPicked(name); }}
-                                 className={`m-auto p-2 w-[200px] min-w-[200px] h-[280px] max-w-full rounded-[.6em] ${selected ? SELECTED : ''}`} />
-                        </div>
-                    );
-                })}
-            </div>
+            <div className="up-cards-layout">
+                <figure className="m-0 flex flex-col items-center gap-3">
+                    <div className="up-preview">
+                        <img src={IMAGES_FOLDER + highlight} alt={`Preview of ${labelOf(highlight)}`} />
+                    </div>
+                    <figcaption className="up-caption">{labelOf(highlight)}</figcaption>
+                </figure>
 
-            <div className="flex justify-center w-full shrink-0 px-3 mt-6 mb-0">
-                <GradientButton id="updateCard" onClick={updateCard}>Update the card</GradientButton>
+                <div className="up-main">
+                    <div id="imageContainer" className="up-strip" role="group" aria-label="Card backs">
+                        {IMAGE_FILES.map((name) => {
+                            const selected = highlight === name;
+                            return (
+                                <button key={name} type="button" aria-pressed={selected} aria-label={labelOf(name)}
+                                        className="up-thumb"
+                                        onClick={() => { setHighlight(name); setPicked(name); }}>
+                                    <img src={IMAGES_FOLDER + name} alt="" loading="lazy" />
+                                    {selected && <span className="up-check"><Check aria-hidden="true" /></span>}
+                                </button>
+                            );
+                        })}
+                    </div>
+
+                    <div className="flex justify-center">
+                        <GradientButton id="updateCard" onClick={updateCard}>Update the card</GradientButton>
+                    </div>
+                </div>
             </div>
         </div>
     );

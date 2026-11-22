@@ -16,14 +16,14 @@ Colors: `bg-navbar-bg`, `text-text-color`, ... (index.css). Breakpoints: `min-[5
 
 ## Hooks and utils (`utils/`)
 - `session.js`
-  - `useSession()` -> `{ user, gamemaster, loading }` from `GET /lupus/api/session` (401 -> user null).
-  - `useLoginChecker()` same, but redirects to `/lupus/login` when logged out (old loginChecker.jsp).
+  - `useSession()` -> `{ user, gamemaster, loading }` from `GET /api/session` (401 -> user null).
+  - `useLoginChecker()` same, but redirects to `/login` when logged out (old loginChecker.jsp).
   - `fetchSession()` the shared promise behind both.
 - `utils.js`
   - `genericGETRequest(url, cb)`, `genericPOSTRequest(url, json, cb)`, `genericPUTRequest(url, json, cb)`, `genericDELETERequest(url, json, cb)`: XHR, cb(xhr) as before.
   - `notFound(xhr)`, `getRoleType(role)`, `getMessage(xhr)`, `capitalizeFirstLetter(s)`.
   - `getCookie`, `setCookie(name, value, days=365)`, `storeData(key, value, seconds)`, `retrieveData(key)`.
-  - `contextPath` (origin + "/lupus/"), status constants `HTTP_STATUS_*`, `JSON_resource_list`, `ROLE_MASTER`.
+  - `contextPath` (origin + "/"), status constants `HTTP_STATUS_*`, `JSON_resource_list`, `ROLE_MASTER`.
   - `rolesColors` (Map), `GamePhase`, `goodRoles`, `evilRoles`, `evilAction`, `victoryStealerRoles`, `neutralRoles`, `neutralAction`.
 - `message.js`: `populateErrorMessage(sel, msg, code, details)`, `populateInfoMessage(sel, title, msg, more="")`, `populateWarningMessage(...)`, `populateSuccessMessage(...)`, `hideMessagePopup(sel)`, `populateMessage(sel, title, details, more="")`, `showMore(btn)`. `sel` = selector such as `.errorMessage` or `#myPage .errorMessage`.
 - `searchPlayer.js`: `playersToIgnore` (array, push lower-case usernames), `minSizeSearch`, `highlightContains(name, text)` (HTML string), `clearSearchBar()`.
@@ -31,3 +31,17 @@ Colors: `bg-navbar-bg`, `text-text-color`, ... (index.css). Breakpoints: `min-[5
 
 ## Styles (`styles/`)
 - `fireflies.css`: keyframes and `.firefly` rules, imported by `Fireflies.jsx`. Import other keyframe-only CSS the same way.
+
+## Variant F design system (`components/lupus/`, tokens in `index.css`)
+Import from `@/components/lupus`. Colours: `bg-lf-paper`, `text-lf-ink`, `border-lf-brass`, `bg-lf-felt`, `text-lf-faction-evil`, ...; fonts: `font-lf-title`, `font-lf-heading`, `font-lf-body`; classes `lf-page`, `lf-nav`, `lf-paper`, `lf-seal`, `lf-token`, `lf-input`. Buttons/badges: `variant="felt|brass|wax"` (+ faction variants on Badge), `size="touch"`.
+- `Panel` `<Panel as="section" className>`: gilded double-border parchment container.
+- `Seal` `<Seal>{children}</Seal>`: red wax seal disc (counts, stamps).
+- `Ornament` `<Ornament className>`: brass divider.
+- `PageTitle` `<PageTitle sub>{title}</PageTitle>`: Cinzel Decorative h1, rubric subtitle, ornament.
+- `MessageSeal` `<MessageSeal kind="error|info|warning|success" small />`: seal icon used by messages and toasts.
+- `MessageBox` `<MessageBox kind title details code />`: popup; `code` is only `console.warn`ed, never shown.
+- `LfToaster` `<LfToaster />`: sonner Toaster in the MessageBox look; mount once per page.
+- `lfToast(kind, title, details, id?)`: pops a toast (same `id` replaces it).
+- `UserToken` `<UserToken username custom size="sm|md|lg" />`: avatar on the user colour; `userColor(username, custom)`, `USER_COLORS`.
+- `RoleIcon` `<RoleIcon role />`: Font Awesome icon per role; `ROLE_ICONS` map.
+- `FactionBadge` `<FactionBadge faction="good|evil|stealer|neutral" />`: faction chip; `FACTIONS` metadata (id, type, label, icon, colours), `factionFromType(type)` maps the numeric role type (0 good, 1 evil, 2 stealer, 3 neutral).

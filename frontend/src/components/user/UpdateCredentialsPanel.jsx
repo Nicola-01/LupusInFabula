@@ -5,7 +5,7 @@ import { populateErrorMessage, populateSuccessMessage } from '../../utils/messag
 import {
     passwordComplexHint, showPassword, showPasswordHint,
 } from '../../utils/passwordComplexAndShowPassword.js';
-import { SECTION_BOX, INPUT, LABEL, SHOW_PASSWORD_BTN, FORM_GROUP, HR, errorListOf } from './shared.js';
+import { errorListOf } from './shared.js';
 import GradientButton from './GradientButton.jsx';
 
 /*
@@ -14,12 +14,12 @@ import GradientButton from './GradientButton.jsx';
  */
 const EMPTY = { currentEmail: '', newEmail: '', oldPassword: '', newPassword: '', confirmPassword: '' };
 
-// Password complexity hint (same markup as the old #passwordComplex list; criteria marked by the shared helper).
+// Password complexity hint (same ids as before: the helpers mark the criteria by id and toggle "hidden" on #passwordComplex).
 function PasswordHint() {
     return (
-        <div id="passwordComplex" className="hidden absolute w-full p-2 px-3 bg-[#ade4f8] text-[#0D324D] rounded-[.6em] -translate-y-[115%]">
-            The password must contain:
-            <ul className="m-0 list-disc pl-8">
+        <div id="passwordComplex" className="hidden up-rules">
+            <p>The password must contain:</p>
+            <ul>
                 <li id="passwordLength" className="text-red-600">From 8 to 20 characters.</li>
                 <li id="passwordUppercase" className="text-red-600">An uppercase letter.</li>
                 <li id="passwordLowercase" className="text-red-600">A lowercase letter.</li>
@@ -82,72 +82,77 @@ export default function UpdateCredentialsPanel({ show, user, loading }) {
     };
 
     return (
-        <div id="changeCredentialsPage" className={show ? SECTION_BOX : 'hidden'}>
+        <div id="changeCredentialsPage" className={show ? 'up-section' : 'hidden'}>
+            <h2 className="up-h2">Change credentials</h2>
+            <p className="up-hint">Change the e-mail, the password, or both.</p>
             {user && (
                 <>
                     <div id="liveAlertPlaceholderPut"></div>
                     <SuccessMessage />
                     <ErrorMessage />
 
-                    <form id="updateForm" className="w-full px-3" onSubmit={(e) => e.preventDefault()}>
-                        <div className={FORM_GROUP}>
-                            <label className="inline-block">Username</label>
-                            <div className="form-input">
-                                <input id="namePut" type="text" name="name" className={INPUT} placeholder=""
-                                       value={user.username} disabled readOnly />
+                    <form id="updateForm" className="flex w-full flex-col gap-4" onSubmit={(e) => e.preventDefault()}>
+                        <div className="up-field">
+                            <label htmlFor="namePut" className="up-label">Username</label>
+                            <input id="namePut" type="text" name="name" className="up-input" value={user.username} disabled readOnly />
+                        </div>
+                        <hr className="up-divider" />
+
+                        <div className="up-field">
+                            <label htmlFor="currentEmail" className="up-label">Current E-mail</label>
+                            <input id="currentEmail" type="text" name="CurrentEmail" className="up-input" autoComplete="email"
+                                   value={v.currentEmail} onChange={set('currentEmail')} onKeyPress={onEnter} />
+                        </div>
+
+                        <div className="up-field">
+                            <label htmlFor="newEmail" className="up-label">New E-mail</label>
+                            <input id="newEmail" type="text" name="NewEmail" className="up-input" autoComplete="email"
+                                   value={v.newEmail} onChange={set('newEmail')} onKeyPress={onEnter} />
+                        </div>
+                        <hr className="up-divider" />
+
+                        <div className="up-field">
+                            <label htmlFor="oldPassword" className="up-label">Current Password</label>
+                            <div className="up-pw">
+                                <input type="password" name="CurrentPassword" id="oldPassword" className="up-input" autoComplete="current-password"
+                                       value={v.oldPassword} onChange={set('oldPassword')} onKeyPress={onEnter} />
+                                <button type="button" id="oldPassword_ShowPassword" className="up-eye" aria-label="Show password" tabIndex={-1}
+                                        onClick={(e) => { e.preventDefault(); showPassword("oldPassword"); }}>
+                                    <i id="oldPassword_eyeIcon" className="fas fa-eye" aria-hidden="true" />
+                                </button>
                             </div>
                         </div>
-                        <hr className={HR} />
 
-                        <div className={FORM_GROUP}>
-                            <input id="currentEmail" type="text" name="CurrentEmail" className={INPUT} placeholder=""
-                                   value={v.currentEmail} onChange={set('currentEmail')} onKeyPress={onEnter} />
-                            <label className={LABEL}>Current E-mail</label>
-                        </div>
-
-                        <div className={FORM_GROUP}>
-                            <input id="newEmail" type="text" name="NewEmail" className={INPUT} placeholder=""
-                                   value={v.newEmail} onChange={set('newEmail')} onKeyPress={onEnter} />
-                            <label className={LABEL}>New E-mail</label>
-                        </div>
-                        <hr className={HR} />
-
-                        <div className={FORM_GROUP}>
-                            <input type="password" name="CurrentPassword" id="oldPassword" className={INPUT} placeholder=""
-                                   value={v.oldPassword} onChange={set('oldPassword')} onKeyPress={onEnter} />
-                            <label className={LABEL}>Current Password</label>
-                            <button type="button" id="oldPassword_ShowPassword" className={SHOW_PASSWORD_BTN} tabIndex={-1}
-                                    onClick={(e) => { e.preventDefault(); showPassword("oldPassword"); }}>
-                                <i id="oldPassword_eyeIcon" className="fas fa-eye" />
-                            </button>
-                        </div>
-
-                        <div className={FORM_GROUP}>
+                        <div className="up-field">
+                            <label htmlFor="newPassword" className="up-label">New Password</label>
+                            <div className="up-pw">
+                                <input type="password" name="NewPassword" id="newPassword" className="up-input" autoComplete="new-password"
+                                       value={v.newPassword}
+                                       onChange={(e) => { set('newPassword')(e); passwordComplexHint(e.target.value); }}
+                                       onFocus={() => showPasswordHint(true)}
+                                       onBlur={() => showPasswordHint(false)}
+                                       onKeyPress={onEnter} />
+                                <button type="button" id="newPassword_ShowPassword" className="up-eye" aria-label="Show password" tabIndex={-1}
+                                        onClick={(e) => { e.preventDefault(); showPassword("newPassword"); }}>
+                                    <i id="newPassword_eyeIcon" className="fas fa-eye" aria-hidden="true" />
+                                </button>
+                            </div>
                             <PasswordHint />
-                            <input type="password" name="NewPassword" id="newPassword" className={INPUT} placeholder=""
-                                   value={v.newPassword}
-                                   onChange={(e) => { set('newPassword')(e); passwordComplexHint(e.target.value); }}
-                                   onFocus={() => showPasswordHint(true)}
-                                   onBlur={() => showPasswordHint(false)}
-                                   onKeyPress={onEnter} />
-                            <label className={LABEL}>New Password</label>
-                            <button type="button" id="newPassword_ShowPassword" className={SHOW_PASSWORD_BTN} tabIndex={-1}
-                                    onClick={(e) => { e.preventDefault(); showPassword("newPassword"); }}>
-                                <i id="newPassword_eyeIcon" className="fas fa-eye" />
-                            </button>
                         </div>
 
-                        <div className={FORM_GROUP}>
-                            <input type="password" name="ConfirmPassword" id="confirm-password" className={INPUT} placeholder=""
-                                   value={v.confirmPassword} onChange={set('confirmPassword')} onKeyPress={onEnter} />
-                            <label className={LABEL}>Repeat New Password</label>
-                            <button type="button" id="confirm-password_ShowPassword" className={SHOW_PASSWORD_BTN} tabIndex={-1}
-                                    onClick={(e) => { e.preventDefault(); showPassword("confirm-password"); }}>
-                                <i id="confirm-password_eyeIcon" className="fas fa-eye" />
-                            </button>
+                        <div className="up-field">
+                            <label htmlFor="confirm-password" className="up-label">Repeat New Password</label>
+                            <div className="up-pw">
+                                <input type="password" name="ConfirmPassword" id="confirm-password" className="up-input" autoComplete="new-password"
+                                       value={v.confirmPassword} onChange={set('confirmPassword')} onKeyPress={onEnter} />
+                                <button type="button" id="confirm-password_ShowPassword" className="up-eye" aria-label="Show password" tabIndex={-1}
+                                        onClick={(e) => { e.preventDefault(); showPassword("confirm-password"); }}>
+                                    <i id="confirm-password_eyeIcon" className="fas fa-eye" aria-hidden="true" />
+                                </button>
+                            </div>
                         </div>
 
-                        <div className="flex justify-center mb-0 mt-12">
+                        <div className="mt-2 flex justify-center">
                             <GradientButton id="updateButton" disabled={!enabled} onClick={sendPutUpdate}>Update Credentials</GradientButton>
                         </div>
                     </form>

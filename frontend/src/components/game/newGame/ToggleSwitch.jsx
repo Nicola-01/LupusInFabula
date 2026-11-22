@@ -1,15 +1,17 @@
+import { Switch } from '@/components/ui/switch';
+
 /*
- * On/off switch (port of HTML_switch / .toggle-switch in js/game/createNewGame.js + createNewGame.css).
- * Usage: <ToggleSwitch checked={on} onChange={(v) => ...} />
+ * On/off switch for the game options (port of HTML_switch / .toggle-switch). Radix Switch: role=switch and keyboard for free.
+ * Usage: <ToggleSwitch id="x" checked={on} onChange={(v) => ...} />
+ * The data-state variants override the default ui/switch colours (they would win over plain classes).
  */
-export default function ToggleSwitch({ checked, onChange }) {
+export default function ToggleSwitch({ checked, onChange, ...rest }) {
     return (
-        <label className="relative inline-block w-[60px] min-w-[60px] h-[30px] cursor-pointer ml-auto mb-0">
-            <input type="checkbox" className="hidden" checked={checked}
-                   onChange={(e) => onChange(e.target.checked)} />
-            <div className={`absolute top-0 left-0 w-full h-full rounded-[20px] transition-colors duration-300 ease-in-out ${checked ? 'bg-navbar-second-bg' : 'bg-[#aaa]'}`}>
-                <div className={`absolute top-[5px] left-[5px] w-5 h-5 rounded-full bg-white shadow-[0_2px_5px_rgba(0,0,0,0.2)] transition-transform duration-300 ease-in-out ${checked ? 'translate-x-[30px]' : ''}`} />
-            </div>
-        </label>
+        <Switch
+            checked={checked}
+            onCheckedChange={onChange}
+            className="h-7 w-12 shrink-0 border-2 border-lf-brass data-[state=checked]:border-lf-felt data-[state=checked]:bg-lf-felt data-[state=unchecked]:bg-[#b9a58a] dark:data-[state=unchecked]:bg-[#5c4a36] [&>[data-slot=switch-thumb]]:size-6 [&>[data-slot=switch-thumb]]:bg-lf-paper"
+            {...rest}
+        />
     );
 }

@@ -1,68 +1,46 @@
+import { Button } from '@/components/ui/button';
+import { MessageSeal } from './lupus/Message.jsx';
 import { showMore } from '../utils/message.js';
 
 /*
  * Message popups (port of jsp/utils/{error,info,warning,success}Message.jsp and jsp/include/show-message.jsp).
  * The popups are hidden (style display none) and filled by utils/message.js through their CSS classes
  * (.messageTitle, .messageDetails, .moreDetails, .showMore). Use <Messages /> (all four) or the single
- * components. Colors = Bootstrap 5.3 "subtle" palette (light / dark), as in css/utils/message.css.
+ * components. Look: variant F parchment panel with a seal icon per kind (kind = seal colour and icon).
  */
 
+// Class hooks used by utils/message.js and the callers' selectors (".errorMessage", "#page .infoMessage", ...).
 const KINDS = {
-    error: {
-        root: 'errorMessage bg-[#f8d7da] text-[#58151c] border-[#f1aeb5] dark:bg-[#2c0b0e] dark:text-[#f1aeb5] dark:border-[#842029]',
-        btn: 'errorShowMore bg-[#f1aeb5] dark:bg-[#842029]',
-        close: 'hover:text-[#f1aeb5] dark:hover:text-[#842029]',
-        title: 'errorMessage',
-        details: 'errorMessageDetails',
-        moreDetails: 'errorMoreDetails',
-        btnText: 'errorShowMoreText',
-    },
-    info: {
-        root: 'infoMessage bg-[#cff4fc] text-[#055160] border-[#9eeaf9] dark:bg-[#032830] dark:text-[#6edff6] dark:border-[#087990]',
-        btn: 'infoShowMore bg-[#9eeaf9] dark:bg-[#087990]',
-        close: 'hover:text-[#9eeaf9] dark:hover:text-[#087990]',
-        title: 'infoTitle',
-        details: 'infoMessageDetails',
-        moreDetails: 'infoMoreDetails',
-        btnText: 'infoShowMoreText',
-    },
-    warning: {
-        root: 'warningMessage bg-[#fff3cd] text-[#664d03] border-[#ffe69c] dark:bg-[#332701] dark:text-[#ffda6a] dark:border-[#997404]',
-        btn: 'warningShowMore bg-[#ffe69c] dark:bg-[#997404]',
-        close: 'hover:text-[#ffe69c] dark:hover:text-[#997404]',
-        title: 'warningTitle',
-        details: 'warningMessageDetails',
-        moreDetails: 'warningMoreDetails',
-        btnText: 'warningShowMoreText',
-    },
-    success: {
-        root: 'successMessage bg-[#d1e7dd] text-[#0a3622] border-[#a3cfbb] dark:bg-[#051b11] dark:text-[#75b798] dark:border-[#0f5132]',
-        btn: 'successShowMore bg-[#a3cfbb] dark:bg-[#0f5132]',
-        close: 'hover:text-[#a3cfbb] dark:hover:text-[#0f5132]',
-        title: 'successTitle',
-        details: 'successMessageDetails',
-        moreDetails: 'successMoreDetails',
-        btnText: 'successShowMoreText',
-    },
+    error: { title: 'errorMessage', details: 'errorMessageDetails', moreDetails: 'errorMoreDetails', btn: 'errorShowMore', btnText: 'errorShowMoreText' },
+    info: { title: 'infoTitle', details: 'infoMessageDetails', moreDetails: 'infoMoreDetails', btn: 'infoShowMore', btnText: 'infoShowMoreText' },
+    warning: { title: 'warningTitle', details: 'warningMessageDetails', moreDetails: 'warningMoreDetails', btn: 'warningShowMore', btnText: 'warningShowMoreText' },
+    success: { title: 'successTitle', details: 'successMessageDetails', moreDetails: 'successMoreDetails', btn: 'successShowMore', btnText: 'successShowMoreText' },
 };
 
-const POPUP_BASE = 'message rounded-[.6em] border border-solid w-full min-[992px]:!w-[70%] my-4 p-[15px]';
-const CLOSE_BASE = 'closebtn float-right font-bold text-[22px] leading-5 cursor-pointer transition-[0.3s]';
-const BTN_BASE = 'showMore font-[Helvetica,sans-serif] cursor-pointer font-bold transition-all duration-200 px-2.5 py-[5px] rounded-full border border-transparent flex items-center text-[15px] w-[105px] active:scale-95 not-[.mb-0]:mb-4 m-0';
+const ROLES = { error: 'alert', info: 'status', warning: 'alert', success: 'status' };
 
 /** One popup of the given kind ("error" | "info" | "warning" | "success"), hidden until populated. */
 function Popup({ kind }) {
     const k = KINDS[kind];
     return (
-        <div className={`${POPUP_BASE} ${k.root}`} style={{ display: 'none' }}>
-            <span className={`${CLOSE_BASE} ${kind}Message`}
-                  onClick={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}>&times;</span>
-            <h4><strong className={`messageTitle ${k.title}`}></strong></h4>
-            <p className={`messageDetails ${k.details}`}></p>
-            <button className={`${BTN_BASE} ${k.btn} mb-0`} onClick={(e) => showMore(e.currentTarget)}>
-                <span className={`showMoreText ${k.btnText} m-auto`}>Show more</span>
-            </button>
-            <p className={`moreDetails ${k.moreDetails}`} style={{ display: 'none' }}></p>
+        <div role={ROLES[kind]} className={`${kind}Message message lf-paper relative my-4 w-full min-[992px]:!w-[70%] py-4 pl-4 pr-14 sm:pl-5 font-lf-body`}
+             style={{ display: 'none' }}>
+            <button type="button" aria-label="Close message"
+                    className={`closebtn ${kind}Message absolute right-1 top-1 flex size-11 cursor-pointer items-center justify-center rounded-full font-lf-heading text-2xl leading-none text-lf-ink2 hover:text-lf-rubric`}
+                    onClick={(e) => { e.currentTarget.parentElement.style.display = 'none'; }}>&times;</button>
+            <div className="flex items-start gap-4">
+                <MessageSeal kind={kind} />
+                <div className="min-w-0 flex-1">
+                    <h4 className="m-0"><strong className={`messageTitle ${k.title} font-lf-heading text-lg font-bold`}></strong></h4>
+                    <p className={`messageDetails ${k.details} mt-1 text-[15px] leading-snug`}></p>
+                    <Button type="button" variant="brass" size="touch"
+                            className={`showMore ${k.btn} mb-0 not-[.mb-0]:mb-4 min-w-[7.5rem] font-lf-heading`}
+                            onClick={(e) => showMore(e.currentTarget)}>
+                        <span className={`showMoreText ${k.btnText}`}>Show more</span>
+                    </Button>
+                    <p className={`moreDetails ${k.moreDetails} m-0 text-[15px]`} style={{ display: 'none' }}></p>
+                </div>
+            </div>
         </div>
     );
 }

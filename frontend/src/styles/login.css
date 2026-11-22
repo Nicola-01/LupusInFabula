@@ -1,116 +1,109 @@
-/* Login/signup page. Scoped under .lupus-login: sibling/state selectors (checkbox toggle), label
-   transitions and the "Keep me logged in" checkbox (old css/login.css, css/common.css, inputFormAnimations.css). */
+/* Login/signup page (Pages/Login.jsx), scoped under .lf-login. Mobile first: a short title over the
+   campfire scene (top of the viewport), then a compact card. Plain CSS (unlayered) so it wins over the
+   Tailwind utilities of the shadcn components it restyles. */
 
-.lupus-login .lb_login, .lupus-login .lb_signup {
-    color: #fff;
-    font-size: 2.3em;
-    justify-content: center;
-    display: flex;
-    margin: 40px auto 15px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: .5s ease-in-out;
+/* The scene iframe is -z-10 and fixed: isolation keeps it above the .lf-page background and below the content. */
+.lf-login { isolation: isolate; min-height: 100vh; font-family: var(--font-lf-body), Georgia, serif; color: var(--lf-ink); }
+.lf-login .lf-root { width: 100%; max-width: 28rem; margin: 0 auto; padding: 0 1rem 2rem; }
+.lf-login .lf-hero {
+  height: calc(40vh - 140px); min-height: 4.5rem; display: flex; align-items: center; justify-content: center;
+  margin: 0; font-size: 1.625rem; line-height: 2rem; text-align: center; color: var(--lf-ink);
+  text-shadow: 0 0 10px var(--lf-paper), 0 0 2px var(--lf-paper);
 }
-.lupus-login .lb_login {
-    color: #0D324D;
-    transform: scale(.6);
+.lf-login .lf-head { display: none; }
+.lf-login .lf-paper { padding: 1rem; margin-top: 0; box-shadow: inset 0 0 40px rgba(120, 80, 30, .18), 0 12px 40px rgba(0, 0, 0, .4); }
+.lf-login .lf-title { margin: 0; font-size: 2.25rem; line-height: 2.5rem; text-align: center; }
+.lf-login .lf-orn { margin: .75rem auto 0; }
+
+/* Inline error (ShowMessage): one line, wax red, no fixed height and no negative margin (those are for the old layout). */
+.lf-login .lf-msg:empty { display: none; }
+.lf-login .lf-msg { margin-bottom: .75rem; }
+.lf-login .lf-msg .error {
+  margin: 0; height: auto; min-height: 2.5rem; width: 100%; padding: .375rem .5rem; gap: .5rem;
+  background: var(--lf-wax); color: var(--lf-wax-text); border-radius: 2px; box-shadow: none;
+}
+.lf-login .lf-msg .error svg path { fill: currentColor; }
+.lf-login .lf-msg .error__title { flex: 1; min-width: 0; margin: 0; color: inherit; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lf-login .lf-msg .error__icon { margin: 0; flex-shrink: 0; }
+.lf-login .lf-msg p { margin: 0 0 .5rem; color: var(--lf-rubric); font-weight: 700; }
+
+/* Tabs: equal-height tab buttons, the two panels share one grid cell. */
+.lf-login .lf-tabs { display: flex; flex-direction: column; gap: 0; }
+.lf-login .lf-tablist { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; width: 100%; height: auto; padding: 0; background: transparent; }
+.lf-login .lf-tab {
+  height: 2.75rem; background: transparent; color: var(--lf-ink); border: 2px solid var(--lf-brass); border-radius: 6px;
+  font-weight: 600; letter-spacing: .04em; font-size: .95rem; cursor: pointer;
+}
+.lf-login .lf-tab:hover { background: var(--lf-hl); }
+.lf-login .lf-tab:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-tab[data-state="active"] { background: var(--lf-felt); color: var(--lf-on-felt); border-color: var(--lf-felt); }
+.lf-login .lf-panes { display: grid; margin-top: 1rem; }
+.lf-login .lf-pane { grid-area: 1 / 1; display: flex; flex-direction: column; }
+.lf-login .lf-pane[data-state="inactive"] { visibility: hidden; }
+
+.lf-login .lf-form { flex: 1; display: flex; flex-direction: column; gap: .75rem; }
+.lf-login .lf-field { display: flex; flex-direction: column; gap: .25rem; }
+.lf-login .lf-label { font-family: var(--font-lf-heading), Georgia, serif; font-weight: 600; font-size: .875rem; letter-spacing: .05em; color: var(--lf-ink); }
+.lf-login .lf-input { height: 2.75rem; width: 100%; padding: 0 .75rem; font-size: 1rem; outline: none; color: var(--lf-ink); }
+.lf-login .lf-input:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-input:disabled { opacity: .55; }
+.lf-login .lf-input-pw { padding-right: 2.75rem; }
+.lf-login .lf-pw { position: relative; }
+.lf-login .lf-eye {
+  position: absolute; top: 50%; right: .125rem; transform: translateY(-50%); width: 2.75rem; height: 2.75rem;
+  display: grid; place-items: center; border: 0; background: transparent; color: var(--lf-ink2); cursor: pointer; font-size: 1rem;
+}
+.lf-login .lf-eye:focus-visible { outline: 2px solid var(--lf-focus); outline-offset: 2px; }
+.lf-login .lf-eye:disabled { opacity: .4; cursor: not-allowed; }
+
+.lf-login .lf-check { display: flex; align-items: center; gap: .5rem; font-size: 15px; min-height: 2.75rem; cursor: pointer; }
+.lf-login .lf-check input { width: 1.125rem; height: 1.125rem; accent-color: var(--lf-felt); }
+
+/* Submit buttons sit at the bottom of both panels, in the same place. */
+.lf-login .lf-btn { width: 100%; height: 2.75rem; font-size: 1rem; margin-top: auto; }
+
+/* Password checklist: two columns on mobile. Met criteria are bold and ticked (data-ok set by the page). */
+.lf-login .lf-rules {
+  list-style: none; margin: 0; padding: .5rem .625rem; border: 1px dashed var(--lf-brass); border-radius: 2px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .125rem .5rem; font-size: .8125rem; line-height: 1.25rem; color: var(--lf-ink2);
+}
+.lf-login .lf-rule { display: flex; align-items: center; gap: .375rem; }
+.lf-login .lf-rule svg { width: 1rem; height: 1rem; flex-shrink: 0; }
+.lf-login .lf-rule[data-ok="true"] { color: var(--lf-seal-ok); font-weight: 700; }
+
+/* Sign up: username and email full width, the two passwords side by side, then the checklist. */
+.lf-login .lf-signup { display: grid; grid-template-columns: 1fr 1fr; column-gap: .75rem; align-content: start; }
+.lf-login .lf-signup > * { grid-column: 1 / -1; }
+.lf-login .lf-signup .lf-pass { grid-column: 1; grid-row: 3; }
+.lf-login .lf-signup .lf-repeat { grid-column: 2; grid-row: 3; }
+.lf-login .lf-signup .lf-rules { grid-row: 4; }
+.lf-login .lf-signup .lf-btn { grid-row: 5; }
+
+@media (min-width: 640px) {
+  .lf-login .lf-paper { padding: 2rem; }
 }
 
-.lupus-login .login {
-    height: 460px;
-    background: #eee;
-    border-radius: 60% / 10%;
-    transform: translateY(-130px);
-    transition: .8s ease-in-out;
+/* Desktop: wide card with the title inside, the campfire shows below it. */
+@media (min-width: 768px) {
+  .lf-login .lf-root { max-width: 40rem; padding-top: 1.5rem; }
+  .lf-login .lf-hero { display: none; }
+  .lf-login .lf-head { display: block; margin-bottom: 1.5rem; }
+  .lf-login .lf-panes { margin-top: 1.5rem; }
+  .lf-login .lf-form { gap: 1rem; }
+  .lf-login .lf-rules { padding: .75rem; gap: .25rem .5rem; font-size: .875rem; }
+  .lf-login .lf-signup { column-gap: 1.25rem; }
+  .lf-login .lf-signup .lf-user { grid-column: 1; grid-row: 1; }
+  .lf-login .lf-signup .lf-mail { grid-column: 2; grid-row: 1; }
+  .lf-login .lf-signup .lf-pass { grid-row: 2; }
+  .lf-login .lf-signup .lf-repeat { grid-row: 2; }
+  .lf-login .lf-signup .lf-rules { grid-row: 3; }
+  .lf-login .lf-signup .lf-btn { grid-row: 4; }
 }
-.lupus-login #loginCB:checked ~ .login { transform: translateY(-480px); }
-.lupus-login #loginCB:checked ~ .login label { transform: scale(1); }
-.lupus-login #loginCB:checked ~ .signup .lb_signup { transform: scale(.6); }
 
-/* Floating labels (the placeholder is "", so :not(:placeholder-shown) always matches, as in the original). */
-.lupus-login .control-label {
-    color: lightslategray;
-    font-size: 18px;
-    font-weight: normal;
-    position: absolute;
-    pointer-events: none;
-    left: 5px;
-    top: 6px !important;
-    transition: 0.2s ease all;
+/* Firelight from the campfire on the card (dark). */
+[data-bs-theme="dark"] .lf-login .lf-paper {
+  box-shadow: inset 0 0 40px rgba(120, 80, 30, .18), 0 12px 40px rgba(0, 0, 0, .45), 0 -16px 50px -20px rgba(253, 150, 80, .4), 0 28px 60px -20px rgba(253, 150, 80, .45);
 }
-.lupus-login .form-control:focus ~ .control-label,
-.lupus-login .form-control:not(:placeholder-shown) ~ .control-label {
-    top: -27px !important;
-    font-size: 16px;
-}
-.lupus-login .login .form-control:focus ~ .control-label,
-.lupus-login .login .form-control:not(:placeholder-shown) ~ .control-label { color: #0d324d; }
-.lupus-login .signup .form-control:focus ~ .control-label,
-.lupus-login .signup .form-control:not(:placeholder-shown) ~ .control-label { color: #e0dede; }
-
-/* "Keep me logged in" checkbox (common.css .checkbox-wrapper). */
-.lupus-login .checkbox-wrapper { display: flex; }
-.lupus-login .checkbox-wrapper * { box-sizing: border-box; }
-.lupus-login .checkbox-wrapper .cbx {
-    -webkit-user-select: none;
-    user-select: none;
-    cursor: pointer;
-    padding: 6px 8px;
-    border-radius: 6px;
-    overflow: hidden;
-    transition: all 0.2s ease;
-    display: inline-block;
-}
-.lupus-login .checkbox-wrapper .cbx:not(:last-child) { margin-right: 6px; }
-.lupus-login .checkbox-wrapper .cbx:hover { background: rgba(0,119,255,0.06); }
-.lupus-login .checkbox-wrapper .cbx span {
-    float: left;
-    vertical-align: middle;
-    transform: translate3d(0, 0, 0);
-}
-.lupus-login .checkbox-wrapper .cbx span:first-child {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    transform: scale(1);
-    border: 1px solid #cccfdb;
-    transition: all 0.2s ease;
-    box-shadow: 0 1px 1px rgba(0,16,75,0.05);
-}
-.lupus-login .checkbox-wrapper .cbx span:first-child svg {
-    position: absolute;
-    top: 3px;
-    left: 2px;
-    fill: none;
-    stroke: #fff;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 16px;
-    stroke-dashoffset: 16px;
-    transition: all 0.3s ease;
-    transition-delay: 0.1s;
-    transform: translate3d(0, 0, 0);
-}
-.lupus-login .checkbox-wrapper .cbx span:last-child {
-    padding-left: 8px;
-    line-height: 18px;
-}
-.lupus-login .checkbox-wrapper .cbx:hover span:first-child { border-color: var(--navbar-inverted-bg); }
-.lupus-login .checkbox-wrapper .inp-cbx {
-    position: absolute;
-    visibility: hidden;
-}
-.lupus-login .checkbox-wrapper .inp-cbx:checked + .cbx span:first-child {
-    background: var(--navbar-inverted-bg);
-    border-color: var(--navbar-inverted-bg);
-}
-.lupus-login .checkbox-wrapper .inp-cbx:checked + .cbx span:first-child svg { stroke-dashoffset: 0; }
-.lupus-login .checkbox-wrapper .inline-svg {
-    position: absolute;
-    width: 0;
-    height: 0;
-    pointer-events: none;
-    user-select: none;
+@media (prefers-reduced-motion: no-preference) {
+  .lf-login .lf-tab { transition: background-color 200ms, color 200ms; }
 }

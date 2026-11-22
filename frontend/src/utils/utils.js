@@ -18,8 +18,8 @@ export const HTTP_STATUS_CONFLICT = 409;
 /** HTTP status code for Internal Server Error (500). */
 export const HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 
-/** The context path of the server (origin + "/lupus/"). */
-export const contextPath = window.location.origin + "/lupus/";
+/** The context path of the server (origin + "/"). */
+export const contextPath = window.location.origin + "/";
 
 /** The key for JSON resource lists. */
 export const JSON_resource_list = "resource-list";

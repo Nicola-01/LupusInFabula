@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { contextPath, genericGETRequest, HTTP_STATUS_OK, JSON_resource_list } from '../utils/utils.js';
 import { minSizeSearch, playersToIgnore } from '../utils/searchPlayer.js';
+import { Button } from '@/components/ui/button';
 
 /*
  * Player search box with the suggestion popup (port of jsp/utils/searchPlayer.jsp + js/utils/searchPlayer.js).
@@ -121,22 +122,22 @@ export default function SearchPlayer({ onSearch, buttonText = 'Add!' }) {
     };
 
     return (
-        <div className="search inline-block absolute left-0 bottom-0 w-[calc(100%-16px)] p-2 m-2">
+        <div className="search relative w-full">
             <input id="playerUsername" ref={inputRef} placeholder=" Search a player..." type="text"
                    data-1p-ignore data-bwignore data-lpignore="true" data-form-type="other"
                    onKeyUp={onKeyUp}
                    onFocus={() => searchUser()}
                    onBlur={() => hidePopup()}
-                   className={`w-full h-10 p-2.5 border-none rounded-[20px] shadow-[0_0_10px_rgba(0,0,0,0.1)] outline-none bg-inputs-bg-color ${open ? '!rounded-t-[20px] !rounded-b-none' : ''}`} />
-            <button id="addPlayer" className={`searchUser absolute top-0 right-0 m-2 h-10 px-5 py-[5px] rounded-[20px] border-none bg-navbar-inverted-bg text-white cursor-pointer transition ease-in-out duration-300 hover:scale-105 hover:text-white hover:bg-navbar-inverted-second-bg ${open ? '!rounded-[20px_20px_0_20px]' : ''}`}
+                   className={`lf-input h-11 w-full pl-3 pr-28 text-base outline-none focus:ring-2 focus:ring-lf-focus md:h-10 md:text-sm ${open ? '!rounded-b-none' : ''}`} />
+            <Button id="addPlayer" variant="felt" size="sm" className="searchUser absolute top-1/2 right-1 h-9 -translate-y-1/2 px-4 min-w-16"
                     onClick={() => onSearchRef.current?.()}>
                 {buttonText}
-            </button>
-            <div id="playerListPopup" className={`popup absolute w-[calc(100%-1em)] ${open ? 'block' : 'hidden'} bg-bg-second-color border border-solid border-[#ccc] z-10 rounded-b-[20px]`}>
+            </Button>
+            <div id="playerListPopup" className={`popup lf-paper !bg-lf-paper !text-lf-ink !rounded-sm absolute top-full left-0 right-0 z-20 mt-1 ${open ? 'block' : 'hidden'}`}>
                 <ul id="playerList" ref={listRef} className="player-list list-none p-0 m-0 max-h-[210px] overflow-y-auto">
                     {shown.map((p) => (
                         <li key={p.username} id={p.username}
-                            className={`px-3 py-1 cursor-pointer last:rounded-b-[20px] hover:bg-[#ced4da] dark:hover:bg-[#495057] ${selected === p.username ? 'selected bg-[#ced4da] dark:bg-[#495057]' : ''}`}
+                            className={`px-3 py-2 cursor-pointer hover:bg-lf-hl ${selected === p.username ? 'selected bg-lf-hl' : ''}`}
                             onMouseDown={() => {
                                 inputRef.current.value = p.username;
                                 st.current.searchUserContain = null;
@@ -146,8 +147,8 @@ export default function SearchPlayer({ onSearch, buttonText = 'Add!' }) {
                             <div className="playerContainer flex">
                                 {highlight(p.username)}
                                 {p.gameId === null
-                                    ? <span className="playerStatus available ml-auto text-[#78b159]">Available &#128994;</span>
-                                    : <span className="playerStatus inGame ml-auto text-[#dd2e44]">In game   &#128308; </span>}
+                                    ? <span className="playerStatus available ml-auto text-lf-seal-ok">Available &#128994;</span>
+                                    : <span className="playerStatus inGame ml-auto text-lf-wax">In game   &#128308; </span>}
                             </div>
                         </li>
                     ))}

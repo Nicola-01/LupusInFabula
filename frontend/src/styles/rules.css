@@ -1,65 +1,38 @@
-@import url("https://fonts.googleapis.com/css?family=Montserrat:400,700");
-
-/* Rules page (old css/rules.css), scoped under .lupus-rules: numbered rule boxes, gradient bars and counters. */
-.lupus-rules .list { list-style: none; counter-reset: item; padding: 0; }
-.lupus-rules .sublist { list-style: none; counter-reset: list; padding: 0; }
-
-.lupus-rules .list .rules,
-.lupus-rules .sublist .subrules {
-    --stop: calc(100% / var(--length) * var(--i));
-    --l: 62%;
-    --l2: 88%;
-    --h: calc((var(--i) - 1) * (180 / var(--length)));
-    --c1: hsl(var(--h), 71%, var(--l));
-    --c2: hsl(var(--h), 71%, var(--l2));
-    position: relative;
-    max-width: 50rem;
-    padding: 2rem 1rem 1rem;
-    box-shadow: 0.01rem 0.01rem 0.3rem rgba(0, 0, 0, 0.2);
-    border-radius: 1rem;
-    overflow: hidden;
-    margin: auto;
-    counter-increment: list;
-    background-color: #f8f9fa; /* Bootstrap --bs-tertiary-bg (light) */
+/* Rules page (variant F): drop cap, notice-board planks and pins. Scoped under .lf-rules, colours from the --lf-* tokens. */
+.lf-rules {
+  --rf-board: #d9b98a;
+  --rf-board-line: #cca774;
+  --rf-board-shade: rgba(90, 55, 20, .35);
 }
-[data-bs-theme="dark"] .lupus-rules .list .rules,
-[data-bs-theme="dark"] .lupus-rules .sublist .subrules { background-color: #2b3035; }
-.lupus-rules .list .rules { margin: 2rem auto !important; }
-.lupus-rules .sublist .subrules { margin: 0.7em auto !important; }
-
-.lupus-rules .list .rules::before,
-.lupus-rules .sublist .subrules::before {
-    content: ' ';
-    display: block;
-    width: 100%;
-    height: 1rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: linear-gradient(to right, var(--c1) var(--stop), var(--c2) var(--stop));
+[data-bs-theme="dark"] .lf-rules {
+  --rf-board: #3b2a1c;
+  --rf-board-line: #33251a;
 }
 
-.lupus-rules .list h2 {
-    display: flex;
-    align-items: baseline;
-    margin: 0 0 1rem;
-}
-.lupus-rules .list h2::before {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 0 0 auto;
-    margin-right: 1rem;
-    width: 4rem;
-    height: 4rem;
-    content: counter(list);
-    padding: 1rem;
-    border-radius: 50%;
-    background-color: var(--c1);
-    color: white;
+/* Illuminated "I" of the Introduction title only. */
+.lf-rules .rf-illum {
+  float: left;
+  font-family: var(--font-lf-title);
+  font-weight: 700;
+  font-size: 2.6em;
+  line-height: .8;
+  padding: .08em .1em 0 0;
+  color: var(--lf-rubric);
 }
 
-@media (min-width: 40em) {
-    .lupus-rules .list h2 { font-size: 2.25rem; margin: 0 0 2rem; }
-    .lupus-rules .list h2::before { margin-right: 1.5rem; }
+/* Faction notice board: wooden planks with a brass frame. */
+.lf-rules .rf-board {
+  background-color: var(--rf-board);
+  background-image: repeating-linear-gradient(180deg, var(--rf-board) 0 44px, var(--rf-board-line) 44px 46px);
+  box-shadow: inset 0 0 36px var(--rf-board-shade), 0 8px 16px rgba(60, 40, 20, .25);
+}
+
+/* Pushpin stuck on a card or note. */
+.lf-rules .rf-pin {
+  display: block;
+  width: 16px;
+  height: 16px;
+  border-radius: 9999px;
+  background: radial-gradient(circle at 35% 35%, #f08a7a, #8b1e1e 60%);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, .45);
 }

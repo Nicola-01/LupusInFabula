@@ -1,27 +1,49 @@
 import { useEffect, useState } from 'react';
+import { BookOpen, Castle, History, LogOut, Plus, UserRound, Users } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
-import Footer from '../components/Footer.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { MessageBox, Ornament, Panel } from '@/components/lupus';
 import { useLoginChecker } from '../utils/session.js';
 import { contextPath, genericGETRequest, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_OK } from '../utils/utils.js';
-import backgroundHtml from '../components/home/homeBackground.html?raw';
+import backgroundHtml from '../components/home/villageBackground.html?raw';
 
-// Same colors as Bootstrap alert-info / alert-success / alert-warning (subtle palette, light and dark).
-const ALERT = {
-    info: 'text-[#055160] bg-[#cff4fc] border-[#9eeaf9] dark:text-[#6edff6] dark:bg-[#032830] dark:border-[#087990]',
-    success: 'text-[#0a3622] bg-[#d1e7dd] border-[#a3cfbb] dark:text-[#75b798] dark:bg-[#051b11] dark:border-[#0f5132]',
-    warning: 'text-[#664d03] bg-[#fff3cd] border-[#ffe69c] dark:text-[#ffda6a] dark:bg-[#332701] dark:border-[#997404]',
-};
-const BUTTON = 'block w-full max-w-[200px] mx-auto my-[10px] p-[10px] rounded-[5px] border-none cursor-pointer transition-all duration-300 hover:bg-navbar-inverted-second-bg';
-const BUTTON_COLORS = 'bg-navbar-inverted-bg text-bg-first-color';
-const LOGOUT_COLORS = 'bg-navbar-second-bg text-text-color';
+// Global `a` colour/underline rules would override the button colours: the entry links get `!` overrides.
+const ENTRY_TEXT = { felt: '!text-lf-on-felt', brass: '!text-lf-ink', wax: '!text-lf-wax-text' };
+
+function EntryLink({ href, variant, id, icon: Icon, children }) {
+    return (
+        <Button asChild variant={variant} size="touch" className={`w-full !no-underline ${ENTRY_TEXT[variant]}`}>
+            <a href={href} id={id}>
+                <Icon className="size-4" aria-hidden="true" />
+                {children}
+            </a>
+        </Button>
+    );
+}
+
+function Block({ title, icon: Icon, children }) {
+    return (
+        <Panel className="flex flex-col gap-4 p-6">
+            <h2 className="flex items-center gap-2 font-lf-title text-xl font-bold text-lf-rubric">
+                <Icon className="size-5 text-lf-brass" aria-hidden="true" />
+                {title}
+            </h2>
+            <Ornament />
+            <div className="flex flex-col gap-3">{children}</div>
+        </Panel>
+    );
+}
 
 /**
  * Home page (port of jsp/home.jsp + js/homepage.js + css/homepage.css).
- * The message about the latest/current match comes from GET /lupus/game/list (same as the old script).
+ * The message about the latest/current match comes from GET /game/list (same as the old script).
  */
 export default function Home() {
     const { user } = useLoginChecker();
     const [notice, setNotice] = useState(null); // {kind, text, gameId}
+    // shortcut: first paint uses the body theme as set so far, Navbar's loadTheme() updates the iframe afterwards.
+    const theme = document.body.dataset.bsTheme || 'light';
+    const html = backgroundHtml.replace('<html lang="en">', `<html lang="en" data-bs-theme="${theme}">`);
 
     useEffect(() => { document.title = 'Lupus in Fabula - Home'; }, []);
 
@@ -49,49 +71,48 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="relative z-0 flex flex-col min-h-screen bg-bg-first-color font-['Jost',sans-serif] leading-[1.5] text-text-color">
+        <div className="lf-page relative z-0 flex min-h-screen flex-col font-lf-body text-lf-ink">
             <Navbar />
-            <iframe id="background" title="background" srcDoc={backgroundHtml} className="fixed inset-0 w-full h-full z-[-1] border-none" />
+            <iframe id="background" title="background" srcDoc={html} className="fixed inset-0 z-[-1] h-full w-full border-none" />
 
-            <main className="grow w-full relative z-[1] max-w-[800px] mx-auto p-5 mt-0 min-[768px]:mt-12 min-[768px]:pt-3">
-                <h1 className="text-[calc(1.25rem_+_1vw)] font-medium leading-[1.2] mb-6">
-                    <span>Welcome back, </span>
-                    {user && <span id="username" className="font-bold">{user.username}</span>}
-                </h1>
+            <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8">
+                <div className="flex flex-col gap-8 md:pt-6">
+                    <Panel className="flex flex-col gap-4 p-6">
+                        <h1 className="font-lf-title text-2xl font-bold sm:text-3xl">
+                            <span>Welcome back, </span>
+                            {user && <span id="username" className="text-lf-rubric">{user.username}</span>}
+                        </h1>
 
-                <div id="messageDiv" className={`mb-2 min-[768px]:mb-12 ${notice ? `relative p-4 border border-solid rounded-md ${ALERT[notice.kind]}` : ''}`}>
-                    {notice && (notice.gameId ? <>{notice.text} <a href={`/lupus/village/${notice.gameId}`} className="underline text-[#0d6efd] dark:text-[#6ea8fe]">{notice.gameId}</a></> : notice.text)}
+                        <div id="messageDiv">
+                            {notice && (
+                                <MessageBox
+                                    kind={notice.kind}
+                                    title={notice.text}
+                                    details={notice.gameId && (
+                                        <a href={`/village/${notice.gameId}`} className="font-bold !text-lf-ink !underline">{notice.gameId}</a>
+                                    )}
+                                />
+                            )}
+                        </div>
+                    </Panel>
+
+                    {/* md+: the two blocks flank the campfire, which sits in the middle of the fixed background. */}
+                    <section className="grid gap-6 md:grid-cols-2" style={{ columnGap: 'min(32vw, 480px)' }}>
+                        <Block title="Habitant" icon={UserRound}>
+                            <EntryLink href="/habitant/me" variant="felt" icon={UserRound}>Personal Area</EntryLink>
+                            <EntryLink href={user ? "/habitant/" + encodeURIComponent(user.username) : "/habitant/"} variant="felt" icon={History}>Statistics and History</EntryLink>
+                            <EntryLink href="/logout" variant="wax" icon={LogOut} id="logoutBT">Logout</EntryLink>
+                        </Block>
+
+                        <Block title="Village" icon={Castle}>
+                            <EntryLink href="/rules" variant="felt" icon={BookOpen}>Rulebook</EntryLink>
+                            <EntryLink href="/newVillage" variant="felt" icon={Plus}>Create a village</EntryLink>
+                            <EntryLink href="/village" variant="brass" icon={Users}>Join your village</EntryLink>
+                        </Block>
+                    </section>
                 </div>
-
-                <section className="flex flex-wrap justify-center items-center -mx-3 pt-3">
-                    <div className="box rounded-lg text-center leading-[1.6] backdrop-blur-[5px] border-[0.13em] border-solid border-bg-second-color w-full min-[768px]:w-5/12 min-[768px]:m-auto mb-4 p-6">
-                        <h2 className="text-[calc(1.3rem_+_.6vw)] font-medium leading-[1.2] mb-2">Habitant</h2>
-                        <a href="/lupus/habitant/me" className="no-underline">
-                            <button className={`${BUTTON} ${BUTTON_COLORS}`}>Personal Area</button>
-                        </a>
-                        <a href="/lupus/habitant/" className="no-underline">
-                            <button className={`${BUTTON} ${BUTTON_COLORS}`}>Statistics and History</button>
-                        </a>
-                        <a href="/lupus/logout" className="no-underline">
-                            <button id="logoutBT" className={`${BUTTON} ${LOGOUT_COLORS}`}>Logout</button>
-                        </a>
-                    </div>
-                    <div className="box rounded-lg text-center leading-[1.6] backdrop-blur-[5px] border-[0.13em] border-solid border-bg-second-color w-full min-[768px]:w-5/12 min-[768px]:m-auto p-6">
-                        <h2 className="text-[calc(1.3rem_+_.6vw)] font-medium leading-[1.2] mb-2">Village</h2>
-                        <a href="/lupus/rules" className="no-underline">
-                            <button className={`${BUTTON} ${BUTTON_COLORS}`}>Rulebook</button>
-                        </a>
-                        <a href="/lupus/newVillage" className="no-underline">
-                            <button className={`${BUTTON} ${BUTTON_COLORS}`}>Create a village</button>
-                        </a>
-                        <a href="/lupus/village" className="no-underline">
-                            <button className={`${BUTTON} ${BUTTON_COLORS}`}>Join your village</button>
-                        </a>
-                    </div>
-                </section>
             </main>
 
-            <Footer />
         </div>
     );
 }

@@ -1,12 +1,10 @@
-/** Page footer (port of jsp/include/footer.jsp). Usage: <Footer /> at the end of a page. */
+/** Page footer (variant F, same brown striped bar as the navbar). Usage: <Footer /> at the end of a page. */
 export default function Footer() {
     return (
-        <footer className="mt-6 p-4 bg-navbar-bg text-text-color">
-            <div className="flex flex-wrap justify-center items-center">
-                <div className="w-full min-[768px]:w-1/2 text-center text-[rgba(33,37,41,0.75)] dark:text-[rgba(222,226,230,0.75)] text-sm leading-[1.5]">
-                    © 2024 Team LIF - Lupus in Fabula. All rights reserved.
-                </div>
-            </div>
+        <footer className="lf-nav relative z-10 mt-8 !shadow-none border-t-2 border-lf-nav-brass px-4 py-4 text-center font-lf-heading text-xs tracking-[.12em] [font-variant-caps:small-caps]">
+            <span aria-hidden="true" className="mr-2 text-lf-nav-brass">✦</span>
+            © 2024 Team LIF · Lupus in Fabula · All rights reserved · {window.__ENV__?.version ?? 'dev'}
+            <span aria-hidden="true" className="ml-2 text-lf-nav-brass">✦</span>
         </footer>
     );
 }

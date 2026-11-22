@@ -1,162 +1,130 @@
-import { useEffect, useMemo, useState } from 'react';
+import { TreePine } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
+import { Button } from '@/components/ui/button';
+import { Ornament, Panel, Seal } from '@/components/lupus';
+import { useEffect } from 'react';
 import '../styles/pageNotFound.css';
 
-/*
- * Random decorations, same formulas as js/pageNotFound.js. The old code positioned elements with jQuery
- * `.each` + `:nth-child(i)` with a 0-based i: the first 24 trees and the first 149 stars were styled,
- * the last tree and the last star were left unstyled. Kept as is.
- */
-function randomTree() {
-    const treeHeight = Math.floor(Math.random() * 2 + 3);
-    const nNodes = treeHeight * 4 + 1;
-    const posNodesH = new Array(nNodes);
-    const posNodesW = new Array(nNodes);
-    const nodeH = 100 / treeHeight;
-    const internalNodeH = Math.floor(Math.random() * 4 + 25 / treeHeight);
-    const nodeW = 50 / treeHeight;
-    const internalNodeW = Math.floor(Math.random() * 3 + 27 / treeHeight);
+// Scene in SVG viewBox units; the tree/cross/lantern positions are the approved mock F.
+const STARS = [[90, 40], [160, 90], [260, 30], [330, 110], [520, 50], [600, 20], [660, 70], [860, 30], [940, 80], [1060, 40], [1120, 120], [480, 120], [230, 150], [1000, 170]];
 
-    posNodesH[0] = 0;
-    posNodesW[0] = 50;
-    for (let j = 1; j <= treeHeight * 2; j++) {
-        if (j % 2 === 1) {
-            posNodesH[j] = posNodesH[j - 1] + nodeH;
-            posNodesW[j] = posNodesW[j - 1] - nodeW;
-        } else {
-            posNodesH[j] = posNodesH[j - 1] - internalNodeH;
-            posNodesW[j] = posNodesW[j - 1] + internalNodeW;
-        }
-        posNodesH[nNodes - j] = posNodesH[j];
-        posNodesW[nNodes - j] = 100 - posNodesW[j];
-    }
-    const scaleH = 100 / Math.max(...posNodesH);
-    const scaleW = 50 / (Math.max(...posNodesW) - 50);
-    posNodesH[treeHeight * 2] = 100 / scaleH;
-    posNodesW[treeHeight * 2] = 50;
-    posNodesH[treeHeight * 2 + 1] = 100 / scaleH;
-    posNodesW[treeHeight * 2 + 1] = 50;
-
-    let points = '50% 0%,';
-    for (let k = 1; k < nNodes; k++) {
-        const posW = 50 + (posNodesW[k] - 50) * scaleW;
-        points += posW + '% ' + posNodesH[k] * scaleH + '%, ';
-    }
-    points = points.substring(0, points.length - 2);
-
-    const rX = Math.floor(Math.random() * 110 - 5);
-    const rH = Math.random() * 10 + 15;
-    const rW = Math.random() * 2 + 14;
-    const rR = Math.floor(Math.random() * 3) * Math.cos(Math.PI * Math.round(Math.random()));
-    return {
-        style: {
-            left: rX + 'vw',
-            height: rH + 'em',
-            width: rW + 'em',
-            bottom: '3dvw',
-            transform: `rotateZ(${rR}deg)`,
-            clipPath: `polygon(${points})`,
-        },
-        className: 'tree' + (3 - (Math.floor(Math.random() * 5 + 1) % 3)),
-    };
+// Pine silhouette, base at (x, y), tiers via a sawtooth polygon.
+function Pine({ x, y, h, className = 'nf-pine' }) {
+  const w = h * 0.3;
+  const pts = [
+    [x, y - h],
+    [x + w * 0.45, y - h * 0.6], [x + w * 0.2, y - h * 0.6],
+    [x + w * 0.8, y - h * 0.3], [x + w * 0.35, y - h * 0.3],
+    [x + w, y],
+    [x - w, y],
+    [x - w * 0.35, y - h * 0.3], [x - w * 0.8, y - h * 0.3],
+    [x - w * 0.2, y - h * 0.6], [x - w * 0.45, y - h * 0.6],
+  ];
+  return (
+    <g>
+      <rect x={x - h * 0.035} y={y - 2} width={h * 0.07} height={h * 0.1} className="nf-wood2" />
+      <polygon points={pts.map((p) => p.join(',')).join(' ')} className={className} />
+    </g>
+  );
 }
 
-function buildScene() {
-    const patches = Array.from({ length: 100 }, (_, i) => {
-        const rX = Math.floor(Math.random() * 50);
-        const rH = Math.floor(Math.random() * 10) + 15;
-        return {
-            left: i - 1 + 'vw',
-            height: rH + 'vh',
-            clipPath: `polygon(${rX}% ${rX}%, 0% 100%, 100% 100%)`,
-        };
-    });
-    const trees = Array.from({ length: 25 }, (_, k) => (k < 24 ? randomTree() : null));
-    const crosses = Array.from({ length: 3 }, () => {
-        const rR = Math.floor(Math.random() * 15) * Math.cos(Math.PI * Math.round(Math.random()));
-        return { transform: `rotateZ(${rR}deg)` };
-    });
-    const cryptR = Math.floor(Math.random() * 5) * Math.cos(Math.PI * Math.round(Math.random()));
-    return { patches, trees, crosses, cryptTransform: `translateX(-50%) rotateZ(${cryptR}deg)` };
+// Leaning grave cross standing on y.
+function Cross({ x, y, s, rot = 0 }) {
+  return (
+    <g transform={`rotate(${rot} ${x} ${y})`}>
+      <rect x={x - 3} y={y - s} width={6} height={s} className="nf-stone" />
+      <rect x={x - s * 0.3} y={y - s * 0.72} width={s * 0.6} height={6} className="nf-stone" />
+    </g>
+  );
 }
+
+function Scene() {
+  return (
+    <svg viewBox="0 0 1200 420" preserveAspectRatio="xMidYMax slice" className="absolute inset-0 size-full" aria-hidden="true">
+      {STARS.map(([x, y], i) => <circle key={i} cx={x} cy={y} r={1.6} className="nf-star" />)}
+      <circle cx={860} cy={90} r={80} className="nf-glow" />
+      <circle cx={860} cy={90} r={46} className="nf-moon" />
+
+      <path d="M0 300 C160 250 300 280 470 300 S820 250 1000 290 S1150 270 1200 280 V420 H0Z" className="nf-hill" />
+      <Pine x={90} y={340} h={180} className="nf-pine2" />
+      <Pine x={190} y={342} h={150} className="nf-pine2" />
+      <Pine x={700} y={336} h={160} className="nf-pine2" />
+      <Pine x={930} y={338} h={190} className="nf-pine2" />
+      <Pine x={1060} y={340} h={150} className="nf-pine2" />
+
+      <path d="M0 352 C200 336 420 350 600 344 S980 334 1200 350 V420 H0Z" className="nf-ground" />
+      <Cross x={640} y={360} s={40} rot={-5} />
+      <Cross x={200} y={362} s={46} rot={4} />
+
+      <Pine x={40} y={352} h={260} />
+      <Pine x={140} y={356} h={200} />
+      <Pine x={230} y={360} h={150} />
+      <Pine x={850} y={352} h={230} />
+      <Pine x={960} y={356} h={280} />
+      <Pine x={1120} y={354} h={250} />
+
+      {/* broken signpost: left board intact, right board hanging loose, pointing nowhere */}
+      <rect x={428} y={170} width={12} height={190} className="nf-wood2" />
+      <path d="M440 184 H350 L330 196 L350 208 H440 Z" className="nf-wood" />
+      <g transform="rotate(16 440 236)">
+        <path d="M440 226 H530 L552 238 L530 250 H440 Z" className="nf-wood" />
+      </g>
+      <line x1={396} y1={208} x2={396} y2={230} stroke="var(--nf-wood2)" strokeWidth={2} />
+      <circle cx={396} cy={244} r={38} className="nf-lamp-glow motion-safe:animate-[nf-flicker_2.6s_ease-in-out_infinite]" />
+      <rect x={388} y={232} width={16} height={20} rx={2} className="nf-lantern" />
+
+      <Cross x={880} y={356} s={44} rot={6} />
+
+      {/* wolf eyes in a bush, blinking */}
+      <path d="M770 362 Q780 330 806 332 Q830 326 842 362 Z" className="nf-pine2" />
+      <circle cx={802} cy={344} r={2.6} className="nf-eye motion-safe:animate-[nf-blink_6s_ease-in-out_infinite]" />
+      <circle cx={814} cy={344} r={2.6} className="nf-eye motion-safe:animate-[nf-blink_6s_ease-in-out_infinite]" />
+
+      <ellipse cx={600} cy={352} rx={520} ry={22} className="nf-fog" />
+    </svg>
+  );
+}
+
+// Link buttons: plain <a> with full page loads (backend redirects/filters still run). ! overrides the global a style.
+const LINK_BTN = '!no-underline inline-flex w-full sm:w-auto';
 
 /**
- * 404 page (port of jsp/pageNotFound.jsp + js/pageNotFound.js + css/pageNotFound.css).
- * Also rendered by other pages for a not-found state. Export default.
+ * 404 page (React port of the approved mock F). Also rendered by CurrentGame and UserStatistics
+ * for a not-found state, so it takes no props. Keep id="pageNotFound": Navbar forces the dark theme on it.
  */
 export default function PageNotFound() {
-    const scene = useMemo(buildScene, []);
-    const [stars, setStars] = useState([]);
-    const [raised, setRaised] = useState(false); // title slides up (old $(".title").animate top 25%)
-    const [life, setLife] = useState(false);     // old addClass("life") after the slide
-    const [msgShown, setMsgShown] = useState(false); // old $(".msg").fadeIn(1000)
+  useEffect(() => { document.title = 'Lupus - Page not found'; }, []);
 
-    useEffect(() => { document.title = 'Lupus - Page not found'; }, []);
-
-    // Old css: body gradient (propagates to the canvas, so it also shows below the scene when the page is taller).
-    useEffect(() => {
-        const old = document.body.style.background;
-        document.body.style.background = 'linear-gradient(0deg, #050514, #30336b)';
-        return () => { document.body.style.background = old; };
-    }, []);
-
-    useEffect(() => {
-        const H = document.documentElement.scrollHeight;
-        const W = document.documentElement.scrollWidth;
-        setStars(Array.from({ length: 150 }, (_, k) => (k < 149
-            ? { top: Math.random() * H - H / 4, left: Math.random() * W }
-            : null)));
-        // two frames so the title's start position is painted before it moves
-        const id = requestAnimationFrame(() => requestAnimationFrame(() => setRaised(true)));
-        return () => cancelAnimationFrame(id);
-    }, []);
-
-    return (
-        <div className="lupus-not-found relative min-h-screen">
-            <Navbar />
-            <main id="pageNotFound">
-                <div className="stars">
-                    {Array.from({ length: 150 }, (_, i) => (
-                        <div key={i} className="star" style={stars[i] || undefined} />
-                    ))}
-                </div>
-
-                <div
-                    className={`title${life ? ' life' : ''}`}
-                    style={{ top: raised ? '25%' : '125vh' }}
-                    onTransitionEnd={(e) => {
-                        if (e.propertyName === 'top' && !life) {
-                            setLife(true);
-                            setMsgShown(true);
-                        }
-                    }}
-                >404</div>
-                <div className="gravestones">
-                    {scene.crosses.map((style, i) => <div key={i} className="cross" style={style} />)}
-                </div>
-                <div className="bottompatch">
-                    {scene.patches.map((style, i) => <div key={i} className="patch" style={style} />)}
-                </div>
-
-                <div className="trees">
-                    {scene.trees.map((tree, i) => (
-                        <div key={i} className={`tree ${tree ? tree.className : ''}`} style={tree ? tree.style : undefined} />
-                    ))}
-                </div>
-
-                <div className={`msg${msgShown ? ' pnf-fade-in' : ''}`} style={{ display: msgShown ? 'block' : 'none' }}>
-                    This page doesn't exist.
-                </div>
-                <div className="crypt" style={{ transform: scene.cryptTransform }}>
-                    <div className="roof" />
-                    <div className="body">
-                        <div className="door" />
-                    </div>
-                </div>
-                <div className="fogRed" />
-                <div className="fogOrange" />
-                <div className="moon" />
-            </main>
+  return (
+    <div className="lf-page min-h-screen">
+      <Navbar />
+      <main id="pageNotFound" className="lf-nf mx-auto w-full max-w-4xl px-4 pt-6 pb-12">
+        <div className="relative h-72 overflow-hidden rounded-sm border-[3px] border-double border-lf-brass bg-[linear-gradient(to_bottom,var(--nf-top),var(--nf-mid)_60%,var(--nf-hor))] shadow-[0_6px_14px_rgba(60,40,20,.18)] sm:h-[26rem]">
+          <Scene />
+          <p aria-hidden="true" className="nf-404 absolute inset-x-0 top-4 text-center font-lf-title text-[clamp(5.5rem,24vw,11rem)] leading-none">
+            404
+          </p>
         </div>
-    );
+
+        <Panel className="nf-torn relative z-10 mx-auto -mt-12 max-w-xl !border-t-0 px-6 pt-10 pb-8 text-center sm:-mt-16">
+          <div className="flex justify-center">
+            <Seal><TreePine className="size-5" aria-hidden="true" /></Seal>
+          </div>
+          <h1 className="mt-4 font-lf-title text-2xl font-bold sm:text-3xl">Folio CDIV not found</h1>
+          <p className="mt-3 text-[17px] italic text-lf-ink2">
+            This path leads deep into the woods… the wolves got here first.
+          </p>
+          <Ornament className="mx-auto mt-5 max-w-xs" />
+          <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
+            <Button asChild variant="felt" size="touch" className={`${LINK_BTN} !text-lf-on-felt`}>
+              <a href="/home">Back to the village</a>
+            </Button>
+            <Button asChild variant="brass" size="touch" className={`${LINK_BTN} !text-lf-ink`}>
+              <a href="/rules">Read the rulebook</a>
+            </Button>
+          </div>
+        </Panel>
+      </main>
+    </div>
+  );
 }

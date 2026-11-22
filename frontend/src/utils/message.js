@@ -14,7 +14,9 @@
  * @param {string} errorDetails - The detailed error message.
  */
 export function populateErrorMessage(element, messageDetails, errorCode, errorDetails) {
-    populateMessage(element, "Error!", messageDetails, errorCode.toUpperCase() + " - " + errorDetails);
+    // The code is not shown to the user (design decision): it goes to the console for debugging only.
+    console.warn("Error code " + errorCode, errorDetails);
+    populateMessage(element, "Error!", messageDetails, errorDetails || "");
 }
 
 /**
