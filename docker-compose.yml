@@ -4,10 +4,11 @@ services:
     working_dir: /app
     restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "9090:9090"
       - "5005:5005"
     environment:
       - TZ=Europe/Rome
+      - DB_URL=jdbc:postgresql://db:5432/postgres
     command: ["java", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-jar", "/app/lupus.jar"]
     depends_on:
       db:
@@ -19,7 +20,7 @@ services:
     image: postgres
     restart: unless-stopped
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres

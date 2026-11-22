@@ -1,0 +1,14 @@
+.git
+.idea
+.run
+data
+logs
+target
+hw1
+hw2
+docs
+RestApiTest
+frontend/node_modules
+src/main/resources/static
+.env*
+secrets
