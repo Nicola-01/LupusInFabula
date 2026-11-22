@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* Theme switch: the app toggles data-bs-theme="light|dark" on <body> (kept from the Bootstrap version). */
 @custom-variant dark (&:where([data-bs-theme="dark"], [data-bs-theme="dark"] *));
@@ -259,3 +260,298 @@
   --color-vote-color: var(--vote-color);
   --color-votes: var(--votes);
 }
+
+/* shadcn/ui tokens (neutral). Light values on :root, dark on data-bs-theme="dark" (this app's theme switch). */
+:root {
+  --radius: 0.625rem;
+  --background: #e9dcc4;
+  --foreground: #2b1d12;
+  --card: #f4e9d1;
+  --card-foreground: #2b1d12;
+  --popover: #f4e9d1;
+  --popover-foreground: #2b1d12;
+  --primary: #2f5d3a;
+  --primary-foreground: #f3e6c8;
+  --secondary: #e3d3b8;
+  --secondary-foreground: #2b1d12;
+  --muted: #e3d3b8;
+  --muted-foreground: #5c4630;
+  --accent: #e3d3b8;
+  --accent-foreground: #2b1d12;
+  --destructive: #8b1e1e;
+  --border: #b08a2e;
+  --input: #b08a2e;
+  --ring: #2f5d3a;
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+[data-bs-theme="dark"] {
+  --background: #2a2119;
+  --foreground: #efe2c4;
+  --card: #2f261c;
+  --card-foreground: #efe2c4;
+  --popover: #2f261c;
+  --popover-foreground: #efe2c4;
+  --primary: #3f7a4d;
+  --primary-foreground: #fbf6ea;
+  --secondary: #251d16;
+  --secondary-foreground: #efe2c4;
+  --muted: #251d16;
+  --muted-foreground: #c9b48c;
+  --accent: #251d16;
+  --accent-foreground: #efe2c4;
+  --destructive: #d0574a;
+  --border: #d4b25a;
+  --input: #d4b25a;
+  --ring: #d4b25a;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+/* ---------------------------------------------------------------------------
+ * Variant F design system ("medieval village"). Global --lf-* tokens so any
+ * component can use them; nothing here targets body/html/a/headings.
+ * Source of truth: mocks/shell/kit/F.jsx and docs/ui-redesign/variants.md (## F).
+ * ------------------------------------------------------------------------- */
+[data-bs-theme="light"] {
+  --lf-page: #e9dcc4;
+  --lf-page-stripe: #e3d3b8;
+  --lf-nav: #5a3d26;
+  --lf-nav-stripe: #55391f;
+  --lf-navtext: #f3e6c8;
+  --lf-nav-brass: #c9a24a;
+  --lf-felt: #2f5d3a;
+  --lf-felt-hover: #264c30;
+  --lf-on-felt: #f3e6c8;
+  --lf-brass: #b08a2e;
+  --lf-focus: #2f5d3a;
+  --lf-hl: rgba(176, 138, 46, .22);
+  --lf-paper: #f4e9d1;
+  --lf-ink: #2b1d12;
+  --lf-ink2: #5c4630;
+  --lf-rubric: #8b1e1e;
+  --lf-wax: #8b1e1e;
+  --lf-wax-text: #f4e9d1;
+  --lf-seal-info: #2f5d3a;
+  --lf-seal-info-text: #f3e6c8;
+  --lf-seal-warn: #b08a2e;
+  --lf-seal-warn-text: #2a2218;
+  --lf-seal-ok: #3f5f3a;
+  --lf-seal-ok-text: #f4e9d1;
+  /* Factions: colour = text on paper (AA), -ink = text on a filled chip of that colour (AA). */
+  --lf-faction-good: #2f5d3a;
+  --lf-faction-good-ink: #f3e6c8;
+  --lf-faction-evil: #8b1e1e;
+  --lf-faction-evil-ink: #f4e9d1;
+  --lf-faction-neutral: #5a5148;
+  --lf-faction-neutral-ink: #f4e9d1;
+  --lf-faction-stealer: #7a5a10;
+  --lf-faction-stealer-ink: #fbf6ea;
+  --lf-shadow-paper: inset 0 0 40px rgba(120, 80, 30, .18), 0 6px 14px rgba(60, 40, 20, .18);
+  --lf-shadow-nav: 0 6px 12px rgba(0, 0, 0, .35);
+  --lf-shadow-seal: inset 0 0 0 2px rgba(0, 0, 0, .25), 0 0 0 2px var(--lf-brass), 0 3px 6px rgba(0, 0, 0, .35);
+  --lf-shadow-seal-sm: inset 0 0 0 1.5px rgba(0, 0, 0, .25), 0 0 0 1.5px var(--lf-brass), 0 2px 4px rgba(0, 0, 0, .3);
+  --lf-shadow-token: 0 2px 4px rgba(0, 0, 0, .3);
+}
+
+[data-bs-theme="dark"] {
+  --lf-page: #2a2119;
+  --lf-page-stripe: #251d16;
+  --lf-nav: #1f160f;
+  --lf-nav-stripe: #1b130d;
+  --lf-navtext: #f3e6c8;
+  --lf-nav-brass: #d4b25a;
+  --lf-felt: #3f7a4d;
+  --lf-felt-hover: #4a8a59;
+  --lf-on-felt: #fbf6ea;
+  --lf-brass: #d4b25a;
+  --lf-focus: #d4b25a;
+  --lf-hl: rgba(212, 178, 90, .22);
+  --lf-paper: #2f261c;
+  --lf-ink: #efe2c4;
+  --lf-ink2: #c9b48c;
+  --lf-rubric: #e07a6e;
+  --lf-wax: #d0574a;
+  --lf-wax-text: #140e09;
+  --lf-seal-info: #3f7a4d;
+  --lf-seal-info-text: #fbf6ea;
+  --lf-seal-warn: #d4b25a;
+  --lf-seal-warn-text: #2a2218;
+  --lf-seal-ok: #6fa36f;
+  --lf-seal-ok-text: #2a2218;
+  --lf-faction-good: #8fcf9c;
+  --lf-faction-good-ink: #1a2a1e;
+  --lf-faction-evil: #e8877b;
+  --lf-faction-evil-ink: #140e09;
+  --lf-faction-neutral: #b9b0a3;
+  --lf-faction-neutral-ink: #1f1a14;
+  --lf-faction-stealer: #d4b25a;
+  --lf-faction-stealer-ink: #2a2218;
+  --lf-shadow-paper: inset 0 0 40px rgba(120, 80, 30, .18), 0 6px 14px rgba(0, 0, 0, .4);
+  --lf-shadow-nav: 0 6px 12px rgba(0, 0, 0, .5);
+  --lf-shadow-seal: inset 0 0 0 2px rgba(0, 0, 0, .25), 0 0 0 2px var(--lf-brass), 0 3px 6px rgba(0, 0, 0, .5);
+  --lf-shadow-seal-sm: inset 0 0 0 1.5px rgba(0, 0, 0, .25), 0 0 0 1.5px var(--lf-brass), 0 2px 4px rgba(0, 0, 0, .45);
+  --lf-shadow-token: 0 2px 4px rgba(0, 0, 0, .5);
+}
+
+@theme inline {
+  --font-lf-title: "Cinzel Decorative", Georgia, serif;
+  --font-lf-heading: "Cinzel", Georgia, serif;
+  --font-lf-body: "Alegreya", Georgia, serif;
+  --color-lf-page: var(--lf-page);
+  --color-lf-page-stripe: var(--lf-page-stripe);
+  --color-lf-nav: var(--lf-nav);
+  --color-lf-nav-stripe: var(--lf-nav-stripe);
+  --color-lf-navtext: var(--lf-navtext);
+  --color-lf-nav-brass: var(--lf-nav-brass);
+  --color-lf-felt: var(--lf-felt);
+  --color-lf-felt-hover: var(--lf-felt-hover);
+  --color-lf-on-felt: var(--lf-on-felt);
+  --color-lf-brass: var(--lf-brass);
+  --color-lf-focus: var(--lf-focus);
+  --color-lf-hl: var(--lf-hl);
+  --color-lf-paper: var(--lf-paper);
+  --color-lf-ink: var(--lf-ink);
+  --color-lf-ink2: var(--lf-ink2);
+  --color-lf-rubric: var(--lf-rubric);
+  --color-lf-wax: var(--lf-wax);
+  --color-lf-wax-text: var(--lf-wax-text);
+  --color-lf-seal-info: var(--lf-seal-info);
+  --color-lf-seal-info-text: var(--lf-seal-info-text);
+  --color-lf-seal-warn: var(--lf-seal-warn);
+  --color-lf-seal-warn-text: var(--lf-seal-warn-text);
+  --color-lf-seal-ok: var(--lf-seal-ok);
+  --color-lf-seal-ok-text: var(--lf-seal-ok-text);
+  --color-lf-faction-good: var(--lf-faction-good);
+  --color-lf-faction-good-ink: var(--lf-faction-good-ink);
+  --color-lf-faction-evil: var(--lf-faction-evil);
+  --color-lf-faction-evil-ink: var(--lf-faction-evil-ink);
+  --color-lf-faction-neutral: var(--lf-faction-neutral);
+  --color-lf-faction-neutral-ink: var(--lf-faction-neutral-ink);
+  --color-lf-faction-stealer: var(--lf-faction-stealer);
+  --color-lf-faction-stealer-ink: var(--lf-faction-stealer-ink);
+}
+
+/* Scoped component classes (Tailwind can't express the multi-layer shadows, double borders and stripes cleanly). */
+@layer components {
+  .lf-page {
+    background-color: var(--lf-page);
+    background-image: repeating-linear-gradient(90deg, var(--lf-page) 0 18px, var(--lf-page-stripe) 18px 26px);
+  }
+  .lf-nav {
+    background-color: var(--lf-nav);
+    color: var(--lf-navtext);
+    background-image: repeating-linear-gradient(90deg, var(--lf-nav) 0 18px, var(--lf-nav-stripe) 18px 26px);
+    box-shadow: var(--lf-shadow-nav);
+  }
+  /* Gilded double-border parchment panel. */
+  .lf-paper {
+    background: var(--lf-paper);
+    color: var(--lf-ink);
+    border: 3px double var(--lf-brass);
+    border-radius: 2px;
+    box-shadow: var(--lf-shadow-paper);
+  }
+  /* Wax/brass seal disc used for message icons. Size with lf-seal (3rem) or lf-seal-sm (2rem). */
+  .lf-seal {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 9999px;
+    box-shadow: var(--lf-shadow-seal);
+  }
+  .lf-seal-sm {
+    width: 2rem;
+    height: 2rem;
+    box-shadow: var(--lf-shadow-seal-sm);
+  }
+  /* Round player avatar; background comes from the user colour (inline style). */
+  .lf-token {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+    border: 2px solid var(--lf-brass);
+    background: var(--lf-felt);
+    color: var(--lf-on-felt);
+    font-family: "Cinzel", Georgia, serif;
+    font-weight: 700;
+    box-shadow: var(--lf-shadow-token);
+  }
+  .lf-input {
+    background: var(--lf-paper);
+    color: var(--lf-ink);
+    border: 2px solid var(--lf-brass);
+    border-radius: 6px;
+  }
+  .lf-input::placeholder {
+    color: var(--lf-ink2);
+    opacity: 1;
+  }
+}
+
+/* shadcn tokens mapped to variant F (shadcn components are not used by pages yet). */
