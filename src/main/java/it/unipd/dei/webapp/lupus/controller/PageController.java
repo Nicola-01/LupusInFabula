@@ -52,7 +52,7 @@ public class PageController {
 
     @GetMapping({"/rules"})
     public void rules(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        // roles are loaded by the React page from GET /lupus/api/rules/roles
+        // roles are loaded by the React page from GET /api/rules/roles
         req.getRequestDispatcher(INDEX).forward(req, res);
     }
 
@@ -74,7 +74,7 @@ public class PageController {
             return;
         }
 
-        String username = uri.substring(uri.lastIndexOf("/lupus/habitant/") + 16);
+        String username = uri.substring(req.getContextPath().length() + "/habitant/".length());
         if (username.isEmpty()) {
             String requested = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             res.sendRedirect(req.getContextPath() + "/habitant/" + requested);
@@ -110,18 +110,18 @@ public class PageController {
         }
 
         String gameMaster = (String) req.getSession().getAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE);
-        String[] urlParts = req.getRequestURI().split("/");
+        String[] urlParts = req.getRequestURI().substring(req.getContextPath().length()).split("/");
 
-        // /lupus/village without public game ID: redirect to the user's game, or to the homepage
-        if (urlParts.length == 3) {
+        // /village without public game ID: redirect to the user's game, or to the homepage
+        if (urlParts.length == 2) {
             String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
             try {
                 int privateGameID = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), username).access().getOutputParam();
                 Game game = new GetGameByGameIdDAO(ds.getConnection(), privateGameID).access().getOutputParam();
                 if (game == null)
-                    res.sendRedirect("/lupus/home");
+                    res.sendRedirect(req.getContextPath() + "/home");
                 else
-                    res.sendRedirect("/lupus/village/" + game.getPublic_ID());
+                    res.sendRedirect(req.getContextPath() + "/village/" + game.getPublic_ID());
                 return;
             } catch (SQLException e) {
                 res.setStatus(ErrorCode.INTERNAL_ERROR.getHTTPCode());

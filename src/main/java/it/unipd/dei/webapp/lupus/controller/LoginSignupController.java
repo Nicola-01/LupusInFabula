@@ -63,7 +63,7 @@ public class LoginSignupController {
         LogContext.setIPAddress(request.getRemoteAddr());
         LogContext.setAction(Actions.LOGIN_REDIRECT_ACTION);
 
-        String op = request.getRequestURI().split("/")[2];
+        String op = request.getRequestURI().substring(request.getContextPath().length()).split("/")[1];
         LOGGER.info("Access using GET, operation: %s, redirect to index.html", op);
 
         if (op.startsWith("logout")) {
@@ -96,7 +96,7 @@ public class LoginSignupController {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         LogContext.setIPAddress(request.getRemoteAddr());
 
-        String op = request.getRequestURI().split("[/;]")[2]; // to handle also jsessionid
+        String op = request.getRequestURI().substring(request.getContextPath().length()).split("[/;]")[1]; // to handle also jsessionid
 
         LOGGER.info("Access using POST, operation: %s", op);
 

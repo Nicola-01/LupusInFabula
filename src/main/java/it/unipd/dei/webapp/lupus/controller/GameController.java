@@ -27,7 +27,7 @@ import java.io.OutputStream;
 /**
  * REST controller for the game section (formerly {@code GameDispatcherServlet}).
  * <p>
- * Supported routes (context path {@code /lupus}):
+ * Supported routes:
  * <ul>
  *     <li>GET, POST {@code /game/create}</li>
  *     <li>GET {@code /game/settings}</li>

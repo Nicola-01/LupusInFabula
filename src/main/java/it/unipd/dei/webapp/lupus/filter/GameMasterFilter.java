@@ -96,10 +96,10 @@ public class GameMasterFilter implements Filter {
 
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
-            path = path.substring(path.indexOf("/lupus/game"));
+            path = path.substring(req.getContextPath().length());
 
             // this filter accept only request that start with /game/* and end with /master
-            if (path.startsWith("/lupus/game") && (path.endsWith("/master")) ) {
+            if (path.startsWith("/game") && (path.endsWith("/master")) ) {
                 // if the path contain /master check if the user is the master in the game
 
                 final HttpSession session = req.getSession(false);

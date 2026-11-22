@@ -24,7 +24,7 @@ import java.io.OutputStream;
 /**
  * REST controller for the user section (formerly {@code UserDispatcherServlet}).
  * <p>
- * Supported routes (context path {@code /lupus}):
+ * Supported routes:
  * <ul>
  *     <li>GET, PUT, DELETE {@code /user/me}</li>
  *     <li>GET, POST, DELETE {@code /user/me/friend}</li>

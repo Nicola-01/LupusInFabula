@@ -16,6 +16,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,6 +36,13 @@ public class ApiController {
 
     public ApiController(DataSource ds) {
         this.ds = ds;
+    }
+
+    /** Runtime config for the frontend (loaded by index.html before the bundle): same image, version from env. */
+    @GetMapping(value = "/config.js", produces = "application/javascript")
+    public String config(@Value("${app.version}") String version, HttpServletResponse res) {
+        res.setHeader("Cache-Control", "no-cache");
+        return "window.__ENV__ = " + new JSONObject().put("version", version) + ";";
     }
 
     @GetMapping("/api/session")

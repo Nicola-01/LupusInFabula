@@ -1,6 +1,6 @@
 #Test for logs and stats
 ###Login of a player to perform the test
-POST http://localhost:8080/lupus/login HTTP/1.1
+POST http://localhost:9090/login HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
 
 user = log_player &
@@ -8,27 +8,27 @@ password = ciao
 
 #LOGS TEST
 ###Test for logs of user present in db and that has played
-GET http://localhost:8080/lupus/user/log_player/logs HTTP/1.1
+GET http://localhost:9090/user/log_player/logs HTTP/1.1
 Content-Type: application/json
 
 ###Test for logs of user present in db but that has not played
-GET http://localhost:8080/lupus/user/log_player2/logs HTTP/1.1
+GET http://localhost:9090/user/log_player2/logs HTTP/1.1
 Content-Type: application/json
 
 ###Test for logs of user not present in db
-GET http://localhost:8080/lupus/user/log_player3/logs HTTP/1.1
+GET http://localhost:9090/user/log_player3/logs HTTP/1.1
 Content-Type: application/json
 
 #STATS TEST
 ###Test for stats of user present in db and that has played
-GET http://localhost:8080/lupus/user/log_player/statistic HTTP/1.1
+GET http://localhost:9090/user/log_player/statistic HTTP/1.1
 Content-Type: application/json
 
 ###Test for stats of user present in db but that has not played
-GET http://localhost:8080/lupus/user/log_player2/statistic HTTP/1.1
+GET http://localhost:9090/user/log_player2/statistic HTTP/1.1
 Content-Type: application/json
 
 ###Test for stats of user not present
-GET http://localhost:8080/lupus/user/log_player3/statistic HTTP/1.1
+GET http://localhost:9090/user/log_player3/statistic HTTP/1.1
 Content-Type: application/json
 
