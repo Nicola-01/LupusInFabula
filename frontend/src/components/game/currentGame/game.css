@@ -1,0 +1,27 @@
+/* Round table of the village page (mock F2). Scoped under .lf-game; colours from the --lf-* tokens. */
+.lf-game .gt-stage {
+  position: relative; width: 100%; max-width: 620px; aspect-ratio: 1; margin: 0 auto; border-radius: 9999px;
+  border: 3px double var(--lf-brass); box-shadow: inset 0 0 40px rgba(0, 0, 0, .35), 0 6px 14px rgba(60, 40, 20, .2);
+}
+.lf-game .gt-night { background: radial-gradient(circle at 50% 50%, #3b2a18 0%, #140f0a 60%, #060403 100%); color: #f3e6c8; --gt-shadow: 0 1px 2px #000; }
+.lf-game .gt-day { background: radial-gradient(circle at 50% 50%, #fbe9c0 0%, #ecd29c 64%, #d9b775 100%); color: #2b1d12; --gt-shadow: 0 0 3px #f4e9d1; }
+[data-bs-theme="dark"] .lf-game .gt-day { background: radial-gradient(circle at 50% 50%, #4a3a24 0%, #2f261c 64%, #231c14 100%); color: #efe2c4; --gt-shadow: 0 0 3px #2f261c; }
+.lf-game .gt-fire { position: absolute; left: 50%; top: 50%; width: 44%; aspect-ratio: 1; transform: translate(-50%, -50%); border-radius: 9999px; background: radial-gradient(circle, rgba(255, 150, 60, .5) 0%, rgba(255, 150, 60, 0) 70%); }
+.lf-game .gt-center { position: absolute; left: 50%; top: 50%; width: 34%; transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; }
+.lf-game .gt-name { text-shadow: var(--gt-shadow); }
+.lf-game .gt-token { box-shadow: 0 2px 4px rgba(0, 0, 0, .3); }
+.lf-game .gt-target { outline: 2px dashed #ffd27a; outline-offset: 4px; }
+.lf-game .gt-selected { box-shadow: 0 0 0 3px var(--lf-paper), 0 0 0 6px var(--lf-rubric); }
+.lf-game .gt-mine { outline: 3px solid #f0c85a; outline-offset: 3px; }
+.lf-game .gt-glow { box-shadow: 0 0 0 3px #ffd27a, 0 0 12px 4px rgba(255, 190, 90, .7); }
+.lf-game .gt-arrow { stroke-dasharray: 2.5 1.5; fill: none; stroke-width: 1.1; stroke-linecap: round; }
+.lf-game .gt-flip-inner { position: absolute; inset: 0; transform-style: preserve-3d; }
+.lf-game .gt-face { position: absolute; inset: 0; border-radius: 4px; border: 1px solid var(--lf-brass); background-size: cover; background-position: top; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.lf-game .gt-face-role { transform: rotateY(180deg); }
+@media (prefers-reduced-motion: no-preference) {
+  .lf-game .gt-arrow { animation: gt-march 1.2s linear infinite; }
+  .lf-game .gt-glow { animation: gt-pulse 1.6s ease-in-out infinite; }
+  .lf-game .gt-flip-inner { transition: transform 500ms ease; }
+}
+@keyframes gt-march { to { stroke-dashoffset: -8; } }
+@keyframes gt-pulse { 0%, 100% { box-shadow: 0 0 0 3px #ffd27a, 0 0 8px 2px rgba(255, 190, 90, .5); } 50% { box-shadow: 0 0 0 5px #ffd27a, 0 0 20px 8px rgba(255, 190, 90, .8); } }
