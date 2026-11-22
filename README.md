@@ -42,19 +42,23 @@ the [report](hw1/WebApplication_HW1_LIFGroup.pdf).
 
 - [Docker](https://www.docker.com/)
 - [Docker Compose](https://docs.docker.com/compose/)
-- [Maven](https://maven.apache.org/)
+- [Maven](https://maven.apache.org/) and Java 17+
+- [Node.js](https://nodejs.org/) 20+ (to build the React frontend)
 
 ### Building and Running
 
+The backend is a Spring Boot application, the frontend a React + Tailwind CSS app (in `frontend/`) that is bundled into the Spring Boot jar.
+
 Follow these steps to build and run the application:
 
-- Build the project using `mvn clean package`
+- Build the frontend: `cd frontend && npm install && npm run build` (output in `src/main/resources/static`)
+- Build the backend jar: `mvn clean package` (creates `target/lupus-1.00.jar`)
 - Generate the Java documentation with `mvn javadoc:javadoc`
 - Start the application using `docker compose up`
 - Stop the application with `docker compose down`
 - To view the web application logs, access the terminal of the web
-  container: `docker exec -it webapp-lupus-web-1 /bin/bash`. Navigate to the directory
-  `/webapps/my-logs`, and use `cat lupus.log` to view the logs.
+  container: `docker exec -it webapp-lupus-web-1 /bin/bash` and use `cat /app/logs/lupus.log`.
+- Frontend development with hot reload: start the backend, then `cd frontend && npm run dev` and open http://localhost:5173/lupus/
 
 ### Database
 
@@ -63,7 +67,7 @@ The database initialization depends on the existence of the `/data/db` directory
 - If the directory `/data/db` does not exist, the database will initialize during application startup.
 - If the directory `/data/db` exists, the database initialization is skipped.
 
-o reset the database, you have two options:
+To reset the database, you have two options:
 
 - Delete the `/data/db/` directory and re-execute `docker-compose`.
 - Alternatively, access the terminal of the database container: `docker exec -it webapp-lupus-db-1 /bin/bash`, navigate to

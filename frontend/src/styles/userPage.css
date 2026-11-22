@@ -1,0 +1,7 @@
+/* Floating labels of the personal area forms (css/utils/inputFormAnimations.css): sibling selectors, scoped to .user-page. */
+.user-page .form-control:focus ~ .control-label,
+.user-page .form-control:not(:placeholder-shown) ~ .control-label {
+    top: -25px;
+    font-size: 16px;
+    color: var(--navbar-inverted-bg);
+}

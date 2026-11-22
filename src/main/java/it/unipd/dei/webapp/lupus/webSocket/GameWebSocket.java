@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -192,11 +191,14 @@ public class GameWebSocket {
             logs.add(new WebSocketLog(sender, target));
     }
 
+    /**
+     * Set once at startup by {@code WebSocketConfig} with the Spring DataSource.
+     */
+    public static void setDataSource(DataSource dataSource) {
+        ds = dataSource;
+    }
+
     private static DataSource getDataSource() throws NamingException {
-        if (ds == null) {
-            InitialContext cxt = new InitialContext();
-            ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/lupusdb");
-        }
         return ds;
     }
 

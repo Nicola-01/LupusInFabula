@@ -1,8 +1,6 @@
 package it.unipd.dei.webapp.lupus.filter;
 
 import it.unipd.dei.webapp.lupus.dao.AuthenticateTokenDAO;
-import it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet;
-import it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet.*;
 import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.*;
@@ -14,14 +12,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Base64;
 
-import static it.unipd.dei.webapp.lupus.servlet.LoginSignupServlet.LoginToken;
+import static it.unipd.dei.webapp.lupus.controller.LoginSignupController.LoginToken;
 
 /**
  * Filter to manage access to the protected resources.
@@ -58,6 +54,15 @@ public class UserFilter implements Filter {
      */
     private DataSource ds;
 
+    /**
+     * Creates the filter with the Spring-managed DataSource.
+     *
+     * @param ds the connection pool to the database.
+     */
+    public UserFilter(DataSource ds) {
+        this.ds = ds;
+    }
+
 
     @Override
     public void init(final FilterConfig config) throws ServletException {
@@ -72,19 +77,6 @@ public class UserFilter implements Filter {
         Here we could pass configuration parameters to the filter, if needed.
          */
 
-        // the JNDI lookup context
-        InitialContext cxt;
-
-        try {
-            cxt = new InitialContext();
-            ds = (DataSource) cxt.lookup("java:/comp/env/jdbc/lupusdb");
-        } catch (NamingException e) {
-            ds = null;
-
-            LOGGER.error("Unable to acquire the connection pool to the database.", e);
-
-            throw new ServletException("Unable to acquire the connection pool to the database", e);
-        }
     }
 
     @Override

@@ -19,7 +19,7 @@
 
 <Configuration status="INFO" monitorInterval="0" name="lupus">
     <Appenders>
-        <RollingRandomAccessFile name="RFILE" fileName="${sys:catalina.base}/webapps/my-logs/lupus.log" filePattern="${sys:catalina.base}/webapps/my-logs/$${date:yyyy-MM}/lupus-%d{yyyyMMdd}-%i.log.gz">
+        <RollingRandomAccessFile name="RFILE" fileName="logs/lupus.log" filePattern="logs/$${date:yyyy-MM}/lupus-%d{yyyyMMdd}-%i.log.gz">
             <PatternLayout>
                 <Pattern>%date{DEFAULT} %level [%thread] %class{1}.%method(%file:%line)%n\tIP = %MDC{IP}; USER = %MDC{USER}; ACTION = %MDC{ACTION}; RESOURCE = %MDC{RESOURCE}; GAME = %MDC{GAME}%n\t%message%n\t%throwable%n</Pattern>
             </PatternLayout>

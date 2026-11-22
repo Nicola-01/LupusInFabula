@@ -8,7 +8,6 @@ import it.unipd.dei.webapp.lupus.resource.*;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.postgresql.shaded.com.ongres.scram.common.message.ServerFinalMessage;
 
 import javax.sql.DataSource;
 import java.io.IOException;
