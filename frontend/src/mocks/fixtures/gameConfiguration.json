@@ -1,0 +1,76 @@
+{
+    "resource-list": [
+        {
+            "role": {
+                "name": "farmer",
+                "type": 0,
+                "with_who_wins": 0,
+                "max_number": 1,
+                "description": "Inhabitant of Tabula. By day he stands in the courtroom to vote and send suspects to the gallows, and by night he sleeps unaware of the danger."
+            }
+        },
+        {
+            "role": {
+                "name": "knight",
+                "type": 0,
+                "with_who_wins": 0,
+                "max_number": 1,
+                "description": "He is a farmer during the day, but at night he has the ability to protect a player from being mauled by wolves. This power does not protect against anointing. He cannot protect the same player twice in a row or himself."
+            }
+        },
+        {
+            "role": {
+                "name": "seer",
+                "type": 0,
+                "with_who_wins": 0,
+                "max_number": 1,
+                "description": "He is a peasant during the day, like any other. At night, he can ask the mayor if a player is a wolf. If he probes the hamster, it dies, but the seer remains uninformed of their role and death."
+            }
+        },
+        {
+            "role": {
+                "name": "sheriff",
+                "type": 0,
+                "with_who_wins": 0,
+                "max_number": 1,
+                "description": "During the night, the sheriff may decide to select a person and kill them. If the designated person is a wolf pack, or a victory stealer, he will die, but if the designated person is a villager, the sheriff himself will die."
+            }
+        },
+        {
+            "role": {
+                "name": "explorer",
+                "type": 1,
+                "with_who_wins": 1,
+                "max_number": 1,
+                "description": "A cunning and fast wolf is sent out to facilitate the movement of the pack. Only once during the game can he decide to act, in which case the wolves' first action will be to maul their victim. Of course, only the explorer can maul."
+            }
+        },
+        {
+            "role": {
+                "name": "wolf",
+                "type": 1,
+                "with_who_wins": 1,
+                "max_number": 1,
+                "description": "Those who sow terror in the small village of Tabula. The wolves know each other and at night they agree to kill a character by deciding who among them will go and maul him."
+            }
+        },
+        {
+            "role": {
+                "name": "hamster",
+                "type": 2,
+                "with_who_wins": 2,
+                "max_number": 1,
+                "description": "He is a farmer during the day, but at night he is invulnerable to wolves. If the seer probes him or the guard protects him, he dies. The hamster wins if he survives with the villagers."
+            }
+        },
+        {
+            "role": {
+                "name": "plague spreader",
+                "type": 3,
+                "with_who_wins": 0,
+                "max_number": 1,
+                "description": "He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right)."
+            }
+        }
+    ]
+}

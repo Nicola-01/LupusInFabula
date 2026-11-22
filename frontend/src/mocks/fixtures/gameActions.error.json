@@ -1,0 +1,7 @@
+{
+    "message": {
+        "message": "ERROR: the game is over",
+        "error-code": "EGME10",
+        "error-details": "Game is over."
+    }
+}

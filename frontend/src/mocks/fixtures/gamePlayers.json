@@ -1,0 +1,68 @@
+{
+    "resource-list": [
+        {
+            "playsAsIn": {
+                "username": "Sofi",
+                "gameID": 1,
+                "role": "wolf",
+                "isDead": true
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Matteo",
+                "gameID": 1,
+                "role": "sheriff",
+                "isDead": true
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Pippo_baudo",
+                "gameID": 1,
+                "role": "seer",
+                "isDead": true
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "aiorT",
+                "gameID": 1,
+                "role": "explorer",
+                "isDead": true
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Rickm",
+                "gameID": 1,
+                "role": "plague spreader",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Polterino",
+                "gameID": 1,
+                "role": "knight",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Bubis",
+                "gameID": 1,
+                "role": "hamster",
+                "isDead": false
+            }
+        },
+        {
+            "playsAsIn": {
+                "username": "Hare_Segz",
+                "gameID": 1,
+                "role": "farmer",
+                "isDead": false
+            }
+        }
+    ]
+}

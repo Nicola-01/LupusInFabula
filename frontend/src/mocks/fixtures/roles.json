@@ -1,0 +1,152 @@
+{
+    "roles": [
+        [
+            {
+                "with_who_wins": 0,
+                "name": "carpenter",
+                "description": "He is the villager who provides wood for the bonfire. If he is voted out, he will refuse to provide the wood, and there will be no bonfire for that day. The power can only be used once.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "farmer",
+                "description": "Inhabitant of Tabula. By day he stands in the courtroom to vote and send suspects to the gallows, and by night he sleeps unaware of the danger.",
+                "type": 0,
+                "max_number": 8
+            },
+            {
+                "with_who_wins": 0,
+                "name": "hobbit",
+                "description": "When there are more than one wolf, The Hobbit is immune to wolf attacks.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "kamikaze",
+                "description": "He is a farmer by day and a kamikaze by night. If he is attacked, he will also kill the designated wolf. The blackmailer cannot block this, but the wolf bombarder can defuse it.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "knight",
+                "description": "He is a farmer during the day, but at night he has the ability to protect a player from being mauled by wolves. This power does not protect against anointing. He cannot protect the same player twice in a row or himself.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "mason",
+                "description": "They are normal farmers who know each other during the game. There can be only two mansons in a game.",
+                "type": 0,
+                "max_number": 2
+            },
+            {
+                "with_who_wins": 0,
+                "name": "medium",
+                "description": "At the beginning of each night he will be informed by the mayor whether the character who died at the stake was seen Wolf or Not Wolf. It is activated from the second night by default (first night of the game).",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "sam",
+                "description": "If Sam should die during the day (for any reason, including because of a vote), he has the right to utter the last words: \"DIE\" while pointing at a player. That player will be killed immediately.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "seer",
+                "description": "He is a peasant during the day, like any other. At night, he can ask the mayor if a player is a wolf. If he probes the hamster, it dies, but the seer remains uninformed of their role and death.",
+                "type": 0,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "sheriff",
+                "description": "During the night, the sheriff may decide to select a person and kill them. If the designated person is a wolf pack, or a victory stealer, he will die, but if the designated person is a villager, the sheriff himself will die.",
+                "type": 0,
+                "max_number": 1
+            }
+        ],
+        [
+            {
+                "with_who_wins": 1,
+                "name": "berserker",
+                "description": "The Berserker can only unleash his rage one during the game. This occurs on the night he is activated, where he has the ability to attack two players in a single turn. However, this action results in his death that same night. He can bypass the knight by making his protection ineffective.",
+                "type": 1,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 1,
+                "name": "dorky",
+                "description": "He is a wolf, but does not know the identities of the other members of the pack. Each night he indicate another player: if the chosen player is a wolf, he will join the pack as a wolf. If he is the last wolf in the game without having succeeded in joining the pack, he will become the wolf pack himself.",
+                "type": 1,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 1,
+                "name": "explorer",
+                "description": "A cunning and fast wolf is sent out to facilitate the movement of the pack. Only once during the game can he decide to act, in which case the wolves' first action will be to maul their victim. Of course, only the explorer can maul.",
+                "type": 1,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 1,
+                "name": "giuda",
+                "description": "Traitor farmer that plays and wins with the wolves (he is seen as a farmer by the seer). At the beginning of the game, he only knows one wolf pack.",
+                "type": 1,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 1,
+                "name": "puppy",
+                "description": "The youngest member of the wolf pack usually joins in the wolf chat. However, due to his mischievous behaviour, the seer sees him as a Non-Wolf and he can be nominated for defrocking. If he is the last wolf remaining in the game, he cannot be mauled on the first night he is alone.",
+                "type": 1,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 1,
+                "name": "wolf",
+                "description": "Those who sow terror in the small village of Tabula. The wolves know each other and at night they agree to kill a character by deciding who among them will go and maul him.",
+                "type": 1,
+                "max_number": 5
+            }
+        ],
+        [
+            {
+                "with_who_wins": 2,
+                "name": "hamster",
+                "description": "He is a farmer during the day, but at night he is invulnerable to wolves. If the seer probes him or the guard protects him, he dies. The hamster wins if he survives with the villagers.",
+                "type": 2,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 3,
+                "name": "jester",
+                "description": "The Jester wins, alone, if he is burnt at the stake.",
+                "type": 2,
+                "max_number": 1
+            }
+        ],
+        [
+            {
+                "with_who_wins": 1,
+                "name": "illusionist",
+                "description": "He chooses a player during the night and blocks his power for that night.",
+                "type": 3,
+                "max_number": 1
+            },
+            {
+                "with_who_wins": 0,
+                "name": "plague spreader",
+                "description": "He is a peasant during the day, but at night he may select a player to be anointed as the mayor. The anointed player cannot answer yes or no for the entire following day, or he will die on the spot. This will propagate the anointing to the two players next to them (left and right).",
+                "type": 3,
+                "max_number": 1
+            }
+        ]
+    ]
+}

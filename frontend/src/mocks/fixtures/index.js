@@ -1,0 +1,23 @@
+// Real API responses captured from the backend (see the .error.json files for endpoints that failed).
+export { default as session } from './session.json';
+export { default as roles } from './roles.json';
+export { default as settings } from './settings.json';
+export { default as friends } from './friends.json';
+export { default as search } from './search.json';
+export { default as statsMatteo } from './statsMatteo.json';
+export { default as logsMatteo } from './logsMatteo.json';
+export { default as habitantMatteo } from './habitantMatteo.json';
+export { default as habitantMe } from './habitantMe.json';
+export { default as village } from './village.json';
+export { default as gameStatus } from './gameStatus.json';
+export { default as gamePlayers } from './gamePlayers.json';
+export { default as gameLogs } from './gameLogs.json';
+export { default as gameSettings } from './gameSettings.json';
+export { default as gameConfiguration } from './gameConfiguration.json';
+export { default as gameList } from './gameList.json';
+export { default as villageMaster } from './villageMaster.json';
+export { default as gameStatusMaster } from './gameStatusMaster.json';
+export { default as gamePlayersMaster } from './gamePlayersMaster.json';
+export { default as gameActionsMaster } from './gameActionsMaster.json';
+export { default as gameLogsMaster } from './gameLogsMaster.json';
+export { default as gameSettingsMaster } from './gameSettingsMaster.json';
