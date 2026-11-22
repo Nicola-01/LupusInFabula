@@ -12,10 +12,11 @@ The app was migrated from Servlet/JSP + Bootstrap (branch `WebSocket`/`master` h
 
 - Frontend build (must run before packaging, output goes to `src/main/resources/static/`, git-ignored): `cd frontend && npm install && npm run build`
 - Backend build: `mvn clean package` → `target/lupus-1.00.jar` (Spring Boot fat jar, includes the frontend build). `./mvnw` is not usable (no `.mvn/` dir).
-- Run everything: `docker compose up` (web = `eclipse-temurin:17-jre` running the jar mounted from `target/`, db = postgres, pgAdmin on 5050). App at http://localhost:8080/lupus/, JDWP debug on 5005. Logs in the web container at `/app/logs/lupus.log`.
-- Run locally without docker for the web part: `DB_URL=jdbc:postgresql://localhost:5432/postgres java -jar target/lupus-1.00.jar` (default URL points to host `db`).
-- Frontend dev server with hot reload: `cd frontend && npm run dev` → http://localhost:5173/lupus/ (proxies REST, login/logout and the WebSocket to the backend on :8080).
+- Run everything: `docker compose up` (web = `eclipse-temurin:17-jre` running the jar mounted from `target/`, db = postgres, pgAdmin on 5050). App at http://localhost:9090/, JDWP debug on 5005. Logs in the web container at `/app/logs/lupus.log`.
+- Run locally without docker for the web part: `docker compose up -d db` (published on host port 5433), then `java -jar target/lupus-1.00.jar` or run `LupusApplication` from the IDE (default `DB_URL` is `localhost:5433`; the compose web service sets it to `db:5432`).
+- Frontend dev server with hot reload: `cd frontend && npm run dev` → http://localhost:5174/ (proxies REST, login/logout and the WebSocket to the backend on :9090).
 - Javadoc: `mvn javadoc:javadoc`
+- Prod image: `docker build --target production .` (root `Dockerfile` builds frontend + jar). Deploy flow (release branches, GHCR, self-hosted runner, `docker-compose.prod.yml`) is in README "Deploy". App version comes from env `APP_VERSION` (git tag), served to the frontend as `window.__ENV__` by `GET /config.js` (`ApiController`).
 - No unit tests. REST API tests are IntelliJ HTTP Client files in `RestApiTest/*.http`, run against the live server; they need `src/main/database/02_populate_db.sql` and `src/main/database/extra/03_populate_db_optional.sql` loaded.
 
 ## Database
@@ -27,7 +28,7 @@ The app was migrated from Servlet/JSP + Bootstrap (branch `WebSocket`/`master` h
 
 ### Backend (`src/main/java/it/unipd/dei/webapp/lupus/`)
 
-Context path `/lupus`; all URLs, JSON shapes and status codes are the same as the original servlet app.
+Served at the root path (the old `/lupus` context path was removed); otherwise all URLs, JSON shapes and status codes are the same as the original servlet app.
 
 - `config/`: `FilterConfig` registers the three servlet filters (same URL patterns as the old web.xml), `WebSocketConfig` exports `GameWebSocket`, `ErrorPageConfig` maps 404 to `/index.html` (React renders the not-found page).
 - `filter/`: `UserFilter` authenticates `/game/*`, `/user/*`, `/logout`, `/api/session|village|habitant` from the session or the `loginToken` cookie and stores the `Player` under `UserFilter.USER_ATTRIBUTE`. `GameMasterFilter` guards `/game/.../master` URLs (checks the user is the master of that game). `PagesFilter` guards the HTML pages and redirects to `/login`.
@@ -44,7 +45,7 @@ Context path `/lupus`; all URLs, JSON shapes and status codes are the same as th
 
 ### Frontend (`frontend/src/`)
 
-- `App.jsx`: routes with the same paths as before (`BrowserRouter basename="/lupus"`). Internal navigation uses full page loads (`<a href="/lupus/...">`), as the JSP app did, so the backend redirects/filters still run.
-- `pages/`: one component per old JSP page. `pages/CurrentGame.jsx` + `components/game/currentGame/` is the game UI: React owns the shell, while the action form, player circle, log and WebSocket are the original imperative DOM code ported as ES modules and run from effects.
+- `App.jsx`: routes with the same paths as before (`BrowserRouter basename="/"`). Internal navigation uses full page loads (`<a href="/...">`), as the JSP app did, so the backend redirects/filters still run.
+- `pages/`: one component per old JSP page. `pages/CurrentGame.jsx` + `components/game/currentGame/` is the game UI, in React (`VillagePage`, state and REST/WebSocket in `useGame.js`, rules for actions/targets in `gameLogic.js`); requests and WebSocket messages are the same as the original imperative code.
 - `utils/`: `utils.js` (XHR helpers `genericGET/POST/PUT/DELETERequest`, role groups/colors), `message.js` (popup messages), `session.js` (`useSession`, `useLoginChecker`). `README.md` in `frontend/src/` lists the shared components.
-- Styling: Tailwind only (no Bootstrap). `index.css` holds the old palette (`lupusColors.css`) as CSS variables exposed as Tailwind colors (`bg-navbar-bg`, `text-role-color-wolf`, …) and a base layer replicating Bootstrap reboot + `common.css`. Light/dark theme via `data-bs-theme` on `<body>` (`dark:` variant follows it). CSS Tailwind can't express (keyframes, sibling-state selectors) lives in `styles/*.css`, scoped under a page root class.
+- Styling: Tailwind only (no Bootstrap) + shadcn/ui components in `components/ui/` (alias `@` → `src`). Design system "variant F" (medieval village): tokens `--lf-*` / Tailwind colors `lf-*`, classes `.lf-page`, `.lf-paper`, … in `index.css`, components in `components/lupus/` (see `frontend/src/README.md`); `index.css` still holds the old palette variables too. Light/dark theme via `data-bs-theme` on `<body>` (`dark:` variant follows it). CSS Tailwind can't express lives in `styles/*.css` or next to the component, scoped under a page root class. Dev-only mock gallery at `/mock` (`src/mocks/`, not in the production build).
