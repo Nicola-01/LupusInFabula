@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import SearchPlayer from '../SearchPlayer.jsx';
 import { ErrorMessage, InfoMessage, SuccessMessage } from '../Messages.jsx';
 import {
@@ -16,10 +17,12 @@ import { useSorttable } from '../user/externalScripts.js';
  * friends: null until the list is loaded (the old table was empty until then), then the array of friend objects.
  * avail: null, or a Map lower-case username -> gameId (null = free), from GET user/search/.
  */
-export default function FriendsPanel({ show }) {
+export default function FriendsPanel({ show, user }) {
     const [friends, setFriends] = useState(null);
     const [avail, setAvail] = useState(null);
     const tableRef = useRef(null);
+    const loaded = useRef(false); // the list is requested once, the first time the tab is shown
+    const meName = user?.username;
     useSorttable(tableRef);
 
     const updateFriendAvailability = (req) => {
@@ -46,7 +49,7 @@ export default function FriendsPanel({ show }) {
             } else {
                 const rows = list.map((item) => item['friend']);
                 playersToIgnore.length = 0;
-                playersToIgnore.push(localStorage.getItem("playerName").toLowerCase());
+                playersToIgnore.push(meName.toLowerCase());
                 rows.forEach((friend) => playersToIgnore.push(friend.username.toLowerCase()));
                 setFriends(rows);
                 setAvail(null);
@@ -60,12 +63,17 @@ export default function FriendsPanel({ show }) {
     };
 
     useEffect(() => {
+        if (!show || !meName || loaded.current) return;
+        loaded.current = true;
         loadFriendList();
+    }, [show, meName]);
+
+    useEffect(() => {
         // bfcache restore: reload the list (friendManagement.js pageshow)
-        const onPageShow = (event) => { if (event.persisted) loadFriendList(); };
+        const onPageShow = (event) => { if (event.persisted && loaded.current) loadFriendList(); };
         window.addEventListener('pageshow', onPageShow);
         return () => window.removeEventListener('pageshow', onPageShow);
-    }, []);
+    }, [meName]);
 
     const deleteFriend = (username) => {
         genericDELETERequest(contextPath + "user/me/friend", JSON.stringify({ friend: { username } }), (req) => {
@@ -119,8 +127,8 @@ export default function FriendsPanel({ show }) {
         if (!avail) return null;
         const gameId = avail.get(username.toLowerCase());
         if (gameId === null)
-            return <a href={contextPath + "newVillage"} className="up-free">{'\u{1F7E2} Free'}</a>;
-        return <a href={contextPath + "village/" + gameId} className="up-busy">{'\u{1F534} In game'}</a>;
+            return <Link to="/newVillage" className="up-free">{'\u{1F7E2} Free'}</Link>;
+        return <Link to={"/village/" + gameId} className="up-busy">{'\u{1F534} In game'}</Link>;
     };
 
     const list = friends ?? [];
@@ -160,10 +168,10 @@ export default function FriendsPanel({ show }) {
                             {list.map((friend) => (
                                 <tr key={friend.username}>
                                     <td>
-                                        <a href={contextPath + "habitant/" + friend.username} className="up-name">
+                                        <Link to={"/habitant/" + friend.username} className="up-name">
                                             <UserToken username={friend.username} size="sm" />
                                             {friend.username}
-                                        </a>
+                                        </Link>
                                     </td>
                                     <td>{availability(friend.username)}</td>
                                     <td>{friend.commonGame}</td>

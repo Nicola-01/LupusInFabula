@@ -65,6 +65,14 @@ export function hideMessagePopup(element) {
 }
 
 /**
+ * Hides every message popup on the page (used on route change, so messages of the previous view don't stay).
+ * Targets the popup containers only (div.message, rendered by components/Messages.jsx), not their titles.
+ */
+export function hideAllMessages() {
+    document.querySelectorAll("div.message").forEach((el) => { el.style.display = "none"; });
+}
+
+/**
  * Populates and shows a message popup.
  *
  * @param {string} element - Selector of the popup.

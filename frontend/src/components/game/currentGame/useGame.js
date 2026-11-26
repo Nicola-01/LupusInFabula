@@ -21,7 +21,7 @@ export const maxPlayersForCircularButtons = 12;
 const done = (req) => req.readyState === XMLHttpRequest.DONE;
 const warnBallot = (n) => populateWarningMessage(".warningMessage", "Ballot " + n + " required", "Insert the votes of the " + n + " ballot.");
 
-export function useGame(gameID, endsWithMaster, village) {
+export function useGame(gameID, endsWithMaster, village, onReload) {
     const [, rerender] = useReducer((x) => x + 1, 0);
     const m = useRef(null);
     if (m.current === null) m.current = {
@@ -40,11 +40,19 @@ export function useGame(gameID, endsWithMaster, village) {
         noShot: false,
         hidden: false,          // the player's role is hidden (old toggleCard)
         selections: new Map(),  // WS: sender -> target
+        votes: new Map(),       // WS #votes: voter -> target (master's day form, sent by the server)
+        lastVotes: null,        // master: last #votes: content sent
+        updated: false,         // a #update arrived: the next status over goes to the end page
         sockets: [],
         cur: 0,                 // old state.currentVoteSection
         order: [],              // old state.playersOrder
+        dead: false,            // unmounted: answers that arrive later are ignored
     };
     const s = m.current;
+    // every request goes through these, so no answer touches the state after unmount (or after the page is reloaded)
+    const GET = (url, cb) => genericGETRequest(url, (req) => { if (!s.dead) cb(req); });
+    const POST = (url, json, cb) => genericPOSTRequest(url, json, (req) => { if (!s.dead) cb(req); });
+    const PUT = (url, json, cb) => genericPUTRequest(url, json, (req) => { if (!s.dead) cb(req); });
     const isOver = village?.gameOver != null && village.gameOver >= 0;
     const hasToggle = village != null && !isOver && !village.isMaster; // old #toggleButton
 
@@ -54,10 +62,22 @@ export function useGame(gameID, endsWithMaster, village) {
         if (!(match && match.groups)) { console.warn("No room found"); return; }
         const room = match.groups.room;
         const protocol = window.location.protocol === "https:" ? "wss://" : "ws://";
+        // one socket per load: the old ones would receive every message again
+        s.sockets.forEach((x) => x.close());
         const socket = new WebSocket(protocol + window.location.host + "/gameWS/" + room);
-        s.sockets.push(socket);
+        s.sockets = [socket];
         socket.onmessage = (event) => {
-            const msg = event.data.split(":");
+            const data = event.data;
+            if (data === "#update") { // the game changed: the master already reloads after its own actions
+                if (!endsWithMaster) { s.updated = true; elementsReload(); }
+                return;
+            }
+            if (data.startsWith("#votes:")) {
+                try { s.votes = new Map(JSON.parse(data.slice(7))); } catch { s.votes = new Map(); }
+                rerender();
+                return;
+            }
+            const msg = data.split(":");
             addSelection(msg[0], msg[1]);
             if (window.location.href.endsWith("master")) updateSelectBox(msg[0], msg[1]);
             rerender();
@@ -96,7 +116,7 @@ export function useGame(gameID, endsWithMaster, village) {
         s.logs = [];
         rerender();
         // as before, the last answer wins (no guard between the two requests of the first load)
-        genericGETRequest(contextPath + "game/logs/" + gameID + (master ? "/master" : ""), (req) => {
+        GET(contextPath + "game/logs/" + gameID + (master ? "/master" : ""), (req) => {
             if (done(req) && req.status === HTTP_STATUS_OK) {
                 s.logs = JSON.parse(req.responseText)[JSON_resource_list];
                 rerender();
@@ -109,6 +129,7 @@ export function useGame(gameID, endsWithMaster, village) {
         const list = JSON.parse(req.responseText)[JSON_resource_list];
         if (list == null) { alert("No game settings available"); return; }
         const loggedUser = localStorage.getItem('playerName');
+        const firstLoad = s.players === null;
         s.players = list.map((i) => i.playsAsIn);
         localStorage.setItem("playsAsInList", JSON.stringify(Array.from(new Map(s.players.map((p) => [p.username, p.role])).entries())));
         s.me = s.players.find((p) => p.username === loggedUser) ?? null;
@@ -116,9 +137,10 @@ export function useGame(gameID, endsWithMaster, village) {
         s.highlight = new Set();
         s.noShot = false;
         s.selections = new Map(); // the old code rebuilt the seats, dropping the vote labels
-        genericGETRequest(contextPath + "game/actions/" + gameID, targetHighlight);
+        s.votes = new Map();
+        GET(contextPath + "game/actions/" + gameID, targetHighlight);
         initGameWS();
-        if (hasToggle) s.hidden = !s.hidden; // by default, the role is hidden (old toggleCard(true))
+        if (hasToggle && firstLoad) s.hidden = true; // by default, the role is hidden (old toggleCard(true)); a reload keeps the choice
         rerender();
     };
 
@@ -137,13 +159,18 @@ export function useGame(gameID, endsWithMaster, village) {
     const gameStatus = (req) => {
         if (!(done(req) && req.status === HTTP_STATUS_OK)) return;
         const game = JSON.parse(req.responseText)['game'];
-        if (game.who_win !== -1) { s.over = game; rerender(); return; }
+        if (game.who_win !== -1) {
+            s.over = game;
+            rerender();
+            if (s.updated) onReload(); // the page remounts with the end screen (same path as a win)
+            return;
+        }
         s.game = { round: game.rounds === 0 ? 1 : game.rounds, phase: game.phase };
         localStorage.setItem("phase", game.phase === GamePhase.NIGHT ? "NIGHT" : "DAY");
         logsReload(endsWithMaster);
         if (endsWithMaster) {
             s.sendShown = true;
-            genericGETRequest(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
+            GET(contextPath + "game/actions/" + gameID + "/master", fillGameActions);
         }
         rerender();
     };
@@ -163,19 +190,21 @@ export function useGame(gameID, endsWithMaster, village) {
     const elementsReload = () => {
         s.sendDisabled = true;
         const master = endsWithMaster ? "/master" : "";
-        genericGETRequest(contextPath + "game/players/" + gameID + master, fillPlayers);
-        genericGETRequest(contextPath + "game/status/" + gameID, gameStatus);
-        genericGETRequest(contextPath + "game/settings/" + gameID, (req) => {
+        GET(contextPath + "game/players/" + gameID + master, fillPlayers);
+        GET(contextPath + "game/status/" + gameID, gameStatus);
+        GET(contextPath + "game/settings/" + gameID, (req) => {
             // the old page ignored this answer; it is only shown in the Settings tab
             if (done(req) && req.status === HTTP_STATUS_OK) { s.settings = JSON.parse(req.responseText)[JSON_resource_list]; rerender(); }
         });
         rerender();
     };
 
+    useEffect(() => () => { s.dead = true; }, []);
+
     useEffect(() => {
         if (!village || village.notFound) return undefined;
         if (hasToggle)
-            genericGETRequest(contextPath + "game/configuration/" + gameID, (req) => {
+            GET(contextPath + "game/configuration/" + gameID, (req) => {
                 if (done(req) && req.status === HTTP_STATUS_OK) { s.config = JSON.parse(req.responseText)[JSON_resource_list]; rerender(); }
             });
         // sic (bug.md 38): the first log request is made without /master
@@ -213,7 +242,7 @@ export function useGame(gameID, endsWithMaster, village) {
         s.cur = r.cur;
         if (r.disable !== undefined) s.sendDisabled = r.disable;
         if (r.load)
-            genericGETRequest(contextPath + "game/players/" + gameID + "/master", (req) => {
+            GET(contextPath + "game/players/" + gameID + "/master", (req) => {
                 if (!(done(req) && req.status === HTTP_STATUS_OK)) return;
                 const list = JSON.parse(req.responseText)[JSON_resource_list];
                 if (list == null) alert("No game settings available");
@@ -237,7 +266,7 @@ export function useGame(gameID, endsWithMaster, village) {
     const sendActions = () => {
         const json = f.phase === GamePhase.NIGHT ? nightPayload(f) : dayPayload(f);
         const phaseWas = f.phase;
-        genericPOSTRequest(contextPath + "game/actions/" + gameID, JSON.stringify(json), (req) => {
+        POST(contextPath + "game/actions/" + gameID, JSON.stringify(json), (req) => {
             if (req.status !== HTTP_STATUS_OK) {
                 const msg = getMessage(req);
                 populateErrorMessage(".errorMessage", msg.message, msg.errorCode, msg.errorDetails);
@@ -250,7 +279,7 @@ export function useGame(gameID, endsWithMaster, village) {
                 phaseInfo = res.gameWin.players.map((p) => p.player).join(", ");
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 populateInfoMessage(".infoMessage", res.gameWin.message, phaseInfo);
-                location.reload();
+                onReload();
                 return;
             }
             let deadPlayers, phase;
@@ -278,11 +307,11 @@ export function useGame(gameID, endsWithMaster, village) {
         });
     };
 
-    /** Settings of the master (old gameSettings.js): PUT game/update/<id>, reload on success. */
+    /** Settings of the master (old gameSettings.js): PUT game/update/<id>, reload of the page on success. */
     const updateSettings = (value, onError) => {
-        genericPUTRequest(contextPath + "game/update/" + gameID, JSON.stringify({ "settings": value }), (req) => {
+        PUT(contextPath + "game/update/" + gameID, JSON.stringify({ "settings": value }), (req) => {
             if (done(req)) {
-                if (req.status === HTTP_STATUS_OK) location.reload();
+                if (req.status === HTTP_STATUS_OK) onReload();
                 else {
                     onError?.();
                     const msg = getMessage(req);
@@ -294,8 +323,17 @@ export function useGame(gameID, endsWithMaster, village) {
 
     const toggleCard = () => { s.hidden = !s.hidden; rerender(); };
 
+    /** Master, day: sends the vote pairs of the open form (#votes:), only when they changed since the last send. */
+    const sendVotes = (pairs) => {
+        const json = JSON.stringify(pairs);
+        const socket = s.sockets[s.sockets.length - 1];
+        if (json === s.lastVotes || !socket || socket.readyState !== WebSocket.OPEN) return;
+        socket.send("#votes:" + json);
+        s.lastVotes = json;
+    };
+
     return {
         ...s, isOver, hasToggle, title, endsWithMaster, cardBack: getCookie("selectedCard"),
-        onNightSelect, onDesignated, onDaySelect, onRadio, onPlague, sendActions, updateSettings, toggleCard, seatClick,
+        onNightSelect, onDesignated, onDaySelect, onRadio, onPlague, sendActions, updateSettings, toggleCard, seatClick, sendVotes,
     };
 }

@@ -3,6 +3,7 @@ import { TriangleAlert } from 'lucide-react';
 import { ErrorMessage, SuccessMessage } from '../Messages.jsx';
 import { contextPath, genericDELETERequest, getMessage, HTTP_STATUS_OK } from '../../utils/utils.js';
 import { populateErrorMessage, populateSuccessMessage } from '../../utils/message.js';
+import { invalidateSession } from '../../utils/session.js';
 import { showPassword } from '../../utils/passwordComplexAndShowPassword.js';
 import { errorListOf } from './shared.js';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -44,6 +45,7 @@ export default function DeleteAccountPanel({ show, user, loading }) {
             if (req.status === HTTP_STATUS_OK) {
                 populateSuccessMessage("#deleteAccountPage .successMessage", "DELETE DONE:", message.message);
                 setPassword(''); // form.reset()
+                invalidateSession(); // the account is gone: the cached session must not be reused
             } else if (message != null) {
                 populateErrorMessage("#deleteAccountPage .errorMessage", message.message, message.errorCode, message.errorDetails);
             } else {

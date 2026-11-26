@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { Panel, Ornament, UserToken, RoleIcon, factionFromType, FACTIONS } from '@/components/lupus';
 import { getRoleType } from '../../../utils/utils.js';
 import { cap, gameOverTexts } from './gameLogic.js';
@@ -57,9 +58,9 @@ export default function TheEnd({ game, players, me, logs, master }) {
                 <VillageLog logs={logs} master={master} />
             </Panel>
 
-            <a href="/home" className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-lf-felt bg-lf-felt font-lf-heading text-base text-lf-on-felt !text-lf-on-felt !no-underline hover:bg-lf-felt-hover">
+            <Link to="/home" className="inline-flex min-h-12 w-full items-center justify-center rounded-md border border-lf-felt bg-lf-felt font-lf-heading text-base text-lf-on-felt !text-lf-on-felt !no-underline hover:bg-lf-felt-hover">
                 Back to the village
-            </a>
+            </Link>
         </div>
     );
 }

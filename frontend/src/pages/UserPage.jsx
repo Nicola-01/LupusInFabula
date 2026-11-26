@@ -1,15 +1,14 @@
-import { useEffect, useState } from 'react';
 import { Check, Mail } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar.jsx';
 import FriendsPanel from '../components/friend/FriendsPanel.jsx';
 import CardsPanel from '../components/user/CardsPanel.jsx';
 import UpdateCredentialsPanel from '../components/user/UpdateCredentialsPanel.jsx';
 import DeleteAccountPanel from '../components/user/DeleteAccountPanel.jsx';
 import { useLoginChecker } from '../utils/session.js';
-import { contextPath } from '../utils/utils.js';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { LfToaster, lfToast, Panel, PageTitle, USER_COLORS, UserToken, userColor } from '@/components/lupus';
+import { Panel, PageTitle, USER_COLORS, UserToken, userColor } from '@/components/lupus';
 import '../styles/userPage.css';
 
 /* Port of jsp/user/userPage.jsp (route /habitant/me). The tab is the ?page= query parameter, as before. */
@@ -20,6 +19,7 @@ const RADIOS = [
     ['deleteAccount', 'Delete Account'],
 ];
 const PAGES = RADIOS.map(([value]) => value);
+const withPage = (params, page) => { const next = new URLSearchParams(params); next.set('page', page); return next; };
 
 // shortcut: custom colour is local only, saving to DB is a TODO (docs/ui-redesign/TODO.md)
 const COLOUR_KEY = 'lupus-user-colour';
@@ -61,12 +61,6 @@ function ProfileCard({ user, colour, onPick }) {
                         );
                     })}
                 </ul>
-                <div>
-                    <Button type="button" variant="brass" size="touch" disabled={colour === null}
-                            onClick={() => onPick(null)}>
-                        Reset to default
-                    </Button>
-                </div>
             </div>
         </Panel>
     );
@@ -74,35 +68,24 @@ function ProfileCard({ user, colour, onPick }) {
 
 export default function UserPage() {
     const { user, loading } = useLoginChecker();
-    const [page] = useState(() => new URLSearchParams(window.location.search).get('page'));
     const [colour, setColour] = useState(readStoredColour);
-    const valid = PAGES.includes(page);
+    const [params, setParams] = useSearchParams();
+    // unknown or missing page -> friends, and the URL is corrected with replace (no history entry)
+    const requested = params.get('page');
+    const page = PAGES.includes(requested) ? requested : 'friends';
 
     useEffect(() => {
-        // loadPage() default case: unknown or missing page -> ?page=friends
-        if (!valid) {
-            const url = new URL(location.protocol + '//' + location.host + location.pathname);
-            url.searchParams.set('page', 'friends');
-            window.location.href = url;
-        }
-    }, [valid]);
+        if (requested !== page)
+            setParams((prev) => withPage(prev, page), { replace: true });
+    }, [requested, page, setParams]);
 
-    // tab change: full page load on the new tab, as before (the radio "change")
-    const onRadio = (value) => {
-        const url = new URL(contextPath + "habitant/me");
-        url.searchParams.set('page', value);
-        window.location.href = url;
+    // tab change: a new history entry, so back and forward switch tabs
+    const onTab = (value) => {
+        setParams((prev) => withPage(prev, value));
     };
 
     const pickColour = (hex) => {
-        if (hex === null) {
-            localStorage.removeItem(COLOUR_KEY);
-            lfToast('info', 'Colour reset', 'Your colour is the default one again.', 'colour');
-        } else {
-            localStorage.setItem(COLOUR_KEY, hex);
-            const name = USER_COLORS.find((c) => c.hex === hex)?.name;
-            lfToast('success', 'Colour updated', `Your colour is now ${name}.`, 'colour');
-        }
+        localStorage.setItem(COLOUR_KEY, hex);
         setColour(hex);
     };
 
@@ -115,7 +98,7 @@ export default function UserPage() {
 
                 {user && <ProfileCard user={user} colour={colour} onPick={pickColour} />}
 
-                <Tabs value={valid ? page : ''} activationMode="manual" onValueChange={onRadio} className="gap-0">
+                <Tabs value={page} activationMode="manual" onValueChange={onTab} className="gap-0">
                     <TabsList className="!h-auto !w-full grid grid-cols-2 gap-2 bg-transparent p-0 sm:grid-cols-4">
                         {RADIOS.map(([value, label]) => (
                             <TabsTrigger key={value} value={value}
@@ -128,7 +111,7 @@ export default function UserPage() {
 
                 <Panel className="p-0">
                     <div id="contentBox">
-                        <FriendsPanel show={page === 'friends'} />
+                        <FriendsPanel show={page === 'friends'} user={user} />
                         <CardsPanel show={page === 'playerCards'} />
                         <UpdateCredentialsPanel show={page === 'changeCredentials'} user={user} loading={loading} />
                         <DeleteAccountPanel show={page === 'deleteAccount'} user={user} loading={loading} />
@@ -136,7 +119,6 @@ export default function UserPage() {
                 </Panel>
             </main>
 
-            <LfToaster />
         </div>
     );
 }

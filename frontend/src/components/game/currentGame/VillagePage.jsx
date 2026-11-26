@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ChevronUp, Copy, Check, Eye, EyeOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button, buttonVariants } from '@/components/ui/button';
@@ -41,12 +41,14 @@ function useWide() {
 /** Copies the game link without the /master suffix (old copyGameLink). */
 function CopyLink() {
     const [copied, setCopied] = useState(false);
+    const timer = useRef(null);
+    useEffect(() => () => clearTimeout(timer.current), []);
     const copy = () => {
         const URL = window.location.href.replace(/\/master\/?$/, '');
         navigator.clipboard.writeText(URL).then(() => {
             console.log('URL copied to clipboard: ' + URL);
             setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
+            timer.current = setTimeout(() => setCopied(false), 1500);
         }).catch((err) => console.error('Could not copy text: ', err));
     };
     return (
@@ -85,8 +87,8 @@ function PlayerCard({ g }) {
     );
 }
 
-export default function VillagePage({ gameId, isMasterRoute, village }) {
-    const g = useGame(gameId, isMasterRoute, village);
+export default function VillagePage({ gameId, isMasterRoute, village, onReload }) {
+    const g = useGame(gameId, isMasterRoute, village, onReload);
     const wide = useWide();
     const [active, setActive] = useState('designatedWolf'); // night: chip that the next tap fills
     const [voter, setVoter] = useState(null);               // day: voter picked on the table
@@ -103,6 +105,13 @@ export default function VillagePage({ gameId, isMasterRoute, village }) {
     let arrows = [];
     let onTable = () => {};
     let hint = '';
+    // master, day: the rows of the open vote / ballot, one per voter (the form can show a voter twice)
+    const dayRows = master && f && f.phase !== GamePhase.NIGHT
+        ? rowsOf(f, f.radios.checked).filter((r, i, all) => all.findIndex((x) => x.player === r.player) === i) : null;
+    const pairs = dayRows ? dayRows.filter((r) => r.value).map((r) => [r.player, r.value]) : null;
+    const pairsKey = JSON.stringify(pairs) + '|' + (dayRows ? f.radios.checked : '');
+    // the players see the votes as the master sees them (useGame.sendVotes skips unchanged content)
+    useEffect(() => { if (pairs) g.sendVotes(pairs); }, [pairsKey]); // eslint-disable-line react-hooks/exhaustive-deps
     if (master && f && f.phase === GamePhase.NIGHT) {
         const chips = nightChips(f);
         const key = chips.some((c) => c.key === active) ? active : chips[0].key;
@@ -124,7 +133,7 @@ export default function VillagePage({ gameId, isMasterRoute, village }) {
         };
         hint = 'Pick who acts in "Now acting", then tap the target on the table, or use the form below.';
     } else if (master && f) {
-        const rows = rowsOf(f, f.radios.checked).filter((r, i, all) => all.findIndex((x) => x.player === r.player) === i);
+        const rows = dayRows;
         const row = voter && rows.find((r) => r.player === voter);
         const counts = {};
         rows.forEach((r) => { if (r.value) counts[r.value] = (counts[r.value] || 0) + 1; });
@@ -138,8 +147,12 @@ export default function VillagePage({ gameId, isMasterRoute, village }) {
         hint = voter ? `Now tap who ${voter} votes for. Tap ${voter} again to cancel.` : 'Tap a voter, then the player they vote for, or use the form below.';
     } else if (!master) {
         const shown = !g.hidden;
-        seat = (name) => ({ target: shown && g.highlight.has(name), note: shown && g.noShot && name === g.me?.username ? '(No shot)' : null });
+        // the day votes of the master (#votes:), shown as the master shows them
+        const counts = {};
+        if (!night) g.votes.forEach((to) => { counts[to] = (counts[to] || 0) + 1; });
+        seat = (name) => ({ target: shown && g.highlight.has(name), note: shown && g.noShot && name === g.me?.username ? '(No shot)' : null, count: counts[name] || 0 });
         arrows = [...g.selections].map(([from, to]) => ({ key: from, from: [from], to, tone: 'ws', curved: true }));
+        if (!night) arrows.push(...[...g.votes].map(([from, to]) => ({ key: 'v' + from, from: [from], to, tone: 'ink', curved: true })));
         hint = g.spectating ? 'You are watching this village.' : 'Your seat is outlined. Show your card to see your targets, then tap one to point at it.';
     }
     const showRole = (p) => master || (!g.hidden && !!p.role);

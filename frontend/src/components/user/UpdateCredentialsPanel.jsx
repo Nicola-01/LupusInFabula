@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { ErrorMessage, SuccessMessage } from '../Messages.jsx';
 import { contextPath, genericPUTRequest, getMessage, HTTP_STATUS_OK } from '../../utils/utils.js';
 import { populateErrorMessage, populateSuccessMessage } from '../../utils/message.js';
+import { invalidateSession } from '../../utils/session.js';
 import {
     passwordComplexHint, showPassword, showPasswordHint,
 } from '../../utils/passwordComplexAndShowPassword.js';
@@ -63,6 +64,7 @@ export default function UpdateCredentialsPanel({ show, user, loading }) {
             if (req.status === HTTP_STATUS_OK) {
                 populateSuccessMessage("#changeCredentialsPage .successMessage", "UPDATE DONE:", message.message);
                 setV(EMPTY); // form.reset()
+                invalidateSession(); // the e-mail may have changed: the next page load must not reuse the cached session
             } else if (message != null) {
                 populateErrorMessage("#changeCredentialsPage .errorMessage", message.message, message.errorCode, message.errorDetails);
             } else {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Check, Circle } from 'lucide-react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Ornament, Panel } from '@/components/lupus';
 import { ShowMessage } from '../components/Messages.jsx';
-import { loadTheme } from '../components/Navbar.jsx';
 import backgroundHtml from '../components/login/loginBackground.html?raw';
 import { showPassword } from '../utils/passwordComplexAndShowPassword.js';
 import { retrieveData, storeData } from '../utils/utils.js';
@@ -61,8 +61,7 @@ function PasswordRules({ value }) {
  */
 export default function Login() {
     useEffect(() => { document.title = 'Lupus in Fabula - Login'; }, []);
-    // No Navbar on this page, so the theme is applied here (also propagates into the background iframe).
-    useEffect(() => { loadTheme(); }, []);
+    // No Navbar here: RouteEffects (mounted in App) applies the theme on every route change, /login and /signup included.
 
     // The scene is a srcDoc, so it is built once; its colours follow data-bs-theme (set again by loadTheme()).
     const [background] = useState(() => {
@@ -74,8 +73,18 @@ export default function Login() {
     const [saved] = useState(() => retrieveData('loginOBJ') || {});
     const fromSaved = (type, key) => (saved.type === type ? (saved[key] ?? '') : '');
 
-    const [tab, setTab] = useState(() => (saved.type ? saved.type : (window.location.href.endsWith('/login') ? 'login' : 'signup')));
+    // The tab is the URL (/login or /signup): switching tabs is a client-side navigation, the URL stays in sync.
+    const navigate = useNavigate();
+    const { pathname } = useLocation();
+    const tab = pathname.endsWith('/signup') ? 'signup' : 'login';
     const isLogin = tab === 'login';
+    // Radix fires onValueChange on both focus and mousedown: skip the repeat, or history gets a duplicate entry.
+    const changeTab = (value) => {
+        const target = value === 'login' ? '/login' : '/signup';
+        if (window.location.pathname === target) return;
+        setMessage(null);
+        navigate(target);
+    };
     const [loginUser, setLoginUser] = useState(() => fromSaved('login', 'user'));
     const [loginPassword, setLoginPassword] = useState(() => fromSaved('login', 'password'));
     const [signUsername, setSignUsername] = useState(() => fromSaved('signup', 'username'));
@@ -135,7 +144,7 @@ export default function Login() {
                         <ShowMessage message={message} />
                     </div>
 
-                    <Tabs value={tab} onValueChange={setTab} className="lf-tabs">
+                    <Tabs value={tab} onValueChange={changeTab} className="lf-tabs">
                         <TabsList className="lf-tablist">
                             <TabsTrigger value="login" className="lf-tab font-lf-heading">Login</TabsTrigger>
                             <TabsTrigger value="signup" className="lf-tab font-lf-heading">Sign up</TabsTrigger>
