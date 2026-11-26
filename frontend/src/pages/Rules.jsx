@@ -60,6 +60,7 @@ function CardImage({ name }) {
         const img = new Image();
         img.src = full;
         img.onload = () => setSrc(full);
+        return () => { img.onload = null; };
     }, [full]);
     return <img className="block h-auto w-full rounded-lg border-[3px] border-lf-brass bg-white shadow-[0_6px_12px_rgba(0,0,0,.35)]" src={src} alt={`${name}'s card`} />;
 }
@@ -192,10 +193,12 @@ export default function Rules() {
     useEffect(() => { document.title = 'Lupus in Fabula - Rules'; }, []);
 
     useEffect(() => {
-        fetch('/api/rules/roles', { credentials: 'same-origin' })
+        const controller = new AbortController();
+        fetch('/api/rules/roles', { credentials: 'same-origin', signal: controller.signal })
             .then((r) => (r.ok ? r.json() : { roles: [] }))
             .then((data) => setRoles((data.roles ?? []).flat()))
-            .catch(() => setRoles([]));
+            .catch(() => { if (!controller.signal.aborted) setRoles([]); });
+        return () => controller.abort();
     }, []);
 
     return (

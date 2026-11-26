@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.dao;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.UUID;
 
 /**
  * Data Access Object (DAO) for resetting game state to a specific phase and round.
@@ -46,7 +47,7 @@ public class ResetGameToDAO extends AbstractDAO {
     /**
      * The ID of the game to be updated.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new DAO object.
@@ -57,7 +58,7 @@ public class ResetGameToDAO extends AbstractDAO {
      * @param phase  the current phase of the game
      * @param rounds the number of rounds in the game
      */
-    public ResetGameToDAO(Connection con, DataSource ds, int gameID, int phase, int rounds) {
+    public ResetGameToDAO(Connection con, DataSource ds, UUID gameID, int phase, int rounds) {
         super(con);
         this.ds = ds;
         this.gameID = gameID;
@@ -81,12 +82,12 @@ public class ResetGameToDAO extends AbstractDAO {
             pstmt_action = con.prepareStatement(STATEMENT_ACTION);
             pstmt_psi = con.prepareStatement(STATEMENT_PLAYS_AS_IN);
 
-            pstmt_action.setInt(1, gameID);
+            pstmt_action.setObject(1, gameID);
             pstmt_action.setInt(2, rounds);
             pstmt_action.setInt(3, rounds);
             pstmt_action.setInt(4, phase);
 
-            pstmt_psi.setInt(1, gameID);
+            pstmt_psi.setObject(1, gameID);
             pstmt_psi.setInt(2, rounds);
             pstmt_psi.setInt(3, rounds);
             pstmt_psi.setInt(4, phase);

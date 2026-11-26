@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ChevronDown, LogIn, LogOut, Menu, MonitorSmartphone, Moon, Search, Sun, SunMoon, UserRound } from 'lucide-react';
 import { useSession } from '../utils/session.js';
 import { contextPath, getCookie, genericGETRequest, HTTP_STATUS_OK, JSON_resource_list, setCookie } from '../utils/utils.js';
@@ -145,7 +146,7 @@ function UserMenu({ user, loading }) {
             <DropdownMenuLabel className="font-lf-title px-2 py-1.5 text-sm text-lf-rubric">{user.username}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className={ITEM}>
-              <a href="/habitant/me" className="flex min-h-11 items-center gap-2"><UserRound aria-hidden="true" />My Profile</a>
+              <Link to="/habitant/me" className="flex min-h-11 items-center gap-2"><UserRound aria-hidden="true" />My Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild className={ITEM}>
               <a href="/logout" className="flex min-h-11 items-center gap-2"><LogOut aria-hidden="true" />Log Out</a>
@@ -156,7 +157,7 @@ function UserMenu({ user, loading }) {
             <DropdownMenuLabel className="font-lf-title px-2 py-1.5 text-sm text-lf-rubric">Not Logged In</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild className={ITEM}>
-              <a href="/login" className="flex min-h-11 items-center gap-2"><LogIn aria-hidden="true" />Log In</a>
+              <Link to="/login" className="flex min-h-11 items-center gap-2"><LogIn aria-hidden="true" />Log In</Link>
             </DropdownMenuItem>
           </>
         )}
@@ -169,6 +170,7 @@ function UserMenu({ user, loading }) {
 function PlayerSearch({ open, onOpenChange }) {
   const [text, setText] = useState('');
   const [found, setFound] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const needle = text.trim();
@@ -190,7 +192,7 @@ function PlayerSearch({ open, onOpenChange }) {
         <CommandGroup heading="Players" className="font-lf-heading text-lf-rubric">
           {found.map((username) => (
             <CommandItem key={username} value={username} className="gap-2 text-base cursor-pointer"
-                         onSelect={() => { window.location.href = '/habitant/' + encodeURIComponent(username); }}>
+                         onSelect={() => { onOpenChange(false); navigate('/habitant/' + encodeURIComponent(username)); }}>
               {username}
             </CommandItem>
           ))}
@@ -205,12 +207,16 @@ export default function Navbar() {
   const [theme, setTheme] = useState(() => getCookie("theme"));
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { pathname: path } = useLocation();
 
   // Mount: apply the theme and sync the selected entries with the cookie.
   useEffect(() => {
     loadTheme();
     setTheme(getCookie("theme"));
   }, []);
+
+  // Close the mobile menu on any route change (also back/forward).
+  useEffect(() => { setMobileOpen(false); }, [path]);
 
   const choose = (value) => {
     // same as the old click handlers: store the cookie, apply, refresh the selected entry
@@ -220,7 +226,6 @@ export default function Navbar() {
   };
 
   // Active links: same rule as the old js/navbar.js (path substring of href).
-  const path = window.location.pathname;
   // direct link: "/habitant/" would load the app twice (it only redirects to the user's page)
   const statsHref = user ? "/habitant/" + encodeURIComponent(user.username) : "/habitant/";
   const onProfile = path === "/habitant/me";
@@ -230,14 +235,14 @@ export default function Navbar() {
   return (
     <header className="lf-nav sticky top-0 z-[1030] mb-6 border-b-2 border-lf-nav-brass">
       <div className="mx-auto flex max-w-6xl items-center gap-2 px-3 py-2 md:gap-x-6 md:px-4">
-        <a href="/home" className="!no-underline !text-lf-navtext font-lf-title inline-flex min-h-11 items-center gap-2 whitespace-nowrap text-[15px] sm:text-lg md:text-xl">
+        <Link to="/home" className="!no-underline !text-lf-navtext font-lf-title inline-flex min-h-11 items-center gap-2 whitespace-nowrap text-[15px] sm:text-lg md:text-xl">
           <WolfMark className="size-6 sm:size-7" />
           Lupus in Fabula
-        </a>
+        </Link>
 
         <nav aria-label="Main" className="hidden items-center gap-6 md:flex">
-          <a href="/home" className={navClass(isActive("/home"))} aria-current={isActive("/home") ? 'page' : undefined}>Home</a>
-          <a href={statsHref} className={navClass(isActive("/habitant/"))}>Stats&amp;History</a>
+          <Link to="/home" className={navClass(isActive("/home"))} aria-current={isActive("/home") ? 'page' : undefined}>Home</Link>
+          <Link to={statsHref} className={navClass(isActive("/habitant/"))}>Stats&amp;History</Link>
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className={`${navClass(gameSection)} h-auto px-0 text-base hover:!bg-transparent`}>
@@ -247,7 +252,7 @@ export default function Navbar() {
             <DropdownMenuContent align="start" className={`${PANEL} min-w-48 p-1`}>
               {GAME_LINKS.map((l) => (
                 <DropdownMenuItem key={l.href} asChild className={ITEM}>
-                  <a href={l.href} className="flex min-h-11 items-center">{l.label}</a>
+                  <Link to={l.href} className="flex min-h-11 items-center">{l.label}</Link>
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
@@ -275,22 +280,22 @@ export default function Navbar() {
                 Lupus in Fabula
               </SheetTitle>
               <nav aria-label="Mobile" className="flex flex-col gap-1 p-4 text-lg" onClick={() => setMobileOpen(false)}>
-                <a href="/home" className={`${ITEM} rounded-sm px-2 py-1`}>Home</a>
-                <a href={statsHref} className={`${ITEM} rounded-sm px-2 py-1`}>Stats&amp;History</a>
+                <Link to="/home" className={`${ITEM} rounded-sm px-2 py-1`}>Home</Link>
+                <Link to={statsHref} className={`${ITEM} rounded-sm px-2 py-1`}>Stats&amp;History</Link>
                 <span className="font-lf-heading mt-3 text-xs tracking-widest text-lf-rubric">Game</span>
                 {GAME_LINKS.map((l) => (
-                  <a key={l.href} href={l.href} className={`${ITEM} rounded-sm py-1 pl-4`}>{l.label}</a>
+                  <Link key={l.href} to={l.href} className={`${ITEM} rounded-sm py-1 pl-4`}>{l.label}</Link>
                 ))}
                 <span className="font-lf-heading mt-3 text-xs tracking-widest text-lf-rubric">Theme</span>
                 <ThemeRow theme={theme} onChoose={choose} />
                 <span className="font-lf-heading mt-3 text-xs tracking-widest text-lf-rubric">Account</span>
                 {user ? (
                   <>
-                    <a href="/habitant/me" className={`${ITEM} rounded-sm py-1 pl-4`}>My Profile</a>
+                    <Link to="/habitant/me" className={`${ITEM} rounded-sm py-1 pl-4`}>My Profile</Link>
                     <a href="/logout" className={`${ITEM} rounded-sm py-1 pl-4`}>Log Out</a>
                   </>
                 ) : !loading && (
-                  <a href="/login" className={`${ITEM} rounded-sm py-1 pl-4`}>Log In</a>
+                  <Link to="/login" className={`${ITEM} rounded-sm py-1 pl-4`}>Log In</Link>
                 )}
               </nav>
             </SheetContent>

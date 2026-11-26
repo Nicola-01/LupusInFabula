@@ -21,12 +21,12 @@ public class ListFriendsDAO extends AbstractDAO<List<Friend>> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT * FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?) ORDER BY LOWER(friend_username)";
+    private static final String STATEMENT = "SELECT fp.username AS friend_username, f.date FROM IS_FRIEND_WITH f JOIN Player p ON p.id = f.player_id JOIN Player fp ON fp.id = f.friend_id WHERE LOWER(p.username) = LOWER(?) ORDER BY LOWER(fp.username)";
 
     /**
      * The SQL statement to calculate the common game.
      */
-    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id WHERE p1.player_username = ? AND p2.player_username = ? AND p1.player_username != p2.player_username";
+    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id JOIN Player u1 ON u1.id = p1.player_id JOIN Player u2 ON u2.id = p2.player_id WHERE u1.username = ? AND u2.username = ? AND u1.id != u2.id";
 
     /**
      * The username of the player

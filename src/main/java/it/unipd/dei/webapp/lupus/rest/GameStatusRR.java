@@ -3,8 +3,8 @@ package it.unipd.dei.webapp.lupus.rest;
 import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGamePlayersDAO;
 import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Handles the GET request for /game/status.
@@ -27,7 +28,7 @@ public class GameStatusRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new GameStatusRR REST resource.
@@ -37,7 +38,7 @@ public class GameStatusRR extends AbstractRR {
      * @param ds     the dataSource for the connection.
      * @param gameID the ID of the game
      */
-    public GameStatusRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
+    public GameStatusRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, UUID gameID) {
         super(Actions.GET_GAME_STATUS_ACTION, req, res, ds);
         this.gameID = gameID;
     }
@@ -48,7 +49,7 @@ public class GameStatusRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setGame(gameID);

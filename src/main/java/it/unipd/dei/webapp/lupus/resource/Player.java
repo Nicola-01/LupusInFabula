@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Represents a player in the system.
@@ -25,6 +26,11 @@ public class Player extends AbstractResource {
      * The JSON field name for role cardinality.
      */
     private static final String JSON_NAME = "player";
+
+    /**
+     * The internal id of the player (UUIDv7). Not written to JSON.
+     */
+    private final UUID id;
 
     /**
      * The username of the player.
@@ -52,6 +58,24 @@ public class Player extends AbstractResource {
     private String gameId;
 
     /**
+     * Constructs a Player object with the specified id, username, email, password, and registration date.
+     *
+     * @param id                The internal id of the player (UUIDv7).
+     * @param username          The username of the player.
+     * @param email             The email address of the player.
+     * @param password          The password of the player.
+     * @param registration_date The registration date of the player.
+     */
+    public Player(final UUID id, final String username, final String email,
+                  final String password, final Date registration_date) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.registration_date = registration_date;
+    }
+
+    /**
      * Constructs a Player object with the specified username, email, password, and registration date.
      *
      * @param username          The username of the player.
@@ -61,10 +85,7 @@ public class Player extends AbstractResource {
      */
     public Player(final String username, final String email,
                   final String password, final Date registration_date) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.registration_date = registration_date;
+        this(null, username, email, password, registration_date);
     }
 
     /**
@@ -75,9 +96,7 @@ public class Player extends AbstractResource {
      * @param password The password of the player.
      */
     public Player(String username, String email, String password) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
+        this(null, username, email, password, null);
     }
 
     /**
@@ -87,6 +106,15 @@ public class Player extends AbstractResource {
      */
     public Player(String username) {
         this(username, null, null, null);
+    }
+
+    /**
+     * Gets the internal id of the player.
+     *
+     * @return The internal id of the player (UUIDv7), or null if not set.
+     */
+    public final UUID getId() {
+        return id;
     }
 
     /**

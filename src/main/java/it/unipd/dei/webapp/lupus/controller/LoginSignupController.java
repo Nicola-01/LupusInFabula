@@ -1,17 +1,15 @@
 package it.unipd.dei.webapp.lupus.controller;
 
 import it.unipd.dei.webapp.lupus.dao.*;
-import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
@@ -23,7 +21,6 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.regex.Pattern;
 
 /**
@@ -48,9 +45,9 @@ public class LoginSignupController {
     Pattern passwordRegexPattern = Pattern.compile(passwordRegex);
 
     /**
-     * Name of the login token cookie. Also used by the filters.
+     * Cookie of the old session-token login: cleared on logout if the browser still has it.
      */
-    public static String LoginToken = "loginToken";
+    private static final String LEGACY_LOGIN_TOKEN = "loginToken";
 
     private final DataSource ds;
 
@@ -67,22 +64,16 @@ public class LoginSignupController {
         LOGGER.info("Access using GET, operation: %s, redirect to index.html", op);
 
         if (op.startsWith("logout")) {
-            HttpSession session = request.getSession();
-            Player p = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
-
-            LogContext.setUser(p.getUsername());
+            Player p = Auth.currentPlayer(request);
+            if (p != null) {
+                LogContext.setUser(p.getUsername());
+                LOGGER.info("the PLAYER %s logged out", p.getUsername());
+                LogContext.removeUser();
+            }
             response.setStatus(HttpServletResponse.SC_OK);
-            LOGGER.info("the PLAYER %s logged out", p.getUsername());
-            LogContext.removeUser();
         }
 
-        request.getSession().invalidate();
-        try {
-            invalidateToken(request, response);
-        } catch (SQLException e) {
-            response.setStatus(ErrorCode.INTERNAL_ERROR.getHTTPCode());
-            LOGGER.error("stacktrace:", e);
-        }
+        clearLoginCookies(request, response);
 
         LogContext.removeIPAddress();
         LogContext.removeAction();
@@ -100,8 +91,6 @@ public class LoginSignupController {
 
         LOGGER.info("Access using POST, operation: %s", op);
 
-        request.getSession().invalidate();
-
         switch (op) {
             case "signup":
                 signup(request, response);
@@ -109,7 +98,9 @@ public class LoginSignupController {
             case "login":
                 login(request, response);
                 break;
-            // case "logout": -> the session is already invalidated
+            case "logout":
+                clearLoginCookies(request, response);
+                break;
         }
 
         LogContext.removeAction();
@@ -177,8 +168,7 @@ public class LoginSignupController {
                     Player signupPlayer = new Player(username, email, password);
                     new SignupPlayerDAO(ds.getConnection(), signupPlayer).access();
 
-                    HttpSession session = request.getSession();
-                    session.setAttribute(UserFilter.USER_ATTRIBUTE, signupPlayer);
+                    Auth.setCookie(request, response, username, false);
                     LOGGER.info("the PLAYER (%s, %s) correctly signup", username, email);
 
                     LogContext.removeIPAddress();
@@ -227,28 +217,9 @@ public class LoginSignupController {
                     ErrorCode ec = ErrorCode.ACCOUNT_DELETED;
                     writeError(response, ec, new Message("The account '" + p.getUsername() + "' is deleted", ec.getErrorCode(), ec.getErrorMessage()));
                 } else {
-                    HttpSession session = request.getSession();
-
-                    int gameID = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
-                    if (gameID > 0) {
-                        String publicGameID = new PlayerInGameDAO(ds.getConnection(), p.getUsername()).access().getOutputParam();
-                        String gameMaster = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
-
-                        LOGGER.info(gameMaster.equals(p.getUsername()));
-                        LOGGER.info(publicGameID);
-
-                        if (gameMaster.equals(p.getUsername()))
-                            session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicGameID);
-                        else
-                            session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
-                    } else
-                        session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, "");
-
-                    if (Objects.equals(request.getParameter("keepLogged"), "on"))
-                        keepLoggedUser(response, p.getUsername());
+                    Auth.setCookie(request, response, p.getUsername(), Objects.equals(request.getParameter("keepLogged"), "on"));
 
                     response.setStatus(HttpServletResponse.SC_OK);
-                    session.setAttribute(UserFilter.USER_ATTRIBUTE, p);
                     LOGGER.info("The user (%s, %s) logged in", p.getUsername(), p.getEmail());
                     response.sendRedirect(request.getContextPath() + "/home");
                 }
@@ -264,35 +235,21 @@ public class LoginSignupController {
         }
     }
 
-    private void keepLoggedUser(HttpServletResponse response, String user) throws SQLException {
-        String token = UUID.randomUUID().toString();
-        new AddUserTokenDAO(ds.getConnection(), user, token).access();
-
-        LOGGER.info("Added token ", token);
-
-        Cookie loginCookie = new Cookie(LoginToken, token);
-        loginCookie.setMaxAge(60 * 60 * 24 * 365); // 365 days
-        loginCookie.setPath("/");
-
-        response.addCookie(loginCookie);
-    }
-
-    public void invalidateToken(HttpServletRequest request, HttpServletResponse response) throws SQLException {
-        String token = "";
+    /**
+     * Clears the JWT cookie and, if present, the old session-token cookie.
+     */
+    private void clearLoginCookies(HttpServletRequest request, HttpServletResponse response) {
+        Auth.clearCookie(request, response);
 
         Cookie[] cookies = request.getCookies();
         if (cookies != null)
             for (Cookie cookie : cookies)
-                if (LoginToken.equals(cookie.getName())) {
-                    token = cookie.getValue();
+                if (LEGACY_LOGIN_TOKEN.equals(cookie.getName())) {
+                    Cookie legacy = new Cookie(LEGACY_LOGIN_TOKEN, "");
+                    legacy.setMaxAge(0);
+                    legacy.setPath("/");
+                    response.addCookie(legacy);
                     break;
                 }
-
-        Cookie cookie = new Cookie(LoginToken, "");
-        cookie.setMaxAge(0);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-
-        new InvalidateTokenDAO(ds.getConnection(), token).access();
     }
 }

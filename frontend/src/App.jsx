@@ -1,14 +1,15 @@
-import React, { Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import Login from './pages/Login.jsx';
 import Home from './pages/Home.jsx';
 import Rules from './pages/Rules.jsx';
 import UserPage from './pages/UserPage.jsx';
 import UserStatistics from './pages/UserStatistics.jsx';
 import CreateNewGame from './pages/CreateNewGame.jsx';
-import CurrentGame from './pages/CurrentGame.jsx';
+import CurrentGame, { JoinVillage } from './pages/CurrentGame.jsx';
 import PageNotFound from './pages/PageNotFound.jsx';
 import { fetchSession } from './utils/session.js';
+import RouteEffects from './components/RouteEffects.jsx';
 
 // Dev-only mock gallery (tree-shaken out of the production build).
 const MockIndex = import.meta.env.DEV ? React.lazy(() => import('./mocks/MockIndex.jsx')) : null;
@@ -17,14 +18,22 @@ const MockScreen = import.meta.env.DEV ? React.lazy(() => import('./mocks/MockSc
 // /habitant and /habitant/ redirect to the user's own page (done by PageController too, but the Vite dev
 // server never hits it for page URLs).
 function HabitantRedirect() {
-  fetchSession().then(({ user }) =>
-    window.location.replace('/' + (user ? 'habitant/' + encodeURIComponent(user.username) : 'login')));
+  const navigate = useNavigate();
+  useEffect(() => {
+    let alive = true;
+    fetchSession().then(({ user }) => {
+      if (alive) navigate(user ? '/habitant/' + encodeURIComponent(user.username) : '/login', { replace: true });
+    });
+    return () => { alive = false; };
+  }, [navigate]);
   return null;
 }
 
 // Same URLs as the old web.xml servlet mappings.
 export default function App() {
   return (
+    <>
+    <RouteEffects />
     <Routes>
       <Route path="/" element={<Navigate to="/home" replace />} />
       <Route path="/login" element={<Login />} />
@@ -36,11 +45,13 @@ export default function App() {
       <Route path="/habitant/:username" element={<UserStatistics />} />
       <Route path="/newVillage" element={<CreateNewGame />} />
       <Route path="/newvillage" element={<CreateNewGame />} />
+      <Route path="/village" element={<JoinVillage />} />
       <Route path="/village/:gameId" element={<CurrentGame isMasterRoute={false} />} />
       <Route path="/village/:gameId/master" element={<CurrentGame isMasterRoute={true} />} />
       {import.meta.env.DEV && <Route path="/mock" element={<Suspense fallback={null}><MockIndex /></Suspense>} />}
       {import.meta.env.DEV && <Route path="/mock/:screen/:variant" element={<Suspense fallback={null}><MockScreen /></Suspense>} />}
       <Route path="*" element={<PageNotFound />} />
     </Routes>
+    </>
   );
 }

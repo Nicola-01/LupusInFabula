@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 /**
  * Represents a game entity.
@@ -23,9 +24,9 @@ public class Game extends AbstractResource {
     private static final String JSON_NAME = "game";
 
     /**
-     * The private ID of the game.
+     * The private ID of the game (UUIDv7).
      */
-    private final int id;
+    private final UUID id;
 
     /**
      * The public ID of the game.
@@ -65,7 +66,7 @@ public class Game extends AbstractResource {
     /**
      * Constructs a new Game object with the specified parameters.
      *
-     * @param id            The private ID of the game.
+     * @param id            The private ID of the game (UUIDv7).
      * @param public_ID     The public ID of the game.
      * @param game_duration The duration of the game.
      * @param who_win       The ID of the winning team or player.
@@ -74,7 +75,7 @@ public class Game extends AbstractResource {
      * @param phase         The phase of the game.
      * @param subphase      The subphase of the game.
      */
-    public Game(final int id, final String public_ID, final Timestamp start, final Time game_duration,
+    public Game(final UUID id, final String public_ID, final Timestamp start, final Time game_duration,
                 final int who_win, final int rounds, final int phase, final int subphase) {
         this.id = id;
         this.public_ID = public_ID;
@@ -91,7 +92,7 @@ public class Game extends AbstractResource {
      *
      * @return The ID of the game.
      */
-    public final int getId() {
+    public final UUID getId() {
         return id;
     }
 
@@ -173,7 +174,7 @@ public class Game extends AbstractResource {
         jg.writeFieldName(JSON_NAME);
         jg.writeStartObject();
 
-        jg.writeNumberField("id", id); // Write the username field
+        jg.writeStringField("id", id.toString());
         jg.writeStringField("public_ID", public_ID);
         jg.writeStringField("start", start.toString());
 

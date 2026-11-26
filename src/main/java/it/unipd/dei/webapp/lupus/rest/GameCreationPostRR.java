@@ -1,15 +1,13 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
-import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import it.unipd.dei.webapp.lupus.utils.RoleType;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 
 import javax.sql.DataSource;
 import java.io.ByteArrayInputStream;
@@ -44,8 +42,7 @@ public class GameCreationPostRR extends AbstractRR {
     protected void doServe() throws IOException {
         try {
             // Recover the game master, i.e., the user who is creating the game
-            HttpSession session = req.getSession(false);
-            Player gameMaster = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
+            Player gameMaster = Auth.currentPlayer(req);
 
             LogContext.setIPAddress(req.getRemoteAddr());
             LogContext.setUser(gameMaster.getUsername());
@@ -195,7 +192,7 @@ public class GameCreationPostRR extends AbstractRR {
                 }
                 //
                 else
-                    createNewGame(gameMaster, session, selectedRoles, totalPlayers, selectedPlayers, givenSettings);
+                    createNewGame(gameMaster, selectedRoles, totalPlayers, selectedPlayers, givenSettings);
 
             } else { // there was an error during player or role validation
                 // return the message(s)
@@ -230,7 +227,6 @@ public class GameCreationPostRR extends AbstractRR {
      * Create new game and assigns roles to players.
      *
      * @param gameMaster      The GameMaster object that controls the game logic.
-     * @param session         The Session object representing the current game session.
      * @param selectedRoles   A list of roles that have been selected for this game.
      * @param totalPlayers    The total number of players participating in the game.
      * @param selectedPlayers A list of players who have been selected to play specific roles.
@@ -238,24 +234,21 @@ public class GameCreationPostRR extends AbstractRR {
      * @throws SQLException If a database access error occurs.
      * @throws IOException  If an input or output exception occurs.
      */
-    private void createNewGame(Player gameMaster, HttpSession session, Map<String, Integer> selectedRoles, int totalPlayers, List<String> selectedPlayers, List<Setting> settings) throws SQLException, IOException {
+    private void createNewGame(Player gameMaster, Map<String, Integer> selectedRoles, int totalPlayers, List<String> selectedPlayers, List<Setting> settings) throws SQLException, IOException {
         // All checked, create the game
         Game createdGame = new CreateGameDAO(ds.getConnection(), ds).access().getOutputParam();
 
-        // obtain the private gameID (a progressive integer) and
+        // obtain the private gameID (a UUID) and
         // obtain the public gameID (a random combination of three roles to create a string used in the URL),
         // e.g. /seer-wolf-farmer
-        int gameID = createdGame.getId();
+        UUID gameID = createdGame.getId();
         String publicID = createdGame.getPublic_ID();
         LogContext.setGame(publicID);
-        LOGGER.info("GAME created, gameID: (%d, %s), game master %s", gameID, publicID, gameMaster.getUsername());
+        LOGGER.info("GAME created, gameID: (%s, %s), game master %s", gameID, publicID, gameMaster.getUsername());
 
         // set the gamemaster role to the player who created the game
         PlaysAsIn master_playsAsIn = new PlaysAsIn(gameMaster.getUsername(), gameID, GameRoleAction.MASTER.getName());
         new InsertIntoPlayAsInDAO(ds.getConnection(), master_playsAsIn, 0).access();
-
-        // add a session attribute to the user corresponding to the private game ID
-        session.setAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE, publicID);
 
         // Assign a random role to each player
 

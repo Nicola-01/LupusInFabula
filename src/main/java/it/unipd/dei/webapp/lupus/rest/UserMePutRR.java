@@ -2,8 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.UpdateEmailByUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.UpdatePasswordByUsernameDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -81,7 +81,7 @@ public class UserMePutRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
 
@@ -89,7 +89,7 @@ public class UserMePutRR extends AbstractRR {
 
             InputStream stream = req.getInputStream();
             UserUpdate user_update = UserUpdate.fromJSON(stream);
-            String user = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+            String user = Auth.currentPlayer(req).getUsername();
             LOGGER.info("Username: " + user + " --> is trying to update the account");
 
             if (!user_update.getOldPassword().isEmpty() && !user_update.getNewPassword().isEmpty() && !user_update.getRepeatNewPassword().isEmpty() &&

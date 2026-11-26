@@ -2,8 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetGameSettingsDAO;
 import it.unipd.dei.webapp.lupus.dao.SelectSettingsDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Returns all the settings of the game.
@@ -25,7 +26,7 @@ public class SettingsOfGameGetRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new REST resource.
@@ -35,14 +36,14 @@ public class SettingsOfGameGetRR extends AbstractRR {
      * @param ds     to connect to the database.
      * @param gameID the ID of the game
      */
-    public SettingsOfGameGetRR(HttpServletRequest req, HttpServletResponse res, DataSource ds, int gameID) {
+    public SettingsOfGameGetRR(HttpServletRequest req, HttpServletResponse res, DataSource ds, UUID gameID) {
         super(Actions.GET_SETTINGS, req, res, ds);
         this.gameID = gameID;
     }
 
     @Override
     protected void doServe() throws IOException, SQLException {
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
         try {

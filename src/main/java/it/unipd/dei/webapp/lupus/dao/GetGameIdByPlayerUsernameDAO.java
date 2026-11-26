@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Retrieves the maximum game ID (the last game) for a player.
@@ -11,12 +12,14 @@ import java.sql.ResultSet;
  * @version 1.0
  * @since 1.0
  */
-public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
+public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<UUID> {
 
     /**
      * The SQL statement to retrieve the maximum game ID for a player username.
      */
-    private static final String STATEMENT = "SELECT MAX(game_id) as game_id FROM plays_as_in WHERE LOWER(player_username) = LOWER(?)";
+    // MAX() does not exist for uuid; UUIDv7 sorts by creation time, so ORDER BY ... DESC LIMIT 1 gives the latest game
+    private static final String STATEMENT = "SELECT pai.game_id FROM plays_as_in pai JOIN player p ON p.id = pai.player_id " +
+            "WHERE LOWER(p.username) = LOWER(?) ORDER BY pai.game_id DESC LIMIT 1";
 
     /**
      * The player username for which the game ID is to be retrieved.
@@ -44,7 +47,7 @@ public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
 
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int game_id = -1;
+        UUID game_id = null;
 
         try {
 
@@ -53,7 +56,7 @@ public class GetGameIdByPlayerUsernameDAO extends AbstractDAO<Integer> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                game_id = rs.getInt("game_id");
+                game_id = rs.getObject("game_id", UUID.class);
                 //LOGGER.info("The player " + playerUsername + " is in the game " + game_id);
             } else {
                 LOGGER.warn("The player " + playerUsername + " is not in the game");

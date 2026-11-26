@@ -1,6 +1,8 @@
 package it.unipd.dei.webapp.lupus.dao;
 
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.PasswordHash;
+import it.unipd.dei.webapp.lupus.utils.UuidV7;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +20,7 @@ public class SignupPlayerDAO extends AbstractDAO {
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "INSERT INTO player VALUES (?, LOWER(?), md5(?), CURRENT_DATE)";
+    private static final String STATEMENT = "INSERT INTO Player (id, username, email, password, registration_date) VALUES (?, ?, LOWER(?), ?, CURRENT_DATE)";
 
     /**
      * The player to be inserted in the database
@@ -46,9 +48,10 @@ public class SignupPlayerDAO extends AbstractDAO {
         PreparedStatement pstmt = null;
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setString(1, player.getUsername());
-            pstmt.setString(2, player.getEmail());
-            pstmt.setString(3, player.getPassword());
+            pstmt.setObject(1, UuidV7.generate());
+            pstmt.setString(2, player.getUsername());
+            pstmt.setString(3, player.getEmail());
+            pstmt.setString(4, PasswordHash.hash(player.getPassword()));
 
             pstmt.execute();
         } finally {

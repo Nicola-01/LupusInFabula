@@ -17,6 +17,7 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -42,49 +43,83 @@ public class GameWebSocket {
 
 
     private static final Map<String, Set<Session>> rooms = new ConcurrentHashMap<>();
-    private static final Map<String, Integer> gameIdMap = new ConcurrentHashMap<>();
-    private static final Map<Integer, String> gamePhaseMap = new ConcurrentHashMap<>();
+    private static final Map<String, UUID> gameIdMap = new ConcurrentHashMap<>();
+    private static final Map<UUID, String> gamePhaseMap = new ConcurrentHashMap<>();
 
 
-    private static final Map<Integer, List<WebSocketLog>> webSocketLogs = new ConcurrentHashMap<>();
+    private static final Map<UUID, List<WebSocketLog>> webSocketLogs = new ConcurrentHashMap<>();
 
     /**
      * Stores the game state logs to handle player reconnections and persistence during the game lifecycle.
      * <p>
      * <strong>Data Structure:</strong> {@code Map<GameID, Map<Username, List<ActionData>>>}
      * <ul>
-     * <li><strong>Outer Key ({@code Integer}):</strong> The {@code gameID} uniquely identifying the active game.</li>
+     * <li><strong>Outer Key ({@code UUID}):</strong> The {@code gameID} uniquely identifying the active game.</li>
      * <li><strong>Inner Key ({@code String}):</strong> The {@code username} of the player who performed the action.</li>
      * <li><strong>Value ({@code List<PlaysAsIn>}):</strong> A list of game state objects representing the actions or visible data associated with that specific player in that game.</li>
      * </ul>
      * <p>
      * This structure allows efficient O(1) retrieval of a specific player's history within a specific game.
      */
-    private static final Map<Integer, Map<String, List<PlaysAsIn>>> gameStateCache = new ConcurrentHashMap<>();
-    private static final Map<Integer, List<ActionTarget>> gameActionCache = new ConcurrentHashMap<>();
+    private static final Map<UUID, Map<String, List<PlaysAsIn>>> gameStateCache = new ConcurrentHashMap<>();
+    private static final Map<UUID, List<ActionTarget>> gameActionCache = new ConcurrentHashMap<>();
+
+    /**
+     * Last {@code #votes:} snapshot sent by the master during the day, per gameID.
+     */
+    private static final Map<UUID, String> votesSnapshotMap = new ConcurrentHashMap<>();
+
+    /** Sent to every session of a game when its state changed; the clients reload their data. */
+    public static final String UPDATE_MESSAGE = "#update";
+    private static final String VOTES_PREFIX = "#votes:";
+    private static final int MAX_VOTES_MESSAGE_BYTES = 10 * 1024;
 
     private static DataSource ds;
 
+    /** Username of the login cookie, given by {@link GetHttpSessionConfigurator} for this connection; null if missing. */
+    private final String username;
+
+    public GameWebSocket(String username) {
+        this.username = username;
+    }
+
     @OnOpen
     public void onOpen(Session session, @PathParam("room") String room) {
-        session.getUserProperties().put("room", room);
+        if (username == null) {
+            LOGGER.warn(String.format("WebSocket for village %s without a valid login cookie, closed", room));
+            try {
+                session.close(new CloseReason(CloseReason.CloseCodes.VIOLATED_POLICY, "Not logged in"));
+            } catch (IOException e) {
+                LOGGER.warn("Error closing the WebSocket without login", e);
+            }
+            return;
+        }
 
-        String username = session.getUserProperties().get("username").toString();
+        session.getUserProperties().put("room", room);
+        session.getUserProperties().put("username", username);
 
         LOGGER.info(String.format("Start WS for %s in village: %s", username, room));
         rooms.computeIfAbsent(room, k -> new CopyOnWriteArraySet<>()).add(session);
 
         try {
-            int gameID = gameIdMap.getOrDefault(room, new GetGameIdFormPublicGameIdDAO(getConnection(), room).access().getOutputParam());
+            UUID gameID = gameIdMap.getOrDefault(room, new GetGameIdFormPublicGameIdDAO(getConnection(), room).access().getOutputParam());
+            if (gameID == null) { // unknown village
+                session.close(new CloseReason(CloseReason.CloseCodes.CANNOT_ACCEPT, "Unknown village"));
+                return;
+            }
             gameIdMap.putIfAbsent(room, gameID);
-            initGamePhaseCache(gameID);
-            initGameStateCache(gameID);
-            initGameActionCache(gameID);
+            // stored on the session: gameIdMap loses the room when the game ends, notifyUpdate still needs it
+            session.getUserProperties().put("gameID", gameID);
+            ensureCaches(gameID);
 
             boolean isDay = gamePhaseMap.get(gameID).equals(GamePhase.DAY.getName());
 
             for (WebSocketLog wsl : webSocketLogs.getOrDefault(gameID, Collections.emptyList()))
                 sendMessage(session, wsl.sender, wsl.target, gameID, isDay);
+
+            String votes = votesSnapshotMap.get(gameID);
+            if (votes != null)
+                sendText(session, votes);
 
         } catch (SQLException | NamingException e) {
             LOGGER.warn("Error in retrieve game actions", e);
@@ -95,16 +130,100 @@ public class GameWebSocket {
 
     @OnMessage
     public void onMessage(String message, Session session) {
+        if (message.startsWith(VOTES_PREFIX)) {
+            handleVotes(message, session);
+            return;
+        }
+
         String room = (String) session.getUserProperties().get("room");
         String username = (String) session.getUserProperties().get("username");
 
         broadcast(username, message, room);
     }
 
+    /**
+     * Stores the master's current vote form during the day and forwards it, as is, to the whole room.
+     * Messages from other users, outside the day or bigger than 10 kB are ignored.
+     */
+    private void handleVotes(String message, Session session) {
+        String room = (String) session.getUserProperties().get("room");
+        String username = (String) session.getUserProperties().get("username");
+        UUID gameID = (UUID) session.getUserProperties().get("gameID");
+
+        if (gameID == null || message.getBytes(StandardCharsets.UTF_8).length > MAX_VOTES_MESSAGE_BYTES) {
+            LOGGER.warn(String.format("Ignored votes message from %s", username));
+            return;
+        }
+
+        ensureCaches(gameID);
+        if (!isMaster(gameID, username) || !GamePhase.DAY.getName().equals(gamePhaseMap.get(gameID)))
+            return;
+
+        votesSnapshotMap.put(gameID, message);
+        Set<Session> roomSessions = rooms.get(room);
+        if (roomSessions == null)
+            return;
+        for (Session s : roomSessions) {
+            if (!s.isOpen()) continue;
+            try {
+                sendText(s, message);
+            } catch (IOException | IllegalStateException e) {
+                LOGGER.error("Error sending votes", e);
+            }
+        }
+    }
+
+    /**
+     * Tells every open session of the game {@code gameID} that its state changed ({@link #UPDATE_MESSAGE}).
+     * Called by the REST handlers after their DB writes. Works also after the game ended, because it
+     * matches the gameID stored on each session. A failing session is logged and does not stop the others.
+     *
+     * @param gameID the internal ID of the game
+     */
+    public static void notifyUpdate(UUID gameID) {
+        for (Set<Session> roomSessions : rooms.values()) {
+            for (Session s : roomSessions) {
+                if (!s.isOpen() || !gameID.equals(s.getUserProperties().get("gameID")))
+                    continue;
+                try {
+                    sendText(s, UPDATE_MESSAGE);
+                } catch (IOException | IllegalStateException e) {
+                    LOGGER.error("Error sending update", e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Sends a text frame; synchronized on the session because the Tomcat remote endpoint
+     * does not allow two concurrent text messages (REST threads and the WebSocket thread both send).
+     */
+    private static void sendText(Session s, String text) throws IOException {
+        synchronized (s) {
+            s.getBasicRemote().sendText(text);
+        }
+    }
+
+    /**
+     * Whether {@code username} is the master of the game, checked on the cached player roles.
+     */
+    private static boolean isMaster(UUID gameID, String username) {
+        Map<String, List<PlaysAsIn>> players = gameStateCache.get(gameID);
+        List<PlaysAsIn> gsc = players == null ? null : players.get(username);
+        if (gsc == null)
+            return false;
+        for (PlaysAsIn psi : gsc) {
+            if (psi.getPlayerUsername().equals(username))
+                return GameRoleAction.MASTER.getName().equals(psi.getRole());
+        }
+        return false;
+    }
+
     @OnClose
     public void onClose(Session session) {
-        String username = (String) session.getUserProperties().get("username");
         String room = (String) session.getUserProperties().get("room");
+        if (room == null) // closed in onOpen before the room was stored
+            return;
 
         Set<Session> roomSessions = rooms.get(room);
         if (roomSessions != null) {
@@ -121,11 +240,12 @@ public class GameWebSocket {
 
     private void broadcast(String sender, String target, String room) {
         try {
-            int gameID = gameIdMap.get(room);
+            UUID gameID = gameIdMap.get(room);
             Set<Session> roomSessions = rooms.get(room);
             if (roomSessions == null)
                 return;
 
+            ensureCaches(gameID);
             List<ActionTarget> actions = gameActionCache.get(gameID);
 
             boolean found = false;
@@ -166,16 +286,16 @@ public class GameWebSocket {
         }
     }
 
-    private void sendMessage(Session s, String sender, String target, int gameID, boolean isDay) throws SQLException, NamingException, IOException {
+    private void sendMessage(Session s, String sender, String target, UUID gameID, boolean isDay) throws SQLException, NamingException, IOException {
         String sessionUser = s.getUserProperties().get("username").toString();
         List<PlaysAsIn> playsAs = gameStateCache.get(gameID).get(sessionUser);
         for (PlaysAsIn p : playsAs) {
             if ((isDay && !sender.equals(target)) || (!isDay && p.getPlayerUsername().equals(sender) && !p.getRole().isEmpty() && !p.getRole().equals(GameRoleAction.MASTER.getName())))
-                s.getBasicRemote().sendText(sender + ":" + target);
+                sendText(s, sender + ":" + target);
         }
     }
 
-    private void saveMessage(String sender, String target, int gameID) {
+    private void saveMessage(String sender, String target, UUID gameID) {
         List<WebSocketLog> logs = webSocketLogs.computeIfAbsent(gameID, k -> new CopyOnWriteArrayList<>());
 
         boolean updated = false;
@@ -206,21 +326,29 @@ public class GameWebSocket {
         return getDataSource().getConnection();
     }
 
-    public static void freeGameWebSocket(int gameID, boolean end) {
-        LOGGER.info(String.format("Free webSocketLogs for %d", gameID));
+    public static void freeGameWebSocket(UUID gameID, boolean end) {
+        LOGGER.info(String.format("Free webSocketLogs for %s", gameID));
         webSocketLogs.remove(gameID);
+        votesSnapshotMap.remove(gameID);
         gameStateCache.remove(gameID);
         gameActionCache.remove(gameID);
         gamePhaseMap.remove(gameID);
-        if (!end) {
-            initGameStateCache(gameID);
-            initGameActionCache(gameID);
-            initGamePhaseCache(gameID);
-        } else
-            gameIdMap.entrySet().removeIf(entry -> entry.getValue() == gameID);
+        // The caches are rebuilt lazily (ensureCaches): this runs before the UPDATE of the game is executed,
+        // so rebuilding them here would read the old phase.
+        if (end)
+            gameIdMap.entrySet().removeIf(entry -> gameID.equals(entry.getValue()));
     }
 
-    public static void initGamePhaseCache(int gameID) {
+    /**
+     * Rebuilds the caches of a game dropped by {@link #freeGameWebSocket}. Each init is a no-op when the cache is present.
+     */
+    private static void ensureCaches(UUID gameID) {
+        initGamePhaseCache(gameID);
+        initGameStateCache(gameID);
+        initGameActionCache(gameID);
+    }
+
+    public static void initGamePhaseCache(UUID gameID) {
         if (gamePhaseMap.containsKey(gameID))
             return;
         try {
@@ -235,7 +363,7 @@ public class GameWebSocket {
 
     }
 
-    public static void initGameStateCache(int gameID) {
+    public static void initGameStateCache(UUID gameID) {
         if (gameStateCache.containsKey(gameID))
             return;
         try {
@@ -253,7 +381,7 @@ public class GameWebSocket {
         }
     }
 
-    public static void initGameActionCache(int gameID) {
+    public static void initGameActionCache(UUID gameID) {
         if (gameActionCache.containsKey(gameID))
             return;
         try {

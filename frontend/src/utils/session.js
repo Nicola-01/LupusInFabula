@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Session hooks (replace jsp/utils/loginChecker.jsp and the sessionScope checks).
@@ -8,18 +9,29 @@ import { useEffect, useState } from 'react';
 
 let sessionPromise = null;
 
-/** Fetches the session once per page load. Any failure is treated as "not logged in". */
+/**
+ * Fetches the session once per page load. A non-OK answer (401) means "not logged in".
+ * A network error (also the request aborted because the page is navigating away) never resolves:
+ * treating it as "logged out" made useLoginChecker redirect to /login, overriding the navigation in progress.
+ */
 export function fetchSession() {
     if (!sessionPromise) {
         sessionPromise = fetch('/api/session', { credentials: 'same-origin' })
             .then((r) => (r.ok ? r.json() : null))
-            .catch(() => null)
             .then((data) => ({
                 user: data?.user ?? null,
                 gamemaster: data?.gamemaster ?? '',
-            }));
+            }), () => new Promise(() => {}));
     }
     return sessionPromise;
+}
+
+/**
+ * Drops the cached session, so the next fetchSession()/useSession() asks the server again
+ * (call it after the session changes without a page reload, e.g. the account is deleted).
+ */
+export function invalidateSession() {
+    sessionPromise = null;
 }
 
 /**
@@ -41,9 +53,10 @@ export function useSession() {
  */
 export function useLoginChecker() {
     const session = useSession();
+    const navigate = useNavigate();
     useEffect(() => {
         if (!session.loading && !session.user)
-            window.location.href = window.location.origin + "/login";
-    }, [session.loading, session.user]);
+            navigate("/login");
+    }, [session.loading, session.user, navigate]);
     return session;
 }

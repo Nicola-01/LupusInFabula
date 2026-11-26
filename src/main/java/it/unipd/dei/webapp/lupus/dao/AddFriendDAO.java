@@ -16,7 +16,7 @@ public class AddFriendDAO extends AbstractDAO<Friend> {
     /**
      * The SQL statement to add a friend relationship in the database.
      */
-    private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH VALUES (?,?,?) RETURNING *";
+    private static final String STATEMENT = "INSERT INTO IS_FRIEND_WITH (player_id, friend_id, date) VALUES ((SELECT id FROM Player WHERE username = ?), (SELECT id FROM Player WHERE username = ?), ?) RETURNING date";
 
     /**
      * The username of the player who initiates the friend request.
@@ -26,7 +26,7 @@ public class AddFriendDAO extends AbstractDAO<Friend> {
     /**
      * The SQL statement to calculate the common game.
      */
-    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id WHERE p1.player_username = ? AND p2.player_username = ? AND p1.player_username != p2.player_username";
+    private static final String GAME_STATEMENT = "SELECT COUNT(*) AS num_games FROM plays_as_in p1 JOIN plays_as_in p2 ON p1.game_id = p2.game_id JOIN Player u1 ON u1.id = p1.player_id JOIN Player u2 ON u2.id = p2.player_id WHERE u1.username = ? AND u2.username = ? AND u1.id != u2.id";
 
     /**
      * The username of the friend to be added.
@@ -85,7 +85,7 @@ public class AddFriendDAO extends AbstractDAO<Friend> {
 
                 rs = pstmt.executeQuery();
                 if (rs.next()) {
-                    f = new Friend(rs.getString("friend_username"), commonGame, rs.getDate("date"));
+                    f = new Friend(friend_username, commonGame, rs.getDate("date"));
                     LOGGER.info("friend %s added", f.getUsername());
 
                 } else {

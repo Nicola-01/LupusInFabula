@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Returns if the role of Puppy has become a Wolf
@@ -30,7 +31,7 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean> {
     /**
      * The ID of the game to retrieve
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructs a new IsPuppyAWolfDAO for search if the Puppy is become a wolf
@@ -39,7 +40,7 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean> {
      * @param ds     the data source for obtaining connections
      * @param gameID the ID of the game.
      */
-    public IsPuppyAWolfDAO(Connection con, DataSource ds, int gameID) {
+    public IsPuppyAWolfDAO(Connection con, DataSource ds, UUID gameID) {
         super(con);
         this.ds = ds;
         this.gameID = gameID;
@@ -59,7 +60,7 @@ public class IsPuppyAWolfDAO extends AbstractDAO<Boolean> {
         try {
             pstmt = con.prepareStatement(STATEMENT);
 
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setString(2, GameRoleAction.WOLF.getName());
             pstmt.setString(3, GameRoleAction.BERSERKER.getName());
             pstmt.setString(4, GameRoleAction.DORKY.getName());

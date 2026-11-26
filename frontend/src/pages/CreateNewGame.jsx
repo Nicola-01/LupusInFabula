@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, Check, Flame, Info, Minus, RotateCcw, RotateCw, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -12,7 +13,7 @@ import SearchPlayer from '../components/SearchPlayer.jsx';
 import { ErrorMessage } from '../components/Messages.jsx';
 import ToggleSwitch from '../components/game/newGame/ToggleSwitch.jsx';
 import AddFriendCheckbox from '../components/game/newGame/AddFriendCheckbox.jsx';
-import { useLoginChecker } from '../utils/session.js';
+import { invalidateSession, useLoginChecker } from '../utils/session.js';
 import {
     contextPath, genericGETRequest, genericPOSTRequest, getMessage, capitalizeFirstLetter,
     HTTP_STATUS_OK, HTTP_STATUS_CREATED, JSON_resource_list,
@@ -574,17 +575,15 @@ function SummaryStep({ players, availOf, roleOrder, counts, settings, gameSettin
 
 export default function CreateNewGame() {
     useLoginChecker();
+    const navigate = useNavigate();
 
-    // ?step=players|roles|options|summary (invalid or missing -> players). The URL follows the current step.
-    const [step, setStep] = useState(() => {
-        const i = STEPS.findIndex((s) => s.key === new URLSearchParams(window.location.search).get('step'));
-        return i >= 0 ? i + 1 : 1;
-    });
+    // ?step=players|roles|options|summary (invalid or missing -> players). Each step is a history entry, so back/forward work.
+    const [searchParams, setSearchParams] = useSearchParams();
+    const stepIndex = STEPS.findIndex((s) => s.key === searchParams.get('step'));
+    const step = stepIndex >= 0 ? stepIndex + 1 : 1;
     useEffect(() => {
-        const url = new URL(window.location.href);
-        url.searchParams.set('step', STEPS[step - 1].key);
-        window.history.replaceState(window.history.state, '', url);
-    }, [step]);
+        if (stepIndex < 0) setSearchParams((prev) => { prev.set('step', STEPS[0].key); return prev; }, { replace: true });
+    }, [stepIndex, setSearchParams]);
 
     const [roles, setRoles] = useState([]);            // sorted role objects from GET game/create
     const [settings, setSettings] = useState([]);      // setting objects from GET game/settings
@@ -734,7 +733,8 @@ export default function CreateNewGame() {
         if (req.readyState !== XMLHttpRequest.DONE) return;
         if (req.status === HTTP_STATUS_CREATED) {
             const game = JSON.parse(req.responseText)['game'];
-            window.location.replace(contextPath + "village/" + game.public_ID);
+            invalidateSession(); // the creator is the game master now
+            navigate('/village/' + encodeURIComponent(game.public_ID), { replace: true });
         } else {
             const message = getMessage(req);
             if (message != null) {
@@ -820,7 +820,7 @@ export default function CreateNewGame() {
         genericPOSTRequest(contextPath + "game/create", JSON.stringify(json), gameCreation);
     };
 
-    const go = (s) => { setStep(s); window.scrollTo({ top: 0 }); };
+    const go = (s) => { setSearchParams({ step: STEPS[s - 1].key }); window.scrollTo({ top: 0 }); };
 
     return (
         <div className="lf-page flex min-h-screen flex-col font-lf-body text-lf-ink">

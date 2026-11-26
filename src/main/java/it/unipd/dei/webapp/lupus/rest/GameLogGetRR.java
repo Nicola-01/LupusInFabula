@@ -1,8 +1,8 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static it.unipd.dei.webapp.lupus.utils.ErrorCode.LOGS_NOT_EXIST;
 
@@ -36,7 +37,7 @@ public class GameLogGetRR extends AbstractRR
     /**
      * numeric identifier for the game
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * boolean that represent if a user logged is a master or not
@@ -58,12 +59,12 @@ public class GameLogGetRR extends AbstractRR
      * @param gameID   numeric identifier for the game
      * @param ds       the connection pool to the database.
      */
-    public GameLogGetRR(int gameID, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
+    public GameLogGetRR(UUID gameID, boolean isMaster, final HttpServletRequest request, final HttpServletResponse response, DataSource ds)
     {
         super(Actions.GET_LOGS, request, response, ds);
         this.gameID = gameID;
         this.isMaster = isMaster;
-        this.nmPlayer =((Player) request.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        this.nmPlayer =Auth.currentPlayer(request).getUsername();
     }
 
     /**

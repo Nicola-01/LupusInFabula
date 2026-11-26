@@ -4,10 +4,9 @@ import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class PageController {
 
     @GetMapping({"/habitant", "/habitant/**"})
     public void habitant(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-        if (req.getSession(false) == null || req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE) == null) {
+        if (Auth.currentPlayer(req) == null) {
             res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
@@ -76,7 +76,7 @@ public class PageController {
 
         String username = uri.substring(req.getContextPath().length() + "/habitant/".length());
         if (username.isEmpty()) {
-            String requested = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+            String requested = Auth.currentPlayer(req).getUsername();
             res.sendRedirect(req.getContextPath() + "/habitant/" + requested);
             return;
         }
@@ -104,19 +104,26 @@ public class PageController {
     @GetMapping({"/village", "/village/**"})
     public void village(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         // if the user isn't logged in, redirect to login page
-        if (req.getSession(false) == null) {
+        if (Auth.currentPlayer(req) == null) {
             res.sendRedirect(req.getContextPath() + "/login");
             return;
         }
 
-        String gameMaster = (String) req.getSession().getAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE);
+        String gameMaster;
+        try {
+            gameMaster = Auth.masterGame(ds, Auth.currentPlayer(req).getUsername());
+        } catch (SQLException e) {
+            res.setStatus(ErrorCode.INTERNAL_ERROR.getHTTPCode());
+            LOGGER.info("Internal error");
+            return;
+        }
         String[] urlParts = req.getRequestURI().substring(req.getContextPath().length()).split("/");
 
         // /village without public game ID: redirect to the user's game, or to the homepage
         if (urlParts.length == 2) {
-            String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+            String username = Auth.currentPlayer(req).getUsername();
             try {
-                int privateGameID = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), username).access().getOutputParam();
+                UUID privateGameID = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), username).access().getOutputParam();
                 Game game = new GetGameByGameIdDAO(ds.getConnection(), privateGameID).access().getOutputParam();
                 if (game == null)
                     res.sendRedirect(req.getContextPath() + "/home");
@@ -135,7 +142,7 @@ public class PageController {
                 : urlParts[urlParts.length - 1];
 
         try {
-            int privateGameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();
+            UUID privateGameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), gameId).access().getOutputParam();
             Game game = new GetGameByGameIdDAO(ds.getConnection(), privateGameID).access().getOutputParam();
             if (game == null) {
                 res.setStatus(HttpServletResponse.SC_NOT_FOUND);

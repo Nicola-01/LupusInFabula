@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.resource.Setting;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Add the settings of a game to the database
@@ -22,7 +23,7 @@ public class AddGameSettingDAO extends AbstractDAO {
     /**
      * The private ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * The setting to add
@@ -36,7 +37,7 @@ public class AddGameSettingDAO extends AbstractDAO {
      * @param con     the connection to the database.
      * @param setting the setting to be added.
      */
-    public AddGameSettingDAO(final Connection con, int gameID, Setting setting) {
+    public AddGameSettingDAO(final Connection con, UUID gameID, Setting setting) {
         super(con);
         this.gameID = gameID;
         this.setting = setting;
@@ -48,7 +49,7 @@ public class AddGameSettingDAO extends AbstractDAO {
 
         try {
             ps = con.prepareStatement(STATEMENT);
-            ps.setInt(1, gameID);
+            ps.setObject(1, gameID);
             ps.setString(2, setting.getSettingName());
             ps.setBoolean(3, setting.isEnable());
 

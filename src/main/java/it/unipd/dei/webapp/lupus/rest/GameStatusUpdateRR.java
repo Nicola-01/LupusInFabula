@@ -11,6 +11,7 @@ import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.WinFaction;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.sql.SQLException;
 
 import org.json.JSONObject;
 
-import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.notifyUpdate;
 
 /**
  * Handles the game status update REST request.
@@ -35,7 +36,7 @@ public class GameStatusUpdateRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new GameSettingsPost REST resource.
@@ -45,7 +46,7 @@ public class GameStatusUpdateRR extends AbstractRR {
      * @param ds     the dataSource for the connection.
      * @param gameID the ID of the game
      */
-    public GameStatusUpdateRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID) {
+    public GameStatusUpdateRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, UUID gameID) {
         super(Actions.GAME_STATUS_UPDATE, req, res, ds);
 
         this.gameID = gameID;
@@ -109,6 +110,10 @@ public class GameStatusUpdateRR extends AbstractRR {
                 LOGGER.error(message.getMessage());
                 break;
         }
+
+        // only on success: the error paths did not change the game
+        if (res.getStatus() == HttpServletResponse.SC_OK)
+            notifyUpdate(gameID);
     }
 
     private boolean skipDay() throws SQLException {

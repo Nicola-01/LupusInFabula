@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Search a game using the public gameID, return the private gameID
@@ -11,12 +12,12 @@ import java.sql.ResultSet;
  * @version 1.0
  * @since 1.0
  */
-public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<Integer> {
+public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<UUID> {
 
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT * FROM game WHERE public_ID = ?";
+    private static final String STATEMENT = "SELECT id FROM game WHERE public_ID = ?";
 
     /**
      * The public gameID to search
@@ -44,7 +45,7 @@ public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<Integer> {
     protected void doAccess() throws Exception {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
-        int gameID = -1;
+        UUID gameID = null;
         try {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, publicGameId);
@@ -52,7 +53,7 @@ public class GetGameIdFormPublicGameIdDAO extends AbstractDAO<Integer> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                gameID = rs.getInt("ID");
+                gameID = rs.getObject("id", UUID.class);
             }
         } finally {
             if (rs != null) {

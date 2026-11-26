@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Retrieves the usernames of players along with their roles for a given game ID.
@@ -23,12 +24,13 @@ public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,Str
     /**
      * The SQL statement to select players and roles by game ID, excluding the "MASTER" role.
      */
-    private static final String STATEMENT = "SELECT player_username, r.name FROM plays_as_in JOIN role r on plays_as_in.role = r.name WHERE game_id = ? AND r.name != ?";
+    private static final String STATEMENT = "SELECT p.username AS player_username, r.name FROM plays_as_in pai " +
+            "JOIN player p ON p.id = pai.player_id JOIN role r ON pai.role = r.name WHERE pai.game_id = ? AND r.name != ?";
 
     /**
      * The game ID for which players and roles are to be retrieved.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * Constructs a new SelectPlayersAndRolesByGameIdDAO with the specified database connection
@@ -37,7 +39,7 @@ public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,Str
      * @param con    the database connection
      * @param gameId the ID of the game
      */
-    public SelectPlayersAndRolesByGameIdDAO(final Connection con, int gameId) {
+    public SelectPlayersAndRolesByGameIdDAO(final Connection con, UUID gameId) {
         super(con);
         this.gameId = gameId;
     }
@@ -58,7 +60,7 @@ public class SelectPlayersAndRolesByGameIdDAO extends AbstractDAO<Map<String,Str
         try {
 
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameId);
+            pstmt.setObject(1, gameId);
             pstmt.setString(2, GameRoleAction.MASTER.getName());
             rs = pstmt.executeQuery();
 

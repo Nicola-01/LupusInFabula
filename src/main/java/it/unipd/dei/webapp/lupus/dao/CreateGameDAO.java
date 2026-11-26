@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.UUID;
+import it.unipd.dei.webapp.lupus.utils.UuidV7;
 
 /**
  * Create a new game into the database
@@ -22,7 +24,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
     /**
      * SQL statement for creating a new game record in the database.
      */
-    private static final String STATEMENT_CREATE_GAME = "INSERT INTO game (public_ID, start) VALUES (?, NOW())";
+    private static final String STATEMENT_CREATE_GAME = "INSERT INTO game (id, public_ID, start) VALUES (?, ?, NOW())";
 
     /**
      * SQL statement for searching for a game record in the database by its public ID.
@@ -64,8 +66,10 @@ public class CreateGameDAO extends AbstractDAO<Game> {
 
             LOGGER.info("Public game id selected: " + publicID);
 
+            UUID gameId = UuidV7.generate();
             pstmt = con.prepareStatement(STATEMENT_CREATE_GAME);
-            pstmt.setString(1, publicID);
+            pstmt.setObject(1, gameId);
+            pstmt.setString(2, publicID);
             pstmt.execute();
 
             pstmt = con.prepareStatement(STATEMENT_SEARCH_GAME);
@@ -73,7 +77,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                this.outputParam = new Game(rs.getInt("ID"), rs.getString("public_ID"), rs.getTimestamp("start"), rs.getTime("game_duration"),
+                this.outputParam = new Game(rs.getObject("id", UUID.class), rs.getString("public_ID"), rs.getTimestamp("start"), rs.getTime("game_duration"),
                         rs.getInt("who_wins"), rs.getInt("rounds"), rs.getInt("phase"), rs.getInt("subphase"));
             }
         } finally {
@@ -120,7 +124,7 @@ public class CreateGameDAO extends AbstractDAO<Game> {
             // Remove spaces from the role names, if any
             randomID = randomID.replaceAll(" ", "");
 
-            repeat = (new GetGameIdFormPublicGameIdDAO(ds.getConnection(), randomID).access().getOutputParam() != -1);
+            repeat = (new GetGameIdFormPublicGameIdDAO(ds.getConnection(), randomID).access().getOutputParam() != null);
 
         } while (repeat);
 

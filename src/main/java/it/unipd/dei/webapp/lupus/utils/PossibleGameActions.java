@@ -34,7 +34,7 @@ public class PossibleGameActions {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * A LOGGER available for the class.
@@ -87,7 +87,7 @@ public class PossibleGameActions {
      * @param gameID The ID of the game for which to generate possible actions.
      * @throws SQLException If a database access error occurs.
      */
-    public PossibleGameActions(DataSource ds, int gameID) throws SQLException {
+    public PossibleGameActions(DataSource ds, UUID gameID) throws SQLException {
         this.ds = ds;
         this.gameID = gameID;
 

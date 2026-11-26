@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Search the list of players playing in a game using the private gameID, returns such list
@@ -24,12 +25,13 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT * FROM plays_as_in WHERE plays_as_in.game_id = ? ORDER BY order_in_game";
+    private static final String STATEMENT = "SELECT pai.*, p.username AS player_username FROM plays_as_in pai JOIN player p ON p.id = pai.player_id " +
+            "WHERE pai.game_id = ? ORDER BY pai.order_in_game";
 
     /**
      * The private ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Whether the URI contained a /master at the end.
@@ -61,7 +63,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
      * @param playerUsername The username of the player who made the request
      * @param role           The role of the player who made the request
      */
-    public GetGamePlayersDAO(DataSource ds, final Connection con, final int gameID, boolean isMaster, String playerUsername, String role) {
+    public GetGamePlayersDAO(DataSource ds, final Connection con, final UUID gameID, boolean isMaster, String playerUsername, String role) {
         super(con);
         this.gameID = gameID;
         this.URIisMaster = isMaster;
@@ -83,7 +85,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
         final List<PlaysAsIn> join = new ArrayList<PlaysAsIn>();
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
 
             rs = pstmt.executeQuery();
 
@@ -93,7 +95,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
                 while (rs.next()) {
                     join.add(new PlaysAsIn(
                             rs.getString("player_username"),
-                            rs.getInt("game_id"),
+                            rs.getObject("game_id", UUID.class),
                             rs.getString("role"),
                             rs.getInt("round_of_death"),
                             rs.getInt("phase_of_death"),
@@ -134,7 +136,7 @@ public class GetGamePlayersDAO extends AbstractDAO<List<PlaysAsIn>> {
 
                     join.add(new PlaysAsIn(
                             sentUsername,
-                            rs.getInt("game_id"),
+                            rs.getObject("game_id", UUID.class),
                             playerRole,
                             rs.getInt("round_of_death"),
                             rs.getInt("phase_of_death"),

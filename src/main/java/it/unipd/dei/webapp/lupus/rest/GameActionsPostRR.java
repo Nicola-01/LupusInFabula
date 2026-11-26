@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.notifyUpdate;
 
 /**
  * Handles the HTTP POST request to handle game actions.
@@ -67,7 +68,7 @@ public class GameActionsPostRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * The current round of the game.
@@ -103,7 +104,7 @@ public class GameActionsPostRR extends AbstractRR {
      * @param ds     The data source.
      * @throws SQLException If an SQL error occurs.
      */
-    public GameActionsPostRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
+    public GameActionsPostRR(UUID gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.POST_GAME_ACTIONS_ACTION, req, res, ds);
         this.gameID = gameID;
 
@@ -217,6 +218,8 @@ public class GameActionsPostRR extends AbstractRR {
                     new UpdateGameDAO(ds.getConnection(), gameID, currentPhase, currentRound).access();
 
                 }
+                // all the DB writes are done: the players' pages can reload their data
+                notifyUpdate(gameID);
             }
 
         } catch (SQLException | IOException e) {
@@ -798,7 +801,7 @@ public class GameActionsPostRR extends AbstractRR {
         }
 
         //check if the target is in the game
-        if (gameID != new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam()) {
+        if (!gameID.equals(new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam())) {
 
             LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
             ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
@@ -809,7 +812,7 @@ public class GameActionsPostRR extends AbstractRR {
         }
 
         //check if the player is in the game
-        if (gameID != new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam()) {
+        if (!gameID.equals(new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam())) {
 
             LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
             ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
@@ -1188,14 +1191,14 @@ public class GameActionsPostRR extends AbstractRR {
         boolean hasSheriffShoot = false;
         boolean areAllAlive = true;
         int berserkerCount = 0;
-        int game_id;
+        UUID game_id;
 
 
         for (GameAction gameAction : gameActions) {
 
             game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getPlayer()).access().getOutputParam();
             //check if the player is in the game
-            if (game_id != gameID) {
+            if (!gameID.equals(game_id)) {
 
                 LOGGER.error("ERROR: the player " + gameAction.getPlayer() + " is not in the game");
                 ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;
@@ -1208,7 +1211,7 @@ public class GameActionsPostRR extends AbstractRR {
 
             game_id = new GetGameIdByPlayerUsernameDAO(ds.getConnection(), gameAction.getTarget()).access().getOutputParam();
             //check if target is in the game
-            if (game_id != gameID) {
+            if (!gameID.equals(game_id)) {
 
                 LOGGER.error("ERROR: the target " + gameAction.getTarget() + " is not in the game");
                 ErrorCode ec = ErrorCode.PLAYER_NOT_IN_GAME;

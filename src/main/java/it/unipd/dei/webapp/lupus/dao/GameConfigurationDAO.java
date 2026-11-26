@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Data Access Object (DAO) for retrieving the game configuration.
@@ -32,14 +33,14 @@ public class GameConfigurationDAO extends AbstractDAO<List<Role>> {
     /**
      * The type of roles to be retrieved.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new object to return all roles.
      *
      * @param con the connection to the database.
      */
-    public GameConfigurationDAO(final Connection con, final int gameID) {
+    public GameConfigurationDAO(final Connection con, final UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -52,7 +53,7 @@ public class GameConfigurationDAO extends AbstractDAO<List<Role>> {
 
         try {
             ps = con.prepareStatement(STATEMENT);
-            ps.setInt(1, gameID);
+            ps.setObject(1, gameID);
             ps.setString(2, GameRoleAction.MASTER.getName());
 
             rs = ps.executeQuery();

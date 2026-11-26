@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar.jsx';
 import { Button } from '@/components/ui/button';
 import { Ornament, Panel, Seal } from '@/components/lupus';
 import { useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/pageNotFound.css';
 
 // Scene in SVG viewBox units; the tree/cross/lantern positions are the approved mock F.
@@ -85,7 +86,7 @@ function Scene() {
   );
 }
 
-// Link buttons: plain <a> with full page loads (backend redirects/filters still run). ! overrides the global a style.
+// Link buttons: client-side Link. ! overrides the global a style.
 const LINK_BTN = '!no-underline inline-flex w-full sm:w-auto';
 
 /**
@@ -117,10 +118,10 @@ export default function PageNotFound() {
           <Ornament className="mx-auto mt-5 max-w-xs" />
           <div className="mt-6 flex flex-col justify-center gap-3 sm:flex-row">
             <Button asChild variant="felt" size="touch" className={`${LINK_BTN} !text-lf-on-felt`}>
-              <a href="/home">Back to the village</a>
+              <Link to="/home">Back to the village</Link>
             </Button>
             <Button asChild variant="brass" size="touch" className={`${LINK_BTN} !text-lf-ink`}>
-              <a href="/rules">Read the rulebook</a>
+              <Link to="/rules">Read the rulebook</Link>
             </Button>
           </div>
         </Panel>

@@ -6,6 +6,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Search a user by username
@@ -55,7 +56,7 @@ public class SearchPlayerByUsernameDAO extends AbstractDAO<Player> {
             rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                player = new Player(rs.getString("username"), rs.getString("email"),
+                player = new Player(rs.getObject("id", UUID.class), rs.getString("username"), rs.getString("email"),
                         rs.getString("password"), rs.getDate("registration_date"));
 //                LOGGER.info("Player found: " + rs.getString("username") + " " + rs.getString("email"));
             } else {

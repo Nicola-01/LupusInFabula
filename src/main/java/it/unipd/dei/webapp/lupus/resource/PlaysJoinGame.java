@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Represents a joined entity containing information about a game and a player's participation.
@@ -21,7 +22,7 @@ public class PlaysJoinGame extends AbstractResource {
     /**
      * The ID of the game.
      */
-    private final int game_id;
+    private final UUID game_id;
 
     /**
      * The public ID of the game.
@@ -75,7 +76,7 @@ public class PlaysJoinGame extends AbstractResource {
      * @param with_who_wins    The ID of the winning team or player.
      * @param who_wins         The ID of the player who wins.
      */
-    public PlaysJoinGame(int game_id, String public_id, Timestamp start, Time game_duration, int number_of_rounds, String name, int with_who_wins, int who_wins) {
+    public PlaysJoinGame(UUID game_id, String public_id, Timestamp start, Time game_duration, int number_of_rounds, String name, int with_who_wins, int who_wins) {
         this.game_id = game_id;
         this.public_id = public_id;
         this.start = start;
@@ -92,7 +93,7 @@ public class PlaysJoinGame extends AbstractResource {
      *
      * @return The ID of the game.
      */
-    public int getGameId() {
+    public UUID getGameId() {
         return game_id;
     }
 
@@ -171,7 +172,7 @@ public class PlaysJoinGame extends AbstractResource {
         jg.writeStartObject();
         jg.writeFieldName("PlaysJoinGame");
         jg.writeStartObject();
-        jg.writeNumberField("game_id", game_id);
+        jg.writeStringField("game_id", game_id.toString());
         jg.writeStringField("public_id", public_id);
         jg.writeStringField("start", start.toString());
         String duration = game_duration != null ? game_duration.toString() : "";

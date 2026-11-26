@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Return the last player protected by the Knight in the game
@@ -18,12 +19,12 @@ public class LastPlayerProtectedByKnightDAO extends AbstractDAO<String> {
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = ? ORDER BY round DESC";
+    private static final String STATEMENT = "SELECT t.username AS target FROM action a JOIN player t ON t.id = a.target_id WHERE a.game_id = ? AND a.type_of_action = ? ORDER BY a.round DESC";
 
     /**
      * The ID of the game to retrieve
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructs a new LastPlayerProtectedByKnightDAO for search the last protected player by the Knight
@@ -31,7 +32,7 @@ public class LastPlayerProtectedByKnightDAO extends AbstractDAO<String> {
      * @param con    the connection to the database.
      * @param gameID the ID of the game.
      */
-    public LastPlayerProtectedByKnightDAO(final Connection con, int gameID) {
+    public LastPlayerProtectedByKnightDAO(final Connection con, UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -51,7 +52,7 @@ public class LastPlayerProtectedByKnightDAO extends AbstractDAO<String> {
         try {
             pstmt = con.prepareStatement(STATEMENT);
 
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setString(2, GameRoleAction.KNIGHT.getAction());
 
 

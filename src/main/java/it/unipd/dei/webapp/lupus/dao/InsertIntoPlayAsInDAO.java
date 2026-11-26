@@ -17,7 +17,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "INSERT INTO PLAYS_AS_IN VALUES(?, ?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO PLAYS_AS_IN (player_id, game_id, role, order_in_game) VALUES ((SELECT id FROM Player WHERE username = ?), ?, ?, ?)";
 
     /**
      * The PlaysAsIn object representing the player's role in a game.
@@ -53,7 +53,7 @@ public class InsertIntoPlayAsInDAO extends AbstractDAO {
         try {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setString(1, playsAsIn.getPlayerUsername());
-            pstmt.setInt(2, playsAsIn.getGameId());
+            pstmt.setObject(2, playsAsIn.getGameId());
             pstmt.setString(3, playsAsIn.getRole());
             pstmt.setInt(4, orderInGame);
 

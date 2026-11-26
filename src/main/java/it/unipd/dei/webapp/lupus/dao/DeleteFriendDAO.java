@@ -19,7 +19,7 @@ public class DeleteFriendDAO extends AbstractDAO<Friend> {
     /**
      * The SQL statement to be executed
      */
-    private static final String DELETE_STATEMENT = "DELETE FROM IS_FRIEND_WITH WHERE LOWER(player_username) = LOWER(?) AND LOWER(friend_username) = LOWER(?) RETURNING *";
+    private static final String DELETE_STATEMENT = "DELETE FROM IS_FRIEND_WITH f USING Player p, Player fp WHERE f.player_id = p.id AND f.friend_id = fp.id AND LOWER(p.username) = LOWER(?) AND LOWER(fp.username) = LOWER(?) RETURNING fp.username AS friend_username, f.date";
 
     /**
      * The player username

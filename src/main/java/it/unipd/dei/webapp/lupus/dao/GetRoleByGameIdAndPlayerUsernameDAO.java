@@ -3,6 +3,7 @@ package it.unipd.dei.webapp.lupus.dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Retrieves the role associated with a particular player username in a specific game.
@@ -16,12 +17,13 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
     /**
      * The SQL statement to retrieve the role of a player by game ID and player username.
      */
-    private static final String STATEMENT = "SELECT role FROM plays_as_in WHERE game_id = ? AND LOWER(player_username) = LOWER(?) ORDER BY order_in_game";
+    private static final String STATEMENT = "SELECT pai.role FROM plays_as_in pai JOIN player p ON p.id = pai.player_id " +
+            "WHERE pai.game_id = ? AND LOWER(p.username) = LOWER(?) ORDER BY pai.order_in_game";
 
     /**
      * The game ID for which the player's role is to be retrieved.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * The username of the player whose role is to be retrieved.
@@ -36,7 +38,7 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
      * @param gameId         the ID of the game
      * @param playerUsername the username of the player
      */
-    public GetRoleByGameIdAndPlayerUsernameDAO(final Connection con, int gameId, String playerUsername) {
+    public GetRoleByGameIdAndPlayerUsernameDAO(final Connection con, UUID gameId, String playerUsername) {
         super(con);
         this.playerUsername = playerUsername;
         this.gameId = gameId;
@@ -58,7 +60,7 @@ public class GetRoleByGameIdAndPlayerUsernameDAO extends AbstractDAO<String> {
 
             pstmt = con.prepareStatement(STATEMENT);
             //LOGGER.info("gameId: " + gameId + " playerUsername: " + playerUsername);
-            pstmt.setInt(1, gameId);
+            pstmt.setObject(1, gameId);
             pstmt.setString(2, playerUsername);
             rs = pstmt.executeQuery();
 

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { BookOpen, Castle, History, LogOut, Plus, UserRound, Users } from 'lucide-react';
 import Navbar from '../components/Navbar.jsx';
 import { Button } from '@/components/ui/button.jsx';
@@ -10,13 +11,14 @@ import backgroundHtml from '../components/home/villageBackground.html?raw';
 // Global `a` colour/underline rules would override the button colours: the entry links get `!` overrides.
 const ENTRY_TEXT = { felt: '!text-lf-on-felt', brass: '!text-lf-ink', wax: '!text-lf-wax-text' };
 
-function EntryLink({ href, variant, id, icon: Icon, children }) {
+// Client-side Link; reloadDocument only for /logout (backend endpoint that invalidates the session).
+function EntryLink({ to, variant, id, icon: Icon, reloadDocument, children }) {
     return (
         <Button asChild variant={variant} size="touch" className={`w-full !no-underline ${ENTRY_TEXT[variant]}`}>
-            <a href={href} id={id}>
+            <Link to={to} id={id} reloadDocument={reloadDocument}>
                 <Icon className="size-4" aria-hidden="true" />
                 {children}
-            </a>
+            </Link>
         </Button>
     );
 }
@@ -89,7 +91,7 @@ export default function Home() {
                                     kind={notice.kind}
                                     title={notice.text}
                                     details={notice.gameId && (
-                                        <a href={`/village/${notice.gameId}`} className="font-bold !text-lf-ink !underline">{notice.gameId}</a>
+                                        <Link to={`/village/${notice.gameId}`} className="font-bold !text-lf-ink !underline">{notice.gameId}</Link>
                                     )}
                                 />
                             )}
@@ -99,15 +101,15 @@ export default function Home() {
                     {/* md+: the two blocks flank the campfire, which sits in the middle of the fixed background. */}
                     <section className="grid gap-6 md:grid-cols-2" style={{ columnGap: 'min(32vw, 480px)' }}>
                         <Block title="Habitant" icon={UserRound}>
-                            <EntryLink href="/habitant/me" variant="felt" icon={UserRound}>Personal Area</EntryLink>
-                            <EntryLink href={user ? "/habitant/" + encodeURIComponent(user.username) : "/habitant/"} variant="felt" icon={History}>Statistics and History</EntryLink>
-                            <EntryLink href="/logout" variant="wax" icon={LogOut} id="logoutBT">Logout</EntryLink>
+                            <EntryLink to="/habitant/me" variant="felt" icon={UserRound}>Personal Area</EntryLink>
+                            <EntryLink to={user ? "/habitant/" + encodeURIComponent(user.username) : "/habitant/"} variant="felt" icon={History}>Statistics and History</EntryLink>
+                            <EntryLink to="/logout" reloadDocument variant="wax" icon={LogOut} id="logoutBT">Logout</EntryLink>
                         </Block>
 
                         <Block title="Village" icon={Castle}>
-                            <EntryLink href="/rules" variant="felt" icon={BookOpen}>Rulebook</EntryLink>
-                            <EntryLink href="/newVillage" variant="felt" icon={Plus}>Create a village</EntryLink>
-                            <EntryLink href="/village" variant="brass" icon={Users}>Join your village</EntryLink>
+                            <EntryLink to="/rules" variant="felt" icon={BookOpen}>Rulebook</EntryLink>
+                            <EntryLink to="/newVillage" variant="felt" icon={Plus}>Create a village</EntryLink>
+                            <EntryLink to="/village" variant="brass" icon={Users}>Join your village</EntryLink>
                         </Block>
                     </section>
                 </div>

@@ -3,13 +3,12 @@ package it.unipd.dei.webapp.lupus.controller;
 import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdByPlayerUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.rest.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +18,7 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -119,8 +119,8 @@ public class GameController {
     public void list(final HttpServletRequest req, final HttpServletResponse res) throws IOException {
         dispatch(req, res, () -> {
             if (req.getMethod().equals("GET")) {
-                String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
-                int privateGameID = new GetGameIdByPlayerUsernameDAO(dataSource.getConnection(), username).access().getOutputParam();
+                String username = Auth.currentPlayer(req).getUsername();
+                UUID privateGameID = new GetGameIdByPlayerUsernameDAO(dataSource.getConnection(), username).access().getOutputParam();
                 new GameStatusRR(req, res, dataSource, privateGameID).serve();
                 return true;
             }
@@ -190,8 +190,8 @@ public class GameController {
         final String method = req.getMethod();
         Message m;
 
-        int gameID = new GetGameIdFormPublicGameIdDAO(dataSource.getConnection(), publicGameID).access().getOutputParam();
-        if (gameID == -1) {
+        UUID gameID = new GetGameIdFormPublicGameIdDAO(dataSource.getConnection(), publicGameID).access().getOutputParam();
+        if (gameID == null) {
             LOGGER.warn("Invalid gameID, the game %s doesn't exists.", publicGameID);
 
             ErrorCode ec = ErrorCode.GAME_NOT_FOUND;
@@ -278,7 +278,7 @@ public class GameController {
 
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setAction(Actions.GAME_DISPATCHER_ACTION);
-        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+        LogContext.setUser(Auth.currentPlayer(req).getUsername());
 
         final OutputStream out = res.getOutputStream();
 

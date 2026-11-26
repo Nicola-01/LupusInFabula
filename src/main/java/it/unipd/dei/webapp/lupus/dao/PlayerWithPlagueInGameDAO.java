@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * DAO for retrieving players with the plague in a specific game and round.
@@ -15,11 +16,11 @@ public class PlayerWithPlagueInGameDAO extends AbstractDAO<String> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND round = ? AND type_of_action = ?";
+    private static final String STATEMENT = "SELECT t.username AS target FROM action a JOIN player t ON t.id = a.target_id WHERE a.game_id = ? AND a.round = ? AND a.type_of_action = ?";
     /**
      * The private ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * The round of the game.
@@ -33,7 +34,7 @@ public class PlayerWithPlagueInGameDAO extends AbstractDAO<String> {
      * @param gameID the ID of the game
      * @param round  the round of the game
      */
-    public PlayerWithPlagueInGameDAO(Connection con, int gameID, int round) {
+    public PlayerWithPlagueInGameDAO(Connection con, UUID gameID, int round) {
         super(con);
         this.gameID = gameID;
         this.round = round;
@@ -51,7 +52,7 @@ public class PlayerWithPlagueInGameDAO extends AbstractDAO<String> {
         this.outputParam = null;
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setInt(2, round);
             pstmt.setString(3, GameRoleAction.PLAGUE_SPREADER.getAction());
             rs = pstmt.executeQuery();

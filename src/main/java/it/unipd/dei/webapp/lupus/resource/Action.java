@@ -3,11 +3,11 @@ package it.unipd.dei.webapp.lupus.resource;
 import com.fasterxml.jackson.core.JsonGenerator;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import jakarta.servlet.http.HttpServlet;
-
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * Class to manage the row of table action in database
@@ -30,7 +30,7 @@ public class Action extends AbstractResource implements Comparable {
     /**
      * Numeric identifier for the game.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * Player who performed the action.
@@ -79,7 +79,7 @@ public class Action extends AbstractResource implements Comparable {
      * @param typeAction represent the name of the type of action
      * @param target     player that suffers the action
      */
-    public Action(int gameId, String player, int round, int phase, int subphase, String typeAction, String target) {
+    public Action(UUID gameId, String player, int round, int phase, int subphase, String typeAction, String target) {
         this.gameId = gameId;
         this.player = player;
         this.round = round;
@@ -99,7 +99,7 @@ public class Action extends AbstractResource implements Comparable {
      * @param phase      phase where it was the action
      * @param typeAction represent the name of the type of action
      */
-    public Action(int gameId, String player, int round, int phase, String typeAction) {
+    public Action(UUID gameId, String player, int round, int phase, String typeAction) {
         this(gameId, player, round, phase, 0, typeAction, null);
     }
 
@@ -115,7 +115,7 @@ public class Action extends AbstractResource implements Comparable {
      * @param target     player that suffers the action
      * @param blocked    if the action was blocked
      */
-    public Action(int gameId, String player, int round, int phase, int subphase, String typeAction, String target, boolean blocked) {
+    public Action(UUID gameId, String player, int round, int phase, int subphase, String typeAction, String target, boolean blocked) {
         this(gameId, player, round, phase, subphase, typeAction, target);
         this.blocked = blocked;
     }
@@ -127,7 +127,7 @@ public class Action extends AbstractResource implements Comparable {
      * @throws SQLException if a database access error occurs
      */
     public Action(ResultSet r) throws SQLException {
-        this(r.getInt("game_id"),
+        this(r.getObject("game_id", UUID.class),
                 r.getString("player_username"),
                 r.getInt("round"),
                 r.getInt("phase"),
@@ -141,7 +141,7 @@ public class Action extends AbstractResource implements Comparable {
      *
      * @return The gameId.
      */
-    public int getGameId() {
+    public UUID getGameId() {
         return gameId;
     }
 
@@ -225,8 +225,8 @@ public class Action extends AbstractResource implements Comparable {
             if (!i.getName().equals("JSON_NAME") && !i.getName().equals("VOTE"))
                 if (i.getName().equals("phase"))
                     jg.writeObjectField(i.getName(), i.getInt(this) == GamePhase.NIGHT.getId() ? GamePhase.NIGHT.getName() : GamePhase.DAY.getName());
-                else
-                    jg.writeObjectField(i.getName(), i.get(this));
+                else // no ObjectCodec on this generator: a UUID must be written as its string
+                    jg.writeObjectField(i.getName(), i.get(this) instanceof UUID u ? u.toString() : i.get(this));
 
         jg.writeEndObject();
         jg.writeEndObject();

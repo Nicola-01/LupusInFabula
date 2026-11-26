@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowDown, ArrowUp, ArrowUpDown, Check } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -10,7 +10,7 @@ import FriendActionButton from '../components/friend/FriendActionButton.jsx';
 import PageNotFound from './PageNotFound.jsx';
 import { useLoginChecker } from '../utils/session.js';
 import {
-    contextPath, genericGETRequest, capitalizeFirstLetter,
+    contextPath, capitalizeFirstLetter,
     HTTP_STATUS_OK, HTTP_STATUS_NOT_FOUND, HTTP_STATUS_FORBIDDEN, JSON_resource_list,
 } from '../utils/utils.js';
 
@@ -127,6 +127,9 @@ function computeGeneral(list) {
         gamesLost: totalGamesPlayed - totalGamesWon,
         winRate: percentage,
         gamesAsMaster: totalGamesAsMaster,
+        // no finished game as a player: a 0% rate would read as "always lost"
+        noRate: totalGamesPlayed === 0,
+        mastered: list.filter((item) => item['PlaysJoinGame'].name === 'master').length,
     };
 }
 
@@ -204,15 +207,17 @@ function Bar({ role, max }) {
 
 // Donut: wins arc over a losses track. r=15.9155 gives a circumference of 100, so dash values are percentages.
 function WinRing({ pct }) {
+    const empty = pct === null; // no finished game as a player
     return (
         <div className="relative mx-auto size-44">
-            <svg viewBox="0 0 42 42" className="size-full -rotate-90" role="img" aria-label={`Win rate ${fmtPct(pct)}`}>
-                <circle cx="21" cy="21" r="15.9155" fill="none" strokeWidth="5" style={{ stroke: 'var(--lf-wax)' }} />
-                <circle cx="21" cy="21" r="15.9155" fill="none" strokeWidth="5" pathLength="100"
-                    strokeDasharray={`${pct} ${100 - pct}`} style={{ stroke: 'var(--lf-felt)' }} />
+            <svg viewBox="0 0 42 42" className="size-full -rotate-90" role="img" aria-label={empty ? 'No win rate yet' : `Win rate ${fmtPct(pct)}`}>
+                <circle cx="21" cy="21" r="15.9155" fill="none" strokeWidth="5"
+                    style={{ stroke: empty ? 'var(--lf-ink2)' : 'var(--lf-wax)', opacity: empty ? 0.25 : 1 }} />
+                {!empty && <circle cx="21" cy="21" r="15.9155" fill="none" strokeWidth="5" pathLength="100"
+                    strokeDasharray={`${pct} ${100 - pct}`} style={{ stroke: 'var(--lf-felt)' }} />}
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="font-lf-title text-3xl">{fmtPct(pct)}</span>
+                <span className="font-lf-title text-3xl">{empty ? '—' : fmtPct(pct)}</span>
                 <span className="text-xs uppercase tracking-widest text-lf-ink2">win rate</span>
             </div>
         </div>
@@ -229,8 +234,26 @@ function Tile({ label, value, sub }) {
     );
 }
 
+// GET like utils.js genericGETRequest, but a fetch that can be aborted on unmount.
+// onDone(status, body): body is the parsed JSON on 200, null otherwise (0 = network error). Aborted requests call nothing.
+function request(path, signal, onDone) {
+    fetch(contextPath + path, { signal, credentials: 'same-origin' }).then(
+        async (res) => {
+            const body = res.ok ? await res.json() : null;
+            if (!signal.aborted) onDone(res.status, body);
+        },
+        () => { if (!signal.aborted) onDone(0, null); },
+    );
+}
+
+// The key remounts the page when the route changes player (/habitant/A -> /habitant/B): all state and requests restart.
 export default function UserStatistics() {
-    const { username: requested } = useParams();
+    const { username } = useParams();
+    return <Statistics key={username} requested={username} />;
+}
+
+function Statistics({ requested }) {
+    const navigate = useNavigate();
     const { user, loading } = useLoginChecker();
 
     const [habitant, setHabitant] = useState(undefined); // undefined = checking, null = not found, string = canonical name
@@ -241,68 +264,53 @@ export default function UserStatistics() {
     const [general, setGeneral] = useState(null);        // null = not loaded / failed
     const [sort, setSort] = useState({ key: 'start', dir: 'desc' });
 
-    const handleError = (status) => {
-        setFailure(status === HTTP_STATUS_FORBIDDEN ? 'login' : 'unexpected');
-        if (status !== HTTP_STATUS_FORBIDDEN) alert("Unexpected error");
-    };
-
-    const handleHttpStatus = (req) => {
-        if (req.status === HTTP_STATUS_OK) {
-            setMainShown(true);
-            return true;
+    // Old handleError: 403 = not logged in (no alert), anything else = unexpected error.
+    const fail = (status) => {
+        if (status === HTTP_STATUS_FORBIDDEN) {
+            setFailure('login');
+        } else {
+            setFailure('unexpected');
+            alert("Unexpected error");
         }
-        handleError(req.status);
-        return false;
     };
 
+    // Shared handling of the three list requests of the old page.
+    const onList = (status, body, apply) => {
+        if (status !== HTTP_STATUS_OK) return fail(status);
+        setMainShown(true);
+        const list = body[JSON_resource_list];
+        if (list == null) {
+            alert("User Not Existing");
+            return;
+        }
+        apply(list);
+    };
+
+    // Username check. The backend redirected to the canonical spelling (exact match), so the page does the same.
     useEffect(() => {
-        genericGETRequest(contextPath + "api/habitant/" + requested, (req) => {
-            if (req.readyState !== XMLHttpRequest.DONE) return;
-            if (req.status === HTTP_STATUS_OK) setHabitant(JSON.parse(req.responseText).username);
-            else if (req.status === HTTP_STATUS_NOT_FOUND) setHabitant(null);
-            else if (req.status === 401 || req.status === HTTP_STATUS_FORBIDDEN) setFailure('login');
-            else handleError(req.status);
+        const ctl = new AbortController();
+        request('api/habitant/' + requested, ctl.signal, (status, body) => {
+            if (status === HTTP_STATUS_OK) {
+                if (body.username !== requested) navigate('/habitant/' + encodeURIComponent(body.username), { replace: true });
+                else setHabitant(body.username);
+            }
+            else if (status === HTTP_STATUS_NOT_FOUND) setHabitant(null);
+            else if (status === 401 || status === HTTP_STATUS_FORBIDDEN) setFailure('login');
+            else fail(status);
         });
-    }, [requested]);
+        return () => ctl.abort();
+    }, [requested, navigate]);
 
-    const getLogs = (req) => {
-        if (req.readyState !== XMLHttpRequest.DONE) return;
-        if (!handleHttpStatus(req)) return;
-        const list = JSON.parse(req.responseText)[JSON_resource_list];
-        if (list == null) {
-            alert("User Not Existing");
-            return;
-        }
-        setLogRows(computeLogs(list));
-    };
-
-    const getStatsRole = (req) => {
-        if (req.readyState !== XMLHttpRequest.DONE) return;
-        if (!handleHttpStatus(req)) return;
-        const list = JSON.parse(req.responseText)[JSON_resource_list];
-        if (list == null) {
-            alert("User Not Existing");
-            return;
-        }
-        setRoleData(computeRoles(list));
-    };
-
-    const getGeneralStats = (req) => {
-        if (req.readyState !== XMLHttpRequest.DONE) return;
-        if (!handleHttpStatus(req)) return;
-        const list = JSON.parse(req.responseText)[JSON_resource_list];
-        if (list == null) {
-            alert("User Not Existing");
-            return;
-        }
-        setGeneral(computeGeneral(list));
-    };
-
+    // The three requests of the old page (logs twice: game list and general statistics).
     useEffect(() => {
         if (!habitant) return;
-        genericGETRequest(contextPath + "user/" + habitant + "/logs", getLogs);
-        genericGETRequest(contextPath + "user/" + habitant + "/statistic", getStatsRole);
-        genericGETRequest(contextPath + "user/" + habitant + "/logs", getGeneralStats);
+        const ctl = new AbortController();
+        const get = (path, apply) => request('user/' + habitant + '/' + path, ctl.signal,
+            (status, body) => onList(status, body, apply));
+        get('logs', (list) => setLogRows(computeLogs(list)));
+        get('statistic', (list) => setRoleData(computeRoles(list)));
+        get('logs', (list) => setGeneral(computeGeneral(list)));
+        return () => ctl.abort();
     }, [habitant]);
 
     const sortedLogs = useMemo(() => {
@@ -344,7 +352,7 @@ export default function UserStatistics() {
     function searchThePlayer() {
         const username = document.getElementById("playerUsername").value;
         if (username.trim() !== "") {
-            window.location.href = contextPath + "habitant/" + username;
+            navigate('/habitant/' + encodeURIComponent(username));
         } else {
             console.error("Username cannot be empty");
         }
@@ -391,7 +399,7 @@ export default function UserStatistics() {
                         value={general ? general.gamesWon : dash}
                         sub={general ? `${general.gamesLost} losses` : undefined}
                     />
-                    <Tile label="Win rate" value={general ? fmtPct(general.winRate) : dash} />
+                    <Tile label="Win rate" value={general && !general.noRate ? fmtPct(general.winRate) : dash} />
                     <Tile
                         label="Usually plays as"
                         value={topRole ? topRole.role : dash}
@@ -423,9 +431,12 @@ export default function UserStatistics() {
                     <Panel className="flex flex-col gap-4">
                         <h2 className="font-lf-heading text-xl text-lf-rubric">Win rate</h2>
                         <Ornament />
-                        <WinRing pct={general ? general.winRate : 0} />
+                        <WinRing pct={general && !general.noRate ? general.winRate : null} />
                         <p className="text-center text-sm text-lf-ink2">
-                            {general ? `${general.gamesWon} wins out of ${general.gamesWon + general.gamesLost} games` : dash}
+                            {!general ? dash
+                                : !general.noRate ? `${general.gamesWon} wins out of ${general.gamesWon + general.gamesLost} games`
+                                : general.mastered > 0 ? `No finished games as a player yet. Game master of ${general.mastered} finished game${general.mastered > 1 ? "s" : ""}.`
+                                : 'No finished games yet.'}
                         </p>
                     </Panel>
                 </div>
@@ -456,10 +467,10 @@ export default function UserStatistics() {
                                     <TableCell>{g.role}</TableCell>
                                     <TableCell><Outcome value={g.outcome} /></TableCell>
                                     <TableCell>
-                                        <a href={contextPath + "village/" + g.publicId} target="_blank" rel="noreferrer"
+                                        <Link to={"/village/" + g.publicId} target="_blank" rel="noreferrer"
                                             className="inline-flex min-h-11 items-center !text-lf-rubric underline decoration-lf-brass underline-offset-4">
                                             View match
-                                        </a>
+                                        </Link>
                                     </TableCell>
                                 </TableRow>
                             ))}
