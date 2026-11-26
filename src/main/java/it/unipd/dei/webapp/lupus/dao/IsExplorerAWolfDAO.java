@@ -5,6 +5,7 @@ import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Return whether the Explorer role has already been used the action explore in the game
@@ -23,7 +24,7 @@ public class IsExplorerAWolfDAO extends AbstractDAO<Boolean> {
     /**
      * The ID of the game to retrieve
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructs a new ExplorerAlreadyExploreDAO for search if the explorer already explore
@@ -31,7 +32,7 @@ public class IsExplorerAWolfDAO extends AbstractDAO<Boolean> {
      * @param con    the connection to the database.
      * @param gameID the ID of the game.
      */
-    public IsExplorerAWolfDAO(Connection con, int gameID) {
+    public IsExplorerAWolfDAO(Connection con, UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -50,7 +51,7 @@ public class IsExplorerAWolfDAO extends AbstractDAO<Boolean> {
         try {
             pstmt = con.prepareStatement(STATEMENT);
 
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setString(2, GameRoleAction.EXPLORER.getAction());
 
             rs = pstmt.executeQuery();

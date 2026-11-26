@@ -4,6 +4,7 @@ import it.unipd.dei.webapp.lupus.resource.PlaysAsIn;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.UUID;
 
 /**
  * Adds a new record indicating the role a player has in a game.
@@ -17,8 +18,8 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
     /**
      * The SQL statement to be executed.
      */
-    private final static String STATEMENT = "UPDATE plays_as_in SET round_of_death = ?, phase_of_death = ?, duration_of_life = NOW() - (SELECT game.start FROM game where game.id = ?)" +
-            "where game_id = ? AND LOWER(player_username) = LOWER(?)";
+    private final static String STATEMENT = "UPDATE plays_as_in SET round_of_death = ?, phase_of_death = ?, duration_of_life = NOW() - (SELECT game.start FROM game WHERE game.id = ?) " +
+            "WHERE game_id = ? AND player_id IN (SELECT id FROM player WHERE LOWER(username) = LOWER(?))";
 
     /**
      * The PlaysAsIn object containing information about the player's role and death in the game
@@ -48,9 +49,9 @@ public class UpdateDeathOfPlayerInTheGameDAO extends AbstractDAO {
             pstmt = con.prepareStatement(STATEMENT);
             pstmt.setInt(1, playsAsIn.getRoundOfDeath());
             pstmt.setInt(2, playsAsIn.getPhaseOfDeath());
-            pstmt.setInt(3, playsAsIn.getGameId());
+            pstmt.setObject(3, playsAsIn.getGameId());
 
-            pstmt.setInt(4, playsAsIn.getGameId());
+            pstmt.setObject(4, playsAsIn.getGameId());
             pstmt.setString(5, playsAsIn.getPlayerUsername());
 
             //LOGGER.info("Executing updateDeathOfPlayerInTheGameDAO");

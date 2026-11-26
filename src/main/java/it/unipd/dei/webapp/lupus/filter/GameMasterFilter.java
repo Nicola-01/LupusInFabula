@@ -1,17 +1,14 @@
 package it.unipd.dei.webapp.lupus.filter;
 
-import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
-import it.unipd.dei.webapp.lupus.dao.GetMasterFromIdGameDAO;
-import it.unipd.dei.webapp.lupus.dao.PlayerInGameDAO;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.StringFormatterMessageFactory;
@@ -19,7 +16,6 @@ import org.apache.logging.log4j.message.StringFormatterMessageFactory;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Base64;
 
 /**
  * Filter to manage access to Master protected resources.<br>
@@ -38,19 +34,10 @@ public class GameMasterFilter implements Filter {
             StringFormatterMessageFactory.INSTANCE);
 
     /**
-     * The Base64 Decoder
-     */
-    private static final Base64.Decoder DECODER = Base64.getDecoder();
-
-    /**
-     * The name of the user attribute in the session
+     * The name of the (former session) attribute with the public id of the game the user masters.
+     * Not stored anymore: the value is computed by {@link Auth#masterGame}.
      */
     public static final String GAMEMASTER_ATTRIBUTE = "gamemaster";
-
-    /**
-     * The configuration for the filter
-     */
-    private FilterConfig config = null;
 
     /**
      * The connection pool to the database.
@@ -66,16 +53,12 @@ public class GameMasterFilter implements Filter {
         this.ds = ds;
     }
 
-
     @Override
     public void init(final FilterConfig config) throws ServletException {
-
         if (config == null) {
             LOGGER.error("Filter configuration cannot be null.");
             throw new ServletException("Filter configuration cannot be null.");
         }
-        this.config = config;
-
     }
 
     @Override
@@ -91,22 +74,19 @@ public class GameMasterFilter implements Filter {
                 throw new ServletException("Only HTTP requests/responses are allowed.");
             }
 
-
-            LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+            Player player = Auth.currentPlayer(req);
+            if (player != null)
+                LogContext.setUser(player.getUsername());
 
             LOGGER.info("request URL =  %s", req.getRequestURL());
             String path = req.getRequestURI();
             path = path.substring(req.getContextPath().length());
 
             // this filter accept only request that start with /game/* and end with /master
-            if (path.startsWith("/game") && (path.endsWith("/master")) ) {
+            if (path.startsWith("/game") && (path.endsWith("/master"))) {
                 // if the path contain /master check if the user is the master in the game
 
-                final HttpSession session = req.getSession(false);
-
-
-                // if the session not exists
-                if (session == null) {
+                if (player == null) {
                     LOGGER.warn("Authentication required to access resource %s with method %s.", req.getRequestURI(),
                             req.getMethod());
 
@@ -116,76 +96,25 @@ public class GameMasterFilter implements Filter {
 
                     m.toJSON(res.getOutputStream());
                     return; // in this case the master is not even logged in
-                } else {
-                    // n.b. there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
+                }
 
-                    path = path.replace("/master", "");
-                    final String publicGame = path.substring(path.lastIndexOf("/") + 1);
-                    LogContext.setGame(publicGame);
+                // n.b. there isn't a check if the URL is correct, since the GameDispatcherServlet does that job.
+                path = path.replace("/master", "");
+                final String publicGame = path.substring(path.lastIndexOf("/") + 1);
+                LogContext.setGame(publicGame);
 
-                    LOGGER.info("Public GameId found on URL: " + publicGame);
-                    int gameID = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicGame).access().getOutputParam();
-                    String publicGameID = new PlayerInGameDAO(ds.getConnection(), publicGame).access().getOutputParam();
+                LOGGER.info("Public GameId found on URL: " + publicGame);
 
-                    final Object gmAttribute = session.getAttribute(GAMEMASTER_ATTRIBUTE);
+                // the game the user masters, empty if none: it must be the game of the URL
+                if (!publicGame.equals(Auth.masterGame(ds, player.getUsername()))) {
+                    LOGGER.warn("%s is not the game master of game %s", player.getUsername(), publicGame);
 
-                    // there might exist a session but without any master in it
-                    if (gmAttribute == null) {
+                    ErrorCode ec = ErrorCode.DIFFERENT_GAME_SESSION;
+                    res.setStatus(ec.getHTTPCode());
 
-                        LOGGER.warn(
-                                "Authentication required to access resource %s with method %s. Session %s exists but no GameID found in session.",
-                                req.getRequestURI(), req.getMethod(), session.getId());
-
-                        // Attempt to authenticate the master even if they don't have the "gamemaster" session attribute.
-                        // This filter is executed after the UserFilter, so the login session attribute is already valid.
-                        Player currentPlayer = (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE); // master's username
-                        LOGGER.info("Trying to authenticate the currentPlayer %s as a gamemaster in the game %d", currentPlayer.getUsername(), gameID);
-
-                        String masterOfGame = new GetMasterFromIdGameDAO(ds.getConnection(), gameID).access().getOutputParam();
-
-                        if (masterOfGame == null) {
-                            LOGGER.warn("There is no game with id %s", publicGame);
-
-                            ErrorCode ec = ErrorCode.NO_GAME_SESSION;
-                            res.setStatus(ec.getHTTPCode());
-                            Message m = new Message("There is no game with id " + publicGame, ec.getErrorCode(), ec.getErrorMessage());
-
-                            m.toJSON(res.getOutputStream());
-//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
-                            return;
-                        } else if (!masterOfGame.equals(currentPlayer.getUsername())) {
-                            LOGGER.warn("%s is not the gamemaster in game %s", currentPlayer.getUsername(), publicGame);
-
-                            ErrorCode ec = ErrorCode.NOT_MASTER;
-                            res.setStatus(ec.getHTTPCode());
-                            Message m = new Message("You are not the gamemaster in game \'" + publicGame + "\'.", ec.getErrorCode(), ec.getErrorMessage());
-
-                            m.toJSON(res.getOutputStream());
-//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
-                            return;
-                        } else {
-                            // the player is the master in the game
-                            session.setAttribute(GAMEMASTER_ATTRIBUTE, publicGameID);
-                        }
-
-                    } else {
-                        int sessionGameID =  new GetGameIdFormPublicGameIdDAO(ds.getConnection(), (String)gmAttribute).access().getOutputParam();
-                        // check if it's the same game
-                        if (sessionGameID != gameID) {
-                            LOGGER.warn("Different gameID");
-
-                            ErrorCode ec = ErrorCode.DIFFERENT_GAME_SESSION;
-                            res.setStatus(ec.getHTTPCode());
-
-                            Message m = new Message("You are not the game master of the game \'" + publicGame + "\'.", ec.getErrorCode(), ec.getErrorMessage());
-                            LOGGER.warn("Different gameID founded: %d != %d", sessionGameID, gameID);
-
-                            m.toJSON(res.getOutputStream());
-//                            res.sendRedirect(req.getContextPath() + "/jsp/home.jsp");
-                            return;
-                        }
-                        // else the player is the master in the game
-                    }
+                    Message m = new Message("You are not the game master of the game \'" + publicGame + "\'.", ec.getErrorCode(), ec.getErrorMessage());
+                    m.toJSON(res.getOutputStream());
+                    return;
                 }
             }
 
@@ -206,8 +135,6 @@ public class GameMasterFilter implements Filter {
 
     @Override
     public void destroy() {
-        config = null;
         ds = null;
     }
-
 }

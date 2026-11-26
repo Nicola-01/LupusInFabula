@@ -1,8 +1,8 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.ListFriendsDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -40,13 +40,13 @@ public class ListFriendsRR extends AbstractRR {
      */
     @Override
     protected void doServe() throws IOException {
-        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+        LogContext.setUser(Auth.currentPlayer(req).getUsername());
         LogContext.setIPAddress(req.getRemoteAddr());
 
 
         List<Friend> fl = null;
         Message m = null;
-        Player player = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE));
+        Player player = Auth.currentPlayer(req);
 
         try {
 

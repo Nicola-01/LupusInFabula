@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 
 /**
@@ -20,14 +21,16 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT * " +
-            "FROM  action a " +
-            "WHERE a.game_id = ? and a.blocked = false " +
+    private static final String STATEMENT = "SELECT a.game_id, p.username AS player_username, a.round, a.phase, a.subphase, a.type_of_action, t.username AS target, a.blocked " +
+            "FROM action a " +
+            "JOIN player p ON p.id = a.player_id " +
+            "JOIN player t ON t.id = a.target_id " +
+            "WHERE a.game_id = ? AND a.blocked = false " +
             "ORDER BY a.round ASC, a.phase DESC, a.subphase ASC";
     /**
      * The ID of the game to retrieve
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructor for the class
@@ -35,7 +38,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
      * @param con    the connection to the database.
      * @param gameID the ID of the game to retrieve.
      */
-    public GetActionByIdGameDAO(final Connection con, final int gameID) {
+    public GetActionByIdGameDAO(final Connection con, final UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -53,7 +56,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
 
         try {
             query = con.prepareStatement(STATEMENT);
-            query.setInt(1, gameID);
+            query.setObject(1, gameID);
 
             rs = query.executeQuery();
 
@@ -62,7 +65,7 @@ public class GetActionByIdGameDAO extends AbstractDAO<ArrayList<Action>> {
             if (query != null) query.close();
             if (rs != null) rs.close();
         }
-        LOGGER.info(String.format("Found for game with id %d, %d logs.", gameID, r.size()));
+        LOGGER.info(String.format("Found for game with id %s, %d logs.", gameID, r.size()));
         this.outputParam = r;
     }
 }

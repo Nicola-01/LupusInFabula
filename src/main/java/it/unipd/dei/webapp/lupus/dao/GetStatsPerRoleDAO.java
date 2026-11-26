@@ -30,7 +30,8 @@ public class GetStatsPerRoleDAO extends AbstractDAO<List<StatsRole>> {
             "FROM plays_as_in " +
             "JOIN public.game g ON g.id = plays_as_in.game_id " +
             "JOIN public.role r ON plays_as_in.role = r.name " +
-            "WHERE g.who_wins != -1 AND lower(player_username) = lower(?)" +
+            "JOIN Player p ON p.id = plays_as_in.player_id " +
+            "WHERE g.who_wins != -1 AND lower(p.username) = lower(?) " +
             "GROUP BY name";
 
     /**

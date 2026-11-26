@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Search a user by partial username
@@ -21,7 +22,7 @@ public class SearchPlayerByPartialUsernameDAO extends AbstractDAO<List<Player>> 
     /**
      * The SQL statement to be executed
      */
-    private static final String STATEMENT = "SELECT * FROM player WHERE LOWER(username) LIKE LOWER(CONCAT('%', ?, '%')) ORDER BY username";
+    private static final String STATEMENT = "SELECT * FROM Player WHERE LOWER(username) LIKE LOWER(CONCAT('%', ?, '%')) ORDER BY username";
 
     /**
      * The username to search
@@ -57,7 +58,7 @@ public class SearchPlayerByPartialUsernameDAO extends AbstractDAO<List<Player>> 
             rs = pstmt.executeQuery();
 
             while (rs.next())
-                players.add(new Player(rs.getString("username")));
+                players.add(new Player(rs.getObject("id", UUID.class), rs.getString("username"), null, null, null));
 
         } finally {
             if (pstmt != null) {

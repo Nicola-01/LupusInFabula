@@ -2,8 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.SelectRoleDAO;
 import it.unipd.dei.webapp.lupus.dao.SelectSettingsDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,7 +30,7 @@ public class GameSettingsGetRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException, SQLException {
 
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
         try {

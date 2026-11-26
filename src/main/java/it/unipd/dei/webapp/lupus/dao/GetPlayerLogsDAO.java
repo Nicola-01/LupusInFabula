@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * DAO class to retrieve logs of a specific player.
@@ -28,7 +29,8 @@ public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
             "on g.id = plays_as_in.game_id join " +
             "public.role r " +
             "on plays_as_in.role = r.name " +
-            "WHERE lower(player_username) = lower(?)";
+            "JOIN Player p ON p.id = plays_as_in.player_id " +
+            "WHERE lower(p.username) = lower(?)";
 
     /**
      * The username of the player whose logs are to be retrieved.
@@ -63,7 +65,7 @@ public class GetPlayerLogsDAO extends AbstractDAO<List<PlaysJoinGame>> {
             rs = pstmt.executeQuery();
             while (rs.next()) {
                 join.add(new PlaysJoinGame(
-                        rs.getInt("game_id"),
+                        rs.getObject("game_id", UUID.class),
                         rs.getString("public_id"),
                         rs.getTimestamp("start"),
                         rs.getTime("game_duration"),

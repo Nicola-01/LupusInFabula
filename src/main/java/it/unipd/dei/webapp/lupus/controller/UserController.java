@@ -1,12 +1,11 @@
 package it.unipd.dei.webapp.lupus.controller;
 
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Actions;
 import it.unipd.dei.webapp.lupus.resource.LogContext;
 import it.unipd.dei.webapp.lupus.resource.Message;
-import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.rest.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -82,7 +81,7 @@ public class UserController {
         dispatch(req, res, () -> {
             switch (req.getMethod()) {
                 case "GET":
-                    String username = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+                    String username = Auth.currentPlayer(req).getUsername();
                     LOGGER.info("GET with /me");
                     new UserUsernameGetRR(username, req, res, dataSource).serve();
                     break;
@@ -215,7 +214,7 @@ public class UserController {
 
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setAction(Actions.USER_DISPATCHER_ACTION);
-        LogContext.setUser(((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername());
+        LogContext.setUser(Auth.currentPlayer(req).getUsername());
 
         final OutputStream out = res.getOutputStream();
 

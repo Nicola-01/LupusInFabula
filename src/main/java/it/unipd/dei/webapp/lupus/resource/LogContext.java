@@ -17,6 +17,7 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import org.apache.logging.log4j.ThreadContext;
+import java.util.UUID;
 
 
 /**
@@ -150,7 +151,7 @@ public final class LogContext {
 	 *
 	 * @param game current game ID.
 	 */
-	public static void setGame(final int game) {
+	public static void setGame(final UUID game) {
 		setGame(String.valueOf(game));
 	}
 

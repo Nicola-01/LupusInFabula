@@ -9,6 +9,7 @@ services:
       TZ: Europe/Rome
       DB_URL: jdbc:postgresql://db:5432/postgres
       DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
       APP_VERSION: ${APP_VERSION:-dev}
     depends_on:
       db:

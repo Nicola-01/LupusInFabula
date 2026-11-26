@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Returns if the role of Dorky has become a Wolf pointing at an evil role.
@@ -23,12 +24,12 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
     /**
      * The SQL statement for selecting targets of "point" action in a game.
      */
-    private static final String STATEMENT = "SELECT target FROM action WHERE game_id = ? AND type_of_action = ?";
+    private static final String STATEMENT = "SELECT t.username AS target FROM action a JOIN player t ON t.id = a.target_id WHERE a.game_id = ? AND a.type_of_action = ?";
 
     /**
      * The ID of the game to check.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * The data source used for obtaining connections.
@@ -42,7 +43,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
      * @param ds     the data source for obtaining connections
      * @param gameId the ID of the game to check
      */
-    public IsDorkyAWolfDAO(final Connection con, DataSource ds, int gameId) {
+    public IsDorkyAWolfDAO(final Connection con, DataSource ds, UUID gameId) {
         super(con);
         this.gameId = gameId;
 
@@ -66,7 +67,7 @@ public class IsDorkyAWolfDAO extends AbstractDAO<Boolean> {
         try {
 
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameId);
+            pstmt.setObject(1, gameId);
             pstmt.setString(2, GameRoleAction.DORKY.getAction());
             rs = pstmt.executeQuery();
 

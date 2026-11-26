@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Retrieves the dead players in a game by its game ID.
@@ -26,12 +27,12 @@ public class GetDeadPlayersInformationByGameIdDAO extends AbstractDAO<ArrayList<
     /**
      * The SQL statement to retrieve dead players by game ID.
      */
-    private static final String STATEMENT = "SELECT game_id, round_of_death, player_username, phase_of_death FROM plays_as_in WHERE game_id = ? AND round_of_death >0";
+    private static final String STATEMENT = "SELECT pai.game_id, pai.round_of_death, p.username AS player_username, pai.phase_of_death FROM plays_as_in pai JOIN player p ON p.id = pai.player_id WHERE pai.game_id = ? AND pai.round_of_death >0";
 
     /**
      * The game ID for which dead players are to be retrieved.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * Constructs a new GetDeadPlayersByGameIdDAO with the specified database connection and game ID.
@@ -39,7 +40,7 @@ public class GetDeadPlayersInformationByGameIdDAO extends AbstractDAO<ArrayList<
      * @param con    the connection to the database
      * @param gameId the ID of the game
      */
-    public GetDeadPlayersInformationByGameIdDAO(final Connection con, final int gameId)
+    public GetDeadPlayersInformationByGameIdDAO(final Connection con, final UUID gameId)
     {
         super(con);
         this.gameId = gameId;
@@ -61,11 +62,11 @@ public class GetDeadPlayersInformationByGameIdDAO extends AbstractDAO<ArrayList<
         {
 
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameId);
+            pstmt.setObject(1, gameId);
             rs = pstmt.executeQuery();
 
             while (rs.next())
-                r.add(new Action(rs.getInt("game_id"),
+                r.add(new Action(rs.getObject("game_id", UUID.class),
                         rs.getString("player_username"),
                         rs.getInt("round_of_death"),
                         rs.getInt("phase_of_death"),

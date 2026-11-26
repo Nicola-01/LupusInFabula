@@ -2,8 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.GetGamePlayersDAO;
 import it.unipd.dei.webapp.lupus.dao.GetRoleByGameIdAndPlayerUsernameDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Handles the GET request for /game/players.
@@ -28,7 +29,7 @@ public class GamePlayersRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * If the requested URI contained /master at the end.
@@ -44,7 +45,7 @@ public class GamePlayersRR extends AbstractRR {
      * @param gameID      the ID of the game
      * @param URIisMaster whether the requested URI contained /master at the end
      */
-    public GamePlayersRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, int gameID, boolean URIisMaster) {
+    public GamePlayersRR(final HttpServletRequest req, final HttpServletResponse res, DataSource ds, UUID gameID, boolean URIisMaster) {
         super(Actions.GET_GAME_PLAYERS_ACTION, req, res, ds);
         this.gameID = gameID;
         this.URIisMaster = URIisMaster;
@@ -59,7 +60,7 @@ public class GamePlayersRR extends AbstractRR {
         List<PlaysAsIn> el = null;
         Message m = null;
 
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
         LogContext.setGame(gameID);

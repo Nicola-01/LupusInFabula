@@ -7,6 +7,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Search the list of settings in a game using the private gameID, returns such list
@@ -25,7 +26,7 @@ public class GetGameSettingsDAO extends AbstractDAO<List<Setting>> {
     /**
      * The private ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new DAO object.
@@ -33,7 +34,7 @@ public class GetGameSettingsDAO extends AbstractDAO<List<Setting>> {
      * @param con    the connection to be used for accessing the database.
      * @param gameID The private gameID used to find the game.
      */
-    public GetGameSettingsDAO(Connection con, int gameID) {
+    public GetGameSettingsDAO(Connection con, UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -45,7 +46,7 @@ public class GetGameSettingsDAO extends AbstractDAO<List<Setting>> {
         List<Setting> settings = new ArrayList<>();
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             rs = pstmt.executeQuery();
             while (rs.next())
                 settings.add(new Setting(rs.getString("setting"), rs.getBoolean("enable")));

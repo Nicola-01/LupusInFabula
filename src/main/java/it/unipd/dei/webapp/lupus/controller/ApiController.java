@@ -4,22 +4,21 @@ import it.unipd.dei.webapp.lupus.dao.GetGameByGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.GetGameIdFormPublicGameIdDAO;
 import it.unipd.dei.webapp.lupus.dao.SearchPlayerByUsernameDAO;
 import it.unipd.dei.webapp.lupus.dao.SelectRoleByTypeDAO;
-import it.unipd.dei.webapp.lupus.filter.GameMasterFilter;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.Game;
 import it.unipd.dei.webapp.lupus.resource.Message;
 import it.unipd.dei.webapp.lupus.resource.Player;
 import it.unipd.dei.webapp.lupus.resource.Role;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.UUID;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -47,18 +46,24 @@ public class ApiController {
 
     @GetMapping("/api/session")
     public void session(HttpServletRequest req, HttpServletResponse res) throws IOException {
-        HttpSession session = req.getSession(false);
-        Player user = session == null ? null : (Player) session.getAttribute(UserFilter.USER_ATTRIBUTE);
+        Player user = Auth.currentPlayer(req);
         if (user == null) {
             ErrorCode ec = ErrorCode.NOT_LOGGED;
             writeMessage(res, 401, new Message("Authentication required", ec.getErrorCode(), ec.getErrorMessage()));
             return;
         }
 
-        Object gamemaster = session.getAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE);
+        String gamemaster;
+        try {
+            gamemaster = Auth.masterGame(ds, user.getUsername());
+        } catch (SQLException e) {
+            ErrorCode ec = ErrorCode.INTERNAL_ERROR;
+            writeMessage(res, ec.getHTTPCode(), new Message("Internal error", ec.getErrorCode(), ec.getErrorMessage()));
+            return;
+        }
         JSONObject body = new JSONObject()
                 .put("user", new JSONObject().put("username", user.getUsername()).put("email", user.getEmail()))
-                .put("gamemaster", gamemaster == null ? "" : gamemaster);
+                .put("gamemaster", gamemaster);
         writeJson(res, 200, body);
     }
 
@@ -89,7 +94,7 @@ public class ApiController {
     @GetMapping("/api/village/{publicId}")
     public void village(@PathVariable String publicId, HttpServletRequest req, HttpServletResponse res) throws IOException {
         try {
-            int privateId = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicId).access().getOutputParam();
+            UUID privateId = new GetGameIdFormPublicGameIdDAO(ds.getConnection(), publicId).access().getOutputParam();
             Game game = new GetGameByGameIdDAO(ds.getConnection(), privateId).access().getOutputParam();
             if (game == null) {
                 ErrorCode ec = ErrorCode.GAME_NOT_FOUND;
@@ -97,8 +102,8 @@ public class ApiController {
                 return;
             }
 
-            HttpSession session = req.getSession(false);
-            Object gamemaster = session == null ? null : session.getAttribute(GameMasterFilter.GAMEMASTER_ATTRIBUTE);
+            Player me = Auth.currentPlayer(req);
+            String gamemaster = me == null ? "" : Auth.masterGame(ds, me.getUsername());
             JSONObject body = new JSONObject()
                     .put("publicId", game.getPublic_ID())
                     .put("isMaster", publicId.equals(gamemaster))

@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * DAO class to retrieve a list of players by game ID.
@@ -21,12 +22,13 @@ public class GetPlayersByGameDAO extends AbstractDAO<List<String>> {
     /**
      * The SQL statement to be executed.
      */
-    private static final String STATEMENT = "SELECT player_username FROM plays_as_in WHERE plays_as_in.game_id = ? AND plays_as_in.role != ? ORDER BY order_in_game";
+    private static final String STATEMENT = "SELECT p.username AS player_username FROM plays_as_in pai JOIN player p ON p.id = pai.player_id " +
+            "WHERE pai.game_id = ? AND pai.role != ? ORDER BY pai.order_in_game";
 
     /**
      * The private ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Creates a new object to list all the players in a game using the private gameID.
@@ -34,7 +36,7 @@ public class GetPlayersByGameDAO extends AbstractDAO<List<String>> {
      * @param con    The connection to the database.
      * @param gameID The private gameID used to find the game.
      */
-    public GetPlayersByGameDAO(Connection con, int gameID) {
+    public GetPlayersByGameDAO(Connection con, UUID gameID) {
         super(con);
         this.gameID = gameID;
     }
@@ -51,7 +53,7 @@ public class GetPlayersByGameDAO extends AbstractDAO<List<String>> {
         List<String> players = new ArrayList<>();
         try {
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setString(2, GameRoleAction.MASTER.getName());
             rs = pstmt.executeQuery();
             while (rs.next())

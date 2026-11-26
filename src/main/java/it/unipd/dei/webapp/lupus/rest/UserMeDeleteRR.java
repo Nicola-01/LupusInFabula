@@ -2,8 +2,8 @@ package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.DeletePlayerDAO;
 import it.unipd.dei.webapp.lupus.dao.LoginPlayerDAO;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,7 +55,7 @@ public class UserMeDeleteRR extends AbstractRR {
     @Override
     protected void doServe() throws IOException {
 
-        String username = ((Player) req.getSession().getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
 
@@ -76,7 +76,7 @@ public class UserMeDeleteRR extends AbstractRR {
 
                 if (result == 1) {
 
-                    req.getSession().invalidate(); // maybe logout is better
+                    Auth.clearCookie(req, res);
                     m = new Message("User successfully deleted");
                     LOGGER.info("User successfully deleted");
                     res.setStatus(HttpServletResponse.SC_OK);

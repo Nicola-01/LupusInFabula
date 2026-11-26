@@ -1,8 +1,8 @@
 package it.unipd.dei.webapp.lupus.rest;
 
 import it.unipd.dei.webapp.lupus.dao.*;
-import it.unipd.dei.webapp.lupus.filter.UserFilter;
 import it.unipd.dei.webapp.lupus.resource.*;
+import it.unipd.dei.webapp.lupus.utils.Auth;
 import it.unipd.dei.webapp.lupus.utils.ErrorCode;
 import it.unipd.dei.webapp.lupus.utils.GamePhase;
 import it.unipd.dei.webapp.lupus.utils.GameRoleAction;
@@ -34,7 +34,7 @@ public class GameActionsGetRR extends AbstractRR {
     /**
      * The ID of the game.
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructs a new GameActionsGetRR object with the specified game ID, request, response, and data source.
@@ -45,7 +45,7 @@ public class GameActionsGetRR extends AbstractRR {
      * @param ds     The data source.
      * @throws SQLException If an SQL error occurs.
      */
-    public GameActionsGetRR(int gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
+    public GameActionsGetRR(UUID gameID, final HttpServletRequest req, final HttpServletResponse res, DataSource ds) throws SQLException {
         super(Actions.GET_GAME_ACTIONS_ACTION, req, res, ds);
 
         this.gameID = gameID;
@@ -54,7 +54,7 @@ public class GameActionsGetRR extends AbstractRR {
 
     @Override
     protected void doServe() throws IOException, SQLException {
-        String username = ((Player) req.getSession(false).getAttribute(UserFilter.USER_ATTRIBUTE)).getUsername();
+        String username = Auth.currentPlayer(req).getUsername();
         LogContext.setUser(username);
         LogContext.setIPAddress(req.getRemoteAddr());
 

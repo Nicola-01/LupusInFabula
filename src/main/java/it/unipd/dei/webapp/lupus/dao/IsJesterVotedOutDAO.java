@@ -7,6 +7,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 /**
  * Determines whether the Jester role was voted out but not killed by Sam.
@@ -25,17 +26,17 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
     /**
      * SQL statement to check if a role was killed by Sam.
      */
-    private static final String STATEMENT_ROLE_KILLED_BY_SAM = "SELECT role FROM plays_as_in JOIN public.action a on " +
-            "(plays_as_in.game_id = a.game_id AND plays_as_in.player_username = a.target) " +
-            "WHERE plays_as_in.game_id = ? and type_of_action = ?";
+    private static final String STATEMENT_ROLE_KILLED_BY_SAM = "SELECT pai.role FROM plays_as_in pai JOIN public.action a on " +
+            "(pai.game_id = a.game_id AND pai.player_id = a.target_id) " +
+            "WHERE pai.game_id = ? and a.type_of_action = ?";
 
 
     /**
      * SQL statement to check if a role was killed by Plague Spreader.
      */
-    private static final String STATEMENT_ROLE_KILLED_BY_PLAGUE_SPREADER = "SELECT role FROM plays_as_in JOIN public.action a on " +
-            "(plays_as_in.game_id = a.game_id AND plays_as_in.player_username = a.target) " +
-            "WHERE plays_as_in.game_id = ? and type_of_action = ?";
+    private static final String STATEMENT_ROLE_KILLED_BY_PLAGUE_SPREADER = "SELECT pai.role FROM plays_as_in pai JOIN public.action a on " +
+            "(pai.game_id = a.game_id AND pai.player_id = a.target_id) " +
+            "WHERE pai.game_id = ? and a.type_of_action = ?";
     /**
      * To connect to the database
      */
@@ -44,7 +45,7 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
     /**
      * The ID of the game to retrieve
      */
-    private final int gameID;
+    private final UUID gameID;
 
     /**
      * Constructs a new IsJesterVotedOut to determine if the Jester was voted out during the day.
@@ -53,7 +54,7 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
      * @param ds     the data source for obtaining connections
      * @param gameID the ID of the game to retrieve.
      */
-    public IsJesterVotedOutDAO(final Connection con, final DataSource ds, int gameID) {
+    public IsJesterVotedOutDAO(final Connection con, final DataSource ds, UUID gameID) {
         super(con);
         this.ds = ds;
         this.gameID = gameID;
@@ -73,7 +74,7 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
         try {
             pstmt = con.prepareStatement(STATEMENT_JESTER_DEAD);
 
-            pstmt.setInt(1, gameID);
+            pstmt.setObject(1, gameID);
             pstmt.setString(2, GameRoleAction.JESTER.getName());
             pstmt.setInt(3, GamePhase.DAY.getId());
 
@@ -82,7 +83,7 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
             if(rs.next()){ // jester is dead during the day
                 pstmt = ds.getConnection().prepareStatement(STATEMENT_ROLE_KILLED_BY_SAM);
 
-                pstmt.setInt(1, gameID);
+                pstmt.setObject(1, gameID);
                 pstmt.setString(2, GameRoleAction.SAM.getAction());
 
                 rs = pstmt.executeQuery();
@@ -92,7 +93,7 @@ public class IsJesterVotedOutDAO extends AbstractDAO<Boolean> {
                 else {
                     pstmt = ds.getConnection().prepareStatement(STATEMENT_ROLE_KILLED_BY_PLAGUE_SPREADER);
 
-                    pstmt.setInt(1, gameID);
+                    pstmt.setObject(1, gameID);
                     pstmt.setString(2, GameRoleAction.PLAGUE_SPREADER.getAction());
 
                     rs = pstmt.executeQuery();

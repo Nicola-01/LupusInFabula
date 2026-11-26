@@ -1,6 +1,7 @@
 package it.unipd.dei.webapp.lupus.resource;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import java.util.UUID;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +23,7 @@ public class PlaysAsIn extends AbstractResource {
     /**
      * the ID of the game
      */
-    private final int gameId;
+    private final UUID gameId;
     /**
      * the role of the player in this game
      */
@@ -50,7 +51,7 @@ public class PlaysAsIn extends AbstractResource {
      * @param phaseOfDeath   the phase during which the player died
      * @param durationOfLife the total amount of time the player has lived
      */
-    public PlaysAsIn(final String playerUsername, final int gameId, final String role,
+    public PlaysAsIn(final String playerUsername, final UUID gameId, final String role,
                      final int roundOfDeath, final int phaseOfDeath, final Time durationOfLife) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
@@ -67,7 +68,7 @@ public class PlaysAsIn extends AbstractResource {
      * @param gameId         the id of the game
      * @param role           the role of the player in this game
      */
-    public PlaysAsIn(final String playerUsername, final int gameId, final String role) {
+    public PlaysAsIn(final String playerUsername, final UUID gameId, final String role) {
         this.playerUsername = playerUsername;
         this.gameId = gameId;
         this.role = role;
@@ -82,7 +83,7 @@ public class PlaysAsIn extends AbstractResource {
      * @param roundOfDeath   the round during which the player died
      * @param phaseOfDeath   the phase during which the player died
      */
-    public PlaysAsIn(final String playerUsername, final int gameId, final String role, final int roundOfDeath, final int phaseOfDeath) {
+    public PlaysAsIn(final String playerUsername, final UUID gameId, final String role, final int roundOfDeath, final int phaseOfDeath) {
         this(playerUsername, gameId, role, roundOfDeath, phaseOfDeath, null);
     }
 
@@ -102,7 +103,7 @@ public class PlaysAsIn extends AbstractResource {
         jg.writeStartObject();
 
         jg.writeStringField("username", this.playerUsername); // Write the username field
-        jg.writeNumberField("gameID", this.gameId);
+        jg.writeStringField("gameID", this.gameId.toString());
         jg.writeStringField("role", this.role);
         jg.writeBooleanField("isDead", this.roundOfDeath > 0);
 
@@ -127,7 +128,7 @@ public class PlaysAsIn extends AbstractResource {
      *
      * @return The ID of the game.
      */
-    public int getGameId() {
+    public UUID getGameId() {
         return gameId;
     }
 

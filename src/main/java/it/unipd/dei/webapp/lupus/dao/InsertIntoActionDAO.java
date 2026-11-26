@@ -17,7 +17,8 @@ public class InsertIntoActionDAO extends AbstractDAO{
     /**
      * The SQL statement to insert an Action into the database.
      */
-    private static final String STATEMENT = "INSERT INTO action VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    private static final String STATEMENT = "INSERT INTO action (game_id, player_id, round, phase, subphase, type_of_action, target_id, blocked) " +
+            "VALUES (?, (SELECT id FROM player WHERE username = ?), ?, ?, ?, ?, (SELECT id FROM player WHERE username = ?), ?)";
 
     /**
      * The Action object to be inserted into the database.
@@ -48,7 +49,7 @@ public class InsertIntoActionDAO extends AbstractDAO{
         try {
 
             pstmt = con.prepareStatement(STATEMENT);
-            pstmt.setInt(1, action.getGameId());
+            pstmt.setObject(1, action.getGameId());
             pstmt.setString(2, action.getPlayer());
             pstmt.setInt(3, action.getRound());
             pstmt.setInt(4, action.getPhase());

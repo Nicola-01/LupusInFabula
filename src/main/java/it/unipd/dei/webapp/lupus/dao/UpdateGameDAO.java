@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.Time;
 
 import static it.unipd.dei.webapp.lupus.webSocket.GameWebSocket.freeGameWebSocket;
+import java.util.UUID;
 
 /**
  * Updates game-related information in the database, such as the game duration,
@@ -46,7 +47,7 @@ public class UpdateGameDAO extends AbstractDAO {
     /**
      * The ID of the game to be updated.
      */
-    private final int gameId;
+    private final UUID gameId;
 
     /**
      * Constructs a new UpdateGameDAO with the specified database connection, game ID, phase, rounds, who wins,
@@ -58,7 +59,7 @@ public class UpdateGameDAO extends AbstractDAO {
      * @param rounds   the number of rounds in the game
      * @param who_wins the player who wins the game
      */
-    public UpdateGameDAO(final Connection con, final int gameId, int phase, int rounds, int who_wins) {
+    public UpdateGameDAO(final Connection con, final UUID gameId, int phase, int rounds, int who_wins) {
         super(con);
         this.gameId = gameId;
         this.phase = phase;
@@ -75,7 +76,7 @@ public class UpdateGameDAO extends AbstractDAO {
      * @param phase  the current phase of the game
      * @param rounds the number of rounds in the game
      */
-    public UpdateGameDAO(final Connection con, final int gameId, int phase, int rounds) {
+    public UpdateGameDAO(final Connection con, final UUID gameId, int phase, int rounds) {
         this(con, gameId, phase, rounds, -1);
     }
 
@@ -96,14 +97,14 @@ public class UpdateGameDAO extends AbstractDAO {
 
                 pstmt.setInt(1, rounds);
                 pstmt.setInt(2, phase);
-                pstmt.setInt(3, gameId);
+                pstmt.setObject(3, gameId);
             } else {
                 pstmt = con.prepareStatement(STATEMENT_FINISHED);
 
                 pstmt.setInt(1, rounds);
                 pstmt.setInt(2, phase);
                 pstmt.setInt(3, who_wins);
-                pstmt.setInt(4, gameId);
+                pstmt.setObject(4, gameId);
             }
             freeGameWebSocket(gameId, who_wins >= 0);
             pstmt.executeUpdate();
