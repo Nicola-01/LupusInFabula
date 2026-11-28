@@ -101,6 +101,19 @@ class AuthFlowTest {
   }
 
   @Test
+  void signupWithReservedUsernameSearch_isBadRequest_evenInOtherCase() throws Exception {
+    mockMvc
+        .perform(
+            post("/signup")
+                .with(csrf())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    "{\"username\": \"Search\", \"email\": \"search@test.it\", \"password\": \"Passw0rd!\"}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.errors.username").exists());
+  }
+
+  @Test
   void signupWithUsedUsername_isConflictOnUsername() throws Exception {
     signup("wolf-user", "first@test.it");
 

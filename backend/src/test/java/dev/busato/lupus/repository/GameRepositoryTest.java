@@ -1,6 +1,7 @@
 package dev.busato.lupus.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -15,9 +16,13 @@ import dev.busato.lupus.model.GamePlayer;
 import dev.busato.lupus.model.GameSetting;
 import dev.busato.lupus.model.Player;
 import dev.busato.lupus.model.Role;
+import dev.busato.lupus.model.WinFaction;
+import java.time.Instant;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
@@ -110,5 +115,70 @@ class GameRepositoryTest {
         () ->
             friendshipRepository.saveAndFlush(
                 Friendship.builder().player(player).friend(player).build()));
+  }
+
+  private Game newGame(String publicId, Player master) {
+    return gameRepository.save(Game.builder().publicId(publicId).master(master).build());
+  }
+
+  @Test
+  void existsOpenGameOf_trueForMasterAndPlayer_falseOnceEnded() {
+    Player master = newPlayer("sam-master");
+    Player wolf = newPlayer("wolf-user");
+    Player idle = newPlayer("idle-user");
+    Game game = newGame("open-game", master);
+    gamePlayerRepository.save(
+        GamePlayer.builder().game(game).player(wolf).role(Role.WOLF).seat(1).build());
+    entityManager.flush();
+
+    assertTrue(gameRepository.existsOpenGameOf(master.getId()));
+    assertTrue(gameRepository.existsOpenGameOf(wolf.getId()));
+    assertFalse(gameRepository.existsOpenGameOf(idle.getId()));
+
+    game.setEndedAt(Instant.now());
+    game.setWinner(WinFaction.FARMERS);
+    entityManager.flush();
+
+    assertFalse(gameRepository.existsOpenGameOf(master.getId()));
+    assertFalse(gameRepository.existsOpenGameOf(wolf.getId()));
+  }
+
+  @Test
+  void findLatestOf_returnsTheMostRecentGameOfThePlayer() {
+    Player wolf = newPlayer("wolf-user");
+    Player sam = newPlayer("sam-master");
+    Game old = newGame("old-game", wolf);
+    Game recent = newGame("recent-game", sam);
+    gamePlayerRepository.save(
+        GamePlayer.builder().game(recent).player(wolf).role(Role.WOLF).seat(1).build());
+    entityManager.flush();
+    // startedAt is set by Hibernate on insert and cannot be changed through the entity
+    entityManager
+        .getEntityManager()
+        .createNativeQuery("UPDATE game SET started_at = :t WHERE id = :id")
+        .setParameter("t", Instant.parse("2020-01-01T00:00:00Z"))
+        .setParameter("id", old.getId())
+        .executeUpdate();
+    entityManager.clear();
+
+    List<Game> latest = gameRepository.findLatestOf(wolf.getId(), Limit.of(1));
+
+    assertEquals(1, latest.size());
+    assertEquals("recent-game", latest.get(0).getPublicId());
+  }
+
+  @Test
+  void deckIsSavedAndReadBack() {
+    Game game = gameRepository.save(Game.builder().publicId("deck-game").master(newPlayer("deck-master")).build());
+    EnumMap<Role, Integer> deck = new EnumMap<>(Role.class);
+    deck.put(Role.WOLF, 2);
+    deck.put(Role.FARMER, 3);
+    game.setDeck(deck);
+    entityManager.flush();
+    entityManager.clear();
+
+    Game loaded = gameRepository.findById(game.getId()).orElseThrow();
+
+    assertEquals(deck, loaded.getDeck());
   }
 }

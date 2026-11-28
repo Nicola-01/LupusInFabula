@@ -50,3 +50,13 @@ codice: non le possiamo cambiare. Le trasformiamo in `ProblemDetail` nel `Global
 - `NotFriendException` — 404, rimozione di qualcuno che non è nella lista.
 - `InvalidFriendException` — 400, aggiungere se stessi.
 - `SearchTooShortException` — 400, ricerca con meno di 2 caratteri.
+- `InGameException` — 409, il master o un giocatore è già in una partita non finita.
+- `InvalidGameException` — 400, una regola della partita non è rispettata; il `detail` dice quale.
+- `InvalidPlayersException` — 400, uno o più giocatori non possono giocare. Ha un enum annidato
+  `PlayerProblem` (`NOT_FOUND`, `IN_GAME`, `IS_MASTER`) e una mappa `players` che associa ogni
+  username (come è stato inviato) al suo problema. Uso di `LinkedHashMap` invece di `HashMap`: le
+  chiavi restano nell'ordine della richiesta, così il frontend le mostra come le ha scritte l'utente.
+- `GameNotFoundException` — 404, nessuna partita con quel `publicId`.
+- `NoGamesException` — 404, il giocatore non è mai stato master né giocatore di una partita.
+- `DeckNotFoundException` — 404, nessun mazzo con quell'id **tra quelli dell'utente**. Anche un
+  mazzo esistente di un altro utente dà 404, per non rivelare che l'id esiste.

@@ -4,11 +4,14 @@ import dev.busato.lupus.dto.PlayerSearchResponse;
 import dev.busato.lupus.dto.ProfileResponse;
 import dev.busato.lupus.dto.UpdateProfileRequest;
 import dev.busato.lupus.exceptions.AlreadyUsedException;
+import dev.busato.lupus.exceptions.InGameException;
 import dev.busato.lupus.exceptions.PlayerNotFoundException;
 import dev.busato.lupus.exceptions.SearchTooShortException;
 import dev.busato.lupus.exceptions.WrongPasswordException;
 import dev.busato.lupus.mappers.PlayerMapper;
 import dev.busato.lupus.model.Player;
+import dev.busato.lupus.repository.DeckRepository;
+import dev.busato.lupus.repository.GameRepository;
 import dev.busato.lupus.repository.PlayerRepository;
 import java.time.Instant;
 import java.util.List;
@@ -30,6 +33,8 @@ public class UserService {
   private static final int MAX_RESULTS = 20;
 
   private final PlayerRepository playerRepository;
+  private final GameRepository gameRepository;
+  private final DeckRepository deckRepository;
   private final PlayerMapper playerMapper;
   private final PasswordEncoder passwordEncoder;
 
@@ -73,8 +78,12 @@ public class UserService {
   public void delete(UUID id, String currentPassword) {
     Player player = active(id);
     checkPassword(player, currentPassword);
+    if (gameRepository.existsOpenGameOf(id))
+      throw new InGameException("You cannot delete your account during a game");
     player.setDeletedAt(Instant.now());
     player.setEmail(null);
+    // the decks are public: a deleted account's decks go too (the player row stays for the games)
+    deckRepository.deleteByOwnerId(id);
     log.info("Account deleted: {}", player.getUsername());
   }
 

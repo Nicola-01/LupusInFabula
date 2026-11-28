@@ -189,8 +189,55 @@ standalone** (`MockMvcBuilders.standaloneSetup`): niente contesto Spring e nient
 controller finto definito nel test e il gestore (`setControllerAdvice`). MockMvc simula le
 richieste HTTP senza avviare Tomcat; `jsonPath("$.detail")` legge un campo del JSON di risposta.
 
+## `GameController`
+
+| Metodo e URL | Body | Risposta | Errori |
+|---|---|---|---|
+| `GET /game/settings` | — | 200 `[{name, description}]` | |
+| `POST /game/create` | `{players: [...], roles: {"WOLF": 2, ...}, settings: ["MASTER_FREE", ...]}` | 201 `{publicId}` + header `Location: /village/{publicId}` | 400 regole (con `players` per i giocatori), 409 già in partita |
+| `GET /game/list` | — | 200 `{publicId, startedAt, endedAt, winner, master}` dell'**ultima** partita | 404 nessuna partita |
+| `GET /api/village/{publicId}` | — | 200 `{publicId, isMaster, winner, settings}` | 404 |
+
+- **`players` è in ordine di posto**: il primo della lista siede al posto 1. Le chiavi di `roles` e
+  i valori di `settings` sono i nomi delle costanti dell'enum (`"WOLF"`, `"MASTER_FREE"`).
+- **`GET /game/create` non esiste più**: i ruoli disponibili sono in `GET /api/rules/roles`, con
+  gli stessi dati di prima.
+- **`ResponseEntity.created(uri)`** mette lo status 201 e l'header `Location`, cioè dove trovare
+  la risorsa appena creata. Il corpo resta `{publicId}`, così il frontend può anche leggerlo
+  senza seguire l'header.
+- **`GET /game/list`** restituisce **una sola** partita, l'ultima: il nome dell'URL è quello vecchio,
+  la lista completa non è ancora costruita. Il 404 vuol dire "non hai mai giocato".
+- **`/api/village` restituisce le `settings`** perché in `MASTER_FREE` il frontend deve mostrare al
+  master la vista da giocatore.
+- **Chi può leggere `/api/village`**: per ora qualunque utente loggato può leggere `/api/village` di
+  qualsiasi partita, come nel vecchio backend. Chi vede cosa è lo step 4 di `TODO.md`.
+
+## `DeckController` (mazzi salvati)
+
+| Metodo e URL | Body | Risposta | Errori |
+|---|---|---|---|
+| `GET /user/me/deck` | — | 200 `[DeckResponse]` | |
+| `POST /user/me/deck` | `{name, players, roles}` | 201 `DeckResponse` | 400 regole, 409 nome già usato |
+| `PUT /user/me/deck/{deckId}` | `{name, players, roles}` | 200 `DeckResponse` | 400 regole, 404 mazzo non trovato o di un altro, 409 nome già usato |
+| `DELETE /user/me/deck/{deckId}` | — | 204 | 404 mazzo non trovato o di un altro |
+| `GET /user/{username}/deck` | — | 200 `[DeckResponse]` | 404 utente inesistente o cancellato |
+
+- **404 e non 403 per il mazzo di un altro**: il controller non distingue "non esiste" da "è di un
+  altro". Il motivo è in `repository/README.md` (`findByIdAndOwnerId`).
+- **I mazzi sono pubblici**: `GET /user/{username}/deck` lo vede qualunque utente loggato, e
+  restituisce solo i mazzi di quell'utente. Modificare o cancellare resta riservato al proprietario.
+- **`/user/me/deck` e `/user/{username}/deck` non si scontrano**: come `/user/me` e
+  `/user/{username}`, il segmento fisso `me` batte la variabile. Uno username `me` non può esistere.
+- **`{deckId}` è un `UUID`**: un valore non valido nell'URL (`/user/me/deck/abc`) dà 400 da Spring,
+  prima di arrivare al service (`MethodArgumentTypeMismatchException`, vedi la tabella sopra).
+
 ## Classi
 
+- `DeckController` — mazzi salvati: lista, creazione, modifica e cancellazione dei propri, lista
+  pubblica dei mazzi di un utente.
+- `GameController` — partite: impostazioni, creazione, ultima partita, pagina del villaggio. Non ha
+  `@RequestMapping` di classe: gli URL hanno prefissi diversi (`/game` e `/api`), quindi ogni metodo
+  scrive il suo percorso per intero.
 - `RoleController` — `GET /api/rules/roles`: ruoli giocabili raggruppati per tipo.
 - `AuthController` — `POST /signup`, `POST /login` (201/204, sessione creata a mano), `GET /api/session`.
   Il logout non ha un metodo: `POST /logout` lo gestisce il `LogoutFilter` di Spring Security.

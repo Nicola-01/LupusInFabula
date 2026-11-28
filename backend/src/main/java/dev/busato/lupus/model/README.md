@@ -285,14 +285,109 @@ dà `"marıo@ınfo.ıt"`, e quell'email non corrisponde più a quella salvata.
 Lo stesso vale per `toUpperCase` e `String.format` con i numeri. Il secondo cambia il separatore
 decimale: `3,5` in italiano, `3.5` in inglese.
 
+## `Game.deck`: le carte scelte dal master
+
+`Game.deck` è una `Map<Role, Integer>`: per ogni ruolo, quante carte il master ha scelto. È una
+collezione di valori (come `settings`), non di entity: la mappa non ha id né ciclo di vita.
+
+```java
+@ElementCollection
+@CollectionTable(name = "game_role", joinColumns = @JoinColumn(name = "game_id"))
+@MapKeyEnumerated(EnumType.STRING)
+@MapKeyColumn(name = "role", length = 20)
+@Column(name = "cards", nullable = false)
+private Map<Role, Integer> deck = new EnumMap<>(Role.class);
+```
+
+- `@ElementCollection` + `@CollectionTable`: crea la tabella `game_role` con colonne `game_id`,
+  `role` e `cards`, una riga per ruolo. `joinColumns` dà il nome della colonna che punta alla partita.
+- `@MapKeyEnumerated(EnumType.STRING)` + `@MapKeyColumn(name = "role")`: la **chiave** (il ruolo) è
+  salvata come testo (`WOLF`), e la colonna si chiama `role`. Senza `STRING` Hibernate userebbe il
+  numero d'ordine dell'enum, che cambierebbe se si inserisse un ruolo in mezzo.
+- `@Column(name = "cards", nullable = false)`: il **valore** (il numero di carte) è la colonna `cards`.
+- `EnumMap` come per `settings`: le chiavi sono enum, quindi la mappa resta ordinata come l'enum.
+
+Come `settings`, le righe di `game_role` sono legate alla partita e Hibernate le cancella insieme
+a lei, senza una entity propria. In `GameService.create` la mappa salva solo i ruoli con numero
+maggiore di zero.
+
+Con `LARGER_ROLE_NUMBER` il mazzo può avere più carte dei giocatori: il mazzo intero resta qui,
+le carte scartate non si perdono e il frontend può mostrare il mazzo a tutti i giocatori senza
+che nessuno sappia quali ruoli sono davvero in gioco (vedi `service/README.md`).
+
+## `Deck`: mazzi salvati, e perché JSON
+
+Un **mazzo salvato** è un preset di ruoli che il master riusa tra una partita e l'altra (es. "2
+lupi, veggente, 7 contadini"). È una entity a sé, con id UUID v7 come le altre, perché ha un
+proprietario, un nome e un ciclo di vita suo: si crea, si rinomina, si cancella.
+
+```java
+@Table(name = "deck", uniqueConstraints = @UniqueConstraint(columnNames = {"owner_id", "name"}))
+@Check(constraints = "players >= 5")
+public class Deck {
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(name = "owner_id")
+  private Player owner;
+
+  @JdbcTypeCode(SqlTypes.JSON)
+  private Map<Role, Integer> roles;
+  ...
+}
+```
+
+- `owner`: `@ManyToOne` verso `Player`, colonna `owner_id`.
+- `name`: massimo 50 caratteri. Il nome è unico **per proprietario**: `@UniqueConstraint(owner_id, name)`
+  impedisce due mazzi con lo stesso nome allo stesso utente, ma due utenti diversi possono
+  chiamare un mazzo "Notte". Il service confronta senza distinguere maiuscole
+  (`existsByOwnerIdAndNameIgnoreCase`), quindi `Notte` e `notte` sono lo stesso nome; il vincolo
+  del database è esatto e fa solo da ultima difesa.
+- `players`: per quanti giocatori è pensato il mazzo. `@Check(players >= 5)` come il minimo di
+  una partita: il database rifiuta un mazzo per 4 giocatori anche se il service avesse un bug.
+- `roles`: `Map<Role, Integer>` salvata in una colonna **jsonb** (vedi sotto).
+- `createdAt`: data di creazione, impostata da Hibernate come negli altri.
+
+### `@JdbcTypeCode(SqlTypes.JSON)`: la mappa diventa JSON
+
+Hibernate 7 converte la mappa in JSON quando salva e la ricostruisce quando legge, da sola e senza
+librerie aggiuntive. Nel codice resta una `Map<Role, Integer>`, come `Game.deck`: il JSON è un
+dettaglio di persistenza. Su Postgres la colonna è di tipo `jsonb`.
+
+Per i dati in formato JSON Postgres ha tre tipi di colonna diversi da un `BLOB`:
+
+| Tipo | Cosa salva | Cosa sa il database |
+|---|---|---|
+| `BLOB` (Binary Large Object) | byte grezzi: immagini, file | niente: sono byte, non sa cosa c'è dentro |
+| `json` | il testo JSON così com'è | solo che è JSON valido; ogni lettura rianalizza il testo |
+| `jsonb` | il JSON già analizzato, in formato binario | lo valida all'inserimento, è più veloce da interrogare e permette indici e operatori (`roles ->> 'WOLF'`) |
+
+Per dati JSON in Postgres si usa `jsonb`. Un `BLOB` è sbagliato qui: il database non potrebbe
+leggere né interrogare il contenuto.
+
+### Perché JSON per il mazzo e una tabella per la partita
+
+- **Il mazzo** si legge e si scrive sempre **intero**: la lista dei mazzi, la modifica di un mazzo
+  che sostituisce tutte le carte. Nessuno cambia una carta alla volta né cerca "il mazzo che
+  contiene un lupo". Una colonna basta: niente tabella di appoggio, niente JOIN, un solo `INSERT`.
+- **Le carte della partita** (`game_role`) servono per le statistiche ("partite con 2 lupi"): una
+  tabella si interroga con SQL semplice (`WHERE role = 'WOLF' AND cards = 2`). Con un JSON la stessa
+  domanda è più complessa e non ha indici semplici.
+
+Il prezzo del JSON:
+- Il database **non controlla il contenuto**: non sa che `WOLF` è un ruolo né che il numero di
+  carte è positivo. Lo fa `DeckService` (e `@Min(1)` nel DTO, vedi `dto/README.md`).
+- Se una costante di `Role` viene rinominata, i JSON già salvati contengono il nome vecchio e non
+  si leggono più. Vale anche per `@Enumerated(EnumType.STRING)`: la colonna conserva il nome
+  vecchio. Da noi si può resettare il database; con dati veri servirebbe una migrazione.
+
 ## Classi
 
 Entity (tabelle), tutte con `id` UUID v7:
 - `Player` — utente registrato (`username`, `email`, `passwordHash`, `deletedAt` per la cancellazione logica; `email` è `null` solo se l'account è cancellato).
 - `Friendship` — "segue" unidirezionale tra due `Player`.
-- `Game` — partita: `publicId` (per gli URL), `master`, `round`, `phase`, `winner`, `settings`, `players`.
+- `Game` — partita: `publicId` (per gli URL), `master`, `round`, `phase`, `winner`, `settings`, `deck` (carte scelte dal master, vedi sopra), `players`.
 - `GamePlayer` — un giocatore in una partita: `role`, `seat` (posto al tavolo), morte (`deathRound`, `deathPhase`, `diedAt`).
 - `GameAction` — riga del log: chi (`actor`) ha fatto cosa (`type`) a chi (`target`), in quale round e fase.
+- `Deck` — mazzo salvato di un utente: `owner`, `name` (unico per proprietario), `players`, `roles` (jsonb), `createdAt` (vedi sopra).
 
 Enum:
 - `Role` — i 20 ruoli giocabili, con tipo, fazione, numero massimo e descrizione. Lista fissa nel codice.
@@ -300,7 +395,7 @@ Enum:
 - `WinFaction` — fazione che può vincere: `FARMERS`, `WOLVES`, `HAMSTER`, `JESTER`, `DRAW` (solo come risultato di una partita).
 - `GamePhase` — `NIGHT`, `DAY`.
 - `ActionType` — `VOTE` (voto di giorno) e i poteri dei ruoli (`MAUL`, `PROTECT`, ...).
-- `GameSetting` — `MASTER_FREE`, `ILLUSIONIST_BLOCK`, `LARGER_ROLE_NUMBER` (non ancora implementate).
+- `GameSetting` — `MASTER_FREE`, `ILLUSIONIST_BLOCK`, `LARGER_ROLE_NUMBER` (alla creazione: `LARGER_ROLE_NUMBER` e `MASTER_FREE` sono applicate da `GameService`; il loro effetto sul gioco e `ILLUSIONIST_BLOCK` arrivano con lo step 5).
 
 ## Email `null` solo per gli account cancellati
 

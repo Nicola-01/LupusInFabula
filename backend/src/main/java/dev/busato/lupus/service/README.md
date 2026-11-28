@@ -135,6 +135,143 @@ String gamemaster = game.isPresent() ? game.get().getPublicId() : null;
   te stesso e i cancellati.
 - **Amicizia a senso unico** (D6): aggiungere B mette solo la riga A → B.
 
+## `GameService`: creazione della partita
+
+`GameService.create` riceve l'id del master (dal principal della sessione) e il
+`CreateGameRequest`, controlla le regole **in ordine** e, se sono tutte rispettate, distribuisce
+i ruoli e salva la partita. Tutto avviene in una sola transazione: se una regola fallisce, non
+viene scritto niente.
+
+Ordine dei controlli:
+
+1. il master esiste ed è attivo (altrimenti 401: account cancellato);
+2. il master non è già in una partita aperta → 409 `InGameException`;
+3. nessun username ripetuto → 400 `InvalidGameException`;
+4. controllo di **ogni** giocatore: se qualcuno non va bene, il service raccoglie tutti i problemi
+   e lancia **un solo** `InvalidPlayersException` (400), con la mappa `players`
+   `{username: NOT_FOUND | IN_GAME | IS_MASTER}`. Così il frontend segna tutti i giocatori
+   sbagliati insieme, non uno alla volta;
+5. in `MASTER_FREE` il master deve essere nella lista, al suo posto → 400;
+6. almeno 5 giocatori → 400;
+7. ogni ruolo al massimo `maxNumber` → 400;
+8. numero di carte uguale al numero di giocatori (o maggiore con `LARGER_ROLE_NUMBER`) → 400;
+9. equilibrio delle fazioni → 400;
+10. distribuzione dei ruoli, `publicId`, salvataggio di `Game` e dei `GamePlayer`.
+
+Lo username è cercato senza distinguere le maiuscole (`findByUsernameIgnoreCaseAndDeletedAtIsNull`),
+e il duplicato nella lista è confrontato in minuscolo (`toLowerCase(Locale.ROOT)`): `Nick` e `nick`
+sono la stessa persona.
+
+### Perché la vecchia assegnazione dei ruoli era sbagliata
+
+Il vecchio `randomRole` pescava tra i **nomi** dei ruoli rimasti (`roles.keySet()`), non tra le
+carte. Lo schema, semplificato:
+
+```java
+// vecchio: pesca un NOME tra quelli rimasti, poi toglie una carta da quel ruolo
+Role r = remaining.keySet().get(random.nextInt(remaining.size()));
+remaining.merge(r, -1, Integer::sum);
+
+// nuovo: un elemento per carta, mescolato; la carta i va al posto i
+List<Role> deck = List.of(SEER, FARMER, FARMER, ...);   // una riga per carta
+Collections.shuffle(deck);
+```
+
+Con `{SEER: 1, FARMER: 7}` le chiavi sono 2, quindi il primo giocatore era veggente con probabilità
+1/2 invece di 1/8: il conteggio serviva solo a togliere la carta dopo, non a pesare la scelta.
+L'effetto: i ruoli rari finivano quasi sempre ai primi posti della lista, cioè ai primi posti del
+tavolo.
+
+Ora il mazzo ha una carta per elemento (`SEER, FARMER×7`), `Collections.shuffle` lo mescola (ogni
+ordine ha la stessa probabilità) e la carta `i` va al posto `i`. Nessun ruolo è favorito.
+
+### Equilibrio delle fazioni (`unbalanced`)
+
+Regole prese dal vecchio backend, con `n` = carte distribuite:
+
+- buoni ≥ `floor(n / 2.5)`;
+- cattivi ≤ `round(n / 3)`;
+- cattivi ≥ `max(round(n / 8), 1)`.
+
+| `n` | buoni almeno | cattivi al massimo | cattivi almeno |
+|---|---|---|---|
+| 5 | 2 | 2 | 1 |
+| 8 | 3 | 3 | 1 |
+| 12 | 4 | 4 | 2 |
+
+Il vecchio codice andava in `NullPointerException` se non c'erano ruoli buoni o cattivi; ora
+`unbalanced` li conta come 0 (con uno stream e `count()`), e la regola fallisce con un messaggio
+che dice quanti ne servono.
+
+### `LARGER_ROLE_NUMBER`: più carte dei giocatori
+
+Il master sceglie più carte dei giocatori. Il mazzo si mescola e si prendono le prime `n` carte:
+quella è la mano. Se la mano non è equilibrata, si rimescola, fino a 100 volte (`MAX_DEALS`); se
+dopo 100 tentativi nessuna mano va bene, la richiesta fallisce con 400.
+
+L'equilibrio si controlla sulla **mano**, non sul mazzo: altrimenti potrebbe capitare una partita
+senza lupi, pescata dalle carte scartate. Il mazzo intero viene salvato in `Game.deck` (vedi
+`model/README.md`): ai giocatori si mostrerà il mazzo, così nessuno sa quali ruoli sono davvero
+in gioco.
+
+### `MASTER_FREE`: il master gioca
+
+In `MASTER_FREE` il creatore è comunque `Game.master` (gestisce la partita e le impostazioni) ed
+è anche un `GamePlayer` con un ruolo. Vedrà solo le sue cose: questo sarà garantito dallo step 4 di `TODO.md`
+(cosa vede il master e cosa vede il giocatore). Lo svolgimento (ognuno invia la propria
+azione) è nello step 5.
+
+`ILLUSIONIST_BLOCK` per ora è solo salvato nelle impostazioni: riguarda la risoluzione della notte
+(step 5).
+
+### `publicId`
+
+Il codice pubblico della partita è tre nomi di ruolo più quattro cifre, per esempio
+`seer-wolf-plaguespreader-0427`. Le combinazioni sono 20³ × 10 000 = 80 milioni, contro le 8000
+del vecchio formato, dove i nomi delle partite finite restavano occupati per sempre. Il service
+genera un codice e ripete finché `existsByPublicId` dice che è libero.
+
+### Limite noto, accettato
+
+Due creazioni nello stesso istante con lo stesso giocatore passano entrambe il controllo "non è in
+partita". Non è gestito: è un'app interna e il caso è rarissimo.
+
+### `UserService.delete` e la partita aperta
+
+`UserService.delete` risponde 409 se l'account è in una partita aperta, come master o come
+giocatore (`existsOpenGameOf`). Un account con partita in corso non si può cancellare.
+
+I test sono in `src/test/java/dev/busato/lupus/service/GameServiceTest.java`.
+
+## `DeckService`: salvare i mazzi
+
+Un mazzo è un preset di ruoli. `DeckService` ne controlla le regole al salvataggio, con le stesse
+regole della creazione partita. Il controllo di `maxNumber` e la lista delle carte sono un solo
+metodo, `GameService.cards(Map<Role, Integer>)`: è `static` e package-private, quindi visibile alle
+classi dello stesso package `service` e a nessun'altra. Lo usano sia la creazione della partita sia
+i mazzi, così le due regole non possono divergere.
+
+Regole al salvataggio:
+1. ogni ruolo da 1 a `maxNumber` (nessun ruolo con 0 carte: per toglierlo basta non metterlo);
+2. numero di carte ≥ `players`;
+3. se le carte sono **uguali** a `players`, l'equilibrio buoni/cattivi (`GameService.unbalanced`)
+   si controlla subito, sul mazzo stesso;
+4. se le carte sono **di più**, il mazzo serve per `LARGER_ROLE_NUMBER`: l'equilibrio non si
+   controlla sul mazzo ma sulla mano distribuita alla creazione della partita (vedi sopra). Un
+   mazzo con più carte può quindi essere salvato anche se, preso intero, non sarebbe equilibrato.
+
+Altre regole:
+- **Nome già usato dallo stesso utente** → 409 (`AlreadyUsedException("name")`). Il confronto non
+  distingue maiuscole, come lo username; il vincolo `UNIQUE` del database è esatto e fa da ultima
+  difesa.
+- **Usare un mazzo**: il frontend legge `roles` dal mazzo e le copia nella `POST /game/create`. La
+  partita salva la **propria** copia (`Game.deck`). Quindi modificare o cancellare il preset **non
+  cambia** le partite già create.
+- **Account cancellato**: `UserService.delete` cancella i suoi mazzi con `deleteByOwnerId`. È una
+  delete vera, non soft: i mazzi sono pubblici (`GET /user/{username}/deck`) e non devono restare
+  visibili. La riga di `Player` invece resta (soft delete, vedi `model/README.md`), perché le
+  partite la referenziano.
+
 ## Classi
 
 - `AuthService` — registrazione (controlla username ed email, salva l'hash BCrypt) e lettura della
@@ -145,3 +282,8 @@ String gamemaster = game.isPresent() ? game.get().getPublicId() : null;
 - `RoleService` — tutti i `Role` raggruppati per `RoleType` in un `EnumMap` (mappa ottimizzata
   per chiavi enum, ordinata come l'enum). Tutti i tipi sono presenti anche se vuoti, così il
   frontend non deve gestire chiavi mancanti. Dipende solo dal mapper: nessun repository.
+- `GameService` — creazione della partita: controlli delle regole, distribuzione dei ruoli
+  (mazzo mescolato, `LARGER_ROLE_NUMBER`), `publicId`, salvataggio. Lettura dell'ultima partita
+  e della partita per `publicId`, con i mapper.
+- `DeckService` — salvataggio, modifica, lista e cancellazione dei mazzi salvati: regole sui ruoli
+  e sulle carte (stesso `GameService.cards`), nome unico per utente.

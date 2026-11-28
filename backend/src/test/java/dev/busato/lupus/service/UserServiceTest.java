@@ -19,6 +19,8 @@ import dev.busato.lupus.exceptions.SearchTooShortException;
 import dev.busato.lupus.exceptions.WrongPasswordException;
 import dev.busato.lupus.mappers.PlayerMapper;
 import dev.busato.lupus.model.Player;
+import dev.busato.lupus.repository.DeckRepository;
+import dev.busato.lupus.repository.GameRepository;
 import dev.busato.lupus.repository.PlayerRepository;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +40,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 class UserServiceTest {
 
   @Mock private PlayerRepository playerRepository;
+  @Mock private GameRepository gameRepository;
+  @Mock private DeckRepository deckRepository;
   @Spy private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(); // real hashes, to check the password
   @Spy private PlayerMapper playerMapper;
   @InjectMocks private UserService userService;
@@ -100,6 +104,7 @@ class UserServiceTest {
 
     assertNotNull(player.getDeletedAt());
     assertNull(player.getEmail());
+    verify(deckRepository).deleteByOwnerId(id);
   }
 
   @Test

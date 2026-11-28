@@ -111,6 +111,47 @@ e si concentra sulle query e sui vincoli del database.
 - Un vincolo violato (`saveAndFlush` con un duplicato) lancia `DataIntegrityViolationException`:
   Spring traduce l'errore SQL in un'eccezione della propria gerarchia, indipendente dal database.
 
+## Query delle partite (`GameRepository`)
+
+| Metodo | Query equivalente | Usato da |
+|---|---|---|
+| `existsOpenGameOf(UUID)` | `SELECT count(g) > 0 FROM Game g WHERE g.endedAt IS NULL AND (g.master.id = ?1 OR EXISTS (...))` | creazione partita (409), cancellazione account (409) |
+| `findLatestOf(UUID, Limit)` | `WHERE g.master.id = ?1 OR EXISTS (...) ORDER BY g.startedAt DESC`, con `LIMIT` | `GameService.latest` (`GET /game/list`) |
+| `existsByPublicId(String)` | `SELECT ... WHERE public_id = ?` (restituisce `true`/`false`) | `GameService.create`, per trovare un `publicId` libero |
+| `findByPublicId(String)` | `WHERE public_id = ?` → `Optional<Game>` | `GameService.village` (`/api/village/{publicId}`) |
+
+- **`existsOpenGameOf`** è vera se il giocatore è master **o** giocatore di una partita con
+  `endedAt IS NULL`. Usa `count(g) > 0` invece di restituire la partita: serve solo il sì/no, e
+  il database non deve costruire nessuna riga.
+- **`EXISTS (SELECT ...)`** è vero se la sottoquery trova **almeno una riga**. Il database si ferma
+  alla prima riga trovata, quindi il costo non dipende da quante partite ha giocato il giocatore.
+  Nel caso di `existsOpenGameOf` la sottoquery cerca in `GamePlayer` le righe del giocatore nella
+  partita corrente della query esterna (`gp.game = g`).
+- **`findLatestOf`** ordina per `startedAt DESC` e riceve `Limit.of(1)`: la query restituisce al più
+  una partita. Con UUID v7 anche l'`id` cresce nel tempo (sono in ordine di creazione), ma
+  `startedAt` lo dice in modo esplicito e non dipende dal formato dell'id.
+
+## Query dei mazzi (`DeckRepository`)
+
+| Metodo | Cosa fa | Usato da |
+|---|---|---|
+| `findByOwnerIdOrderByNameAsc(UUID)` | mazzi di un utente, in ordine di nome | `GET /user/me/deck` e `GET /user/{username}/deck` |
+| `findByIdAndOwnerId(UUID, UUID)` | un mazzo, **solo se** è dell'utente | modifica e cancellazione di `/user/me/deck/{deckId}` |
+| `existsByOwnerIdAndNameIgnoreCase(UUID, String)` | nome già usato dallo stesso utente | `DeckService` al salvataggio (409) |
+| `existsByOwnerIdAndNameIgnoreCaseAndIdNot(UUID, String, UUID)` | come sopra, escluso il mazzo stesso | `DeckService` in rinomina (`PUT`) |
+| `deleteByOwnerId(UUID)` | cancella tutti i mazzi di un utente | `UserService.delete` |
+
+- **`findByIdAndOwnerId` è il controllo di proprietà**: un solo filtro nella `WHERE`. Se il mazzo
+  esiste ma è di un altro utente, non lo trova e il service lancia `DeckNotFoundException` → 404.
+  Non 403: un 403 rivelerebbe che quell'id esiste.
+- **`...AndIdNot`**: stesso ragionamento di `existsByUsernameIgnoreCaseAndIdNot`. Rinominare un
+  mazzo cambiando solo le maiuscole non deve trovare il mazzo stesso.
+- **`deleteByOwnerId` è una delete derivata**: Spring carica le righe e le cancella **una per una**.
+  Serve una transazione (la chiama `UserService.delete`, che è `@Transactional`). Per pochi mazzi
+  va bene; con tante righe si scriverebbe una query esplicita,
+  `@Modifying @Query("DELETE FROM Deck d WHERE d.owner.id = :ownerId")`, che manda una sola
+  istruzione `DELETE` al database.
+
 ## Classi
 
 - `PlayerRepository` — tabella `player`, chiave `UUID id`.
@@ -118,6 +159,7 @@ e si concentra sulle query e sui vincoli del database.
 - `GameRepository` — tabella `game`.
 - `GamePlayerRepository` — tabella `game_player`.
 - `GameActionRepository` — tabella `game_action`.
+- `DeckRepository` — tabella `deck`, mazzi salvati (vedi "Query dei mazzi").
 
 ### Query aggiunte con l'autenticazione
 

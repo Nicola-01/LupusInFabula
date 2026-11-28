@@ -29,3 +29,9 @@ mano come in FinanceWebApp, finché sono pochi e semplici.
   (per `/user/me`) ha l'email, il secondo (per il profilo di un altro) la lascia `null`: l'email è
   privata. Due metodi con il nome che dice chi li vede, invece di un `boolean` da ricordare.
 - `RoleMapper` — `Role` (enum) → `RoleResponse`. Non richiede una transazione: l'enum è già in memoria.
+- `GameMapper` — `Game` → `GameSummaryResponse` (`mapToSummary`) e `VillageResponse` (`mapToVillage`),
+  e `GameSetting` → `SettingResponse` (`mapToResponse`). I metodi per la partita ricevono anche
+  l'id di chi chiama, per calcolare `master` / `isMaster` (il master è `game.getMaster()`).
+  `mapToVillage` copia le impostazioni in un nuovo `EnumSet`, perché il set della entity è lazy.
+- `DeckMapper` — `Deck` → `DeckResponse`. Copia `roles` in un `EnumMap`: nel JSON i ruoli escono
+  nell'ordine dell'enum, indipendentemente dall'ordine in cui la mappa è stata letta dal database.

@@ -150,6 +150,14 @@ Le costanti `USERNAME` e `PASSWORD` stanno **dentro** il record (`static final`)
 che descrivono. Il controllo sulla password usa lookahead (`(?=.*\\d)` = "contiene almeno una
 cifra"): ogni gruppo è una condizione indipendente, e l'ultima parte limita lunghezza e spazi.
 
+### Username riservato: `search`
+
+All'inizio di `USERNAME` c'è `(?!(?i:search)$)`: un *lookahead negativo* ("qui non deve esserci...")
+con `(?i:...)`, che ignora le maiuscole solo per quel pezzo. Rifiuta lo username `search` in ogni
+forma (`Search`, `SEARCH`). Il motivo: `GET /user/search/{text}` ha la precedenza su
+`/user/{username}/...`, quindi le pagine di un utente chiamato `search` (es. `/user/search/deck`)
+non sarebbero raggiungibili. Vale anche per `PUT /user/me`, che usa la stessa costante.
+
 ### Niente `passwordRepeat`
 
 Il frontend chiede due volte la password per evitare errori di battitura, ma il confronto è un
@@ -181,6 +189,12 @@ verrebbe inviato in chiaro in più. Il frontend confronta i due campi prima di i
   `Long` e non `long` perché il record è creato dalla query JPQL (`SELECT new ...`) e `count`
   restituisce `Long`: il costruttore deve avere lo stesso tipo.
 - `PlayerSearchResponse` — `username`, `currentGame` (publicId della partita in corso, o `null`).
+- `DeckRequest` — `POST` e `PUT /user/me/deck`: `name`, `players`, `roles` (`Map<Role, Integer>`
+  con `@Min(1)` su ogni valore). Un ruolo con 0 carte non si salva: basta toglierlo dalla mappa.
+  Le regole di sostanza (carte ≥ giocatori, equilibrio, nome libero) stanno nel service, come per
+  `CreateGameRequest`.
+- `DeckResponse` — `id`, `name`, `players`, `roles`. Stessa forma di `DeckRequest` più l'`id`: il
+  frontend può rimandare la risposta in `PUT` senza trasformarla.
 
 ## Classi
 
@@ -188,3 +202,15 @@ verrebbe inviato in chiaro in più. Il frontend confronta i due campi prima di i
 - `RolesByTypeResponse` — `{"roles": {"GOOD": [...], "EVIL": [...], "VICTORY_STEALER": [...], "NEUTRAL": [...]}}`.
   Una `Map<RoleType, ...>` diventa un oggetto JSON con i nomi delle costanti come chiavi; è un
   `EnumMap`, quindi le chiavi escono nell'ordine dell'enum.
+- `CreateGameRequest` — `POST /game/create`: `players` (in ordine di posto), `roles` (`Map<Role, Integer>`)
+  e `settings` (facoltativo). Le annotazioni sul tipo dentro i generici validano ogni valore della
+  mappa: `Map<Role, @NotNull @Min(0) Integer>` rifiuta un numero negativo o `null` per ogni ruolo.
+  Un nome di ruolo sconosciuto (`"DRAGON"`) fa fallire la lettura del JSON, quindi arriva 400 prima
+  di qualunque controllo del service.
+- `CreateGameResponse` — `{publicId}`: la risposta di `POST /game/create`, con lo stesso valore
+  nell'header `Location`.
+- `SettingResponse` — `{name, description}` di una impostazione, per `GET /game/settings`.
+- `GameSummaryResponse` — `{publicId, startedAt, endedAt, winner, master}`: l'ultima partita in
+  `GET /game/list`. `master` dice se il chiamante è il master.
+- `VillageResponse` — `GET /api/village/{publicId}`: `{publicId, isMaster, winner, settings}`. La
+  chiave JSON è proprio `isMaster` (non `master`), perché il frontend la legge con quel nome.

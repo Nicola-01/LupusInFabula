@@ -38,16 +38,21 @@ di sessione viaggia da solo. Dettagli in `security/README.md`.
 
 ## 3. Creazione partita (`/game/create`, `/game/settings`, `/game/list`)
 
-- [ ] `GET /game/create` (ruoli disponibili), `GET /game/settings` (impostazioni possibili)
-- [ ] `POST /game/create`: validazione numero ruoli/giocatori, assegnazione casuale, `publicId`
-- [ ] `GET /game/list` (partite dell'utente)
-- [ ] `GET /api/village/{publicId}`
+- [x] ~~`GET /game/create`~~ tolto: i ruoli sono in `GET /api/rules/roles`; `GET /game/settings`
+- [x] `POST /game/create`: validazione numero ruoli/giocatori, assegnazione casuale, `publicId`
+- [x] `GET /game/list` (partite dell'utente)
+- [x] `GET /api/village/{publicId}`
+- [x] Impostazioni alla creazione: `LARGER_ROLE_NUMBER` (mazzo + mano equilibrata), `MASTER_FREE` (il master gioca)
+- [x] `DELETE /user/me` → 409 durante una partita
+- [x] Mazzi salvati (`deck`, ruoli in jsonb): `GET/POST /user/me/deck`, `PUT/DELETE /user/me/deck/{id}`, `GET /user/{username}/deck`
+- [x] Cancellazione account → cancella i suoi mazzi
 
 ## 4. Stato della partita (sola lettura)
 
 - [ ] Controllo "è il master di questa partita" (`@PreAuthorize` o bean di sicurezza, come `GameMasterFilter`)
 - [ ] `GET /game/status/{id}[/master]`, `/players/...`, `/settings/...`, `/configuration/...`
 - [ ] Cosa vede il master e cosa vede il giocatore (ruoli nascosti finché la partita non finisce)
+- [ ] In MASTER_FREE il master vede solo le sue cose (gestisce la partita, non vede i ruoli)
 
 ## 5. Logica di gioco
 
@@ -55,7 +60,7 @@ di sessione viaggia da solo. Dettagli in `security/README.md`.
 - [ ] `GET/POST /game/actions/{id}[/master]`: azioni notturne, voto diurno
 - [ ] Risoluzione delle azioni per ruolo (protezione, blocco, peste, …), morti, cambio fase
 - [ ] `POST /game/update/{id}/master` (avanzamento fase), condizioni di vittoria
-- [ ] Impostazioni di partita attive (D1: `MASTER_FREE`, `ILLUSIONIST_BLOCK`, `LARGER_ROLE_NUMBER`)
+- [ ] Impostazioni di partita attive (D1): `MASTER_FREE` (azioni inviate dai giocatori), `ILLUSIONIST_BLOCK` ancora da fare nella logica di gioco
 - [ ] Molti test unitari: è la parte con più regole
 
 ## 6. Tempo reale

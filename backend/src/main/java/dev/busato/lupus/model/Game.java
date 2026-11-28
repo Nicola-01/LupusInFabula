@@ -10,14 +10,18 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.MapKeyColumn;
+import jakarta.persistence.MapKeyEnumerated;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
@@ -81,6 +85,15 @@ public class Game {
   @Column(name = "setting", nullable = false)
   @Builder.Default
   private Set<GameSetting> settings = EnumSet.noneOf(GameSetting.class);
+
+  /** Cards chosen by the master, role -> number. With LARGER_ROLE_NUMBER more than the players: the extra ones are discarded. */
+  @ElementCollection
+  @CollectionTable(name = "game_role", joinColumns = @JoinColumn(name = "game_id"))
+  @MapKeyEnumerated(EnumType.STRING)
+  @MapKeyColumn(name = "role", length = 20)
+  @Column(name = "cards", nullable = false)
+  @Builder.Default
+  private Map<Role, Integer> deck = new EnumMap<>(Role.class);
 
   /** Players of the game, ordered by seat. Inverse side: the column is in {@code GamePlayer}. */
   @OneToMany(mappedBy = "game")

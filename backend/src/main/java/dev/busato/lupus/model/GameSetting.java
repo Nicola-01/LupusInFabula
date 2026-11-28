@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * Settings that can be enabled in a game. Not implemented yet in the game logic.
+ * Settings that can be enabled in a game. Applied at creation by GameService; their effect on the game flow comes with the game logic.
  */
 @Getter
 @RequiredArgsConstructor
