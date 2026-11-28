@@ -42,3 +42,11 @@ codice: non le possiamo cambiare. Le trasformiamo in `ProblemDetail` nel `Global
 ## Classi
 
 - `AlreadyUsedException` — 409, con il campo (`username`, `email`) che è già usato.
+- `PlayerNotFoundException` — 404, nessun account attivo con quello username.
+- `WrongPasswordException` — 403, `currentPassword` sbagliata in `PUT`/`DELETE /user/me`. È 403 e
+  non 401 perché l'utente **è** autenticato: un 401 farebbe credere al frontend che la sessione sia
+  scaduta.
+- `AlreadyFriendException` — 409, l'amico è già nella lista.
+- `NotFriendException` — 404, rimozione di qualcuno che non è nella lista.
+- `InvalidFriendException` — 400, aggiungere se stessi.
+- `SearchTooShortException` — 400, ricerca con meno di 2 caratteri.

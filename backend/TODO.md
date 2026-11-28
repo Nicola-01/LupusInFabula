@@ -31,10 +31,10 @@ di sessione viaggia da solo. Dettagli in `security/README.md`.
 
 ## 2. Profilo e amici (`/user/**`)
 
-- [ ] `GET /user/me`, `PUT /user/me` (modifica dati/password), `DELETE /user/me` (soft delete, D4)
-- [ ] `GET /user/{username}`, `GET /api/habitant/{username}`
-- [ ] `GET /user/search/{username}` (esclude gli account cancellati)
-- [ ] `GET/POST/DELETE /user/me/friend` (amicizia a senso unico, D6)
+- [x] `GET /user/me`, `PUT /user/me` (username, email, password), `DELETE /user/me` (soft delete, D4: username bloccato, email liberata)
+- [x] `GET /user/{username}` (sostituisce `GET /api/habitant/{username}`, rimosso)
+- [x] `GET /user/search/{text}` (min 2 caratteri, max 20, esclude cancellati e se stessi)
+- [x] `GET/POST/DELETE /user/me/friend` (amicizia a senso unico, D6; DELETE con body)
 
 ## 3. Creazione partita (`/game/create`, `/game/settings`, `/game/list`)
 

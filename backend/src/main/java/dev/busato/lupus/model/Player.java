@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -27,6 +28,8 @@ import org.hibernate.annotations.UuidGenerator;
 @AllArgsConstructor
 @Entity
 @Table(name = "player")
+// a deleted account frees its email (null), an active one must have it
+@Check(constraints = "email IS NOT NULL OR deleted_at IS NOT NULL")
 public class Player {
 
   @Id
@@ -37,7 +40,7 @@ public class Player {
   @Column(nullable = false, unique = true, length = 20)
   private String username;
 
-  @Column(nullable = false, unique = true, length = 100)
+  @Column(unique = true, length = 100)
   private String email;
 
   @Column(nullable = false, length = 100)
@@ -54,6 +57,6 @@ public class Player {
   @PrePersist
   @PreUpdate
   void normalizeEmail() {
-    email = email.toLowerCase(Locale.ROOT);
+    if (email != null) email = email.toLowerCase(Locale.ROOT);
   }
 }

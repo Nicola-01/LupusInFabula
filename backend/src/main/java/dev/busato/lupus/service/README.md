@@ -120,10 +120,28 @@ Optional<Game> game = gameRepository.findFirstByMasterIdAndEndedAtIsNull(playerI
 String gamemaster = game.isPresent() ? game.get().getPublicId() : null;
 ```
 
+## `UserService` e `FriendService`
+
+- **Il giocatore "attivo"**: ogni metodo parte da `findByIdAndDeletedAtIsNull(id)`. Se l'account è
+  stato cancellato da un altro dispositivo, la sessione rimasta aperta riceve 401 al primo uso.
+- **Password attuale**: `PUT` e `DELETE /user/me` la richiedono (`passwordEncoder.matches`). Così
+  una sessione lasciata aperta su un PC altrui non basta per cambiare password o cancellare l'account.
+- **Nessun `save` in `update`**: dentro una transazione l'entity letta è *managed*; Hibernate
+  confronta i campi alla fine (*dirty checking*) e scrive l'`UPDATE` da solo.
+- **`saveAndFlush` in `FriendService.add`**: `since` è `@CreationTimestamp` e Hibernate lo valorizza
+  quando scrive la riga. Con `save` l'`INSERT` è rimandato alla fine della transazione e il valore
+  sarebbe ancora `null` nella risposta; `flush` lo forza subito.
+- **Ricerca**: almeno 2 caratteri (con 1 tornerebbe mezzo database), massimo 20 risultati, esclude
+  te stesso e i cancellati.
+- **Amicizia a senso unico** (D6): aggiungere B mette solo la riga A → B.
+
 ## Classi
 
 - `AuthService` — registrazione (controlla username ed email, salva l'hash BCrypt) e lettura della
   sessione (utente + publicId della partita di cui è master, se c'è).
+- `UserService` — profilo proprio e degli altri, modifica (username, email, password), cancellazione
+  (soft delete con email liberata), ricerca.
+- `FriendService` — lista (con partite in comune), aggiunta e rimozione degli amici.
 - `RoleService` — tutti i `Role` raggruppati per `RoleType` in un `EnumMap` (mappa ottimizzata
   per chiavi enum, ordinata come l'enum). Tutti i tipi sono presenti anche se vuoti, così il
   frontend non deve gestire chiavi mancanti. Dipende solo dal mapper: nessun repository.

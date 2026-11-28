@@ -249,7 +249,7 @@ database (vedi sopra); è il compromesso accettato.
 @PrePersist
 @PreUpdate
 void normalizeEmail() {
-  email = email.toLowerCase(Locale.ROOT);
+  if (email != null) email = email.toLowerCase(Locale.ROOT); // null solo per un account cancellato
 }
 ```
 
@@ -288,7 +288,7 @@ decimale: `3,5` in italiano, `3.5` in inglese.
 ## Classi
 
 Entity (tabelle), tutte con `id` UUID v7:
-- `Player` — utente registrato (`username`, `email`, `passwordHash`, `deletedAt` per la cancellazione logica).
+- `Player` — utente registrato (`username`, `email`, `passwordHash`, `deletedAt` per la cancellazione logica; `email` è `null` solo se l'account è cancellato).
 - `Friendship` — "segue" unidirezionale tra due `Player`.
 - `Game` — partita: `publicId` (per gli URL), `master`, `round`, `phase`, `winner`, `settings`, `players`.
 - `GamePlayer` — un giocatore in una partita: `role`, `seat` (posto al tavolo), morte (`deathRound`, `deathPhase`, `diedAt`).
@@ -301,3 +301,23 @@ Enum:
 - `GamePhase` — `NIGHT`, `DAY`.
 - `ActionType` — `VOTE` (voto di giorno) e i poteri dei ruoli (`MAUL`, `PROTECT`, ...).
 - `GameSetting` — `MASTER_FREE`, `ILLUSIONIST_BLOCK`, `LARGER_ROLE_NUMBER` (non ancora implementate).
+
+## Email `null` solo per gli account cancellati
+
+Quando un account viene cancellato (soft delete) lo username resta occupato, ma l'email torna
+libera, così chi la usava può registrarsi di nuovo. Per questo `UserService.delete` mette
+`deletedAt = adesso` ed `email = null`. La colonna `email` è quindi nullable, con due protezioni:
+
+```java
+@Check(constraints = "email IS NOT NULL OR deleted_at IS NOT NULL")
+```
+
+- `@Check` (Hibernate) crea un vincolo `CHECK` nella tabella: è il **database** a rifiutare un
+  account attivo senza email, anche se un service avesse un bug. Si legge "o l'email c'è, o
+  l'account è cancellato".
+- `UNIQUE` in Postgres non confronta i `NULL` tra loro (`NULL` = "valore sconosciuto", mai uguale a
+  un altro): più account cancellati con `email = null` non violano il vincolo.
+- Alternativa scartata: un'email finta (`<id>@deleted`). Funziona, ma mette nel database un dato
+  falso che ogni query deve riconoscere; `null` dice esattamente "non c'è più".
+- `ddl-auto=update` non aggiunge un `CHECK` né toglie un `NOT NULL` a una tabella esistente: per
+  questo lo schema è stato ricreato.

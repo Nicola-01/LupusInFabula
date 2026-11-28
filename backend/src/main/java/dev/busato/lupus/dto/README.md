@@ -167,6 +167,20 @@ verrebbe inviato in chiaro in più. Il frontend confronta i due campi prima di i
 - `SessionResponse` — `GET /api/session`: `user` (un `PlayerResponse`) e `gamemaster` (publicId
   della partita di cui è master, oppure `null`; il JSON include il campo anche quando è `null`,
   perché Spring Boot non esclude i null di default).
+- `ProfileResponse` — `username`, `email`, `registeredOn`. Su `email` c'è
+  `@JsonInclude(JsonInclude.Include.NON_NULL)`: quando è `null` (profilo di un altro utente) il
+  campo **non compare** nel JSON, invece di valere `null`. A differenza di `gamemaster`, qui
+  l'assenza è il messaggio: "questo dato non è per te".
+- `UpdateProfileRequest` — `PUT /user/me`: `currentPassword` obbligatoria, `username`, `email`,
+  `password` facoltativi (`null` = non cambia). Le regole sono quelle di `SignupRequest`
+  (`@Pattern(regexp = SignupRequest.USERNAME)`): `@Pattern` ed `@Email` considerano valido un
+  `null`, quindi un campo omesso passa e uno presente deve essere corretto.
+- `DeleteAccountRequest` — `DELETE /user/me`: `currentPassword`.
+- `FriendRequest` — `POST` e `DELETE /user/me/friend`: `username`.
+- `FriendResponse` — `username`, `commonGames` (partite giocate insieme), `since`. `commonGames` è
+  `Long` e non `long` perché il record è creato dalla query JPQL (`SELECT new ...`) e `count`
+  restituisce `Long`: il costruttore deve avere lo stesso tipo.
+- `PlayerSearchResponse` — `username`, `currentGame` (publicId della partita in corso, o `null`).
 
 ## Classi
 

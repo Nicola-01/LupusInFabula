@@ -269,12 +269,37 @@ se l'account esiste.
 
 ## Il principal: `PlayerPrincipal`
 
+**Principal** è il nome che Spring Security dà a **chi è loggato** in questa richiesta. Spring non
+conosce la nostra classe `Player`: vuole un oggetto che implementi la sua interfaccia `UserDetails`,
+cioè che sappia rispondere a tre domande: `getUsername()`, `getPassword()` (l'hash da confrontare)
+e `getAuthorities()` (i permessi, per noi una lista vuota: non abbiamo ruoli admin/utente).
+
+Il suo percorso:
+1. **Login**: `DaoAuthenticationProvider` chiama `PlayerDetailsService.loadUserByUsername`, che
+   legge il `Player` dal database e lo converte in `PlayerPrincipal`. Il provider confronta la
+   password digitata con `getPassword()` (BCrypt `matches`).
+2. Se va bene crea un `Authentication`, una "busta" che contiene il principal
+   (`auth.getPrincipal()`), e la mette nel `SecurityContext`, che finisce nella sessione.
+3. **Richieste successive**: `SecurityContextHolderFilter` rilegge il contesto dalla sessione, quindi
+   il principal è disponibile senza toccare il database. Con il remember-me lo ricostruisce
+   `RememberMeAuthenticationFilter`, chiamando di nuovo `loadUserByUsername`.
+4. **Nel controller**: `@AuthenticationPrincipal PlayerPrincipal me` lo riceve come parametro.
+5. **Cambio username/password**: `SessionAuthenticator.refresh` ne crea uno nuovo (vedi sotto).
+
+**Non è un filtro.** Il filtro è **codice che lavora** su ogni richiesta (controlla la sessione,
+il cookie, il token CSRF). Il principal è un **dato**, il risultato di quel lavoro: un foglietto
+con scritto "questa richiesta è di Nick, id ...". Un'analogia è il portiere e il badge: il portiere
+(filtro) controlla all'ingresso e ti consegna il badge (principal); dentro, gli uffici (controller e
+service) leggono il badge per sapere chi sei, senza rifare il controllo. Il principal non blocca
+niente: a bloccare le richieste senza login è `AuthorizationFilter`, che guarda se il badge c'è.
+
 Dentro la sessione finisce un `PlayerPrincipal`, un **record nostro** che implementa `UserDetails`
 (`id`, `username`, `passwordHash`), non l'entity `Player`. Motivi:
 
-- **l'entity fuori dalla transazione**: la sessione sopravvive alla richiesta, e un'entity
-  con relazioni lazy (`Player` ha `deletedAt` e in futuro collezioni) darebbe errore o dati
-  scollegati dal database.
+- **l'entity fuori dalla transazione**: la sessione sopravvive alla richiesta, mentre l'entity è
+  legata alla transazione in cui è stata letta. Oggi `Player` non ha relazioni lazy, ma se ne
+  avesse (per esempio una lista di partite), leggerle dalla sessione darebbe
+  `LazyInitializationException`.
 - **dati vecchi**: l'entity è una copia letta al login; il record è una foto minima e immutabile
   (l'hash serve solo a Spring per il remember-me).
 - **l'`id` e non lo username**: l'username può cambiare (`PUT /user/me`), l'`id` UUID no. Le
@@ -320,6 +345,25 @@ solo anche nell'handshake del WebSocket; un header `Authorization` no (il browse
 nelle connessioni WebSocket). Quindi sessioni e cookie sono l'approccio standard di Spring per
 questo caso, e la revoca "da tutti i dispositivi" è il limite accettato sopra.
 
+## Cambio di username o password: `SessionAuthenticator.refresh`
+
+La sessione contiene un `PlayerPrincipal` con username e hash della password **del momento del
+login**. Dopo `PUT /user/me` sarebbero vecchi, quindi `UserController` chiama `refresh`:
+1. rilegge l'utente (`userDetailsService.loadUserByUsername(nuovoUsername)`), dopo che la
+   transazione del service ha salvato le modifiche;
+2. cambia l'id di sessione e salva il nuovo `Authentication`, come nel login;
+3. se la richiesta aveva il cookie `remember-me`, ne emette uno nuovo. Il vecchio è firmato con lo
+   username e l'hash vecchi, quindi non vale più: senza questo passo, chi aveva scelto
+   `keepLogged` verrebbe sloggato alla chiusura del browser.
+
+Gli **altri dispositivi**: il loro `remember-me` smette di funzionare (firma diversa), ma una
+sessione già aperta resta valida fino alla scadenza. È il limite accettato delle sessioni in
+memoria (vedi "Logout da tutti i dispositivi" nel `TODO.md`).
+
+`DELETE /user/me` chiama invece `logout`: `rememberMeServices.logout` cancella il cookie e
+`SecurityContextLogoutHandler` invalida la sessione. Sono gli stessi pezzi che usa il `LogoutFilter`
+per `POST /logout`; qui li chiamiamo a mano perché la richiesta è un'altra.
+
 ## Classi
 
 - `SecurityConfig` — `@Configuration @EnableWebSecurity`: i bean `PasswordEncoder` (BCrypt),
@@ -329,6 +373,9 @@ questo caso, e la revoca "da tutti i dispositivi" è il limite accettato sopra.
   cancellato (`deletedAt`) o non esiste, lancia `UsernameNotFoundException`. Il filtro sui
   cancellati è nella query `PlayerRepository.findActiveByLogin`, non in Java. Il login per email
   porta il valore in minuscolo prima della query, come le email salvate (vedi `model/README.md`).
+- `SessionAuthenticator` — `@Component` con il codice di sessione condiviso da `AuthController` e
+  `UserController`: `login` (il login manuale), `refresh` (dopo il cambio di username o password),
+  `logout` (dopo la cancellazione dell'account).
 - `PlayerPrincipal` — il record in sessione: `id`, `username`, `passwordHash`.
 - `LogContextFilter` — non è un `@Component`: lo crea `SecurityConfig` e lo aggiunge alla catena
   dopo il remember-me. Riempie l'MDC con utente e IP e lo svuota alla fine della richiesta.

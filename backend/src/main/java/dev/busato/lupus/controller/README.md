@@ -249,3 +249,58 @@ public ResponseEntity<Void> login(
 **Perché 204 e non 200**: 204 vuol dire "riuscito, e non c'è un body". Il login non deve
 restituire dati: il frontend, se gli servono, chiama `GET /api/session`. Il signup risponde invece
 **201 Created**, perché crea una risorsa nuova (il giocatore).
+
+## `UserController` (`/user/**`)
+
+| Metodo e URL | Body | Risposta | Errori |
+|---|---|---|---|
+| `GET /user/me` | — | 200 `ProfileResponse` con email | 401 |
+| `PUT /user/me` | `{currentPassword, username?, email?, password?}` | 200 profilo aggiornato | 400, 403 password sbagliata, 409 username/email usati |
+| `DELETE /user/me` | `{currentPassword}` | 204, sessione e remember-me chiusi | 403 |
+| `GET /user/{username}` | — | 200 profilo **senza email** | 404 |
+| `GET /user/search/{text}` | — | 200 `[PlayerSearchResponse]` | 400 se meno di 2 caratteri |
+| `GET /user/me/friend` | — | 200 `[FriendResponse]` | |
+| `POST /user/me/friend` | `{username}` | 201 `FriendResponse` | 400 te stesso, 404, 409 già amico |
+| `DELETE /user/me/friend` | `{username}` | 204 | 404 non è un amico |
+
+- **`/user/me` e `/user/{username}` non si scontrano**: Spring sceglie il pattern più specifico,
+  e un segmento fisso (`me`) batte una variabile. Uno username `me` non può esistere (minimo 3 caratteri).
+- **`@AuthenticationPrincipal PlayerPrincipal me`**: Spring passa il principal della sessione;
+  il controller usa solo `me.id()` e lascia tutto il resto al service.
+- **DELETE con body**: Spring lo legge con `@RequestBody` come per POST. Lo standard HTTP non dà
+  un significato al body di una DELETE e qualche proxy potrebbe scartarlo; lo teniamo perché è
+  l'API vecchia e tra frontend e backend non ci sono proxy che lo tolgono.
+- **Perché non c'è più `/api/habitant/{username}`**: la usava solo la pagina delle statistiche
+  (`/habitant/:username`) per sapere se l'utente esiste (404 → pagina non trovata) e per avere lo
+  username scritto come è salvato (`/habitant/nick` → `/habitant/Nick`). `GET /user/{username}`
+  restituisce le stesse informazioni, quindi il frontend userà quello.
+
+### Come funziona `PUT /user/me`
+
+```java
+ProfileResponse profile = userService.update(me.id(), body);
+if (body.username() != null || body.password() != null)
+  sessionAuthenticator.refresh(profile.username(), request, response);
+return ResponseEntity.ok(profile);
+```
+
+1. `userService.update` cambia i dati nel **database** e restituisce il profilo nuovo. La
+   transazione si chiude qui: quando il metodo torna, le modifiche sono salvate.
+2. Il database è aggiornato, ma due copie dei dati vecchi restano **fuori**:
+   - il `PlayerPrincipal` nella sessione (RAM del server) ha ancora lo username vecchio;
+   - il cookie `remember-me` nel browser è firmato con lo username e l'hash della password vecchi.
+3. `refresh` sistema entrambe: crea un principal nuovo e lo salva in sessione, e se il browser
+   aveva il cookie `remember-me` ne scrive uno nuovo nella risposta. Per questo servono `request` e
+   `response`.
+
+Senza `refresh`:
+- **il remember-me non funziona più**: alla prossima apertura del browser, Spring legge il cookie,
+  ricalcola la firma con i dati attuali, non coincide e lo cancella. Chi aveva scelto "resta
+  loggato" si ritrova sloggato. Con lo username cambiato non trova nemmeno l'utente;
+- **i log mostrano lo username vecchio** (`LogContextFilter` lo prende dal principal);
+- qualunque codice futuro che usasse `me.username()` leggerebbe quello vecchio.
+
+`/api/session` invece sarebbe già corretto, perché rilegge dal database usando `me.id()`, che non cambia.
+
+Solo username e password richiedono il `refresh`: sono gli unici dati che stanno nel principal e
+nella firma del cookie. Il cambio della sola email non tocca né l'uno né l'altra.

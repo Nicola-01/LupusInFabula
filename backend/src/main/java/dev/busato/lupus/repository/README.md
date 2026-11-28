@@ -143,3 +143,34 @@ Due dettagli:
 - `findFirst...` restituisce al massimo una riga. Il nome dice "il primo", ma senza un ordine è
   quello che il database trova per primo: va bene perché un master ha una sola partita aperta
   alla volta (la regola si fa rispettare nel service della creazione partita).
+
+### Query aggiunte con profilo e amici
+
+| Metodo | Cosa fa | Usato da |
+|---|---|---|
+| `PlayerRepository.existsByUsernameIgnoreCaseAndIdNot(String, UUID)` | username usato da **un altro** (anche cancellato) | `UserService.update` |
+| `PlayerRepository.existsByEmailAndIdNot(String, UUID)` | email usata da un altro | `UserService.update` |
+| `PlayerRepository.findByUsernameIgnoreCaseAndDeletedAtIsNull(String)` | account attivo per username | profilo, aggiunta amico |
+| `PlayerRepository.search(String, UUID, Limit)` | `@Query`: ricerca per parte dello username, con la partita in corso | `UserService.search` |
+| `FriendshipRepository.existsByPlayerIdAndFriendId(UUID, UUID)` | già amici? | `FriendService.add` |
+| `FriendshipRepository.findByPlayerIdAndFriendUsernameIgnoreCase(UUID, String)` | l'amicizia da rimuovere; `FriendUsername` attraversa la relazione `friend.username` | `FriendService.remove` |
+| `FriendshipRepository.findFriends(UUID)` | `@Query`: amici attivi con le partite in comune | `FriendService.list` |
+| `GamePlayerRepository.countCommonGames(UUID, UUID)` | partite giocate da entrambi | `FriendService.add` |
+
+- **`...AndIdNot`**: in `PUT /user/me` chi cambia solo le maiuscole (`nick` → `Nick`) troverebbe sé
+  stesso con `existsByUsernameIgnoreCase`; escludendo il proprio id il controllo guarda solo gli altri.
+- **La query restituisce direttamente il DTO**: `SELECT new dev.busato.lupus.dto.FriendResponse(...)`
+  è una *constructor expression* JPQL. Hibernate legge solo le colonne servono e crea il record,
+  senza caricare le entity. Serve il nome completo della classe, e i tipi del costruttore devono
+  coincidere con quelli della query (`count` → `Long`).
+- **Sottoquery nel `SELECT`** (`(SELECT count(gp1) ...)`): il conteggio delle partite in comune è
+  calcolato dal database per ogni amico, in **una** query. Chiamare `countCommonGames` per ogni
+  amico sarebbe il problema N+1 (1 query per la lista + 1 per amico).
+- **`Limit`**: `search(text, id, Limit.of(20))` aggiunge `LIMIT 20` alla query. È il tipo di Spring
+  Data per "al massimo N righe" con le `@Query`; il nome del metodo con `findFirst20By...` vale solo
+  per le query derivate.
+- **`LIKE ... ESCAPE '\'`**: in `LIKE` `%` e `_` sono jolly ("qualsiasi testo", "un carattere"). Lo
+  username può contenere `_`, quindi `UserService.search` li fa precedere da `\` e la query dice
+  che `\` è il carattere di escape: `a_b` cerca proprio `a_b`, non `axb`.
+- **`max(g.publicId)`**: un giocatore dovrebbe essere in una sola partita aperta; `max` garantisce
+  che la sottoquery restituisca una riga sola anche se per un bug fossero due.

@@ -25,4 +25,7 @@ mano come in FinanceWebApp, finché sono pochi e semplici.
 
 - `PlayerMapper` — `Player` → `PlayerResponse` (`username`, `email`). Non espone `passwordHash`,
   `id` e `deletedAt`: il JSON è solo quello che il frontend mostra.
+- `PlayerMapper.mapToOwnProfile` / `mapToPublicProfile` — `Player` → `ProfileResponse`. Il primo
+  (per `/user/me`) ha l'email, il secondo (per il profilo di un altro) la lascia `null`: l'email è
+  privata. Due metodi con il nome che dice chi li vede, invece di un `boolean` da ricordare.
 - `RoleMapper` — `Role` (enum) → `RoleResponse`. Non richiede una transazione: l'enum è già in memoria.

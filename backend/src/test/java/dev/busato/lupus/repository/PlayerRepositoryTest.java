@@ -1,16 +1,23 @@
 package dev.busato.lupus.repository;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import dev.busato.lupus.dto.PlayerSearchResponse;
 import dev.busato.lupus.model.Player;
 import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.domain.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /** Real PostgreSQL (Replace.NONE), each test in a transaction rolled back at the end. */
 @DataJpaTest
@@ -63,5 +70,44 @@ class PlayerRepositoryTest {
 
     assertFalse(playerRepository.findActiveByLogin("gone-login", "gone-login").isPresent());
     assertFalse(playerRepository.findActiveByLogin("gone-login@test.it", "gone-login@test.it").isPresent());
+  }
+
+  @Test
+  void search_skipsDeletedAndExcludedPlayers_isCaseInsensitive_andEscapesUnderscore() {
+    Player me = playerRepository.save(Player.builder().username("alpha-me").email("alpha-me@test.it").passwordHash("hash").build());
+    playerRepository.save(Player.builder().username("Alpha_one").email("alpha-one@test.it").passwordHash("hash").build());
+    playerRepository.save(Player.builder().username("alphaX").email("alphax@test.it").passwordHash("hash").build());
+    playerRepository.save(Player.builder().username("alpha-gone").email("alpha-gone@test.it").passwordHash("hash").deletedAt(Instant.now()).build());
+    entityManager.flush();
+    entityManager.clear();
+
+    List<String> all = usernames(playerRepository.search("ALPHA", me.getId(), Limit.unlimited()));
+    List<String> underscore = usernames(playerRepository.search("alpha\\_", me.getId(), Limit.unlimited()));
+
+    assertThat(all).containsExactlyInAnyOrder("Alpha_one", "alphaX");
+    assertThat(underscore).containsExactly("Alpha_one");
+  }
+
+  private static List<String> usernames(List<PlayerSearchResponse> results) {
+    return results.stream().map(PlayerSearchResponse::username).toList();
+  }
+
+  @Test
+  void emailOfADeletedAccountCanBeReused() {
+    Player old = playerRepository.save(Player.builder().username("old-owner").email("reuse@test.it").passwordHash("hash").build());
+    old.setDeletedAt(Instant.now());
+    old.setEmail(null);
+    playerRepository.saveAndFlush(old);
+
+    playerRepository.saveAndFlush(Player.builder().username("new-owner").email("reuse@test.it").passwordHash("hash").build());
+
+    assertTrue(playerRepository.existsByEmail("reuse@test.it"));
+  }
+
+  @Test
+  void activePlayerWithoutEmail_isRejected() {
+    assertThrows(
+        DataIntegrityViolationException.class,
+        () -> playerRepository.saveAndFlush(Player.builder().username("no-mail").passwordHash("hash").build()));
   }
 }

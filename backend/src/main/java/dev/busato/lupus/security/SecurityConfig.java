@@ -80,7 +80,7 @@ public class SecurityConfig {
             .accessDeniedHandler((req, res, ex) -> resolver.resolveException(req, res, null, ex)))
         // same protected URLs as the old UserFilter; pages and static files stay public
         .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/user/**", "/game/**", "/api/session", "/api/village/**", "/api/habitant/**")
+            .requestMatchers("/user/**", "/game/**", "/api/session", "/api/village/**")
             .authenticated()
             .anyRequest().permitAll())
         .build();
