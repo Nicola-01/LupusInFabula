@@ -8,6 +8,14 @@ Web app (University of Padova, Web Applications course) that helps the game mast
 
 The app was migrated from Servlet/JSP + Bootstrap (branch `WebSocket`/`master` history). Known bugs of the original code are listed in `bug.md`; they were intentionally kept unless noted there.
 
+## New backend (`backend/`) — rewrite in progress
+
+The backend is being rewritten from scratch in `backend/` (Spring Boot 4.2, Java 21, Maven wrapper `./mvnw`, package `dev.busato.lupus`), step by step, as a learning project. The structure and annotation style follow `/home/nicola/Desktop/FinanceWebApp/backend`: packages by layer (`controller/`, `service/`, `repository/`, `model/`, `dto/`, `mappers/`), JPA + Lombok, `ddl-auto=update` (the DB can be reset freely), DTOs as `record`, `@RequiredArgsConstructor` injection, Mockito unit tests. Own postgres in `backend/compose.yaml` (port 5434, db/user/password `lupus`; reset with `docker compose down && docker run --rm -v "$PWD/data:/d" alpine rm -rf /d/db`, the files belong to the container's postgres user), roles are a Java enum (`model/Role`), no seed data. URLs stay the same as the old app, but the JSON may change (camelCase names, enums as strings instead of int codes, e.g. `RoleType`, `WinFaction`): the frontend will be adapted. The old backend in `src/` stays untouched until the rewrite is done.
+
+- The user is learning Spring: explain every choice (why, alternatives), in Italian.
+- **Every code implementation/modification goes through a subagent with `model: haiku`**: the main agent designs the change, gives the subagent a precise spec (files, contents, verification commands), reviews the result, then explains it to the user.
+- **Every package has a `README.md`** (and `dev/busato/lupus/README.md` explains beans in general). Keep them up to date: when you add/change a class, annotation or pattern, update the README of that package. When the user asks a question about something in a package (an annotation, a concept, a choice), answer it **and** add the explanation to that package's README (or the root one if it is general). New packages get their own README.
+
 ## Commands
 
 - Frontend build (must run before packaging, output goes to `src/main/resources/static/`, git-ignored): `cd frontend && npm install && npm run build`

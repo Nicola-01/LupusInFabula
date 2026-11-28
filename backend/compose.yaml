@@ -1,0 +1,13 @@
+# Database of the new backend.
+# Reset (files belong to the container user): docker compose down && docker run --rm -v "$PWD/data:/d" alpine rm -rf /d/db
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_DB: lupus
+      POSTGRES_USER: lupus
+      POSTGRES_PASSWORD: lupus
+    ports:
+      - "5434:5432"
+    volumes:
+      - ./data/db:/var/lib/postgresql

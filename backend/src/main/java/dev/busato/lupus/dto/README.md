@@ -1,0 +1,145 @@
+# `dto/` — Data Transfer Object (il JSON dell'API)
+
+Un DTO descrive **una forma di JSON** che entra o esce dall'API. È il contratto con il frontend:
+le entity possono cambiare, i DTO restano stabili.
+
+Convenzione dei nomi:
+- `XxxRequest` — body in ingresso (`@RequestBody` nel controller), con le regole di validazione;
+- `XxxResponse` — risposta in uscita.
+
+Un DTO per ogni forma: per esempio `RoleResponse` è **un** ruolo, `RolesByTypeResponse` è la
+busta `{"roles": {...}}` di `GET /api/rules/roles`. Una `Map.of("roles", ...)` funzionerebbe
+uguale, ma non ha nome né tipo: il record rende il contratto esplicito.
+
+## Perché un DTO se `Role` è già un enum? (`Role` vs `RoleResponse`)
+
+`Role` è un `enum` Java, non una entity: non ha tabella, non ha lazy loading, non ha cicli. Il DTO
+resta comunque, per tre motivi:
+- il JSON è un **contratto**: `RoleResponse` ha esattamente i campi che il frontend legge
+  (`name`, `type`, `withWhoWins`, `maxNumber`, `description`), e se domani il tipo del campo
+  `Role` cambia (un campo in più, un nome diverso) il JSON resta quello;
+- l'enum sa cose che non vanno nel JSON (ad esempio i campi interni per la logica di gioco): il
+  DTO scrive solo quelli pubblici;
+- è la stessa forma di tutti gli altri endpoint: un controller restituisce sempre DTO.
+
+Le entity (`Game`, `Player`...) invece hanno tabella, relazioni e campi che non vanno esposti: lì
+la separazione è obbligatoria. Il DTO risponde a un'altra domanda rispetto all'entity: l'entity è
+**com'è fatto il dato**, il DTO è **cosa promettiamo al frontend**. Appena l'entity cresce
+divergono (in FinanceWebApp `Tag` ha `id`, `wallet`, `parent`, `placeholder`; `TagResponse` ha solo
+`parentName` e i campi visibili).
+
+Restituire l'entity direttamente dal controller rischia:
+- **dati esposti per sbaglio**: aggiungi `password` a `Player` e finisce in ogni JSON;
+- **lazy loading**: Jackson chiama tutti i getter, anche `getGame()`, fuori dalla transazione →
+  errore (o query nascoste);
+- **cicli infiniti**: `Game → players → Player → game → ...`;
+- **API legata al database**: rinomini una colonna e il frontend si rompe.
+
+Regola uniforme: **dal service escono solo DTO**. Costo: un record e un mapper di poche righe
+(se diventano tanti, MapStruct li genera da un'interfaccia).
+
+## Bean?
+
+**No.** Sono dati: li crea Jackson (dal JSON della richiesta) o il mapper (per la risposta).
+
+## Perché `record`
+
+I DTO non cambiano dopo la creazione: un `record` Java dà costruttore, accessor (`name()`),
+`equals`, `hashCode`, `toString` senza Lombok. Jackson li sa leggere e scrivere.
+
+## Annotazioni
+
+| Annotazione | Significato |
+|---|---|
+| `@JsonProperty("with_who_wins")` | (Jackson) nome del campo nel JSON diverso da quello Java |
+| `@JsonIgnore` | campo escluso dal JSON |
+| `@NotNull`, `@NotBlank`, `@Size(min, max)`, `@Email`, `@Min`, `@Max` | (Bean Validation) regole controllate da `@Valid` nel controller; se violate → 400 senza che il service venga chiamato |
+
+### `@JsonProperty`, nel dettaglio
+
+> Non lo usiamo più: l'API nuova usa i nomi Java (`withWhoWins`, `maxNumber`) e il frontend verrà
+> adattato. La spiegazione resta perché serve quando un nome JSON è imposto dall'esterno.
+
+Jackson (la libreria che Spring usa per Java ⇄ JSON) di default usa il **nome Java** del campo:
+`int withWhoWins` → `"withWhoWins"`. Il frontend però legge `with_who_wins` (snake_case, il nome
+della vecchia colonna). Con `@JsonProperty("with_who_wins")` il campo Java resta in camelCase,
+come vuole la convenzione Java, e nel JSON si chiama come vuole il frontend.
+
+- Vale nei **due sensi**: in uscita Jackson scrive `with_who_wins`; in un DTO di richiesta legge
+  `with_who_wins` dal body e lo mette in `withWhoWins`.
+- Alternativa globale: `spring.jackson.property-naming-strategy=SNAKE_CASE` in
+  `application.properties` rinomina **tutti** i campi di tutta l'API. Non la usiamo perché il
+  frontend mescola le due convenzioni nei vari endpoint: meglio decidere campo per campo.
+- Riguarda **solo il JSON**. Il nome della colonna nel database lo decide JPA nell'entity
+  (`withWhoWins` → `with_who_wins` in automatico, o `@Column(name = "...")`).
+
+### Validazione: come funziona
+
+La dipendenza `spring-boot-starter-validation` porta **Bean Validation** (standard Jakarta,
+implementato da Hibernate Validator). Le annotazioni sui campi descrivono le regole; il controllo
+parte solo dove c'è `@Valid` (`@Valid @RequestBody SignupRequest request`). Se una regola è violata
+Spring lancia `MethodArgumentNotValidException` **prima** di chiamare il metodo del controller, e
+`GlobalExceptionHandler` risponde 400 con `"errors": {campo: messaggio}`. Il messaggio si può
+personalizzare: `@NotBlank(message = "Username is required")`.
+
+#### Da dove arriva il messaggio "must not be blank"?
+
+Non lo scriviamo noi: ogni annotazione ha un messaggio di default, contenuto nel jar di
+Hibernate Validator (`org/hibernate/validator/ValidationMessages.properties`):
+
+```properties
+jakarta.validation.constraints.NotBlank.message = must not be blank
+jakarta.validation.constraints.Size.message     = size must be between {min} and {max}
+jakarta.validation.constraints.Email.message    = must be a well-formed email address
+```
+
+`{min}` e `{max}` vengono sostituiti con i valori dell'annotazione (`@Size(min = 3, max = 20)`).
+Il jar contiene anche le traduzioni (`ValidationMessages_it.properties`: "non deve essere
+spazio"), e Spring sceglie la lingua in base all'header `Accept-Language` della richiesta: lo
+stesso errore può uscire in inglese o in italiano a seconda del browser.
+
+Per avere un testo fisso: `@NotBlank(message = "Username is required")`. Per cambiarli tutti:
+un file `src/main/resources/ValidationMessages.properties` con le stesse chiavi.
+
+Validazione nel DTO = regole sul **formato** (vuoto, lunghezza, email). Le regole che servono il
+database ("username già usato") restano nel service.
+
+### Perché nei DTO e non nelle entity (`model/`)?
+
+Le due cose controllano momenti diversi:
+
+| | Validazione nel DTO (`@NotBlank` + `@Valid`) | Vincoli nell'entity (`@Column(nullable = false, length = 20)`) |
+|---|---|---|
+| Quando | all'**ingresso** della richiesta, prima del controller | al **salvataggio** nel database |
+| Chi controlla | Bean Validation, nel controller | il database (vincoli creati da Hibernate) |
+| Se fallisce | 400 con `errors` per campo: errore dell'utente | eccezione SQL → 500: è un bug nostro |
+
+- **Ogni richiesta ha regole sue**, mentre l'entity è una sola. Lo stesso `Player` arriva da
+  `SignupRequest` (password obbligatoria, min 8 caratteri), da `UpdateUsernameRequest` (solo lo
+  username) e da `LoginRequest` (nessun limite di lunghezza: chi sbaglia la password non deve
+  sapere le regole). Con le regole sull'entity varrebbero tutte sempre.
+- **Il DTO contiene campi che l'entity non ha**: la password in chiaro e la sua conferma, che
+  non vengono mai salvate (nell'entity c'è solo l'hash). Non c'è un campo dell'entity su cui mettere
+  `@Size(min = 8)`.
+- **Prima si ferma, meno lavoro**: con il DTO l'errore si ferma alla porta, senza entrare nel
+  service e senza aprire transazioni.
+
+I vincoli dell'entity restano comunque: sono **l'ultima difesa** che garantisce dati corretti nel
+database anche se un service ha un bug. Bean Validation funzionerebbe anche sull'entity
+(Hibernate la esegue prima del salvataggio), ma l'errore arriverebbe tardi e come 500.
+
+Esempio di richiesta:
+
+```java
+public record SignupRequest(
+    @NotBlank @Size(max = 20) String username,
+    @NotBlank @Email String email,
+    @NotBlank @Size(min = 8) String password) {}
+```
+
+## Classi
+
+- `RoleResponse` — un ruolo (`name` è la costante dell'enum, es. `"WOLF"`; `type`, `withWhoWins`, `maxNumber`, `description`).
+- `RolesByTypeResponse` — `{"roles": {"GOOD": [...], "EVIL": [...], "VICTORY_STEALER": [...], "NEUTRAL": [...]}}`.
+  Una `Map<RoleType, ...>` diventa un oggetto JSON con i nomi delle costanti come chiavi; è un
+  `EnumMap`, quindi le chiavi escono nell'ordine dell'enum.
