@@ -29,6 +29,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Check;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UuidGenerator;
@@ -79,7 +80,9 @@ public class Game {
   private GamePhase phase = GamePhase.NIGHT;
 
   /** Settings enabled in this game (present = enabled). Stored in table {@code game_setting}. */
+  // the live board loads up to 50 games, the collections of all of them are fetched in one query instead of one per game
   @ElementCollection
+  @BatchSize(size = 50)
   @CollectionTable(name = "game_setting", joinColumns = @JoinColumn(name = "game_id"))
   @Enumerated(EnumType.STRING)
   @Column(name = "setting", nullable = false)
@@ -96,7 +99,9 @@ public class Game {
   private Map<Role, Integer> deck = new EnumMap<>(Role.class);
 
   /** Players of the game, ordered by seat. Inverse side: the column is in {@code GamePlayer}. */
+  // the live board loads up to 50 games, the collections of all of them are fetched in one query instead of one per game
   @OneToMany(mappedBy = "game")
+  @BatchSize(size = 50)
   @OrderBy("seat")
   @Builder.Default
   private List<GamePlayer> players = new ArrayList<>();

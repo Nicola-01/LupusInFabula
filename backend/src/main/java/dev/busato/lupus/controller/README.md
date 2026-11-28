@@ -231,6 +231,30 @@ richieste HTTP senza avviare Tomcat; `jsonPath("$.detail")` legge un campo del J
 - **`{deckId}` è un `UUID`**: un valore non valido nell'URL (`/user/me/deck/abc`) dà 400 da Spring,
   prima di arrivare al service (`MethodArgumentTypeMismatchException`, vedi la tabella sopra).
 
+## Stato della partita (sola lettura)
+
+Quattro `GET` sulla partita. Come `/api/village`, sono leggibili da qualunque utente loggato: a
+cambiare è la risposta, in base a chi chiede (vedi `service/README.md`).
+
+| Metodo e URL | Risposta | Errori |
+|---|---|---|
+| `GET /game/status/{publicId}` | 200 `{publicId, master, round, phase, startedAt, endedAt, winner, settings}` | 404 partita inesistente |
+| `GET /game/players/{publicId}` | 200 `[{username, seat, role, dead, deathRound, deathPhase}]` | 404 |
+| `GET /game/configuration/{publicId}` | 200 `{deck: {"WOLF": 2, ...}}` | 404 |
+| `GET /game/live` | 200 `[{publicId, master, startedAt, round, phase, players, settings}]` | |
+
+- **`role` è `null`** se il ruolo non è visibile a chi chiede (regole in `RoleVisibility`).
+- **`configuration` mostra il mazzo, non la mano**: con `LARGER_ROLE_NUMBER` è il mazzo intero,
+  perché nessuno deve sapere quali carte sono state scartate.
+- **`/game/live` è la bacheca**: partite in corso, dalla più recente, al massimo 50.
+
+**Un solo URL per risorsa.** Il vecchio backend aveva `/game/players/{id}` e
+`/game/players/{id}/master`, più un filtro (`GameMasterFilter`) che controllava l'URL per capire
+chi chiedeva. Ora il server sa chi chiede (`@AuthenticationPrincipal`) e la risposta dipende da
+quello: niente varianti e niente filtro. Per le azioni dello step 5, che sono scritture riservate
+al master, si userà `@PreAuthorize`. `GET /game/settings/{id}` è stato tolto: le impostazioni sono
+in `status`.
+
 ## Classi
 
 - `DeckController` — mazzi salvati: lista, creazione, modifica e cancellazione dei propri, lista

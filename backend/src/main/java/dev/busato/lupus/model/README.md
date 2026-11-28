@@ -379,12 +379,25 @@ Il prezzo del JSON:
   si leggono più. Vale anche per `@Enumerated(EnumType.STRING)`: la colonna conserva il nome
   vecchio. Da noi si può resettare il database; con dati veri servirebbe una migrazione.
 
+## Caricare le collezioni a blocchi: `@BatchSize`
+
+`Game.settings` e `Game.players` sono collezioni **lazy**: Hibernate le carica solo quando qualcuno
+le legge. Senza altro, la bacheca (`GET /game/live`) leggerebbe le impostazioni di 50 partite una
+alla volta: 50 query in più (N+1).
+
+`@BatchSize(size = 50)` su entrambe cambia questo: alla prima lettura di una collezione, Hibernate
+carica quella di fino a 50 partite insieme, con una sola query `WHERE game_id IN (...)`. Il
+risultato è lo stesso, cambia solo il numero di query.
+
+Così la bacheca fa **3 query** in tutto: partite con il master (`findLive`), impostazioni, giocatori
+(per contarli). Perché qui e non un `JOIN FETCH` sulle collezioni: vedi `repository/README.md`.
+
 ## Classi
 
 Entity (tabelle), tutte con `id` UUID v7:
 - `Player` — utente registrato (`username`, `email`, `passwordHash`, `deletedAt` per la cancellazione logica; `email` è `null` solo se l'account è cancellato).
 - `Friendship` — "segue" unidirezionale tra due `Player`.
-- `Game` — partita: `publicId` (per gli URL), `master`, `round`, `phase`, `winner`, `settings`, `deck` (carte scelte dal master, vedi sopra), `players`.
+- `Game` — partita: `publicId` (per gli URL), `master`, `round`, `phase`, `winner`, `settings`, `deck` (carte scelte dal master, vedi sopra), `players` (con `@BatchSize`, vedi sopra).
 - `GamePlayer` — un giocatore in una partita: `role`, `seat` (posto al tavolo), morte (`deathRound`, `deathPhase`, `diedAt`).
 - `GameAction` — riga del log: chi (`actor`) ha fatto cosa (`type`) a chi (`target`), in quale round e fase.
 - `Deck` — mazzo salvato di un utente: `owner`, `name` (unico per proprietario), `players`, `roles` (jsonb), `createdAt` (vedi sopra).

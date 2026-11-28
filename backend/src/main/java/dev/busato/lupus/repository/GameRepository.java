@@ -33,4 +33,8 @@ public interface GameRepository extends JpaRepository<Game, UUID> {
   boolean existsByPublicId(String publicId);
 
   Optional<Game> findByPublicId(String publicId);
+
+  /** Games not ended yet, newest first; the master is fetched for the live board. */
+  @Query("SELECT g FROM Game g JOIN FETCH g.master WHERE g.endedAt IS NULL ORDER BY g.startedAt DESC")
+  List<Game> findLive(Limit limit);
 }

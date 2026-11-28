@@ -49,10 +49,12 @@ di sessione viaggia da solo. Dettagli in `security/README.md`.
 
 ## 4. Stato della partita (sola lettura)
 
-- [ ] Controllo "è il master di questa partita" (`@PreAuthorize` o bean di sicurezza, come `GameMasterFilter`)
-- [ ] `GET /game/status/{id}[/master]`, `/players/...`, `/settings/...`, `/configuration/...`
-- [ ] Cosa vede il master e cosa vede il giocatore (ruoli nascosti finché la partita non finisce)
-- [ ] In MASTER_FREE il master vede solo le sue cose (gestisce la partita, non vede i ruoli)
+- [x] Un solo URL per risorsa, la risposta dipende da chi chiede (niente `/master`, niente `GameMasterFilter`)
+- [x] `GET /game/status/{id}`, `/game/players/{id}`, `/game/configuration/{id}` (tolto `/game/settings/{id}`: è in status)
+- [x] Visibilità dei ruoli (`RoleVisibility`): master tutto, giocatore il suo e i compagni (lupi, mason), spettatore niente, a fine partita tutto; morti nascosti
+- [x] In MASTER_FREE il master vede solo le sue cose
+- [x] `GET /game/live`: bacheca delle partite in corso (max 50)
+- [ ] DORKY diventato lupo (`RoleVisibility.dorkyIsWolf`) — con la logica di gioco
 
 ## 5. Logica di gioco
 
@@ -62,6 +64,7 @@ di sessione viaggia da solo. Dettagli in `security/README.md`.
 - [ ] `POST /game/update/{id}/master` (avanzamento fase), condizioni di vittoria
 - [ ] Impostazioni di partita attive (D1): `MASTER_FREE` (azioni inviate dai giocatori), `ILLUSIONIST_BLOCK` ancora da fare nella logica di gioco
 - [ ] Molti test unitari: è la parte con più regole
+- [ ] Pubblicare un evento a ogni cambio di stato (azione, fase, fine partita), così lo step 6 (WebSocket) lo ascolta senza toccare la logica
 
 ## 6. Tempo reale
 

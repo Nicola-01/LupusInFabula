@@ -214,3 +214,15 @@ verrebbe inviato in chiaro in più. Il frontend confronta i due campi prima di i
   `GET /game/list`. `master` dice se il chiamante è il master.
 - `VillageResponse` — `GET /api/village/{publicId}`: `{publicId, isMaster, winner, settings}`. La
   chiave JSON è proprio `isMaster` (non `master`), perché il frontend la legge con quel nome.
+- `GameStatusResponse` — `GET /game/status/{publicId}`: `{publicId, master, round, phase, startedAt,
+  endedAt, winner, settings}`. `endedAt` e `winner` sono `null` finché la partita è in corso.
+- `GamePlayerResponse` — un posto di `GET /game/players/{publicId}`: `{username, seat, role, dead,
+  deathRound, deathPhase}`. `role` è `null` se il ruolo non è visibile a chi chiede (vedi
+  `RoleVisibility` in `service/README.md`). `dead` non è un campo dell'entity: è calcolato da
+  `deathRound` (`dead = deathRound != null`), così il frontend non deve ricordare la convenzione dei
+  `null`.
+- `ConfigurationResponse` — `GET /game/configuration/{publicId}`: `{deck: {"WOLF": 2, ...}}`, cioè la
+  mappa dei ruoli del mazzo. Con `LARGER_ROLE_NUMBER` è il mazzo intero (vedi `controller/README.md`).
+- `LiveGameResponse` — un elemento di `GET /game/live`: `{publicId, master, startedAt, round, phase,
+  players, settings}`. `players` è il **numero** di giocatori, non la lista: la bacheca non mostra i
+  nomi di tutti.

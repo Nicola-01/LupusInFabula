@@ -33,5 +33,11 @@ mano come in FinanceWebApp, finché sono pochi e semplici.
   e `GameSetting` → `SettingResponse` (`mapToResponse`). I metodi per la partita ricevono anche
   l'id di chi chiama, per calcolare `master` / `isMaster` (il master è `game.getMaster()`).
   `mapToVillage` copia le impostazioni in un nuovo `EnumSet`, perché il set della entity è lazy.
+  Per le letture di `GameViewService` si aggiungono: `Game` → `GameStatusResponse` (`mapToStatus`),
+  `Game` → `ConfigurationResponse` (`mapToConfiguration`), `Game` → `LiveGameResponse` (`mapToLive`),
+  e il posto `GamePlayer` → `GamePlayerResponse` (`mapToPlayer(seat, showRole)`).
+- **Il mapper copia, non decide.** `mapToPlayer` riceve il posto e un `boolean showRole`: non sa chi
+  chiede né perché un ruolo è nascosto. La decisione è del service (`GameViewService`, che chiede a
+  `RoleVisibility`, vedi `service/README.md`). Così il mapper resta uguale qualunque regola cambi.
 - `DeckMapper` — `Deck` → `DeckResponse`. Copia `roles` in un `EnumMap`: nel JSON i ruoli escono
   nell'ordine dell'enum, indipendentemente dall'ordine in cui la mappa è stata letta dal database.

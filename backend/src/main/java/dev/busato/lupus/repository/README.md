@@ -152,6 +152,29 @@ e si concentra sulle query e sui vincoli del database.
   `@Modifying @Query("DELETE FROM Deck d WHERE d.owner.id = :ownerId")`, che manda una sola
   istruzione `DELETE` al database.
 
+## Query di lettura della partita (`GameRepository`, `GamePlayerRepository`)
+
+| Metodo | Cosa fa | Usato da |
+|---|---|---|
+| `GameRepository.findLive(Limit)` | partite in corso (`endedAt` nullo), dalla più recente, con `JOIN FETCH g.master` | `GET /game/live` |
+| `GamePlayerRepository.findSeats(Game)` | i posti della partita, con `JOIN FETCH gp.player` | `GET /game/players/{publicId}` |
+
+- **`JOIN FETCH g.master`** carica il master nella stessa query. Il master è un `@ManyToOne`: una
+  sola riga per partita, quindi non moltiplica le righe. È sicuro anche con `LIMIT`: il limite
+  continua a contare partite.
+- **`JOIN FETCH gp.player`** serve per lo username di ogni posto. Senza, Hibernate farebbe una
+  query per posto per caricare il `Player`: il problema N+1 (1 query + N query).
+
+### Perché niente `JOIN FETCH` su una collezione con `LIMIT`
+
+`settings` e `players` sono collezioni: una riga per elemento. Con `JOIN FETCH` su una di queste,
+ogni partita diventa più righe (5 giocatori = 5 righe). Il `LIMIT 50` del database conta **righe**,
+non partite: 50 righe possono essere 10 partite, e la bacheca ne mostrerebbe 10 invece di 50.
+Hibernate non sa tagliare per partite con SQL, quindi caricherebbe tutte le righe e taglierebbe in
+memoria, avvisando con `HHH90003004` ("firstResult/maxResults specified with collection fetch;
+applying in memory"). Per questo le collezioni non si caricano in questa query ma dopo, con
+`@BatchSize` (vedi `model/README.md`).
+
 ## Classi
 
 - `PlayerRepository` — tabella `player`, chiave `UUID id`.

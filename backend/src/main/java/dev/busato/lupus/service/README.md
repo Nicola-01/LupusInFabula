@@ -272,6 +272,108 @@ Altre regole:
   visibili. La riga di `Player` invece resta (soft delete, vedi `model/README.md`), perché le
   partite la referenziano.
 
+## Chi vede cosa: `RoleVisibility` e `GameViewService`
+
+Due classi con compiti separati. `RoleVisibility` decide **cosa** un giocatore può vedere;
+`GameViewService` **legge** i dati dal database e applica quella decisione.
+
+### `RoleVisibility`: regole pure, non un bean
+
+`RoleVisibility` è `final`, package-private, con costruttore privato e solo metodi `static`.
+**Non è un bean**: le sue regole non hanno dipendenze (né repository, né altri service) e non
+tengono stato. Un bean serve quando una classe ha dipendenze da iniettare o stato gestito da
+Spring; qui non c'è niente di tutto ciò, e una classe di metodi statici è più semplice. Il
+vantaggio è che si testa con JUnit puro, senza Spring e senza Mockito.
+
+Le regole sono due metodi:
+
+- `seesAll(game, viewerId)`: vede **tutti** i ruoli se la partita è finita, o se `viewerId` è il
+  master di una partita che non è `MASTER_FREE`. Usa l'id perché il master (D2) non ha un
+  `GamePlayer`, quindi `viewer` è `null` sia per il master sia per lo spettatore.
+- `canSee(game, viewer, target)`: vede il ruolo di `target` secondo il proprio ruolo, con le regole
+  **in quest'ordine** (vale la prima che si applica):
+  1. `viewer == null` (spettatore, master senza posto) → niente;
+  2. lo stesso posto → il proprio ruolo;
+  3. i lupi (`PACK`: WOLF, PUPPY, BERSERKER, EXPLORER) si vedono tra loro;
+  4. il DORKY diventato lupo vede i lupi e viceversa. `dorkyIsWolf` per ora è sempre `false`
+     (nel codice è marcato `shortcut:`): dipende dalle azioni dello step 5;
+  5. i MASON si vedono tra loro;
+  6. altrimenti no.
+
+Perché due metodi: `canSee` confronta solo i posti, mentre `seesAll` ha bisogno dell'id del master.
+`seesAll` si calcola una volta per tutta la lista invece che una volta per posto.
+
+Il ruolo dei morti resta nascosto fino alla fine della partita (scelta del progetto, come nel
+vecchio backend). In `MASTER_FREE` il master è un giocatore normale: ha un posto e un ruolo, quindi
+`seesAll` è falso per lui e vede il proprio posto tramite `canSee`.
+
+### `GameViewService`: le letture
+
+`GameViewService` fa le letture della partita: `status`, `players`, `configuration` e `live`.
+Tutte sono `@Transactional(readOnly = true)`: non scrivono nulla, quindi Hibernate non deve
+controllare quali oggetti sono cambiati (*dirty checking*) e il database può trattarle come sola
+lettura.
+
+È separato da `GameService`, che crea le partite. Ognuno dei due ha un motivo solo per cambiare:
+le regole di creazione e le regole di visibilità non dipendono l'una dall'altra.
+
+`players` cerca il posto di chi chiama (`viewer`) tra i posti della partita e calcola una volta
+`seesAll`. Per ogni posto chiede a `RoleVisibility.canSee` se mostrare il ruolo (oppure vale
+`seesAll`) e passa il risultato (`showRole`) al mapper: se il ruolo
+non è visibile, nel JSON vale `role: null`. Il service decide, il mapper copia (vedi
+`mappers/README.md`).
+
+**Spettatori**: chiunque sia loggato può leggere qualunque partita, come nel vecchio backend. Uno
+spettatore però vede solo le informazioni pubbliche: stato, posti, chi è vivo o morto, mazzo.
+
+## Stream: `filter`, `findFirst`, `map`, `toList` (esempio: `GameViewService.players`)
+
+```java
+GamePlayer viewer =
+    seats.stream()                                                // i posti, uno alla volta
+        .filter(seat -> seat.getPlayer().getId().equals(viewerId)) // tiene solo il mio posto
+        .findFirst()                                               // Optional<GamePlayer>
+        .orElse(null);                                             // il mio posto, o null se non gioco
+boolean all = RoleVisibility.seesAll(game, viewerId);          // calcolato una volta sola
+return seats.stream()
+    .map(seat -> gameMapper.mapToPlayer(seat, all || RoleVisibility.canSee(game, viewer, seat)))
+    .toList();                                                     // List<GamePlayerResponse>
+```
+
+Uno **stream** fa scorrere gli elementi di una lista attraverso una catena di passi:
+- **`filter(condizione)`** lascia passare solo gli elementi per cui la lambda restituisce `true`;
+- **`findFirst()`** prende il primo che arriva e lo mette in un `Optional` (vuoto se non è passato
+  niente). Lo stream si ferma lì: non controlla gli altri posti;
+- **`map(f)`** trasforma ogni elemento in un altro (qui `GamePlayer` → `GamePlayerResponse`);
+- **`toList()`** raccoglie i risultati in una lista nuova, che non si può modificare.
+
+`seat -> ...` è una **lambda**: una funzione senza nome, "dato un `seat`, calcola ...". Lo stesso
+codice con i cicli:
+
+```java
+GamePlayer viewer = null;
+for (GamePlayer seat : seats)
+  if (seat.getPlayer().getId().equals(viewerId)) { viewer = seat; break; }
+boolean all = RoleVisibility.seesAll(game, viewerId);
+List<GamePlayerResponse> result = new ArrayList<>();
+for (GamePlayer seat : seats)
+  result.add(gameMapper.mapToPlayer(seat, all || RoleVisibility.canSee(game, viewer, seat)));
+```
+
+**Come fa `seat` a essere un elemento di `seats`?** Il nome non c'entra: potresti scrivere
+`x -> x.getPlayer()...` e funzionerebbe uguale. Sono due cose:
+1. **chi chiama la lambda è lo stream**: `filter` la chiama una volta per ogni elemento, passando
+   l'elemento come argomento. `seat` è il nome del parametro, come in un metodo
+   `boolean isMine(GamePlayer seat)`;
+2. **il tipo lo deduce il compilatore**: `seats` è `List<GamePlayer>`, quindi `seats.stream()` è
+   `Stream<GamePlayer>`, e `filter` di uno `Stream<GamePlayer>` vuole una funzione che riceve un
+   `GamePlayer` (`Predicate<GamePlayer>`). Per questo `seat.getPlayer()` compila: il parametro è un
+   `GamePlayer` anche senza scriverlo. Si può scrivere esplicito: `(GamePlayer seat) -> ...`.
+
+Perché si cerca prima `viewer`: le regole dipendono dal **ruolo di chi guarda** (un lupo vede gli
+altri lupi), quindi serve il suo posto prima di decidere per ogni altro posto. `null` vuol dire "non
+gioca" (spettatore, o master che non gioca), e `canSee` lo tratta come tale.
+
 ## Classi
 
 - `AuthService` — registrazione (controlla username ed email, salva l'hash BCrypt) e lettura della
@@ -287,3 +389,7 @@ Altre regole:
   e della partita per `publicId`, con i mapper.
 - `DeckService` — salvataggio, modifica, lista e cancellazione dei mazzi salvati: regole sui ruoli
   e sulle carte (stesso `GameService.cards`), nome unico per utente.
+- `RoleVisibility` — regole di visibilità dei ruoli: chi può vedere il ruolo di chi, in una
+  partita. Solo metodi `static`, niente bean: non ha dipendenze.
+- `GameViewService` — letture della partita: stato, posti (con i ruoli visibili a chi chiama),
+  configurazione, bacheca delle partite in corso. Separato da `GameService`, che le crea.

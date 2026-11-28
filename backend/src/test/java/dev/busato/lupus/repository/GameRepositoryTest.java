@@ -21,6 +21,8 @@ import java.time.Instant;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.domain.Limit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,5 +182,57 @@ class GameRepositoryTest {
     Game loaded = gameRepository.findById(game.getId()).orElseThrow();
 
     assertEquals(deck, loaded.getDeck());
+  }
+
+  /** Sets startedAt, which Hibernate fills on insert and the entity cannot change. */
+  private void setStartedAt(Game game, String when) {
+    entityManager
+        .getEntityManager()
+        .createNativeQuery("UPDATE game SET started_at = :t WHERE id = :id")
+        .setParameter("t", Instant.parse(when))
+        .setParameter("id", game.getId())
+        .executeUpdate();
+  }
+
+  @Test
+  void findLive_onlyOpenGames_newestFirst_masterFetched() {
+    Game old = newGame("live-old", newPlayer("live-old-master"));
+    Game recent = newGame("live-recent", newPlayer("live-recent-master"));
+    Game ended = newGame("live-ended", newPlayer("live-ended-master"));
+    ended.setEndedAt(Instant.now());
+    ended.setWinner(WinFaction.WOLVES);
+    entityManager.flush();
+    setStartedAt(old, "2020-01-01T00:00:00Z");
+    setStartedAt(recent, "2021-01-01T00:00:00Z");
+    setStartedAt(ended, "2022-01-01T00:00:00Z");
+    entityManager.clear();
+
+    // the database may hold other open games: keep only the ones of this test
+    List<Game> live = gameRepository.findLive(Limit.unlimited()).stream()
+        .filter(g -> Set.of("live-old", "live-recent", "live-ended").contains(g.getPublicId()))
+        .toList();
+
+    assertEquals(List.of("live-recent", "live-old"), live.stream().map(Game::getPublicId).toList());
+    assertTrue(Hibernate.isInitialized(live.get(0).getMaster()));
+    assertEquals("live-recent-master", live.get(0).getMaster().getUsername());
+  }
+
+  @Test
+  void findSeats_orderedBySeat_withPlayerLoaded() {
+    Game game = newGame("seats-game", newPlayer("seats-master"));
+    gamePlayerRepository.save(
+        GamePlayer.builder().game(game).player(newPlayer("seat-two")).role(Role.SEER).seat(2).build());
+    gamePlayerRepository.save(
+        GamePlayer.builder().game(game).player(newPlayer("seat-one")).role(Role.WOLF).seat(1).build());
+    entityManager.flush();
+    entityManager.clear();
+
+    Game loaded = gameRepository.findByPublicId("seats-game").orElseThrow();
+    List<GamePlayer> seats = gamePlayerRepository.findSeats(loaded);
+
+    assertEquals(
+        List.of("seat-one", "seat-two"),
+        seats.stream().map(seat -> seat.getPlayer().getUsername()).toList());
+    assertTrue(seats.stream().allMatch(seat -> Hibernate.isInitialized(seat.getPlayer())));
   }
 }
