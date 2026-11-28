@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.csrf.CsrfException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +48,19 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     body.setDetail("Invalid request content");
     body.setProperty("errors", errors);
     return handleExceptionInternal(ex, body, headers, status, request);
+  }
+
+  /** Security filters' errors arrive here too (see SecurityConfig): 401 with no session or wrong login. */
+  @ExceptionHandler(AuthenticationException.class)
+  public ProblemDetail handleAuthentication(AuthenticationException ex) {
+    String detail = ex instanceof BadCredentialsException ? "Wrong credentials" : "Authentication required";
+    return ProblemDetail.forStatusAndDetail(HttpStatus.UNAUTHORIZED, detail);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ProblemDetail handleAccessDenied(AccessDeniedException ex) {
+    String detail = ex instanceof CsrfException ? "Invalid or missing CSRF token" : "Access denied";
+    return ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, detail);
   }
 
   @ExceptionHandler(Exception.class)

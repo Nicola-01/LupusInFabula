@@ -23,4 +23,6 @@ mano come in FinanceWebApp, finché sono pochi e semplici.
 
 ## Classi
 
+- `PlayerMapper` — `Player` → `PlayerResponse` (`username`, `email`). Non espone `passwordHash`,
+  `id` e `deletedAt`: il JSON è solo quello che il frontend mostra.
 - `RoleMapper` — `Role` (enum) → `RoleResponse`. Non richiede una transazione: l'enum è già in memoria.

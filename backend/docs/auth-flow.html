@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Come funziona il login</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 1.25rem; background: #0c0f16; color: #e6e9f0;
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header h1 { font-size: 1.6rem; margin: 0 0 .25rem; }
+  header p.sub { margin: 0 0 1rem; color: #9aa4b2; }
+
+  /* scenario switch */
+  .scen { display: flex; gap: .75rem; margin-bottom: 1rem; }
+  .tab {
+    flex: 1; padding: .85rem; font: inherit; font-size: 1.05rem; font-weight: 600;
+    border: 2px solid #2a3142; background: #141925; color: #cfd6e4; border-radius: 12px; cursor: pointer;
+  }
+  .tab[aria-pressed="true"] { border-color: #7dd3fc; background: #16283a; color: #fff; }
+  .tab:focus-visible, .btn:focus-visible, .dot:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 2px; }
+
+  /* stage */
+  .stage {
+    position: relative; display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 1.25rem;
+    background: #10141e; border: 1px solid #232b3b; border-radius: 16px; padding: 1.25rem; min-height: 520px;
+  }
+  .col { display: flex; flex-direction: column; gap: .6rem; min-width: 0; }
+  .col h2 { font-size: .85rem; text-transform: uppercase; letter-spacing: .08em; color: #8b96a8; margin: 0; }
+  .col h3 { font-size: .8rem; color: #8b96a8; margin: .5rem 0 .1rem; font-weight: 600; }
+
+  .box {
+    background: #171d2a; border: 1px solid #2a3344; border-radius: 10px; padding: .6rem .75rem;
+    transition: border-color .4s, box-shadow .4s, opacity .4s;
+  }
+  .box.on { border-color: #7dd3fc; box-shadow: 0 0 0 2px rgba(125,211,252,.35), 0 0 18px rgba(125,211,252,.35); }
+  .box.dim { opacity: .35; }
+  .http { border-left: 4px solid #4a5670; }
+  .http.k-req { border-left-color: #60a5fa; }
+  .http.k-ok { border-left-color: #34d399; }
+  .http.k-err { border-left-color: #f87171; }
+  .http .lbl { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: #8b96a8; margin-bottom: .3rem; }
+
+  pre {
+    margin: 0; white-space: pre-wrap; word-break: break-word;
+    font: 12.5px/1.5 ui-monospace, Menlo, Consolas, monospace; color: #dbe3f0;
+  }
+
+  #chain { display: flex; flex-direction: column; gap: .4rem; }
+  #chain .box { padding: .45rem .7rem; font: 13px/1.3 ui-monospace, Menlo, Consolas, monospace; color: #e6e9f0; }
+  #chain .sep { height: 1px; background: #3a4560; margin: .35rem 0; }
+
+  .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: .35rem; }
+  .list li {
+    background: #171d2a; border: 1px solid #2a3344; border-radius: 8px; padding: .4rem .6rem;
+    display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; font-size: .85rem;
+  }
+  .list li.cookie { border-left: 3px solid #fbbf24; }
+  .list li.empty { color: #6b768a; font-style: italic; border-style: dashed; background: none; }
+  .cname { font-weight: 700; color: #fcd34d; }
+  code { font: 12.5px ui-monospace, Menlo, Consolas, monospace; color: #dbe3f0; }
+  .ctag { margin-left: auto; font-size: .7rem; padding: .1rem .5rem; border-radius: 999px; font-weight: 600; }
+  .t-ses { background: #3b2f10; color: #fcd34d; }
+  .t-30 { background: #fbbf24; color: #1c1500; }
+  .arrow { color: #7dd3fc; }
+
+  .enter { animation: enter .6s ease-out both; }
+  .ghost { animation: leave .5s ease-in forwards; }
+  @keyframes enter { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: none; } }
+  @keyframes leave { to { opacity: 0; transform: translateX(16px); } }
+
+  /* database */
+  .db { background: #171d2a; border: 1px solid #2a3344; border-radius: 10px; padding: .6rem; transition: border-color .4s, box-shadow .4s; }
+  .db.hl { border-color: #7dd3fc; box-shadow: 0 0 0 2px rgba(125,211,252,.35), 0 0 18px rgba(125,211,252,.35); }
+  table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+  th, td { text-align: left; padding: .35rem .4rem; border-bottom: 1px solid #2a3344; word-break: break-all; }
+  th { color: #8b96a8; font-weight: 600; }
+  tr.hl td { background: rgba(125,211,252,.15); }
+  td.changed { color: #fbbf24; font-weight: 700; }
+
+  /* packet */
+  .packet {
+    position: absolute; z-index: 5; pointer-events: none; opacity: 0;
+    transform: translate(-50%, -50%); padding: .3rem .65rem; border-radius: 999px;
+    font: 600 12px/1.2 ui-monospace, Menlo, Consolas, monospace; color: #0b1020; white-space: nowrap;
+    box-shadow: 0 4px 14px rgba(0,0,0,.45);
+    transition: left .8s ease-in-out, top .8s ease-in-out, opacity .3s;
+  }
+  .packet.req { background: #60a5fa; }
+  .packet.ok { background: #34d399; }
+  .packet.err { background: #f87171; }
+
+  /* explanation */
+  .explain { margin-top: 1rem; background: #10141e; border: 1px solid #232b3b; border-radius: 16px; padding: 1.25rem; }
+  .counter { color: #8b96a8; font-size: .85rem; }
+  .explain h2 { font-size: 1.3rem; margin: .2rem 0 .5rem; }
+  .explain p { margin: 0 0 .75rem; font-size: 1rem; }
+  #snippet { background: #0a0d14; border: 1px solid #232b3b; border-radius: 8px; padding: .75rem; margin-bottom: .9rem; }
+  .controls { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: .9rem; }
+  .btn {
+    padding: .6rem 1rem; font: inherit; font-size: .95rem; border-radius: 10px; cursor: pointer;
+    border: 1px solid #33405a; background: #1a2233; color: #e6e9f0;
+  }
+  .btn:hover:not(:disabled) { border-color: #7dd3fc; }
+  .btn:disabled { opacity: .4; cursor: default; }
+  .timeline { display: flex; flex-wrap: wrap; gap: .45rem; list-style: none; margin: 0; padding: 0; }
+  .dot {
+    width: 2.1rem; height: 2.1rem; border-radius: 50%; border: 2px solid #4a5670; background: #141925;
+    color: #cfd6e4; font: inherit; font-size: .85rem; cursor: pointer; padding: 0;
+  }
+  .dot[aria-current="step"] { background: #7dd3fc; border-color: #7dd3fc; color: #04111c; font-weight: 700; }
+
+  footer { margin-top: 1.25rem; color: #9aa4b2; font-size: .9rem; }
+  footer .legend { display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: .5rem; }
+  .sw { display: inline-block; width: 12px; height: 12px; border-radius: 3px; margin-right: .35rem; vertical-align: -1px; }
+
+  @media (max-width: 899px) {
+    .stage { grid-template-columns: 1fr; min-height: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Come funziona il login</h1>
+  <p class="sub">Spring Security 7.2: sessione HTTP, remember-me e protezione CSRF. Scegli uno scenario e avanza passo passo.</p>
+</header>
+
+<nav class="scen" aria-label="Scenario">
+  <button class="tab" id="tabA" type="button" aria-pressed="true" data-scen="a">Senza keepLogged</button>
+  <button class="tab" id="tabB" type="button" aria-pressed="false" data-scen="b">Con keepLogged</button>
+</nav>
+
+<main>
+  <section class="stage" id="stage" aria-label="Schema del flusso">
+    <div class="packet" id="packet"></div>
+
+    <div class="col" id="col-browser">
+      <h2>Browser</h2>
+      <div class="box http" id="http">
+        <div class="lbl">Messaggio HTTP corrente</div>
+        <pre id="httpText"></pre>
+      </div>
+      <h3>Cookie nel browser</h3>
+      <ul class="list" id="cookies"></ul>
+    </div>
+
+    <div class="col" id="col-server">
+      <h2>Server (Spring)</h2>
+      <div id="chain"></div>
+    </div>
+
+    <div class="col" id="col-mem">
+      <h2>Memoria / Database</h2>
+      <h3>Sessioni (RAM di Tomcat)</h3>
+      <ul class="list" id="sessions"></ul>
+      <h3>Database: tabella player</h3>
+      <div class="db" id="dbPanel">
+        <table>
+          <thead><tr><th>username</th><th>email</th><th>password (hash)</th></tr></thead>
+          <tbody>
+            <tr id="dbRow"><td>nick</td><td>nick@example.com</td><td id="dbHash">$2a$10$N9qo…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="explain" aria-live="polite">
+    <div class="counter" id="counter"></div>
+    <h2 id="title"></h2>
+    <p id="text"></p>
+    <pre id="snippet" hidden></pre>
+    <div class="controls">
+      <button class="btn" id="prev" type="button">◀ Indietro</button>
+      <button class="btn" id="next" type="button">Avanti ▶</button>
+      <button class="btn" id="play" type="button">▶ Riproduci</button>
+      <button class="btn" id="restart" type="button">↺ Ricomincia</button>
+    </div>
+    <ol class="timeline" id="timeline" aria-label="Passi"></ol>
+  </section>
+</main>
+
+<footer>
+  <div class="legend">
+    <span><span class="sw" style="background:#60a5fa"></span>richiesta</span>
+    <span><span class="sw" style="background:#34d399"></span>risposta OK</span>
+    <span><span class="sw" style="background:#f87171"></span>errore</span>
+    <span><span class="sw" style="background:#fbbf24"></span>cookie</span>
+    <span><span class="sw" style="background:#7dd3fc"></span>componente attivo in questo passo</span>
+  </div>
+  <div>Codice: security/SecurityConfig.java, controller/AuthController.java, security/PlayerDetailsService.java — spiegazione completa in security/README.md</div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var STEP_MS = 950;      // durata di un passaggio del pacchetto (con un piccolo margine)
+  var AUTO_MS = 4500;     // intervallo della riproduzione automatica
+
+  var CHAIN = [
+    { k: 'SecurityContextHolderFilter', t: 'SecurityContextHolderFilter' },
+    { k: 'CsrfFilter', t: 'CsrfFilter' },
+    { k: 'LogoutFilter', t: 'LogoutFilter' },
+    { k: 'RememberMeAuthenticationFilter', t: 'RememberMeAuthenticationFilter' },
+    { k: 'AuthorizationFilter', t: 'AuthorizationFilter' },
+    { k: 'ExceptionTranslationFilter', t: 'ExceptionTranslationFilter' },
+    null,
+    { k: 'AuthController', t: 'AuthController' },
+    { k: 'AuthenticationManager', t: 'AuthenticationManager → DaoAuthenticationProvider' },
+    { k: 'PlayerDetailsService', t: 'PlayerDetailsService' },
+    { k: 'BCrypt', t: 'BCrypt (PasswordEncoder)' },
+    { k: 'GlobalExceptionHandler', t: 'GlobalExceptionHandler' }
+  ];
+
+  var OLD_HASH = '$2a$10$N9qo…';
+
+  // cookie e sessioni ricorrenti
+  var XSRF = { name: 'XSRF-TOKEN', value: '8f2c…', tag: 'sessione' };
+  var XSRF2 = { name: 'XSRF-TOKEN', value: '7b3a…', tag: 'sessione' };
+  var JS_A = { name: 'JSESSIONID', value: 'A1B2…', tag: 'sessione' };
+  var JS_C = { name: 'JSESSIONID', value: 'C3D4…', tag: 'sessione' };
+  var RM = { name: 'remember-me', value: 'bmljaz…', tag: '30 giorni' };
+  var SESS_A = { id: 'A1B2…', user: 'nick' };
+  var SESS_C = { id: 'C3D4…', user: 'nick' };
+
+  // pacchetti ricorrenti
+  var P_GET_ROLES = { label: 'GET /api/rules/roles', from: 'browser', to: 'server', kind: 'req' };
+  var P_200_COOKIE = { label: '200 + Set-Cookie', from: 'server', to: 'browser', kind: 'ok' };
+  var P_LOGIN = { label: 'POST /login', from: 'browser', to: 'server', kind: 'req' };
+  var P_SELECT = { label: 'SELECT player', from: 'server', to: 'db', kind: 'req' };
+  var P_ROW = { label: 'riga nick', from: 'db', to: 'server', kind: 'ok' };
+  var P_204_COOKIE = { label: '204 + Set-Cookie', from: 'server', to: 'browser', kind: 'ok' };
+  var P_204_TWO = { label: '204 + 2× Set-Cookie', from: 'server', to: 'browser', kind: 'ok' };
+  var P_GET_SESSION = { label: 'GET /api/session', from: 'browser', to: 'server', kind: 'req' };
+  var P_200_OK = { label: '200 OK', from: 'server', to: 'browser', kind: 'ok' };
+  var P_401 = { label: '401 Unauthorized', from: 'server', to: 'browser', kind: 'err' };
+
+  var LOGIN_SNIPPET = 'POST /login HTTP/1.1\nContent-Type: application/json\nX-XSRF-TOKEN: 8f2c…\n\n{"user":"nick","password":"Passw0rd!","keepLogged":false}';
+  var LOGIN_SNIPPET_T = 'POST /login HTTP/1.1\nContent-Type: application/json\nX-XSRF-TOKEN: 8f2c…\n\n{"user":"nick","password":"Passw0rd!","keepLogged":true}';
+
+  var A1 = {
+    title: 'La prima richiesta: arriva il token CSRF',
+    text: 'Il server invia il token CSRF già nella prima risposta, anche prima del login. Il frontend lo copierà nell\'header X-XSRF-TOKEN di ogni POST, PUT e DELETE. Il cookie XSRF-TOKEN non è HttpOnly: JavaScript deve poterlo leggere. Un altro sito non può leggerlo (same-origin policy), quindi non può costruire la richiesta corretta.',
+    snippet: 'GET /api/rules/roles HTTP/1.1\nHost: localhost:9090\n\nHTTP/1.1 200 OK\nSet-Cookie: XSRF-TOKEN=8f2c…; Path=/',
+    packets: [P_GET_ROLES, P_200_COOKIE],
+    active: ['SecurityContextHolderFilter', 'CsrfFilter'],
+    http: { kind: 'ok', text: 'GET /api/rules/roles\n\nHTTP/1.1 200 OK\nSet-Cookie: XSRF-TOKEN=8f2c…; Path=/' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var A2 = {
+    title: 'POST /login: la richiesta arriva al server',
+    text: 'Il browser invia le credenziali in JSON e l\'header X-XSRF-TOKEN, copiato dal cookie. CsrfFilter confronta header e cookie: coincidono, quindi la richiesta passa. Non c\'è ancora una sessione, quindi SecurityContextHolderFilter considera l\'utente anonimo. /login è permitAll, quindi AuthorizationFilter lo lascia passare.',
+    snippet: LOGIN_SNIPPET,
+    packets: [P_LOGIN],
+    active: ['SecurityContextHolderFilter', 'CsrfFilter', 'AuthorizationFilter'],
+    http: { kind: 'req', text: LOGIN_SNIPPET },
+    cookies: [XSRF], sessions: []
+  };
+
+  var A3 = {
+    title: 'AuthController e @Valid',
+    text: 'AuthController riceve il corpo. Jackson trasforma il JSON in un oggetto LoginRequest. @Valid controlla le annotazioni del record (per esempio @NotBlank): se user o password sono vuoti, la risposta è 400 e la verifica non parte.',
+    snippet: 'public record LoginRequest(@NotBlank String user,\n                                   @NotBlank String password,\n                                   boolean keepLogged) {}',
+    packets: [],
+    active: ['AuthController'],
+    http: { kind: 'note', text: 'POST /login in elaborazione…' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var A4 = {
+    title: 'Verifica delle credenziali',
+    text: 'AuthenticationManager delega a DaoAuthenticationProvider, che chiama PlayerDetailsService. Una query cerca l\'utente per username (in qualunque maiuscolo) o per email, escludendo gli account cancellati. Poi BCrypt confronta la password con l\'hash: legge da solo salt e costo dall\'hash, ricalcola e confronta. Password sbagliata, utente inesistente o account cancellato producono lo stesso 401 "Wrong credentials".',
+    snippet: 'PlayerPrincipal(id, username="nick", hash="$2a$10$N9qo…")\npasswordEncoder.matches("Passw0rd!", hash)  → true',
+    packets: [P_SELECT, P_ROW],
+    active: ['AuthenticationManager', 'PlayerDetailsService', 'BCrypt'],
+    dbActive: true,
+    http: { kind: 'note', text: 'POST /login in elaborazione: verifica delle credenziali…' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var A5 = {
+    title: 'Nasce la sessione',
+    text: 'Dopo il login riuscito Spring cambia l\'id di sessione (ChangeSessionIdAuthenticationStrategy): un id eventualmente rubato prima del login non serve più (session fixation). Il SecurityContext, cioè "chi è loggato", viene salvato nella HttpSession tramite SecurityContextRepository. La sessione vive nella RAM di Tomcat.',
+    snippet: '// semplificato: Spring fa queste operazioni da solo\nrequest.changeSessionId();\nsecurityContextRepository.saveContext(context, request, response);',
+    packets: [],
+    active: ['AuthController', 'SecurityContextHolderFilter'],
+    http: { kind: 'note', text: 'Login riuscito: il server crea la sessione.' },
+    cookies: [XSRF], sessions: [SESS_A]
+  };
+
+  var A6 = {
+    title: 'Risposta 204 e cookie JSESSIONID',
+    text: 'La risposta non ha corpo: il risultato è il cookie. JSESSIONID è solo un id casuale; i dati (chi è loggato) restano sul server. HttpOnly vuol dire che JavaScript non può leggerlo, quindi uno script iniettato non lo ruba.',
+    snippet: 'HTTP/1.1 204 No Content\nSet-Cookie: JSESSIONID=A1B2…; HttpOnly; SameSite=Lax',
+    packets: [P_204_COOKIE],
+    active: ['AuthController'],
+    http: { kind: 'ok', text: 'HTTP/1.1 204 No Content\nSet-Cookie: JSESSIONID=A1B2…; HttpOnly; SameSite=Lax' },
+    cookies: [XSRF, JS_A], sessions: [SESS_A]
+  };
+
+  var A7 = {
+    title: 'Le richieste successive',
+    text: 'Il browser rimanda il cookie JSESSIONID a ogni richiesta. SecurityContextHolderFilter trova la sessione A1B2… e ricostruisce l\'utente "nick" senza toccare il database. AuthorizationFilter vede che /api/session richiede il login e lo lascia passare. Il controller risponde con i dati dell\'utente.',
+    snippet: 'GET /api/session HTTP/1.1\nCookie: JSESSIONID=A1B2…\n\nHTTP/1.1 200 OK\n{"user":{"username":"nick","email":"nick@example.com"},"gamemaster":null}',
+    packets: [P_GET_SESSION, P_200_OK],
+    active: ['SecurityContextHolderFilter', 'AuthorizationFilter', 'AuthController'],
+    http: { kind: 'ok', text: 'GET /api/session\nCookie: JSESSIONID=A1B2…\n\nHTTP/1.1 200 OK\n{"user":{"username":"nick","email":"nick@example.com"},"gamemaster":null}' },
+    cookies: [XSRF, JS_A], sessions: [SESS_A]
+  };
+
+  var A8 = {
+    title: 'La sessione finisce',
+    text: 'La sessione termina in due modi: chiudendo il browser (JSESSIONID è un cookie di sessione e sparisce dal browser) oppure dopo 30 minuti di inattività o al riavvio del server (la sessione sparisce dalla RAM). In entrambi i casi il server non sa più nulla di nick.',
+    snippet: null,
+    packets: [],
+    active: [],
+    http: { kind: 'note', text: 'Browser chiuso, oppure timeout di 30 minuti, oppure riavvio del server.' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var A9 = {
+    title: 'Di nuovo anonimo: 401',
+    text: 'Nessun cookie di sessione e nessun remember-me: RememberMeAuthenticationFilter non fa nulla. AuthorizationFilter nega l\'accesso e ExceptionTranslationFilter lo trasforma in 401 tramite GlobalExceptionHandler. Questa richiesta anonima non crea una sessione (la request cache è disattivata): l\'utente deve rifare il login.',
+    snippet: 'GET /api/session HTTP/1.1\n\nHTTP/1.1 401 Unauthorized\n{"title":"Unauthorized","status":401,"detail":"Authentication required"}',
+    packets: [P_GET_SESSION, P_401],
+    active: ['SecurityContextHolderFilter', 'RememberMeAuthenticationFilter', 'AuthorizationFilter', 'ExceptionTranslationFilter', 'GlobalExceptionHandler'],
+    http: { kind: 'err', text: 'GET /api/session  (senza JSESSIONID)\n\nHTTP/1.1 401 Unauthorized\n{"title":"Unauthorized","status":401,"detail":"Authentication required"}' },
+    cookies: [XSRF], sessions: []
+  };
+
+  // ---- scenario "Con keepLogged" (riusa i primi passi) ----
+  var B2 = {
+    title: 'POST /login con keepLogged: true',
+    text: 'Stessa richiesta di prima, ma con keepLogged a true. Il flag non cambia la verifica della password: decide solo se alla fine verrà creato anche il cookie remember-me.',
+    snippet: LOGIN_SNIPPET_T,
+    packets: [P_LOGIN],
+    active: ['SecurityContextHolderFilter', 'CsrfFilter', 'AuthorizationFilter'],
+    http: { kind: 'req', text: LOGIN_SNIPPET_T },
+    cookies: [XSRF], sessions: []
+  };
+
+  var B3 = {
+    title: 'AuthController e @Valid',
+    text: 'Come nel caso precedente: Jackson crea il LoginRequest e @Valid controlla i campi. Il valore keepLogged arriva così al controller.',
+    snippet: A3.snippet,
+    packets: [],
+    active: ['AuthController'],
+    http: { kind: 'note', text: 'POST /login in elaborazione…' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var B4 = {
+    title: 'Verifica delle credenziali',
+    text: 'Stessa verifica del caso senza keepLogged: query sulla tabella player e confronto BCrypt. Il risultato è un PlayerPrincipal con id, username e hash.',
+    snippet: A4.snippet,
+    packets: [P_SELECT, P_ROW],
+    active: ['AuthenticationManager', 'PlayerDetailsService', 'BCrypt'],
+    dbActive: true,
+    http: { kind: 'note', text: 'POST /login in elaborazione: verifica delle credenziali…' },
+    cookies: [XSRF], sessions: []
+  };
+
+  var B5 = {
+    title: 'Nasce la sessione',
+    text: 'La sessione viene creata come nel caso senza keepLogged: nuovo id e SecurityContext nella HttpSession.',
+    snippet: A5.snippet,
+    packets: [],
+    active: ['AuthController', 'SecurityContextHolderFilter'],
+    http: { kind: 'note', text: 'Login riuscito: il server crea la sessione.' },
+    cookies: [XSRF], sessions: [SESS_A]
+  };
+
+  var B6 = {
+    title: 'In più: il cookie remember-me',
+    text: 'rememberMeServices.loginSuccess(...) costruisce il cookie remember-me. È firmato, non cifrato: chiunque può leggere username e scadenza, ma nessuno può modificarli senza la chiave segreta del server. L\'hash BCrypt entra nel calcolo della firma, ma non compare nel cookie.',
+    snippet: '// schema semplificato\nremember-me = Base64("nick:1767225600000:SHA256:3f9a…e1")\nfirma = SHA-256("nick" : scadenza : hashBCrypt : chiaveSegreta)',
+    packets: [],
+    active: ['AuthController'],
+    http: { kind: 'note', text: 'Login riuscito: il server prepara i cookie di risposta.' },
+    cookies: [XSRF], sessions: [SESS_A]
+  };
+
+  var B7 = {
+    title: 'Risposta 204 con due cookie',
+    text: 'Il server invia due Set-Cookie. JSESSIONID è un cookie di sessione: sparisce chiudendo il browser. remember-me ha Max-Age=2592000 secondi, cioè 30 giorni: il browser lo conserva anche dopo la chiusura.',
+    snippet: 'HTTP/1.1 204 No Content\nSet-Cookie: JSESSIONID=A1B2…; HttpOnly; SameSite=Lax\nSet-Cookie: remember-me=bmljaz…; Max-Age=2592000; HttpOnly',
+    packets: [P_204_TWO],
+    active: ['AuthController'],
+    http: { kind: 'ok', text: 'HTTP/1.1 204 No Content\nSet-Cookie: JSESSIONID=A1B2…; HttpOnly; SameSite=Lax\nSet-Cookie: remember-me=bmljaz…; Max-Age=2592000; HttpOnly' },
+    cookies: [XSRF, JS_A, RM], sessions: [SESS_A]
+  };
+
+  var B8 = {
+    title: 'Il browser viene chiuso',
+    text: 'JSESSIONID sparisce perché è un cookie di sessione. Il cookie remember-me resta, perché ha una scadenza (Max-Age). Anche la sessione in RAM non c\'è più (chiusura, timeout o riavvio), ma il cookie remember-me permette di ricrearla.',
+    snippet: null,
+    packets: [],
+    active: [],
+    http: { kind: 'note', text: 'Browser chiuso: JSESSIONID eliminato, remember-me conservato.' },
+    cookies: [RM], sessions: []
+  };
+
+  var B9 = {
+    title: 'Il giorno dopo: GET /api/session con il solo remember-me',
+    text: 'Il browser manda solo il cookie remember-me. SecurityContextHolderFilter non trova nessuna sessione: per ora l\'utente è anonimo. Entra in gioco RememberMeAuthenticationFilter, che prova il login automatico.',
+    snippet: 'GET /api/session HTTP/1.1\nCookie: remember-me=bmljaz…',
+    packets: [P_GET_SESSION],
+    active: ['SecurityContextHolderFilter', 'RememberMeAuthenticationFilter'],
+    http: { kind: 'req', text: 'GET /api/session\nCookie: remember-me=bmljaz…' },
+    cookies: [RM], sessions: []
+  };
+
+  var B10 = {
+    title: 'autoLogin: il cookie viene verificato',
+    text: 'Il filtro decodifica il cookie e controlla la scadenza. Poi carica l\'utente con PlayerDetailsService (una query sul database): se l\'account è stato cancellato non lo trova e il cookie viene rifiutato. Infine ricalcola la firma con l\'hash attuale e la chiave del server e la confronta con quella nel cookie.',
+    snippet: 'decodifica Base64 → "nick", scadenza, firma nel cookie\nscadenza nel futuro?                            ✔\nPlayerDetailsService → hash attuale nel database\nfirma nel cookie == firma ricalcolata           ✔',
+    packets: [P_SELECT, P_ROW],
+    active: ['RememberMeAuthenticationFilter', 'PlayerDetailsService'],
+    dbActive: true,
+    http: { kind: 'note', text: 'Il server sta verificando il cookie remember-me…' },
+    cookies: [RM], sessions: []
+  };
+
+  var B11 = {
+    title: 'Una sessione nuova',
+    text: 'Il filtro salva il SecurityContext in una nuova sessione (stesso SecurityContextRepository del login). La richiesta arriva fino ad AuthorizationFilter e AuthController, che risponde 200 con i dati dell\'utente e un nuovo JSESSIONID. Il cookie remember-me non cambia: resta valido fino alla scadenza.',
+    snippet: 'HTTP/1.1 200 OK\nSet-Cookie: XSRF-TOKEN=7b3a…; Path=/\nSet-Cookie: JSESSIONID=C3D4…; HttpOnly; SameSite=Lax\n\n{"user":{"username":"nick","email":"nick@example.com"},"gamemaster":null}',
+    packets: [P_200_COOKIE],
+    active: ['RememberMeAuthenticationFilter', 'SecurityContextHolderFilter', 'AuthorizationFilter', 'AuthController'],
+    http: { kind: 'ok', text: 'HTTP/1.1 200 OK\nSet-Cookie: XSRF-TOKEN=7b3a…; Path=/\nSet-Cookie: JSESSIONID=C3D4…; HttpOnly; SameSite=Lax\n\n{"user":{"username":"nick","email":"nick@example.com"},"gamemaster":null}' },
+    cookies: [XSRF2, JS_C, RM], sessions: [SESS_C]
+  };
+
+  var B12 = {
+    title: 'E se la password cambia?',
+    text: 'Nel frattempo nick ha cambiato password: nel database l\'hash è ora $2a$10$Zx81… . Il cookie vecchio contiene una firma calcolata con l\'hash precedente. Con l\'hash nuovo la firma non coincide: il server non si fida del cookie, lo cancella e risponde 401. Poiché l\'hash entra nel calcolo, cambiare la password invalida tutti i remember-me esistenti.',
+    snippet: 'firma nel cookie    = 9c4e…\nfirma ricalcolata   = 17ab…   ✘ diverse\n→ Set-Cookie: remember-me=; Max-Age=0',
+    packets: [P_GET_SESSION, P_SELECT, P_ROW, P_401],
+    active: ['RememberMeAuthenticationFilter', 'PlayerDetailsService', 'AuthorizationFilter', 'ExceptionTranslationFilter', 'GlobalExceptionHandler'],
+    dbActive: true,
+    dbHash: '$2a$10$Zx81…',
+    dbChanged: true,
+    http: { kind: 'err', text: 'GET /api/session\nCookie: remember-me=bmljaz…\n\nHTTP/1.1 401 Unauthorized\nSet-Cookie: remember-me=; Max-Age=0' },
+    cookies: [RM], sessions: [],
+    delayed: { cookies: [] }
+  };
+
+  var B13 = {
+    title: 'Logout',
+    text: 'Ipotesi di partenza: l\'utente è di nuovo loggato, con sessione C3D4… e i due cookie. POST /logout passa il controllo CSRF; poi LogoutFilter, gestito interamente da Spring, invalida la sessione (sparisce dalla RAM), cancella JSESSIONID e remember-me e risponde 204. Non serve nessun metodo del controller.',
+    snippet: null,
+    packets: [
+      { label: 'POST /logout', from: 'browser', to: 'server', kind: 'req' },
+      { label: '204 + cancella cookie', from: 'server', to: 'browser', kind: 'ok' }
+    ],
+    active: ['CsrfFilter', 'LogoutFilter'],
+    http: { kind: 'ok', text: 'POST /logout\nX-XSRF-TOKEN: 7b3a…\n\nHTTP/1.1 204 No Content\nSet-Cookie: JSESSIONID=; Max-Age=0\nSet-Cookie: remember-me=; Max-Age=0' },
+    cookies: [XSRF2, JS_C, RM], sessions: [SESS_C],
+    delayed: { cookies: [XSRF2], sessions: [] }
+  };
+
+  var SCEN = {
+    a: { steps: [A1, A2, A3, A4, A5, A6, A7, A8, A9] },
+    b: { steps: [A1, B2, B3, B4, B5, B6, B7, B8, B9, B10, B11, B12, B13] }
+  };
+
+  // ---- stato ----
+  var scen = 'a';
+  var idx = 0;
+  var playing = false;
+  var timer = null;
+  var runToken = 0;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var reduced = function () { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; };
+  var stacked = function () { return window.matchMedia('(max-width: 899px)').matches; };
+
+  // costruisce la colonna dei filtri/servizi (una volta)
+  function buildChain() {
+    var chain = $('chain');
+    CHAIN.forEach(function (item) {
+      if (item === null) {
+        var sep = document.createElement('div');
+        sep.className = 'sep';
+        chain.appendChild(sep);
+        return;
+      }
+      var b = document.createElement('div');
+      b.className = 'box';
+      b.dataset.k = item.k;
+      b.textContent = item.t;
+      chain.appendChild(b);
+    });
+  }
+
+  // sincronizza una lista (cookie/sessioni): le voci nuove entrano, quelle tolte escono con una dissolvenza
+  function syncList(ul, items, keyOf, render, emptyText) {
+    var prev = ul._items || [];
+    var prevKeys = prev.map(keyOf);
+    var keys = items.map(keyOf);
+    ul.innerHTML = '';
+    items.forEach(function (it) {
+      var li = render(it);
+      if (prevKeys.indexOf(keyOf(it)) < 0) li.classList.add('enter');
+      ul.appendChild(li);
+    });
+    prev.forEach(function (it) {
+      if (keys.indexOf(keyOf(it)) >= 0) return;
+      var li = render(it);
+      li.classList.add('ghost');
+      ul.appendChild(li);
+      setTimeout(function () { li.remove(); }, reduced() ? 0 : 500);
+    });
+    if (items.length === 0) {
+      var empty = document.createElement('li');
+      empty.className = 'empty';
+      empty.textContent = emptyText;
+      ul.appendChild(empty);
+    }
+    ul._items = items;
+  }
+
+  function cookieLi(c) {
+    var li = document.createElement('li');
+    li.className = 'cookie';
+    var tag = document.createElement('span');
+    tag.className = 'ctag ' + (c.tag === 'sessione' ? 't-ses' : 't-30');
+    tag.textContent = c.tag;
+    var name = document.createElement('span');
+    name.className = 'cname';
+    name.textContent = c.name;
+    var val = document.createElement('code');
+    val.textContent = c.value;
+    li.append(name, val, tag);
+    return li;
+  }
+
+  function sessionLi(s) {
+    var li = document.createElement('li');
+    var id = document.createElement('code');
+    id.textContent = s.id;
+    var arrow = document.createElement('span');
+    arrow.className = 'arrow';
+    arrow.textContent = '→';
+    var user = document.createElement('span');
+    user.textContent = s.user;
+    li.append(id, arrow, user);
+    return li;
+  }
+
+  // disegna lo stato completo di un passo (tranne i pacchetti)
+  function renderStep(s) {
+    var active = s.active || [];
+    document.querySelectorAll('#chain .box').forEach(function (b) {
+      var on = active.indexOf(b.dataset.k) >= 0;
+      b.classList.toggle('on', on);
+      b.classList.toggle('dim', !on);
+    });
+
+    var http = $('http');
+    var kind = s.http ? s.http.kind : 'note';
+    http.className = 'box http k-' + kind;
+    $('httpText').textContent = s.http ? s.http.text : '';
+
+    syncList($('cookies'), s.cookies || [], function (c) { return c.name + '=' + c.value; }, cookieLi, 'nessun cookie');
+    syncList($('sessions'), s.sessions || [], function (x) { return x.id + x.user; }, sessionLi, 'nessuna sessione');
+
+    $('dbPanel').classList.toggle('hl', !!s.dbActive);
+    $('dbRow').classList.toggle('hl', !!s.dbActive);
+    $('dbHash').textContent = s.dbHash || OLD_HASH;
+    $('dbHash').classList.toggle('changed', !!s.dbChanged);
+  }
+
+  function renderText(i, steps) {
+    var s = steps[i];
+    $('counter').textContent = 'Passo ' + (i + 1) + ' / ' + steps.length;
+    $('title').textContent = s.title;
+    $('text').textContent = s.text;
+    var pre = $('snippet');
+    pre.hidden = !s.snippet;
+    pre.textContent = s.snippet || '';
+    $('prev').disabled = i === 0;
+    $('next').disabled = i === steps.length - 1;
+    document.querySelectorAll('#timeline .dot').forEach(function (d, j) {
+      if (j === i) d.setAttribute('aria-current', 'step');
+      else d.removeAttribute('aria-current');
+    });
+  }
+
+  function renderTimeline(steps) {
+    var tl = $('timeline');
+    tl.innerHTML = '';
+    steps.forEach(function (s, i) {
+      var li = document.createElement('li');
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'dot';
+      b.textContent = String(i + 1);
+      b.setAttribute('aria-label', 'Vai al passo ' + (i + 1) + ': ' + s.title);
+      b.title = s.title;
+      b.addEventListener('click', function () { stopPlay(); go(i); });
+      li.appendChild(b);
+      tl.appendChild(li);
+    });
+  }
+
+  // posizione del pacchetto: centro della colonna (asse lungo), corsia in base al tipo (andata/ritorno)
+  function place(pkt, who, kind) {
+    var stage = $('stage').getBoundingClientRect();
+    var col = $(who === 'browser' ? 'col-browser' : who === 'server' ? 'col-server' : 'col-mem').getBoundingClientRect();
+    var p = $('packet');
+    var cx = col.left - stage.left + col.width / 2;
+    var cy = col.top - stage.top + col.height / 2;
+    var req = kind === 'req';
+    if (!stacked()) {
+      p.style.left = cx + 'px';
+      p.style.top = (stage.height * (req ? 0.42 : 0.58)) + 'px';
+    } else {
+      p.style.left = (stage.width * (req ? 0.42 : 0.58)) + 'px';
+      p.style.top = cy + 'px';
+    }
+  }
+
+  function movePacket(pkt) {
+    var p = $('packet');
+    p.textContent = pkt.label;
+    p.className = 'packet ' + pkt.kind;
+    if (reduced()) {
+      p.style.transition = 'none';
+      place(pkt, pkt.to, pkt.kind);
+      p.style.opacity = 1;
+      return;
+    }
+    // prima nel punto di partenza senza transizione, poi (due frame dopo) verso la destinazione
+    p.style.transition = 'none';
+    place(pkt, pkt.from, pkt.kind);
+    p.style.opacity = 1;
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        p.style.transition = '';
+        place(pkt, pkt.to, pkt.kind);
+      });
+    });
+  }
+
+  // avvia la sequenza di pacchetti del passo e, alla fine, l'eventuale stato ritardato
+  function runPackets(s, token) {
+    var list = s.packets || [];
+    var p = $('packet');
+    var t = 0;
+    list.forEach(function (pkt) {
+      setTimeout(function () {
+        if (token !== runToken) return;
+        movePacket(pkt);
+      }, t);
+      t += STEP_MS;
+    });
+    setTimeout(function () {
+      if (token !== runToken) return;
+      p.style.opacity = 0;
+      if (s.delayed) {
+        renderStep(Object.assign({}, s, s.delayed, { packets: [] }));
+      }
+    }, t + 150);
+  }
+
+  function go(i) {
+    var steps = SCEN[scen].steps;
+    idx = Math.max(0, Math.min(i, steps.length - 1));
+    var s = steps[idx];
+    var token = ++runToken;
+    clearTimeout(timer);
+    renderStep(s);
+    renderText(idx, steps);
+    runPackets(s, token);
+    if (playing) {
+      if (idx < steps.length - 1) {
+        timer = setTimeout(function () { go(idx + 1); }, AUTO_MS);
+      } else {
+        setPlaying(false);
+      }
+    }
+  }
+
+  function setPlaying(on) {
+    playing = on;
+    $('play').textContent = on ? '⏸ Pausa' : '▶ Riproduci';
+    if (!on) clearTimeout(timer);
+    if (on && idx < SCEN[scen].steps.length - 1) {
+      clearTimeout(timer);
+      timer = setTimeout(function () { go(idx + 1); }, AUTO_MS);
+    }
+  }
+
+  function stopPlay() { if (playing) setPlaying(false); }
+
+  function togglePlay() {
+    if (!playing && idx === SCEN[scen].steps.length - 1) go(0);
+    setPlaying(!playing);
+  }
+
+  function setScenario(key) {
+    stopPlay();
+    scen = key;
+    document.querySelectorAll('.tab').forEach(function (t) {
+      t.setAttribute('aria-pressed', String(t.dataset.scen === key));
+    });
+    renderTimeline(SCEN[key].steps);
+    // azzera anche le liste per non far "uscire" i cookie dello scenario precedente
+    $('cookies')._items = [];
+    $('sessions')._items = [];
+    go(0);
+  }
+
+  // ---- eventi ----
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () { setScenario(t.dataset.scen); });
+  });
+  $('prev').addEventListener('click', function () { stopPlay(); go(idx - 1); });
+  $('next').addEventListener('click', function () { stopPlay(); go(idx + 1); });
+  $('play').addEventListener('click', togglePlay);
+  $('restart').addEventListener('click', function () { stopPlay(); go(0); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowLeft') { stopPlay(); go(idx - 1); e.preventDefault(); }
+    else if (e.key === 'ArrowRight') { stopPlay(); go(idx + 1); e.preventDefault(); }
+    else if (e.code === 'Space' && e.target.tagName !== 'BUTTON') { togglePlay(); e.preventDefault(); }
+  });
+
+  window.addEventListener('resize', function () {
+    // ricalcola le posizioni del pacchetto se è visibile (il layout cambia sotto i 900 px)
+    var p = $('packet');
+    if (p.style.opacity === '1') {
+      var s = SCEN[scen].steps[idx];
+      var pk = (s.packets || [])[0];
+      if (pk) place(pk, pk.to, pk.kind);
+    }
+  });
+
+  buildChain();
+  setScenario('a');
+})();
+</script>
+</body>
+</html>

@@ -243,6 +243,48 @@ database (vedi sopra); è il compromesso accettato.
   `winner`/`endedAt` a `null` = partita in corso. Il `CHECK` di `game_player` garantisce che le tre
   colonne della morte siano tutte `null` o tutte valorizzate.
 
+## Callback del ciclo di vita: `@PrePersist` / `@PreUpdate`
+
+```java
+@PrePersist
+@PreUpdate
+void normalizeEmail() {
+  email = email.toLowerCase(Locale.ROOT);
+}
+```
+
+Hibernate chiama il metodo appena prima dell'`INSERT` (`@PrePersist`) e dell'`UPDATE`
+(`@PreUpdate`) di quella riga. Lo usiamo per salvare l'email sempre in minuscolo **in un solo
+punto**, qualunque codice salvi il `Player`: oggi la registrazione, domani la modifica del profilo.
+Così le ricerche per email sono uguaglianze esatte (`existsByEmail`) che usano l'indice `UNIQUE`
+di `email`, e il vincolo `UNIQUE` diventa di fatto case-insensitive.
+
+Alternative:
+- **Nel service**: si scrive `toLowerCase` in ogni metodo che salva l'email. Funziona, ma va
+  ricordato in ogni service presente e futuro; se ne dimentichi uno, nel database finiscono
+  email con maiuscole.
+- **Colonna `citext`** di Postgres: confronti case-insensitive dal database. Richiede l'estensione
+  `citext` e un tipo di colonna che `ddl-auto` non genera da solo.
+- **Indice `UNIQUE` su `lower(email)`**: stesso effetto sul vincolo, ma `ddl-auto` non crea indici
+  funzionali: andrebbe in uno script SQL a mano.
+
+Il callback non tocca lo username: lo mostriamo come l'utente lo ha digitato, quindi le sue
+ricerche restano `IgnoreCase` (vedi `repository/README.md`).
+
+### Perché `toLowerCase(Locale.ROOT)` e non `toLowerCase()`
+
+`toLowerCase()` senza argomenti usa la **lingua di default della JVM**, presa dal sistema
+operativo, e alcune lingue hanno regole diverse. Il caso classico è il turco: `I` minuscola
+diventa `ı` (senza puntino), non `i`. Su un server in turco `"MARIO@INFO.IT".toLowerCase()`
+dà `"marıo@ınfo.ıt"`, e quell'email non corrisponde più a quella salvata.
+
+`Locale.ROOT` vuol dire "nessuna lingua": regole neutre, uguali su qualunque macchina. Regola:
+- `Locale.ROOT` per i dati che il programma confronta (email, codici, chiavi);
+- la lingua dell'utente solo per il testo da mostrare.
+
+Lo stesso vale per `toUpperCase` e `String.format` con i numeri. Il secondo cambia il separatore
+decimale: `3,5` in italiano, `3.5` in inglese.
+
 ## Classi
 
 Entity (tabelle), tutte con `id` UUID v7:

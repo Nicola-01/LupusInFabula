@@ -128,7 +128,7 @@ I vincoli dell'entity restano comunque: sono **l'ultima difesa** che garantisce 
 database anche se un service ha un bug. Bean Validation funzionerebbe anche sull'entity
 (Hibernate la esegue prima del salvataggio), ma l'errore arriverebbe tardi e come 500.
 
-Esempio di richiesta:
+Esempio di richiesta (la versione reale è in `SignupRequest`):
 
 ```java
 public record SignupRequest(
@@ -136,6 +136,37 @@ public record SignupRequest(
     @NotBlank @Email String email,
     @NotBlank @Size(min = 8) String password) {}
 ```
+
+### Regole con `@Pattern` e messaggio proprio
+
+Per username e password le regole sono espressioni regolari (`@Pattern`), con un messaggio scritto
+per l'utente invece di quello di default:
+
+```java
+@Pattern(regexp = PASSWORD, message = "8-20 characters with upper case, lower case, a digit and a symbol")
+```
+
+Le costanti `USERNAME` e `PASSWORD` stanno **dentro** il record (`static final`), vicino alla regola
+che descrivono. Il controllo sulla password usa lookahead (`(?=.*\\d)` = "contiene almeno una
+cifra"): ogni gruppo è una condizione indipendente, e l'ultima parte limita lunghezza e spazi.
+
+### Niente `passwordRepeat`
+
+Il frontend chiede due volte la password per evitare errori di battitura, ma il confronto è un
+controllo **dell'interfaccia**: il server riceve solo la password una volta. Un campo
+`passwordRepeat` nel DTO lo dovrebbe controllare il backend senza un motivo di sicurezza, e
+verrebbe inviato in chiaro in più. Il frontend confronta i due campi prima di inviare.
+
+## Classi (nuovi)
+
+- `SignupRequest` — `POST /signup`: username, email, password, con le regole sopra.
+- `LoginRequest` — `POST /login`: `user` (username **o** email), `password`, `keepLogged` (resta
+  loggato 30 giorni con il cookie remember-me). Nessuna regola di formato: chi sbaglia la password
+  non deve sapere quali regole valgono.
+- `PlayerResponse` — `username`, `email` di un utente.
+- `SessionResponse` — `GET /api/session`: `user` (un `PlayerResponse`) e `gamemaster` (publicId
+  della partita di cui è master, oppure `null`; il JSON include il campo anche quando è `null`,
+  perché Spring Boot non esclude i null di default).
 
 ## Classi
 

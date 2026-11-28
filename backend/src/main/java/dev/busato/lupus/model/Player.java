@@ -2,11 +2,14 @@ package dev.busato.lupus.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Locale;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -46,4 +49,11 @@ public class Player {
 
   /** Soft delete: {@code null} = active account. A deleted account keeps its games but cannot log in. */
   private Instant deletedAt;
+
+  /** Emails are case-insensitive: stored in lower case so lookups are exact and use the UNIQUE index. */
+  @PrePersist
+  @PreUpdate
+  void normalizeEmail() {
+    email = email.toLowerCase(Locale.ROOT);
+  }
 }

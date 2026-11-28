@@ -20,7 +20,7 @@ Dipende **solo** dai service, iniettati dal costruttore con `@RequiredArgsConstr
 | `@RequestParam` | parametro | query string: `?page=2` |
 | `@RequestBody` | parametro | il JSON del body convertito nel DTO di richiesta |
 | `@Valid` | parametro | applica le regole del DTO (`@NotBlank`, `@Size`...); se fallisce → 400 |
-| `@AuthenticationPrincipal` | parametro | l'utente loggato (quando avremo Spring Security) |
+| `@AuthenticationPrincipal` | parametro | l'utente loggato: Spring lo prende dalla sessione (vedi `security/README.md`) |
 
 ## Risposta
 
@@ -180,7 +180,7 @@ nel `GlobalExceptionHandler` (13 eccezioni → 13 metodi quasi uguali). Qui lo s
 nell'eccezione e il gestore è uno solo. Il prezzo: le eccezioni conoscono un concetto HTTP (lo
 status); in un'app che espone solo REST è un compromesso comune.
 
-Le eccezioni di dominio andranno nel package `exceptions/`, creato alla prima eccezione reale.
+Le eccezioni di dominio stanno nel package `exceptions/` (vedi il suo README).
 
 ### Test
 
@@ -192,4 +192,60 @@ richieste HTTP senza avviare Tomcat; `jsonPath("$.detail")` legge un campo del J
 ## Classi
 
 - `RoleController` — `GET /api/rules/roles`: ruoli giocabili raggruppati per tipo.
+- `AuthController` — `POST /signup`, `POST /login` (201/204, sessione creata a mano), `GET /api/session`.
+  Il logout non ha un metodo: `POST /logout` lo gestisce il `LogoutFilter` di Spring Security.
 - `GlobalExceptionHandler` — ogni eccezione → `ProblemDetail` (vedi sopra).
+
+### Errori di sicurezza: perché passano dal `GlobalExceptionHandler`
+
+I filtri di Spring Security (CSRF, utente non loggato, permessi) lanciano le loro eccezioni
+**fuori** dal controller, quindi `@ExceptionHandler` non le vedrebbe. `SecurityConfig` le
+inoltra al `handlerExceptionResolver` di Spring MVC, lo stesso che usa il controller, e così
+arrivano ai due metodi aggiunti in `GlobalExceptionHandler`:
+
+- `handleAuthentication(AuthenticationException)`: 401. "Wrong credentials" per il login
+  sbagliato (`BadCredentialsException`), "Authentication required" nel resto.
+- `handleAccessDenied(AccessDeniedException)`: 403. "Invalid or missing CSRF token" per
+  `CsrfException` (che è una sottoclasse di `AccessDeniedException`), "Access denied" nel resto.
+
+Il risultato: anche un 401 o un 403 del filtro ha lo stesso JSON `ProblemDetail` di tutti gli altri
+errori, costruito in un solo punto. Dettagli in `security/README.md`.
+
+## Come funziona `POST /login`
+
+```java
+@PostMapping("/login")
+public ResponseEntity<Void> login(
+    @Valid @RequestBody LoginRequest body, HttpServletRequest request, HttpServletResponse response) {
+  startSession(body.user(), body.password(), body.keepLogged(), request, response);
+  return ResponseEntity.noContent().build();
+}
+```
+
+**I parametri**:
+- `@RequestBody LoginRequest body`: Jackson converte il JSON
+  `{"user":"nick","password":"...","keepLogged":true}` nel record.
+- `@Valid` controlla `@NotBlank` su `user` e `password` **prima** di eseguire il metodo.
+- `HttpServletRequest` / `HttpServletResponse`: Spring passa la richiesta e la risposta "grezze".
+  Servono a `startSession` per leggere e creare la sessione e per aggiungere i cookie.
+
+**Il metodo** non restituisce dati: il risultato del login è nei **cookie**, messi da
+`startSession` nella risposta.
+1. Controlla le credenziali. Se sono sbagliate lancia un'eccezione e il metodo si ferma.
+2. Crea una sessione nuova.
+3. Ci salva dentro l'utente.
+4. Con `keepLogged`, aggiunge il cookie `remember-me`.
+
+**Le risposte possibili**:
+
+| Caso | Status | Chi lo produce |
+|---|---|---|
+| login riuscito | **204 No Content**, cookie `JSESSIONID` (+ `remember-me` se `keepLogged`) | `ResponseEntity.noContent()` |
+| `user` o `password` vuoti | 400, `errors` per campo | `@Valid` → `handleMethodArgumentNotValid` |
+| credenziali sbagliate, utente inesistente o cancellato | 401 "Wrong credentials" | `BadCredentialsException` → `handleAuthentication` |
+| header `X-XSRF-TOKEN` mancante o sbagliato | 403 | `CsrfFilter`, **prima** di arrivare al controller |
+| JSON malformato | 400 | `HttpMessageNotReadableException`, gestita da `ResponseEntityExceptionHandler` |
+
+**Perché 204 e non 200**: 204 vuol dire "riuscito, e non c'è un body". Il login non deve
+restituire dati: il frontend, se gli servono, chiama `GET /api/session`. Il signup risponde invece
+**201 Created**, perché crea una risorsa nuova (il giocatore).

@@ -17,6 +17,8 @@ HTTP ──► controller ──► service ──► repository ──► datab
 | `model/`      | entity JPA = tabelle                          | `@Entity` (non è un bean) |
 | `dto/`        | JSON in ingresso/uscita                       | `record` (non è un bean) |
 | `mappers/`    | conversione entity → DTO                      | `@Component`           |
+| `security/`   | login, sessione, remember-me, CSRF, `SecurityFilterChain` | `@Configuration` |
+| `exceptions/` | eccezioni di dominio (`ErrorResponseException`) | estende l'eccezione Spring |
 
 Regola: ogni strato chiama solo quello sotto. Il controller non tocca il repository, il
 repository non sa nulla di HTTP.
@@ -49,7 +51,8 @@ giusto (prima repository e mapper, poi service, poi controller).
    Sono tutte varianti di `@Component`; il nome dice lo strato a chi legge (e alcune aggiungono
    comportamento, es. `@Repository` traduce le eccezioni SQL).
 2. **Metodo `@Bean` in una classe `@Configuration`**: per oggetti di librerie esterne, che non
-   puoi annotare. Es. `@Bean PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }`.
+   puoi annotare. Es. `@Bean PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(); }`
+   (ora esiste davvero: è in `security/SecurityConfig`, insieme agli altri bean di sicurezza).
 3. **Auto-configurazione di Spring Boot**: in base alle dipendenze del `pom.xml` Boot crea da solo
    `DataSource`, Jackson (`ObjectMapper`), Tomcat, il `TransactionManager`... Non li dichiari ma
    puoi farteli iniettare.
@@ -87,3 +90,39 @@ una classe fuori da qui non viene trovata, senza nessun errore.
 - `@WebMvcTest`, `@DataJpaTest`: Spring crea **solo** i bean di uno strato.
 - `@SpringBootTest`: Spring crea **tutti** i bean, come all'avvio vero (serve il database).
 - `@MockitoBean`: sostituisce un bean del contesto con un mock.
+
+---
+
+## Log
+
+Il progetto usa **SLF4J** (l'API con cui scrivi i log nel codice) e **Logback** (l'implementazione
+che li stampa). Logback è il default di Spring Boot: arriva con `spring-boot-starter`, non si
+aggiunge nessuna dipendenza. Il vecchio backend (`src/`) usava log4j2, aggiunto a mano; qui non
+serve.
+
+```java
+@Slf4j                                   // Lombok: crea  private static final Logger log = ...
+@Service
+public class AuthService {
+  public void signup(SignupRequest request) {
+    // ...
+    log.info("Signup: {}", request.username());
+  }
+}
+```
+
+- **Livelli**, dal più grave: `ERROR` (qualcosa è rotto, c'è uno stack trace), `WARN` (anomalia
+  prevista, es. login sbagliato), `INFO` (fatti normali e importanti, es. signup o logout),
+  `DEBUG` (dettagli per lo sviluppo), `TRACE` (tutto, rumoroso).
+- **Soglia per pacchetto** in `application.properties`: `logging.level.dev.busato.lupus=INFO`
+  stampa INFO e superiori di tutto il nostro codice; i pacchetti di Spring e Hibernate restano al
+  loro default.
+- **Placeholder `{}`**, non concatenazione: `log.info("Signup: {}", x)` costruisce la stringa solo
+  se il livello è attivo. `"Signup: " + x` la costruisce sempre, anche quando il log è spento.
+- **Mai** password, hash, cookie, token CSRF o token JWT nei log. Un log finisce in file, console,
+  sistemi di raccolta: tutto ciò che ci scrivi lì è visibile a chi legge i log.
+- **Solo console**: il log va sullo standard output. Con Docker lo legge `docker logs`. Se un
+  giorno serve un file, basta `logging.file.name` (non lo usiamo ora).
+
+Il contesto della richiesta (utente e IP) non si passa come parametro: sta nell'**MDC**, vedi
+`security/README.md`, sezione "Log di sicurezza".
